@@ -11,7 +11,7 @@ uses
   {$ENDIF}
   opensslsockets,
   Interfaces, // this includes the LCL widgetset
-  Forms, uFMain, uFAbout, uFMedocCheckDocs
+  Forms, uFMain, uFAbout, uFMedocCheckDocs, uForms
   { you can add units after this };
 
 {$R *.res}

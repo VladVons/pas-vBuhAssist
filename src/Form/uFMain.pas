@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList,
   ExtCtrls, uFAbout, uFMedocCheckDocs,
-  fpjson, MyUnit in 'Utit/uHttp.pas';
+  fpjson, uForms, uHttp;
 
 type
 
@@ -42,25 +42,6 @@ implementation
 {$R *.lfm}
 
 { TFMain }
-
-procedure ShowFormDock(aForm: TForm; aHost: TWinControl);
-begin
-  aForm.Hide();
-  aForm.Parent := aHost;
-  aForm.Align := alClient;
-  aForm.BorderStyle := bsNone;
-  aForm.Show();
-end;
-
-procedure ShowFormFloat(aForm: TForm);
-begin
-  aForm.Hide();
-  aForm.Parent := nil;
-  aForm.Align := alNone;
-  aForm.BorderStyle := bsSizeable;
-  aForm.Position := poMainFormCenter;
-  aForm.Show();
-end;
 
 procedure TFMain.ActionFAboutExecute(Sender: TObject);
 begin

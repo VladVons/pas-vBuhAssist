@@ -1,19 +1,28 @@
 object FMedocCheckDocs: TFMedocCheckDocs
   Left = 342
-  Height = 240
+  Height = 356
   Top = 250
-  Width = 320
+  Width = 637
   BorderStyle = bsNone
   Caption = 'FMedocCheckDocs'
-  ClientHeight = 240
-  ClientWidth = 320
+  ClientHeight = 356
+  ClientWidth = 637
   LCLVersion = '4.4.0.0'
   object Button1: TButton
-    Left = 240
+    Left = 520
     Height = 25
-    Top = 208
+    Top = 304
     Width = 75
     Caption = 'Button1'
     TabOrder = 0
+  end
+  object DBGrid1: TDBGrid
+    Left = 16
+    Height = 240
+    Top = 64
+    Width = 592
+    Color = clWindow
+    Columns = <>
+    TabOrder = 1
   end
 end

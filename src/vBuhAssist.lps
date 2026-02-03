@@ -9,7 +9,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="19"/>
-        <UsageCount Value="62"/>
+        <UsageCount Value="65"/>
       </Unit>
       <Unit>
         <Filename Value="Form/uFMain.pas"/>
@@ -17,9 +17,8 @@
         <ComponentName Value="FMain"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <TopLine Value="80"/>
-        <CursorPos Y="97"/>
-        <UsageCount Value="62"/>
+        <CursorPos X="24" Y="10"/>
+        <UsageCount Value="65"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -29,9 +28,9 @@
         <ComponentName Value="FAbout"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="2"/>
         <CursorPos Y="16"/>
-        <UsageCount Value="62"/>
+        <UsageCount Value="65"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -41,11 +40,20 @@
         <ComponentName Value="FMedocCheckDocs"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="4"/>
-        <CursorPos Y="9"/>
-        <UsageCount Value="59"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="3"/>
+        <CursorPos X="42" Y="8"/>
+        <UsageCount Value="62"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Unit/uForms.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="1"/>
+        <CursorPos X="27" Y="8"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="Form/uMedocCheckDocs.pas"/>
@@ -59,11 +67,9 @@
       </Unit>
       <Unit>
         <Filename Value="Utit/uHttp.pas"/>
-        <EditorIndex Value="2"/>
-        <TopLine Value="11"/>
-        <CursorPos X="6" Y="18"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="27" Y="16"/>
         <UsageCount Value="27"/>
-        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/share/fpcsrc/3.2.2/packages/fcl-web/src/base/fphttpclient.pp"/>
@@ -81,12 +87,10 @@
       </Unit>
       <Unit>
         <Filename Value="/usr/share/lazarus/4.4.0/lcl/include/customform.inc"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="912"/>
-        <CursorPos Y="925"/>
+        <CursorPos Y="924"/>
         <UsageCount Value="14"/>
-        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/share/fpcsrc/3.2.2/packages/fcl-json/src/fpjson.pp"/>
@@ -95,127 +99,61 @@
         <CursorPos X="57" Y="710"/>
         <UsageCount Value="11"/>
       </Unit>
+      <Unit>
+        <Filename Value="Unit/uHttp.pas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="30" Y="13"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="/usr/share/lazarus/4.4.0/lcl/forms.pp"/>
+        <UnitName Value="Forms"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="277"/>
+        <CursorPos X="14" Y="280"/>
+        <UsageCount Value="10"/>
+      </Unit>
     </Units>
-    <JumpHistory HistoryIndex="29">
+    <JumpHistory HistoryIndex="9">
       <Position>
         <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="92" TopLine="74"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="93" Column="8" TopLine="74"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="95" Column="16" TopLine="78"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="89" TopLine="78"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="90" TopLine="78"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="91" TopLine="78"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="93" TopLine="78"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="94" TopLine="78"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="98" TopLine="83"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="99" Column="15" TopLine="85"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="98" Column="7" TopLine="86"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="103" Column="4" TopLine="85"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="98" Column="6" TopLine="86"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="83" TopLine="79"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="88" TopLine="79"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="89" TopLine="79"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="91" TopLine="79"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="92" TopLine="79"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="93" TopLine="79"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="89" TopLine="79"/>
+        <Caret Line="89" TopLine="80"/>
       </Position>
       <Position>
         <Filename Value="Form/uFMain.pas"/>
         <Caret Line="97" TopLine="80"/>
       </Position>
       <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="85" Column="24" TopLine="75"/>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="8" Column="42"/>
       </Position>
       <Position>
         <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="88" TopLine="75"/>
+        <Caret Line="10" Column="24"/>
       </Position>
       <Position>
         <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="89" TopLine="75"/>
+        <Caret Line="10" Column="28"/>
+      </Position>
+      <Position>
+        <Filename Value="Unit/uForms.pas"/>
+        <Caret Line="11" Column="39"/>
+      </Position>
+      <Position>
+        <Filename Value="Unit/uForms.pas"/>
+        <Caret Line="10" Column="48"/>
       </Position>
       <Position>
         <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="91" TopLine="75"/>
+        <Caret Line="5" Column="14"/>
       </Position>
       <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="92" TopLine="75"/>
+        <Filename Value="Unit/uForms.pas"/>
+        <Caret Line="8" Column="27"/>
       </Position>
       <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="93" TopLine="75"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="89" TopLine="75"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="97" TopLine="80"/>
-      </Position>
-      <Position>
-        <Filename Value="/usr/share/lazarus/4.4.0/lcl/include/customform.inc"/>
-        <Caret Line="924" TopLine="912"/>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="8" Column="42"/>
       </Position>
     </JumpHistory>
     <RunParams>
@@ -223,15 +161,4 @@
       <Modes ActiveMode=""/>
     </RunParams>
   </ProjectSession>
-  <Debugging>
-    <BreakPoints>
-      <Item>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="Form/uFMain.pas"/>
-        <Line Value="88"/>
-      </Item>
-    </BreakPoints>
-  </Debugging>
 </CONFIG>

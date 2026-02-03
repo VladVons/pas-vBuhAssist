@@ -5,7 +5,7 @@ unit uFMedocCheckDocs;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, DBGrids;
 
 type
 
@@ -13,6 +13,7 @@ type
 
   TFMedocCheckDocs = class(TForm)
     Button1: TButton;
+    DBGrid1: TDBGrid;
   private
 
   public
