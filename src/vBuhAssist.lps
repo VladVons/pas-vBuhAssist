@@ -17,9 +17,8 @@
         <ComponentName Value="FMain"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
-        <TopLine Value="75"/>
-        <CursorPos X="31" Y="83"/>
+        <TopLine Value="80"/>
+        <CursorPos Y="97"/>
         <UsageCount Value="62"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -30,7 +29,7 @@
         <ComponentName Value="FAbout"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <CursorPos Y="16"/>
         <UsageCount Value="62"/>
         <Loaded Value="True"/>
@@ -42,7 +41,7 @@
         <ComponentName Value="FMedocCheckDocs"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <CursorPos Y="9"/>
         <UsageCount Value="59"/>
         <Loaded Value="True"/>
@@ -60,7 +59,7 @@
       </Unit>
       <Unit>
         <Filename Value="Utit/uHttp.pas"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
         <TopLine Value="11"/>
         <CursorPos X="6" Y="18"/>
         <UsageCount Value="27"/>
@@ -82,10 +81,12 @@
       </Unit>
       <Unit>
         <Filename Value="/usr/share/lazarus/4.4.0/lcl/include/customform.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="956"/>
-        <CursorPos Y="963"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="912"/>
+        <CursorPos Y="925"/>
         <UsageCount Value="14"/>
+        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/share/fpcsrc/3.2.2/packages/fcl-json/src/fpjson.pp"/>
@@ -95,39 +96,7 @@
         <UsageCount Value="11"/>
       </Unit>
     </Units>
-    <JumpHistory HistoryIndex="28">
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="90" TopLine="74"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="88" TopLine="74"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="89" TopLine="74"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="93" Column="4" TopLine="78"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="94" Column="3" TopLine="78"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="88" TopLine="73"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="89" TopLine="73"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="90" TopLine="73"/>
-      </Position>
+    <JumpHistory HistoryIndex="29">
       <Position>
         <Filename Value="Form/uFMain.pas"/>
         <Caret Line="92" TopLine="74"/>
@@ -211,6 +180,42 @@
       <Position>
         <Filename Value="Form/uFMain.pas"/>
         <Caret Line="97" TopLine="80"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMain.pas"/>
+        <Caret Line="85" Column="24" TopLine="75"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMain.pas"/>
+        <Caret Line="88" TopLine="75"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMain.pas"/>
+        <Caret Line="89" TopLine="75"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMain.pas"/>
+        <Caret Line="91" TopLine="75"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMain.pas"/>
+        <Caret Line="92" TopLine="75"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMain.pas"/>
+        <Caret Line="93" TopLine="75"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMain.pas"/>
+        <Caret Line="89" TopLine="75"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMain.pas"/>
+        <Caret Line="97" TopLine="80"/>
+      </Position>
+      <Position>
+        <Filename Value="/usr/share/lazarus/4.4.0/lcl/include/customform.inc"/>
+        <Caret Line="924" TopLine="912"/>
       </Position>
     </JumpHistory>
     <RunParams>
