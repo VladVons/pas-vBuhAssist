@@ -1,0 +1,6 @@
+*.o
+*.or
+*.ppu
+vBuhAssist
+scr/lib
+backup
