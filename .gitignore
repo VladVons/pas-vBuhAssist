@@ -2,5 +2,5 @@
 *.or
 *.ppu
 vBuhAssist
-scr/lib
+scr/lib/
 backup
