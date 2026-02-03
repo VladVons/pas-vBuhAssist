@@ -7,9 +7,11 @@
       <Unit>
         <Filename Value="vBuhAssist.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos Y="19"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="2"/>
+        <CursorPos X="34" Y="12"/>
         <UsageCount Value="65"/>
+        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="Form/uFMain.pas"/>
@@ -17,7 +19,6 @@
         <ComponentName Value="FMain"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <CursorPos X="24" Y="10"/>
         <UsageCount Value="65"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -29,7 +30,6 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="2"/>
-        <CursorPos Y="16"/>
         <UsageCount Value="65"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -40,9 +40,9 @@
         <ComponentName Value="FMedocCheckDocs"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
-        <CursorPos X="42" Y="8"/>
+        <TopLine Value="8"/>
+        <CursorPos X="66" Y="19"/>
         <UsageCount Value="62"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -51,7 +51,8 @@
         <Filename Value="Unit/uForms.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="1"/>
-        <CursorPos X="27" Y="8"/>
+        <TopLine Value="10"/>
+        <CursorPos Y="34"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit>
@@ -113,8 +114,29 @@
         <CursorPos X="14" Y="280"/>
         <UsageCount Value="10"/>
       </Unit>
+      <Unit>
+        <Filename Value="DataModule/uDmFbConnect.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DmFbConnect"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="DataModule"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="5"/>
+        <CursorPos X="43" Y="6"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="DataModule/uDmFbConnect.lfm"/>
+        <EditorIndex Value="6"/>
+        <CursorPos X="41" Y="10"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="LFM"/>
+      </Unit>
     </Units>
-    <JumpHistory HistoryIndex="9">
+    <JumpHistory HistoryIndex="10">
       <Position>
         <Filename Value="Form/uFMain.pas"/>
         <Caret Line="89" TopLine="80"/>
@@ -154,6 +176,10 @@
       <Position>
         <Filename Value="Form/uFMedocCheckDocs.pas"/>
         <Caret Line="8" Column="42"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="19" Column="66" TopLine="8"/>
       </Position>
     </JumpHistory>
     <RunParams>

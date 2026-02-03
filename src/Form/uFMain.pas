@@ -6,8 +6,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList,
-  ExtCtrls, uFAbout, uFMedocCheckDocs,
-  fpjson, uForms, uHttp;
+  ExtCtrls,
+  uFAbout, uFMedocCheckDocs, fpjson, uForms, uHttp;
 
 type
 

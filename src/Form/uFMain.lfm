@@ -10,11 +10,17 @@ object FMain: TFMain
   LCLVersion = '4.4.0.0'
   OnCreate = FormCreate
   object PanelClient: TPanel
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
     Left = 0
     Height = 422
     Top = 0
     Width = 788
-    Align = alClient
+    Anchors = [akTop, akLeft, akRight, akBottom]
     BevelOuter = bvNone
     Caption = 'PanelClient'
     TabOrder = 0

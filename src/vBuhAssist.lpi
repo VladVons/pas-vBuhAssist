@@ -58,6 +58,13 @@
         <Filename Value="Unit/uForms.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="DataModule/uDmFbConnect.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DmFbConnect"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="DataModule"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -67,7 +74,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="Form;Unit"/>
+      <OtherUnitFiles Value="Form;Unit;DataModule"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

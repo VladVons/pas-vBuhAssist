@@ -11,7 +11,7 @@ uses
   {$ENDIF}
   opensslsockets,
   Interfaces, // this includes the LCL widgetset
-  Forms, uFMain, uFAbout, uFMedocCheckDocs, uForms
+  Forms, uFMain, uFAbout, uFMedocCheckDocs, uForms, uDmFbConnect
   { you can add units after this };
 
 {$R *.res}
@@ -26,6 +26,7 @@ begin
   Application.CreateForm(TFMain, FMain);
   Application.CreateForm(TFAbout, FAbout);
   Application.CreateForm(TFMedocCheckDocs, FMedocCheckDocs);
+  Application.CreateForm(TDmFbConnect, DmFbConnect);
   Application.Run();
 end.
 
