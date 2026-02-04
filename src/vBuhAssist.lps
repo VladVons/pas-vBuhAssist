@@ -41,8 +41,8 @@
         <ResourceBaseClass Value="Form"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="24"/>
-        <CursorPos X="5" Y="38"/>
+        <TopLine Value="26"/>
+        <CursorPos X="5" Y="47"/>
         <UsageCount Value="64"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -54,6 +54,19 @@
         <TopLine Value="12"/>
         <CursorPos X="24" Y="21"/>
         <UsageCount Value="22"/>
+      </Unit>
+      <Unit>
+        <Filename Value="DataModule/uDmFbConnect.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DmFbConnect"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="DataModule"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="26"/>
+        <CursorPos Y="45"/>
+        <UsageCount Value="22"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="Form/uMedocCheckDocs.pas"/>
@@ -87,11 +100,10 @@
       </Unit>
       <Unit>
         <Filename Value="/usr/share/lazarus/4.4.0/lcl/include/customform.inc"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="912"/>
-        <CursorPos X="48" Y="925"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1199"/>
+        <CursorPos X="31" Y="1203"/>
         <UsageCount Value="14"/>
-        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/share/fpcsrc/3.2.2/packages/fcl-json/src/fpjson.pp"/>
@@ -113,19 +125,6 @@
         <TopLine Value="277"/>
         <CursorPos X="14" Y="280"/>
         <UsageCount Value="10"/>
-      </Unit>
-      <Unit>
-        <Filename Value="DataModule/uDmFbConnect.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="DmFbConnect"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="DataModule"/>
-        <EditorIndex Value="4"/>
-        <TopLine Value="26"/>
-        <CursorPos Y="45"/>
-        <UsageCount Value="22"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="DataModule/uDmFbConnect.lfm"/>

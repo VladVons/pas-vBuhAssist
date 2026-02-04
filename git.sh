@@ -5,8 +5,8 @@
 
 source ./common.sh
 
-
-cProject="pas-vBuhAssist"
+cFile="vBuhAssist"
+cProject="pas-$cFile"
 cUser="VladVons"
 cMail="vladvons@gmail.com"
 cUrl="https://github.com/$cUser/$cProject.git"
@@ -19,6 +19,7 @@ Clean()
 
   echo "delete objects"
   rm -R ./src/lib
+  rm ./src/$cFile
 
   echo
   echo "Statistics *.pas"
