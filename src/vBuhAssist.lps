@@ -18,6 +18,7 @@
         <ComponentName Value="FMain"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <IsVisibleTab Value="True"/>
         <UsageCount Value="67"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -39,10 +40,9 @@
         <ComponentName Value="FMedocCheckDocs"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="26"/>
-        <CursorPos X="5" Y="47"/>
+        <TopLine Value="24"/>
+        <CursorPos X="27" Y="36"/>
         <UsageCount Value="64"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -134,7 +134,7 @@
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit>
     </Units>
-    <JumpHistory HistoryIndex="27">
+    <JumpHistory HistoryIndex="28">
       <Position>
         <Filename Value="Form/uFMedocCheckDocs.pas"/>
         <Caret Line="8" Column="42"/>
@@ -246,6 +246,9 @@
       <Position>
         <Filename Value="Form/uFMedocCheckDocs.pas"/>
         <Caret Line="38" Column="5" TopLine="26"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMain.pas"/>
       </Position>
     </JumpHistory>
     <RunParams>

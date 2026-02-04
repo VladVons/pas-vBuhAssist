@@ -31,16 +31,11 @@ object FMain: TFMain
     object MenuItemModules: TMenuItem
       Caption = 'Модулі'
       object Medoc: TMenuItem
-        Caption = 'Медок'
-        object MedocCheckDocs: TMenuItem
-          Action = ActionFMedocCheckDocs
-        end
+        Action = ActionFMedocCheckDocs
+        Caption = 'Медок. Звіти '
       end
       object MenuItemOprimizePDF: TMenuItem
         Caption = 'Оптимізація PDF'
-      end
-      object Calculator: TMenuItem
-        Caption = 'Калькулятор'
       end
     end
     object ManuItemHelp: TMenuItem

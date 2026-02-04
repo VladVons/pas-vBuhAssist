@@ -19,8 +19,6 @@ type
     MainMenu1: TMainMenu;
     ManuItemHelp: TMenuItem;
     Medoc: TMenuItem;
-    MedocCheckDocs: TMenuItem;
-    Calculator: TMenuItem;
     MenuItemOprimizePDF: TMenuItem;
     MenuItemModules: TMenuItem;
     MenuItemAboutApp: TMenuItem;
