@@ -7,11 +7,10 @@
       <Unit>
         <Filename Value="vBuhAssist.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="2"/>
         <CursorPos X="34" Y="12"/>
-        <UsageCount Value="65"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="67"/>
       </Unit>
       <Unit>
         <Filename Value="Form/uFMain.pas"/>
@@ -19,7 +18,7 @@
         <ComponentName Value="FMain"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UsageCount Value="65"/>
+        <UsageCount Value="67"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -29,8 +28,8 @@
         <ComponentName Value="FAbout"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="2"/>
-        <UsageCount Value="65"/>
+        <EditorIndex Value="1"/>
+        <UsageCount Value="67"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -40,21 +39,21 @@
         <ComponentName Value="FMedocCheckDocs"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="8"/>
-        <CursorPos X="66" Y="19"/>
-        <UsageCount Value="62"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="24"/>
+        <CursorPos X="5" Y="38"/>
+        <UsageCount Value="64"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="Unit/uForms.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="10"/>
-        <CursorPos Y="34"/>
-        <UsageCount Value="20"/>
-        <Loaded Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="12"/>
+        <CursorPos X="24" Y="21"/>
+        <UsageCount Value="22"/>
       </Unit>
       <Unit>
         <Filename Value="Form/uMedocCheckDocs.pas"/>
@@ -88,10 +87,11 @@
       </Unit>
       <Unit>
         <Filename Value="/usr/share/lazarus/4.4.0/lcl/include/customform.inc"/>
-        <EditorIndex Value="-1"/>
+        <EditorIndex Value="3"/>
         <TopLine Value="912"/>
-        <CursorPos Y="924"/>
+        <CursorPos X="48" Y="925"/>
         <UsageCount Value="14"/>
+        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/share/fpcsrc/3.2.2/packages/fcl-json/src/fpjson.pp"/>
@@ -120,31 +120,22 @@
         <ComponentName Value="DmFbConnect"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="5"/>
-        <CursorPos X="43" Y="6"/>
-        <UsageCount Value="20"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="26"/>
+        <CursorPos Y="45"/>
+        <UsageCount Value="22"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="DataModule/uDmFbConnect.lfm"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="-1"/>
         <CursorPos X="41" Y="10"/>
         <UsageCount Value="20"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit>
     </Units>
-    <JumpHistory HistoryIndex="10">
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="89" TopLine="80"/>
-      </Position>
-      <Position>
-        <Filename Value="Form/uFMain.pas"/>
-        <Caret Line="97" TopLine="80"/>
-      </Position>
+    <JumpHistory HistoryIndex="27">
       <Position>
         <Filename Value="Form/uFMedocCheckDocs.pas"/>
         <Caret Line="8" Column="42"/>
@@ -158,20 +149,8 @@
         <Caret Line="10" Column="28"/>
       </Position>
       <Position>
-        <Filename Value="Unit/uForms.pas"/>
-        <Caret Line="11" Column="39"/>
-      </Position>
-      <Position>
-        <Filename Value="Unit/uForms.pas"/>
-        <Caret Line="10" Column="48"/>
-      </Position>
-      <Position>
         <Filename Value="Form/uFMain.pas"/>
         <Caret Line="5" Column="14"/>
-      </Position>
-      <Position>
-        <Filename Value="Unit/uForms.pas"/>
-        <Caret Line="8" Column="27"/>
       </Position>
       <Position>
         <Filename Value="Form/uFMedocCheckDocs.pas"/>
@@ -180,6 +159,94 @@
       <Position>
         <Filename Value="Form/uFMedocCheckDocs.pas"/>
         <Caret Line="19" Column="66" TopLine="8"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="13" Column="12"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="15" Column="42" TopLine="6"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="37" Column="25" TopLine="26"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="41" Column="3" TopLine="29"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="10" Column="15"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="37" Column="25" TopLine="26"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="9" Column="15"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="37" Column="37" TopLine="25"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="41" Column="16" TopLine="27"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="47" TopLine="27"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="34" Column="55" TopLine="27"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="37" TopLine="27"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="38" TopLine="27"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="39" TopLine="27"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="41" TopLine="27"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="42" TopLine="27"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="40" Column="27" TopLine="27"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="36" Column="24" TopLine="27"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="41" TopLine="27"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="42" TopLine="27"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="39" Column="5" TopLine="27"/>
+      </Position>
+      <Position>
+        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Caret Line="38" Column="5" TopLine="26"/>
       </Position>
     </JumpHistory>
     <RunParams>

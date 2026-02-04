@@ -25,8 +25,8 @@ begin
   Application.Initialize();
   Application.CreateForm(TFMain, FMain);
   Application.CreateForm(TFAbout, FAbout);
-  Application.CreateForm(TFMedocCheckDocs, FMedocCheckDocs);
   Application.CreateForm(TDmFbConnect, DmFbConnect);
+  Application.CreateForm(TFMedocCheckDocs, FMedocCheckDocs);
   Application.Run();
 end.
 

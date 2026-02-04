@@ -1,4 +1,5 @@
 object DmFbConnect: TDmFbConnect
+  OnCreate = DataModuleCreate
   OldCreateOrder = False
   Height = 252
   HorizontalOffset = 661

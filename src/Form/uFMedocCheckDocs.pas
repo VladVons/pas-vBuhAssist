@@ -5,15 +5,17 @@ unit uFMedocCheckDocs;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, DBGrids;
+  Classes, SysUtils, SQLDB, Forms, Controls, Graphics, Dialogs, StdCtrls, DBGrids,
+  uDmFbConnect;
 
 type
 
   { TFMedocCheckDocs }
 
   TFMedocCheckDocs = class(TForm)
-    Button1: TButton;
     DBGrid1: TDBGrid;
+    SQLQuery1: TSQLQuery;
+    procedure FormCreate(Sender: TObject);
   private
 
   public
@@ -26,6 +28,20 @@ var
 implementation
 
 {$R *.lfm}
+
+{ TFMedocCheckDocs }
+
+procedure TFMedocCheckDocs.FormCreate(Sender: TObject);
+begin
+  SQLQuery1.DataBase := DmFbConnect.IBConnection1;
+  SQLQuery1.Transaction := DmFbConnect.SQLTransaction1;
+  //SQLQuery1.SQL.Text := 'SELECT EDRPOU, SHORTNAME, INDTAXNUM, DEPT FROM ORG';
+
+  DmFbConnect.DataSource1.DataSet := SQLQuery1;
+  DBGrid1.DataSource := DmFbConnect.DataSource1;
+
+  SQLQuery1.Open();
+end;
 
 end.
 
