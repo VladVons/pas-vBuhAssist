@@ -8,9 +8,7 @@
       <Unit>
         <Filename Value="vBuhAssist.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="12" Y="16"/>
-        <UsageCount Value="38"/>
+        <UsageCount Value="25"/>
       </Unit>
       <Unit>
         <Filename Value="IncP\Form\uFMain.pas"/>
@@ -18,9 +16,9 @@
         <ComponentName Value="FMain"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <TopLine Value="11"/>
-        <CursorPos X="23" Y="14"/>
-        <UsageCount Value="38"/>
+        <TopLine Value="10"/>
+        <CursorPos X="54" Y="27"/>
+        <UsageCount Value="25"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -30,7 +28,7 @@
         <ComponentName Value="FAbout"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UsageCount Value="38"/>
+        <UsageCount Value="25"/>
       </Unit>
       <Unit>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
@@ -38,17 +36,18 @@
         <ComponentName Value="FMedocCheckDocs"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="2"/>
-        <TopLine Value="34"/>
-        <CursorPos Y="48"/>
-        <UsageCount Value="38"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="36"/>
+        <CursorPos X="3" Y="48"/>
+        <UsageCount Value="25"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uForms.pas"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="38"/>
+        <UsageCount Value="25"/>
       </Unit>
       <Unit>
         <Filename Value="IncP\DataModule\uDmFbConnect.pas"/>
@@ -56,209 +55,147 @@
         <ComponentName Value="DmFbConnect"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
-        <UsageCount Value="38"/>
+        <UsageCount Value="25"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uMatrix.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="3"/>
-        <CursorPos Y="9"/>
-        <UsageCount Value="30"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="43"/>
+        <CursorPos X="21" Y="73"/>
+        <UsageCount Value="25"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="151"/>
-        <CursorPos X="3" Y="181"/>
-        <UsageCount Value="21"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="104"/>
+        <CursorPos Y="124"/>
+        <UsageCount Value="25"/>
         <Loaded Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="IncP\Unit\uLicence.pas"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="5"/>
-        <TopLine Value="10"/>
-        <CursorPos X="50" Y="17"/>
-        <UsageCount Value="19"/>
-        <Loaded Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="C:\Lazarus\fpc\3.2.2\source\rtl\objpas\classes\classesh.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="805"/>
-        <CursorPos X="3" Y="816"/>
-        <UsageCount Value="9"/>
-      </Unit>
-      <Unit>
-        <Filename Value="C:\Lazarus\fpc\3.2.2\source\rtl\objpas\types.pp"/>
-        <UnitName Value="Types"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="56"/>
-        <CursorPos X="6" Y="66"/>
-        <UsageCount Value="9"/>
-      </Unit>
-      <Unit>
-        <Filename Value="C:\Lazarus\fpc\3.2.2\source\packages\fcl-json\src\fpjson.pp"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="520"/>
-        <CursorPos X="42" Y="531"/>
-        <UsageCount Value="12"/>
-      </Unit>
-      <Unit>
-        <Filename Value="Inc\Type\uTypeCommon.pas"/>
-        <UnitName Value="uType"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="14" Y="6"/>
-        <UsageCount Value="10"/>
-      </Unit>
-      <Unit>
-        <Filename Value="Inc\Type\uTypes.pas"/>
-        <UnitName Value="uType"/>
-        <EditorIndex Value="-1"/>
-        <UsageCount Value="10"/>
-      </Unit>
-      <Unit>
-        <Filename Value="Inc\Type\uType.pas"/>
-        <EditorIndex Value="4"/>
-        <CursorPos X="27" Y="9"/>
-        <UsageCount Value="12"/>
-        <Loaded Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="Inc\Unit\uStringMatrix.pas"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos Y="11"/>
-        <UsageCount Value="21"/>
-      </Unit>
-      <Unit>
-        <Filename Value="C:\Lazarus\fpc\3.2.2\source\rtl\objpas\sysutils\syshelph.inc"/>
-        <EditorIndex Value="-1"/>
-        <CursorPos X="11" Y="4"/>
-        <UsageCount Value="10"/>
       </Unit>
     </Units>
     <JumpHistory HistoryIndex="29">
       <Position>
         <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <Caret Line="102" Column="6" TopLine="80"/>
+        <Caret Line="122" TopLine="106"/>
       </Position>
       <Position>
         <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <Caret Line="95" Column="48" TopLine="80"/>
-      </Position>
-      <Position>
-        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <Caret Line="32" Column="46" TopLine="18"/>
-      </Position>
-      <Position>
-        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <Caret Line="102" Column="12" TopLine="85"/>
-      </Position>
-      <Position>
-        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <Caret Line="105" Column="30" TopLine="90"/>
-      </Position>
-      <Position>
-        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <Caret Line="110" Column="12" TopLine="93"/>
-      </Position>
-      <Position>
-        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <Caret Line="119" Column="13" TopLine="98"/>
-      </Position>
-      <Position>
-        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <Caret Line="125" Column="47" TopLine="110"/>
-      </Position>
-      <Position>
-        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <Caret Line="36" Column="15" TopLine="23"/>
-      </Position>
-      <Position>
-        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <Caret Line="125" TopLine="111"/>
-      </Position>
-      <Position>
-        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <Caret Line="36" Column="52" TopLine="16"/>
-      </Position>
-      <Position>
-        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <Caret Line="132" Column="10" TopLine="114"/>
-      </Position>
-      <Position>
-        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <Caret Line="131" Column="27" TopLine="115"/>
-      </Position>
-      <Position>
-        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <Caret Line="132" Column="32" TopLine="117"/>
-      </Position>
-      <Position>
-        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <Caret Line="135" Column="44" TopLine="120"/>
-      </Position>
-      <Position>
-        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <Caret Line="144" Column="6" TopLine="124"/>
-      </Position>
-      <Position>
-        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <Caret Line="148" Column="20" TopLine="130"/>
-      </Position>
-      <Position>
-        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <Caret Line="158" Column="18" TopLine="132"/>
-      </Position>
-      <Position>
-        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <Caret Line="45" TopLine="27"/>
+        <Caret Line="124" TopLine="106"/>
       </Position>
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="37" Column="46" TopLine="26"/>
-      </Position>
-      <Position>
-        <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="44" Column="7" TopLine="26"/>
-      </Position>
-      <Position>
-        <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="39" TopLine="30"/>
-      </Position>
-      <Position>
-        <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="46" Column="5" TopLine="32"/>
-      </Position>
-      <Position>
-        <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="47" Column="5" TopLine="33"/>
+        <Caret Line="41" TopLine="36"/>
       </Position>
       <Position>
         <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <Caret Line="97" Column="19" TopLine="82"/>
+        <Caret Line="121" TopLine="106"/>
       </Position>
       <Position>
         <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <Caret Line="32" Column="61" TopLine="24"/>
+        <Caret Line="122" TopLine="106"/>
       </Position>
       <Position>
         <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <Caret Line="12" Column="15"/>
-      </Position>
-      <Position>
-        <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="41" TopLine="34"/>
+        <Caret Line="123" TopLine="106"/>
       </Position>
       <Position>
         <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <Caret Line="181" Column="3" TopLine="151"/>
+        <Caret Line="110" TopLine="104"/>
       </Position>
       <Position>
-        <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="48" TopLine="34"/>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <Caret Line="111" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <Caret Line="112" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <Caret Line="113" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <Caret Line="114" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <Caret Line="115" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <Caret Line="114" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <Caret Line="115" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <Caret Line="114" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <Caret Line="116" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <Caret Line="122" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <Caret Line="123" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <Caret Line="110" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <Caret Line="111" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <Caret Line="112" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <Caret Line="113" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <Caret Line="114" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <Caret Line="115" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <Caret Line="114" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <Caret Line="115" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <Caret Line="114" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <Caret Line="116" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <Caret Line="122" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <Caret Line="124" TopLine="104"/>
       </Position>
     </JumpHistory>
     <RunParams>
@@ -266,4 +203,15 @@
       <Modes ActiveMode=""/>
     </RunParams>
   </ProjectSession>
+  <Debugging>
+    <BreakPoints>
+      <Item>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="IncP\Form\uFMedocCheckDocs.pas"/>
+        <Line Value="41"/>
+      </Item>
+    </BreakPoints>
+  </Debugging>
 </CONFIG>

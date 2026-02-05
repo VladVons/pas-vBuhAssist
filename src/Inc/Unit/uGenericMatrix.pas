@@ -8,6 +8,8 @@ uses
   Classes, SysUtils;
 
 type
+  generic TWriteItemProc<T> = procedure(const aValue: T; aStream: TStream);
+
   generic TMatrix<T> = class
   public
     type
@@ -21,10 +23,8 @@ type
     constructor Create();
     destructor Destroy(); override;
 
-    // властивість Count (кількість рядків)
+    property Matrix: TMatrixType read FData write FData;
     property Count: Integer read GetCount;
-
-    // доступ до елементів, як Cells[Row,Col]
     property Cells[aRow, aCol: Integer]: T read GetCells write SetCells;
 
     // Рядки
@@ -36,18 +36,35 @@ type
     // Колонки
     procedure AddColumn(aRowIndex: Integer; const aValue: T);
     procedure DeleteColumn(aRowIndex, aColIndex: Integer);
-
-    // Доступ до всієї матриці
-    function GetMatrix(): TMatrixType;
-    procedure SetMatrix(const aMatrix: TMatrixType);
   end;
 
   TStringMatrix = specialize TMatrix<string>;
 
+  generic TReadItemProc<T> = procedure(aStream: TStream; out aValue: T);
+  procedure ReadStringItem(aStream: TStream; out aValue: string);
+  procedure WriteStringItem(const aValue: string; aStream: TStream);
+
+  generic procedure MatrixToStream<T>(
+    const aMatrix: specialize TMatrix<T>;
+    aStream: TStream;
+    const aWriteItem: specialize TWriteItemProc<T>
+  );
+
+  generic function MatrixFromStream<T>(
+    aStream: TStream;
+    const aReadItem: specialize TReadItemProc<T>
+  ): specialize TMatrix<T>;
+
+  procedure MatrixCryptToFile(const aFileName, aPassword: string; const aMatrix: TStringMatrix);
+  function MatrixCryptFromFile(const aFileName, aPassword: string): TStringMatrix;
+
+
 implementation
 
-{ TMatrix<T> }
+type
+THash256 = array[0..31] of Byte;
 
+{ TMatrix<T> }
 constructor TMatrix.Create();
 begin
   inherited;
@@ -167,14 +184,162 @@ begin
   SetLength(FData[aRowIndex], Len - 1);
 end;
 
-function TMatrix.GetMatrix(): TMatrixType;
+//---
+function SimpleHash256(const aString: string): THash256;
+var
+  i, j: Integer;
+  h: QWord;
 begin
-  Result := FData;
+  h := $CBF29CE484222325;
+  for i := 1 to Length(aString) do
+    h := (h xor Ord(aString[i])) * $100000001B3;
+
+  for j := 0 to 31 do
+  begin
+    h := h xor (h shr 33);
+    h := h * $FF51AFD7ED558CCD;
+    h := h xor (h shr 33);
+    Result[j] := Byte(h shr ((j mod 8) * 8));
+  end;
 end;
 
-procedure TMatrix.SetMatrix(const aMatrix: TMatrixType);
+
+procedure ReadStringItem(aStream: TStream; out aValue: string);
+var
+  L: Integer;
+  B: TBytes;
 begin
-  FData := aMatrix;
+  L := aStream.ReadDWord();
+  if L > 0 then
+  begin
+    SetLength(B, L);
+    aStream.ReadBuffer(B[0], L);
+    aValue := TEncoding.UTF8.GetString(B);
+  end
+  else
+    aValue := '';
+end;
+
+procedure WriteStringItem(const aValue: string; aStream: TStream);
+var
+  B: TBytes;
+  L: Integer;
+begin
+  B := TEncoding.UTF8.GetBytes(aValue);
+  L := Length(B);
+  aStream.WriteDWord(L);
+  if L > 0 then
+    aStream.WriteBuffer(B[0], L);
+end;
+
+generic procedure MatrixToStream<T>(
+  const aMatrix: specialize TMatrix<T>;
+  aStream: TStream;
+  const aWriteItem: specialize TWriteItemProc<T>
+);
+var
+  i, j: Integer;
+  M: specialize TMatrix<T>.TMatrixType;
+begin
+  M := aMatrix.Matrix;
+
+  aStream.WriteDWord(Length(M));
+
+  for i := 0 to High(M) do
+  begin
+    aStream.WriteDWord(Length(M[i]));
+    for j := 0 to High(M[i]) do
+      aWriteItem(M[i][j], aStream);
+  end;
+end;
+
+generic function MatrixFromStream<T>(
+  aStream: TStream;
+  const aReadItem: specialize TReadItemProc<T>
+): specialize TMatrix<T>;
+var
+  i, j, R, C: Integer;
+  M: specialize TMatrix<T>;
+  Row: array of T;
+begin
+  M := specialize TMatrix<T>.Create();
+
+  R := aStream.ReadDWord();
+
+  for i := 0 to R - 1 do
+  begin
+    C := aStream.ReadDWord();
+    SetLength(Row, C);
+
+    for j := 0 to C - 1 do
+      aReadItem(aStream, Row[j]);
+
+    M.Add(Row);
+  end;
+
+  Result := M;
+end;
+
+procedure CryptStream(aStreamIn, aStreamOut: TStream; const aPassword: string);
+var
+  Key: THash256;
+  Buf: array[0..4095] of Byte;
+  R, i, p: Integer;
+begin
+  Key := SimpleHash256(aPassword);
+  p := 0;
+
+  while True do
+  begin
+    R := aStreamIn.Read(Buf, SizeOf(Buf));
+    if R = 0 then Break;
+
+    for i := 0 to R - 1 do
+    begin
+      Buf[i] := Buf[i] xor Key[p];
+      Inc(p);
+      if p > High(Key) then p := 0;
+    end;
+
+    aStreamOut.WriteBuffer(Buf, R);
+  end;
+end;
+
+procedure MatrixCryptToFile(const aFileName, aPassword: string; const aMatrix: TStringMatrix);
+var
+  Plain, Crypt: TMemoryStream;
+begin
+  Plain := TMemoryStream.Create();
+  Crypt := TMemoryStream.Create();
+  try
+    specialize MatrixToStream<string>(aMatrix, Plain, @WriteStringItem);
+    Plain.Position := 0;
+    CryptStream(Plain, Crypt, aPassword);
+    Crypt.SaveToFile(aFileName);
+  finally
+    Plain.Free();
+    Crypt.Free();
+  end;
+end;
+
+function MatrixCryptFromFile(const aFileName, aPassword: string): TStringMatrix;
+var
+  Plain, Crypt: TMemoryStream;
+begin
+  Crypt := TMemoryStream.Create();
+  Plain := TMemoryStream.Create();
+  try
+    Crypt.LoadFromFile(aFileName);
+    Crypt.Position := 0;
+
+    CryptStream(Crypt, Plain, aPassword);
+    Plain.Position := 0;
+
+    Result := specialize MatrixFromStream<string>(Plain, @ReadStringItem);
+  finally
+    Plain.Free();
+    Crypt.Free();
+  end;
 end;
 
 end.

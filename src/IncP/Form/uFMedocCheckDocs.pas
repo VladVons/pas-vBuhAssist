@@ -36,13 +36,12 @@ var
   Firms: TStringList;
   StringMatrix, StringMatrix2: TStringMatrix;
 begin
-  StringMatrix.Create();
+  StringMatrix := TStringMatrix.Create();
 
   StringMatrix.AddMatrix(
     [
       ['one', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'],
-      ['two', '1111111111111111111111111111111'],
-      ['three', 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz']
+      ['two', '1111111111111111111111111111111']
     ]
     );
   MatrixCryptToFile('lic.dat', '123', StringMatrix);

@@ -6,7 +6,7 @@ interface
 
 uses
    Classes, fpjson,
-   uHttp, uType;
+   uHttp, uType, uGenericMatrix;
 
 function GetLicence(aFirms: TStrings): TStringMatrix;
 
