@@ -6,13 +6,13 @@ interface
 
 uses
    Classes, fpjson,
-   uHttp;
+   uHttp, uType;
 
-function GetLicence(aFirms: TStrings): TStringList;
+function GetLicence(aFirms: TStrings): TStringMatrix;
 
 implementation
 
-function GetLicence(aFirms: TStrings): TStringList;
+function GetLicence(aFirms: TStrings): TStringMatrix;
 var
   i: Integer;
   Str: String;
@@ -30,7 +30,7 @@ begin
 
   Json := PostJSON('https://windows.cloud-server.com.ua/api', Json);
   Licenses := Json.Arrays['licenses'];
-  for I := 0 to Licenses.Count - 1 do
+  for i := 0 to Licenses.Count - 1 do
   begin
     Row := Licenses.Objects[I];
     Str := Row.Strings['firm'];

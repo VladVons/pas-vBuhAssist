@@ -72,6 +72,10 @@
         <Filename Value="Inc/Unit/uMatrix.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="Inc/Unit/uGenericMatrix.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

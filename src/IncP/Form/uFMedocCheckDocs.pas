@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, SQLDB, Forms, Controls, Graphics, Dialogs, StdCtrls, DBGrids,
-  uDmFbConnect, uLicence, uMatrix, uType;
+  uDmFbConnect, uLicence, uMatrix, uType, uGenericMatrix;
 
 type
 
@@ -34,15 +34,19 @@ implementation
 procedure TFMedocCheckDocs.FormCreate(Sender: TObject);
 var
   Firms: TStringList;
-  MatrixString, MatrixString2: TMatrixString;
+  StringMatrix, StringMatrix2: TStringMatrix;
 begin
-  MatrixString := [
-    ['one', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'],
-    ['two', '1111111111111111111111111111111'],
-    ['three', 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz']
-  ];
-  MatrixCryptToFile('lic.dat', '123', MatrixString);
-  MatrixString2 := MatrixCryptFromFile('lic.dat', '123');
+  StringMatrix.Create();
+
+  StringMatrix.AddMatrix(
+    [
+      ['one', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'],
+      ['two', '1111111111111111111111111111111'],
+      ['three', 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz']
+    ]
+    );
+  MatrixCryptToFile('lic.dat', '123', StringMatrix);
+  StringMatrix2 := MatrixCryptFromFile('lic.dat', '123');
 
   Firms := TStringList.Create();
   Firms.AddStrings(['88888801']);

@@ -8,8 +8,8 @@ uses
   Classes, SysUtils,
   uType;
 
-procedure MatrixCryptToFile(const aFileName, aPassword: string; const aMatrix: TMatrixString);
-function MatrixCryptFromFile(const aFileName, aPassword: string): TMatrixString;
+procedure MatrixCryptToFile(const aFileName, aPassword: string; const aMatrix: TStringMatrix);
+function MatrixCryptFromFile(const aFileName, aPassword: string): TStringMatrix;
 
 implementation
 
@@ -34,7 +34,7 @@ begin
   end;
 end;
 
-procedure MatrixToStream(const aMatrix: TMatrixString; aStream: TStream);
+procedure MatrixToStream(const aMatrix: TStringMatrix; aStream: TStream);
 var
   i, j, L: Integer;
   B: TBytes;
@@ -55,7 +55,7 @@ begin
   end;
 end;
 
-function MatrixFromStream(aStream: TStream): TMatrixString;
+function MatrixFromStream(aStream: TStream): TStringMatrix;
 var
   i, j, R, C, L: Integer;
   B: TBytes;
@@ -107,7 +107,7 @@ begin
   end;
 end;
 
-procedure MatrixCryptToFile(const aFileName, aPassword: string; const aMatrix: TMatrixString);
+procedure MatrixCryptToFile(const aFileName, aPassword: string; const aMatrix: TStringMatrix);
 var
   Plain, Crypt: TMemoryStream;
 begin
@@ -125,7 +125,7 @@ begin
   end;
 end;
 
-function MatrixCryptFromFile(const aFileName, aPassword: string): TMatrixString;
+function MatrixCryptFromFile(const aFileName, aPassword: string): TStringMatrix;
 var
   Plain, Crypt: TMemoryStream;
 begin

@@ -5,7 +5,7 @@ unit uType;
 interface
 
 type
-  TMatrixString = array of array of string;
+  TStringMatrix = array of array of string;
 
 implementation
 
