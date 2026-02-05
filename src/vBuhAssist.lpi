@@ -37,36 +37,40 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="Form/uFMain.pas"/>
+        <Filename Value="IncP/Form/uFMain.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FMain"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="Form/uFAbout.pas"/>
+        <Filename Value="IncP/Form/uFAbout.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FAbout"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="Form/uFMedocCheckDocs.pas"/>
+        <Filename Value="IncP/Form/uFMedocCheckDocs.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FMedocCheckDocs"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="Unit/uForms.pas"/>
+        <Filename Value="Inc/Unit/uForms.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="DataModule/uDmFbConnect.pas"/>
+        <Filename Value="IncP/DataModule/uDmFbConnect.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="DmFbConnect"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Inc/Unit/uMatrix.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit>
     </Units>
   </ProjectOptions>
@@ -77,8 +81,8 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="Form;Unit;DataModule"/>
-      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+      <OtherUnitFiles Value="Inc/Unit;Inc/Type;IncP/Form;IncP/Unit;IncP/DataModule"/>
+      <UnitOutputDirectory Value="_lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
       <Debugging>

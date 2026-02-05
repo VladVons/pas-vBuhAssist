@@ -8,7 +8,6 @@ object FMain: TFMain
   ClientWidth = 788
   Menu = MainMenu1
   LCLVersion = '4.4.0.0'
-  OnCreate = FormCreate
   object PanelClient: TPanel
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Control = Owner

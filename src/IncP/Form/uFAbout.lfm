@@ -8,12 +8,11 @@ object FAbout: TFAbout
   ClientWidth = 320
   Position = poMainFormCenter
   LCLVersion = '4.4.0.0'
-  Visible = True
   object Label1: TLabel
     Left = 112
-    Height = 17
+    Height = 15
     Top = 96
-    Width = 65
+    Width = 59
     Caption = 'Версія 1.01'
   end
 end
