@@ -25,6 +25,9 @@
     </RunParams>
     <RequiredPackages>
       <Item>
+        <PackageName Value="lazreport"/>
+      </Item>
+      <Item>
         <PackageName Value="SQLDBLaz"/>
       </Item>
       <Item>
@@ -69,12 +72,13 @@
         <ResourceBaseClass Value="DataModule"/>
       </Unit>
       <Unit>
-        <Filename Value="Inc/Unit/uMatrix.pas"/>
+        <Filename Value="Inc/Unit/uGenericMatrix.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="Inc/Unit/uGenericMatrix.pas"/>
+        <Filename Value="IncP/Unit/uwinreg.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="uWinReg"/>
       </Unit>
     </Units>
   </ProjectOptions>

@@ -4,9 +4,30 @@ unit uType;
 
 interface
 
+uses
+    classes, fgl;
+
 type
-  TStringMatrix = array of array of string;
+    TStringArray = array of string;
+
+    TStringIntMap = specialize TFPGMap<string, Integer>;
+
+    TStringListEx = class(TStringList)
+    public
+      constructor Create(aArrStr : TStringArray);
+    end;
+
 
 implementation
+
+constructor TStringListEx.Create(aArrStr : TStringArray);
+var
+  i:  Integer;
+begin
+  inherited Create();
+
+  for i := Low(aArrStr) to High(aArrStr) do
+      Add(aArrStr[i]);
+end;
 
 end.

@@ -9,10 +9,11 @@ object FMedocCheckDocs: TFMedocCheckDocs
   ClientWidth = 637
   LCLVersion = '4.4.0.0'
   OnCreate = FormCreate
+  OnShow = FormShow
   object DBGrid1: TDBGrid
     Left = 0
-    Height = 356
-    Top = 0
+    Height = 260
+    Top = 96
     Width = 637
     Align = alClient
     Color = clWindow
@@ -20,8 +21,83 @@ object FMedocCheckDocs: TFMedocCheckDocs
     DataSource = DmFbConnect.DataSource1
     TabOrder = 0
   end
+  object Panel1: TPanel
+    Left = 0
+    Height = 96
+    Top = 0
+    Width = 637
+    Align = alTop
+    ClientHeight = 96
+    ClientWidth = 637
+    TabOrder = 1
+    object ComboBox1: TComboBox
+      Left = 112
+      Height = 23
+      Top = 8
+      Width = 328
+      ItemHeight = 15
+      TabOrder = 0
+      Text = 'ComboBox1'
+      OnChange = ComboBox1Change
+    end
+    object Label1: TLabel
+      Left = 15
+      Height = 15
+      Top = 16
+      Width = 24
+      Caption = 'База'
+    end
+    object Label2: TLabel
+      Left = 15
+      Height = 15
+      Top = 32
+      Width = 38
+      Caption = 'Період'
+    end
+    object Label3: TLabel
+      Left = 15
+      Height = 15
+      Top = 56
+      Width = 82
+      Caption = 'Тип документу'
+    end
+  end
+  object ComboBoxMonth: TComboBox
+    Left = 112
+    Height = 23
+    Top = 32
+    Width = 176
+    DropDownCount = 20
+    ItemHeight = 15
+    TabOrder = 2
+    Text = 'ComboBoxMonth'
+    OnChange = ComboBoxMonthChange
+  end
+  object ComboBoxYear: TComboBox
+    Left = 304
+    Height = 23
+    Top = 32
+    Width = 136
+    DropDownCount = 20
+    ItemHeight = 15
+    TabOrder = 3
+    Text = 'ComboBoxYear'
+    OnChange = ComboBoxYearChange
+  end
+  object ComboBoxDoc: TComboBox
+    Left = 112
+    Height = 23
+    Top = 56
+    Width = 176
+    DropDownCount = 20
+    ItemHeight = 15
+    TabOrder = 4
+    Text = 'ComboBoxDoc'
+    OnChange = ComboBoxMonthChange
+  end
   object SQLQuery1: TSQLQuery
     FieldDefs = <>
+    AfterOpen = SQLQuery1AfterOpen
     SQL.Strings = (
       'SELECT'
       '  ORG.EDRPOU,'
@@ -45,7 +121,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
       '  ORG'
       'LEFT JOIN CARD'
       '  ON CARD.IDORG = ORG.Code'
-      '  AND CARD.PERDATE = DATE ''2025-12-01'''
+      '  AND CARD.PERDATE = DATE %_PERDATE'
       'LEFT JOIN FORM'
       '  ON FORM.CODE = CARD.FORM'
       'LEFT JOIN CARDSTATUS'
@@ -65,8 +141,22 @@ object FMedocCheckDocs: TFMedocCheckDocs
       ''
     )
     Params = <>
-    Macros = <>
-    Left = 424
-    Top = 24
+    Macros = <    
+      item
+        DataType = ftUnknown
+        Name = '_PERDATE'
+        ParamType = ptInput
+      end>
+    MacroCheck = True
+    Left = 296
+    Top = 136
+  end
+  object frReport1: TfrReport
+    InitialZoom = pzDefault
+    Options = []
+    PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit, pbSettings, pbPageSetup]
+    DataType = dtDataSet
+    Left = 368
+    Top = 136
   end
 end

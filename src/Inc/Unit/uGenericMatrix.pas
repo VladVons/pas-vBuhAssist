@@ -32,10 +32,11 @@ type
     procedure AddMatrix(const aMatrix: TMatrixType);
     procedure Insert(aIndex: Integer; const aRow: array of T);
     procedure Delete(aIndex: Integer);
+    function Find(aIndexStart, aCol: Integer; const aValue: T): Integer;
 
     // Колонки
-    procedure AddColumn(aRowIndex: Integer; const aValue: T);
-    procedure DeleteColumn(aRowIndex, aColIndex: Integer);
+    procedure ColAdd(aRowIndex: Integer; const aValue: T);
+    procedure ColDel(aRowIndex, aColIndex: Integer);
   end;
 
   TStringMatrix = specialize TMatrix<string>;
@@ -155,7 +156,7 @@ begin
   SetLength(FData, Count - 1);
 end;
 
-procedure TMatrix.AddColumn(aRowIndex: Integer; const aValue: T);
+procedure TMatrix.ColAdd(aRowIndex: Integer; const aValue: T);
 var
   NewCol: Integer;
 begin
@@ -167,7 +168,7 @@ begin
   FData[aRowIndex][NewCol] := aValue;
 end;
 
-procedure TMatrix.DeleteColumn(aRowIndex, aColIndex: Integer);
+procedure TMatrix.ColDel(aRowIndex, aColIndex: Integer);
 var
   i, Len: Integer;
 begin
@@ -184,7 +185,27 @@ begin
   SetLength(FData[aRowIndex], Len - 1);
 end;
 
+function TMatrix.Find(aIndexStart, aCol: Integer; const aValue: T): Integer;
+var
+  i: Integer;
+begin
+  Result := -1;
+
+  if (aCol < 0) or (Length(FData) = 0) then
+    Exit;
+
+  for i := aIndexStart to High(FData) do
+  begin
+    if (aCol <= High(FData[i])) and (FData[i][aCol] = aValue) then
+    begin
+      Result := i;
+      Exit;
+    end;
+  end;
+end;
+
 //---
+
 function SimpleHash256(const aString: string): THash256;
 var
   i, j: Integer;

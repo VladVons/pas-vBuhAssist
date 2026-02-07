@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList,
-  ExtCtrls,
+  ExtCtrls, ComCtrls,
   uFAbout, uFMedocCheckDocs, fpjson, uForms, uHttp;
 
 type
@@ -23,6 +23,7 @@ type
     MenuItemModules: TMenuItem;
     MenuItemAboutApp: TMenuItem;
     PanelClient: TPanel;
+    Splitter1: TSplitter;
     procedure ActionFAboutExecute(Sender: TObject);
     procedure ActionFMedocCheckDocsExecute(Sender: TObject);
   private

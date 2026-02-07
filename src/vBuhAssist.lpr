@@ -12,7 +12,8 @@ uses
   opensslsockets,
   Interfaces, // this includes the LCL widgetset
   Forms,
-  uFMain, uFAbout, uFMedocCheckDocs, uForms, uMatrix, uGenericMatrix, uDmFbConnect
+  uFMain, uFAbout, uFMedocCheckDocs, uForms, uGenericMatrix, uDmFbConnect,
+uWinReg
   { you can add units after this };
 
 {$R *.res}

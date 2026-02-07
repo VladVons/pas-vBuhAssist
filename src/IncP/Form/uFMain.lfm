@@ -24,6 +24,12 @@ object FMain: TFMain
     Caption = 'PanelClient'
     TabOrder = 0
   end
+  object Splitter1: TSplitter
+    Left = 0
+    Height = 422
+    Top = 0
+    Width = 5
+  end
   object MainMenu1: TMainMenu
     Left = 264
     Top = 16
