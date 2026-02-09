@@ -1,53 +1,73 @@
 object FMain: TFMain
   Left = 342
-  Height = 422
+  Height = 368
   Top = 250
-  Width = 788
+  Width = 741
   Caption = 'Помічник бухгалтера'
-  ClientHeight = 422
-  ClientWidth = 788
+  ClientHeight = 368
+  ClientWidth = 741
   Menu = MainMenu1
   LCLVersion = '4.4.0.0'
-  object PanelClient: TPanel
-    AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = Owner
-    AnchorSideRight.Control = Owner
-    AnchorSideRight.Side = asrBottom
-    AnchorSideBottom.Control = Owner
-    AnchorSideBottom.Side = asrBottom
+  Visible = True
+  OnCreate = FormCreate
+  object Panel1: TPanel
     Left = 0
-    Height = 422
-    Top = 0
-    Width = 788
-    Anchors = [akTop, akLeft, akRight, akBottom]
-    BevelOuter = bvNone
-    Caption = 'PanelClient'
+    Height = 74
+    Top = 294
+    Width = 741
+    Align = alBottom
+    Caption = 'Panel1'
+    ClientHeight = 74
+    ClientWidth = 741
     TabOrder = 0
+    object MemoInfo1: TMemo
+      Left = 1
+      Height = 72
+      Top = 1
+      Width = 739
+      Align = alClient
+      ReadOnly = True
+      ScrollBars = ssAutoVertical
+      TabOrder = 0
+    end
+  end
+  object PanelClient: TPanel
+    Left = 0
+    Height = 289
+    Top = 0
+    Width = 741
+    Align = alClient
+    TabOrder = 1
+    OnClick = PanelClientClick
   end
   object Splitter1: TSplitter
+    Cursor = crVSplit
     Left = 0
-    Height = 422
-    Top = 0
-    Width = 5
+    Height = 5
+    Top = 289
+    Width = 741
+    Align = alBottom
+    ResizeAnchor = akBottom
   end
   object MainMenu1: TMainMenu
     Left = 264
     Top = 16
     object MenuItemModules: TMenuItem
       Caption = 'Модулі'
-      object Medoc: TMenuItem
+      object MenuItemMedoc: TMenuItem
         Action = ActionFMedocCheckDocs
-        Caption = 'Медок. Звіти '
       end
       object MenuItemOprimizePDF: TMenuItem
-        Caption = 'Оптимізація PDF'
+        Action = ActionOptimizePDF
       end
     end
     object ManuItemHelp: TMenuItem
       Caption = 'Допомога'
+      object MenuItemLicense: TMenuItem
+        Action = ActionLicense
+      end
       object MenuItemAboutApp: TMenuItem
         Action = ActionFAbout
-        Caption = 'Про програму'
       end
     end
   end
@@ -55,12 +75,20 @@ object FMain: TFMain
     Left = 264
     Top = 72
     object ActionFAbout: TAction
-      Caption = 'ActionFAbout'
+      Caption = 'Про програму'
       OnExecute = ActionFAboutExecute
     end
     object ActionFMedocCheckDocs: TAction
-      Caption = 'ActionFMedocCheckDocs'
+      Caption = 'Медок звіти'
       OnExecute = ActionFMedocCheckDocsExecute
+    end
+    object ActionLicense: TAction
+      Caption = 'Ліцензія'
+      OnExecute = ActionLicenseExecute
+    end
+    object ActionOptimizePDF: TAction
+      Caption = 'Оптимізація PDF'
+      OnExecute = ActionOptimizePDFExecute
     end
   end
 end

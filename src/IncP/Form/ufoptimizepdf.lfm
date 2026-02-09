@@ -1,0 +1,62 @@
+object FOptimizePDF: TFOptimizePDF
+  Left = 276
+  Height = 149
+  Top = 250
+  Width = 391
+  Caption = 'Оптимізація PDF'
+  ClientHeight = 149
+  ClientWidth = 391
+  LCLVersion = '4.4.0.0'
+  OnShow = FormShow
+  object ButtonConvert: TButton
+    Left = 24
+    Height = 25
+    Top = 112
+    Width = 72
+    Caption = 'Виконати'
+    TabOrder = 0
+    OnClick = ButtonConvertClick
+  end
+  object LabeledEditDirIn: TLabeledEdit
+    Left = 24
+    Height = 23
+    Top = 24
+    Width = 296
+    EditLabel.Height = 15
+    EditLabel.Width = 296
+    EditLabel.Caption = 'Папка вхідна'
+    TabOrder = 1
+  end
+  object LabeledEditDirOut: TLabeledEdit
+    Left = 24
+    Height = 23
+    Top = 72
+    Width = 296
+    EditLabel.Height = 15
+    EditLabel.Width = 296
+    EditLabel.Caption = 'Папка вихідна'
+    TabOrder = 2
+  end
+  object ButtonDirIn: TButton
+    Left = 328
+    Height = 25
+    Top = 22
+    Width = 24
+    Caption = '...'
+    TabOrder = 3
+    OnClick = ButtonDirInClick
+  end
+  object ButtonDirOut: TButton
+    Left = 328
+    Height = 25
+    Top = 70
+    Width = 24
+    Caption = '...'
+    TabOrder = 4
+    OnClick = ButtonDirOutClick
+  end
+  object SelectDirectoryDialog1: TSelectDirectoryDialog
+    Left = 136
+    Top = 104
+  end
+end

@@ -8,32 +8,40 @@ uses
    Classes, fpjson,
    uHttp, uType, uGenericMatrix;
 
-function GetLicence(aFirms: TStrings): TStringMatrix;
+function GetLicence(aFirms: TStrings; const aModule: String): TStringMatrix;
 
 implementation
 
-function GetLicence(aFirms: TStrings): TStringMatrix;
+function GetLicence(aFirms: TStrings; const aModule: String): TStringMatrix;
 var
   i: Integer;
   Str: String;
   Json, Row: TJSONObject;
-  Licenses: TJSONArray;
+  ArrLic, Licenses: TJSONArray;
 begin
-  Json := TJSONObject.Create();
-  Json.Add('type', 'get_licenses');
-  Json.Add('app', 'vBuhAssist');
+  try
+    Result := TStringMatrix.Create();
 
-  Licenses := TJSONArray.Create();
-  for i := 0 to aFirms.Count - 1 do
-    Licenses.Add(aFirms[i]);
-  Json.Add('firms', Licenses);
+    Json := TJSONObject.Create();
+    Json.Add('type', 'get_licenses');
+    Json.Add('app', 'BuhAssist');
+    Json.Add('module', aModule);
 
-  Json := PostJSON('https://windows.cloud-server.com.ua/api', Json);
-  Licenses := Json.Arrays['licenses'];
-  for i := 0 to Licenses.Count - 1 do
-  begin
-    Row := Licenses.Objects[I];
-    Str := Row.Strings['firm'];
+    ArrLic := TJSONArray.Create();
+    for i := 0 to aFirms.Count - 1 do
+      ArrLic.Add(aFirms[i]);
+    Json.Add('firms', ArrLic);
+
+    Json := PostJSON('https://windows.cloud-server.com.ua/api', Json);
+    Licenses := Json.Arrays['licenses'];
+    for i := 0 to Licenses.Count - 1 do
+    begin
+      Row := Licenses.Objects[I];
+      Result.Add([Row.Strings['firm'], Row.Strings['module'], Row.Strings['till']]);
+    end;
+  finally
+    Json.Free();
+    ArrLic.Free();
   end;
 end;
 

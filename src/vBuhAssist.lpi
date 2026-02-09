@@ -76,9 +76,42 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="IncP/Unit/uwinreg.pas"/>
+        <Filename Value="IncP/Unit/uWinReg.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="uWinReg"/>
+      </Unit>
+      <Unit>
+        <Filename Value="IncP/Unit/uLicence.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="IncP/Form/uFlicense.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FLicense"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uFLicense"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Inc/Unit/usys.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uSys"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Inc/Unit/uGhostScript.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="IncP/Form/ufoptimizepdf.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FOptimizePDF"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uFOptimizePDF"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Inc/Unit/usettings.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uSettings"/>
       </Unit>
     </Units>
   </ProjectOptions>

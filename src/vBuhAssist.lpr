@@ -11,10 +11,9 @@ uses
   {$ENDIF}
   opensslsockets,
   Interfaces, // this includes the LCL widgetset
-  Forms,
-  uFMain, uFAbout, uFMedocCheckDocs, uForms, uGenericMatrix, uDmFbConnect,
-uWinReg
-  { you can add units after this };
+  Forms, uFMain, uFAbout, uFMedocCheckDocs, uForms, uGenericMatrix,
+  uDmFbConnect, uWinReg, uLicence, uFLicense, uSys, uGhostScript, uFOptimizePDF,
+  uSettings;
 
 {$R *.res}
 
@@ -29,6 +28,8 @@ begin
   Application.CreateForm(TFAbout, FAbout);
   Application.CreateForm(TDmFbConnect, DmFbConnect);
   Application.CreateForm(TFMedocCheckDocs, FMedocCheckDocs);
+  Application.CreateForm(TFLicense, FLicense);
+  Application.CreateForm(TFOptimizePDF, FOptimizePDF);
   Application.Run();
 end.
 

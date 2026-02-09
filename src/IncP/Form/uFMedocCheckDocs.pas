@@ -7,14 +7,16 @@ interface
 uses
   Classes, SysUtils, DateUtils, SQLDB, Forms, Controls, Graphics, Dialogs, StdCtrls,
   DBGrids, ExtCtrls, LR_Class, DB,
-  uDmFbConnect, uLicence, uType, uGenericMatrix, uWinReg;
+  uDmFbConnect, uType, uGenericMatrix, uWinReg, uSys;
 
 type
 
   { TFMedocCheckDocs }
 
   TFMedocCheckDocs = class(TForm)
-    ComboBox1: TComboBox;
+    ButtonPrint: TButton;
+    ButtonExec: TButton;
+    ComboBoxPath: TComboBox;
     ComboBoxMonth: TComboBox;
     ComboBoxDoc: TComboBox;
     ComboBoxYear: TComboBox;
@@ -25,9 +27,8 @@ type
     Label3: TLabel;
     Panel1: TPanel;
     SQLQuery1: TSQLQuery;
-    procedure ComboBox1Change(Sender: TObject);
-    procedure ComboBoxMonthChange(Sender: TObject);
-    procedure ComboBoxYearChange(Sender: TObject);
+    SQLQuery2: TSQLQuery;
+    procedure ButtonExecClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure SQLQuery1AfterOpen(DataSet: TDataSet);
@@ -53,6 +54,17 @@ var
   Month, Year: Integer;
   Date: String;
 begin
+  DmFbConnect.IBConnection1.Connected := False;
+  DmFbConnect.IBConnection1.DatabaseName := ComboBoxPath.Text;
+  DmFbConnect.IBConnection1.Connected := True;
+
+  SQLQuery1.DataBase := DmFbConnect.IBConnection1;
+  SQLQuery1.Transaction := DmFbConnect.SQLTransaction1;
+
+  DmFbConnect.DataSource1.DataSet := SQLQuery1;
+  DBGrid1.DataSource := DmFbConnect.DataSource1;
+  DBGrid1.Visible := True;
+
   Month := Integer(ComboBoxMonth.Items.Objects[ComboBoxMonth.ItemIndex]);
   Year := Integer(ComboBoxYear.Items.Objects[ComboBoxYear.ItemIndex]);
   Date := FormatDateTime('yyyy-mm-dd', EncodeDate(Year, Month, 1));
@@ -117,32 +129,36 @@ end;
 
 procedure TFMedocCheckDocs.FormShow(Sender: TObject);
 begin
-  ComboBox1.Items.Assign(FindMedocDB());
-  if (ComboBox1.Items.Count = 0) then
+  ComboBoxPath.Items.Assign(FindMedocDB());
+  if (ComboBoxPath.Items.Count = 0) then
   begin
        ShowMessage('Бази МЕДОК не знайдено');
        Exit();
   end;
 
-  ComboBox1.ItemIndex := 0;
-  ComboBox1Change(Nil);
+  ComboBoxPath.ItemIndex := 0;
 end;
 
 procedure TFMedocCheckDocs.SQLQuery1AfterOpen(DataSet: TDataSet);
 var
   i, Idx: Integer;
+  Data: array of TStringArray;
   Matrix: TStringMatrix;
 begin
-  Matrix := TStringMatrix.Create();
-  Matrix.Add(['EDRPOU', 'ЄДРПОУ', '70']);
-  Matrix.Add(['SHORTNAME', 'Назва', '250']);
-  Matrix.Add(['VAT', 'Тип', '50']);
-  Matrix.Add(['PERDATE', 'Період', '80']);
-  Matrix.Add(['MODDATE', 'Змінено', '80']);
-  Matrix.Add(['STATUSNAME', 'Статус', '100']);
-  Matrix.Add(['CHARCODE', 'Код звіту', '60']);
+  Data := [
+    ['EDRPOU', 'ЄДРПОУ', '70'],
+    ['SHORTNAME', 'Назва', '250'],
+    ['VAT', 'Тип', '50'],
+    ['PERDATE', 'Період', '80'],
+    ['MODDATE', 'Змінено', '80'],
+    ['STATUSNAME', 'Статус', '100'],
+    ['CHARCODE', 'Код звіту', '60']
+  ];
 
   try
+    Matrix := TStringMatrix.Create();
+    Matrix.AddMatrix(Data);
+
     for i := 0 to DBGrid1.Columns.Count - 1 do
     begin
       Idx := Matrix.Find(0, 0, DBGrid1.Columns[i].FieldName);
@@ -159,73 +175,21 @@ begin
   end;
 end;
 
-procedure TFMedocCheckDocs.ComboBox1Change(Sender: TObject);
-begin
-  DmFbConnect.IBConnection1.Connected := False;
-  DmFbConnect.IBConnection1.DatabaseName := ComboBox1.Text;
-  DmFbConnect.IBConnection1.Connected := True;
-
-  SQLQuery1.DataBase := DmFbConnect.IBConnection1;
-  SQLQuery1.Transaction := DmFbConnect.SQLTransaction1;
-
-  DmFbConnect.DataSource1.DataSet := SQLQuery1;
-  DBGrid1.DataSource := DmFbConnect.DataSource1;
-
-  QueryOpen();
-end;
-
-procedure TFMedocCheckDocs.ComboBoxMonthChange(Sender: TObject);
-begin
-  QueryOpen();
-end;
-
-procedure TFMedocCheckDocs.ComboBoxYearChange(Sender: TObject);
+procedure TFMedocCheckDocs.ButtonExecClick(Sender: TObject);
 begin
   QueryOpen();
 end;
 
 procedure TFMedocCheckDocs.FormCreate(Sender: TObject);
 var
-  i: Integer;
+  Path: String;
 begin
+  Path := 'C:\Program Files\Medoc\Medoc\fb3\32';
+  SysPathAddd(Path);
+
   SetComboBoxToCurrentMonth(ComboBoxMonth);
   SetComboBoxToCurrentYear(ComboBoxYear);
 end;
-
-//procedure TFMedocCheckDocs.FormCreate(Sender: TObject);
-//var
-//  Firms, Db: TStringList;
-//  StringMatrix, StringMatrix2: TStringMatrix;
-//begin
-//  Firms := TStringList.Create();
-//  StringMatrix := FindMedocDB();
-//  Firms := Nil;
-//
-//  StringMatrix := TStringMatrix.Create();
-//
-//  StringMatrix.AddMatrix(
-//    [
-//      ['one', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'],
-//      ['two', '1111111111111111111111111111111']
-//    ]
-//    );
-//  MatrixCryptToFile('lic.dat', '123', StringMatrix);
-//  StringMatrix2 := MatrixCryptFromFile('lic.dat', '123');
-//
-//  Firms := TStringList.Create();
-//  Firms.AddStrings(['88888801']);
-//  GetLicence(Firms);
-//
-//
-//  SQLQuery1.DataBase := DmFbConnect.IBConnection1;
-//  SQLQuery1.Transaction := DmFbConnect.SQLTransaction1;
-//  //SQLQuery1.SQL.Text := 'SELECT EDRPOU, SHORTNAME, INDTAXNUM, DEPT FROM ORG';
-//
-//  DmFbConnect.DataSource1.DataSet := SQLQuery1;
-//  DBGrid1.DataSource := DmFbConnect.DataSource1;
-//
-//  SQLQuery1.Open();
-//end;
 
 end.
 

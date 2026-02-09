@@ -3,9 +3,11 @@ object FAbout: TFAbout
   Height = 240
   Top = 250
   Width = 320
+  BorderStyle = bsDialog
   Caption = 'Про програму'
   ClientHeight = 240
   ClientWidth = 320
+  Enabled = False
   Position = poMainFormCenter
   LCLVersion = '4.4.0.0'
   object Label1: TLabel

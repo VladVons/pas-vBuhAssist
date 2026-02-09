@@ -12,40 +12,46 @@ object FMedocCheckDocs: TFMedocCheckDocs
   OnShow = FormShow
   object DBGrid1: TDBGrid
     Left = 0
-    Height = 260
-    Top = 96
+    Height = 244
+    Top = 112
     Width = 637
     Align = alClient
     Color = clWindow
     Columns = <>
     DataSource = DmFbConnect.DataSource1
     TabOrder = 0
+    Visible = False
   end
   object Panel1: TPanel
     Left = 0
-    Height = 96
+    Height = 112
     Top = 0
     Width = 637
     Align = alTop
-    ClientHeight = 96
+    ClientHeight = 112
     ClientWidth = 637
+    Color = clWhite
+    ParentBackground = False
+    ParentColor = False
     TabOrder = 1
-    object ComboBox1: TComboBox
+    object ComboBoxPath: TComboBox
       Left = 112
       Height = 23
       Top = 8
-      Width = 328
+      Width = 448
+      Color = clYellow
       ItemHeight = 15
       TabOrder = 0
-      Text = 'ComboBox1'
-      OnChange = ComboBox1Change
+      Text = 'ComboBoxPath'
     end
     object Label1: TLabel
       Left = 15
       Height = 15
-      Top = 16
+      Top = 8
       Width = 24
       Caption = 'База'
+      Color = clMenuHighlight
+      ParentColor = False
     end
     object Label2: TLabel
       Left = 15
@@ -61,39 +67,60 @@ object FMedocCheckDocs: TFMedocCheckDocs
       Width = 82
       Caption = 'Тип документу'
     end
+    object ButtonExec: TButton
+      Left = 112
+      Height = 25
+      Top = 80
+      Width = 91
+      Caption = 'Сформувати'
+      Font.CharSet = RUSSIAN_CHARSET
+      Font.Pitch = fpVariable
+      Font.Quality = fqDraft
+      ParentFont = False
+      TabOrder = 1
+      OnClick = ButtonExecClick
+    end
+    object ButtonPrint: TButton
+      Left = 216
+      Height = 25
+      Top = 80
+      Width = 75
+      Caption = 'Друк'
+      TabOrder = 2
+    end
   end
   object ComboBoxMonth: TComboBox
     Left = 112
     Height = 23
     Top = 32
     Width = 176
+    Color = clYellow
     DropDownCount = 20
     ItemHeight = 15
     TabOrder = 2
     Text = 'ComboBoxMonth'
-    OnChange = ComboBoxMonthChange
   end
   object ComboBoxYear: TComboBox
     Left = 304
     Height = 23
     Top = 32
     Width = 136
+    Color = clYellow
     DropDownCount = 20
     ItemHeight = 15
     TabOrder = 3
     Text = 'ComboBoxYear'
-    OnChange = ComboBoxYearChange
   end
   object ComboBoxDoc: TComboBox
     Left = 112
     Height = 23
     Top = 56
-    Width = 176
+    Width = 448
+    Color = clYellow
     DropDownCount = 20
     ItemHeight = 15
     TabOrder = 4
     Text = 'ComboBoxDoc'
-    OnChange = ComboBoxMonthChange
   end
   object SQLQuery1: TSQLQuery
     FieldDefs = <>
@@ -158,5 +185,60 @@ object FMedocCheckDocs: TFMedocCheckDocs
     DataType = dtDataSet
     Left = 368
     Top = 136
+  end
+  object SQLQuery2: TSQLQuery
+    FieldDefs = <>
+    SQL.Strings = (
+      'SELECT'
+      '  ORG.EDRPOU,'
+      '  ORG.SHORTNAME,'
+      '  --ORG.INDTAXNUM,'
+      '  CASE WHEN TRIM(ORG.INDTAXNUM) <> ''100000000000'' AND TRIM(ORG.INDTAXNUM) <> '''''
+      '    THEN ''ПДВ'''
+      '    ELSE '''''
+      '  END AS vat,'
+      '  ORG.DEPT,'
+      '  CARD.PERDATE,'
+      '  --CARD.SENDSTT,'
+      '  CAST(CARD.MODDATE AS DATE) AS MODDATE,'
+      '  CARDSENDSTT.NAME,'
+      '  --CARD.STATUS,'
+      '  CARDSTATUS.NAME AS StatusName,'
+      '  FORM.CHARCODE,'
+      '  --FORM.NAME,'
+      '  '''''
+      'FROM'
+      '  ORG'
+      'LEFT JOIN CARD'
+      '  ON CARD.IDORG = ORG.Code'
+      '  AND CARD.PERDATE = DATE %_PERDATE'
+      'LEFT JOIN FORM'
+      '  ON FORM.CODE = CARD.FORM'
+      'LEFT JOIN CARDSTATUS'
+      '  ON CARDSTATUS.CODE = CARD.STATUS'
+      'LEFT JOIN CARDSENDSTT'
+      '  ON CARDSENDSTT.CODE = CARD.SENDSTT'
+      'WHERE'
+      '  TRUE'
+      '  --AND ORG.EDRPOU = ''45747371'''
+      '  --AND FORM.CHARCODE IN (''j0200126'', ''j0500110'')'
+      '  AND (ORG.DEPT <> ''0'' OR ORG.DEPT IS NULL)'
+      '  --AND ORG.INDTAXNUM <> '''''
+      '  --AND (CARD.STATUS <> 2 OR CARD.IDORG IS NULL)'
+      'ORDER BY'
+      '    StatusName,'
+      '    ORG.SHORTNAME'
+      ''
+    )
+    Params = <>
+    Macros = <    
+      item
+        DataType = ftUnknown
+        Name = '_PERDATE'
+        ParamType = ptInput
+      end>
+    MacroCheck = True
+    Left = 296
+    Top = 192
   end
 end

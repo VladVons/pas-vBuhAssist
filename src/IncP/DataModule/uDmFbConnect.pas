@@ -35,14 +35,24 @@ implementation
 
 procedure TDmFbConnect.DataModuleCreate(Sender: TObject);
 begin
-  IBConnection1.HostName := 'localhost';
   //IBConnection1.DatabaseName := 'C:\ProgramData\Medoc\Medoc\db\ZVIT.FDB';
-  //IBConnection1.DatabaseName := '/var/lib/firebird/3.0/data/ZVIT.FDB';
   IBConnection1.UserName := 'SYSDBA';
   IBConnection1.Password := 'masterkey';
+
+  IBConnection1.Params.Clear();
+  IBConnection1.Params.Add('embedded=true');
+  //IBConnection1.Params.Add('lc_ctype=WIN1251');
+  //IBConnection1.Connected := True;
+
+
+  //IBConnection1.HostName := 'localhost';
+  ////IBConnection1.DatabaseName := 'C:\ProgramData\Medoc\Medoc\db\ZVIT.FDB';
+  ////IBConnection1.DatabaseName := '/var/lib/firebird/3.0/data/ZVIT.FDB';
+  //IBConnection1.UserName := 'SYSDBA';
+  //IBConnection1.Password := 'masterkey';
   IBConnection1.CharSet := 'UTF8';
   IBConnection1.Transaction := SQLTransaction1;
-  //IBConnection1.Connected := True;
+  ////IBConnection1.Connected := True;
 end;
 
 end.
