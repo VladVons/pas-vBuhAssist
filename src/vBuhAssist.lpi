@@ -92,7 +92,7 @@
         <UnitName Value="uFLicense"/>
       </Unit>
       <Unit>
-        <Filename Value="Inc/Unit/usys.pas"/>
+        <Filename Value="Inc/Unit/uSys.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uSys"/>
       </Unit>
@@ -109,7 +109,7 @@
         <UnitName Value="uFOptimizePDF"/>
       </Unit>
       <Unit>
-        <Filename Value="Inc/Unit/usettings.pas"/>
+        <Filename Value="Inc/Unit/uSettings.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uSettings"/>
       </Unit>
@@ -117,6 +117,10 @@
         <Filename Value="Inc/Unit/uvarutil.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uVarUtil"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Inc/Unit/uLog.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit>
     </Units>
   </ProjectOptions>

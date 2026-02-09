@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList,
   ExtCtrls, ComCtrls, StdCtrls, fpjson,
-  uFAbout, uFMedocCheckDocs, uFLicense, uFOptimizePDF, uForms, uHttp;
+  uLog, uFAbout, uFMedocCheckDocs, uFLicense, uFOptimizePDF, uForms, uHttp;
 
 type
 
@@ -71,7 +71,7 @@ end;
 
 procedure TFMain.FormCreate(Sender: TObject);
 begin
-  MemoInfo := MemoInfo1;
+  Log := TLog.Create(MemoInfo1);
 end;
 
 end.

@@ -9,20 +9,8 @@ uses
 
 procedure ShowFormDock(aForm: TForm; aControl: TWinControl);
 procedure ShowFormFloat(aForm: TForm);
-procedure Log(const aText: String);
-
-var
-  MemoInfo: TMemo;
 
 implementation
-
-procedure Log(const aText: String);
-var
-  Str: String;
-begin
-  Str := FormatDateTime('hh:nn:ss', Now()) + ' '+ aText;
-  MemoInfo.Lines.Add(Str);
-end;
 
 procedure ShowFormDock(aForm: TForm; aControl: TWinControl);
 begin

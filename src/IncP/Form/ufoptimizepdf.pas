@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  uGhostScript, uSettings, uForms, uSys, uVarUtil;
+  uGhostScript, uLog, uSettings, uForms, uSys, uVarUtil;
 
 type
 
@@ -47,13 +47,13 @@ var
 begin
   if (Trim(LabeledEditDirIn.Text) = '') then
   begin
-    Log('Не вказано паку вхідна');
+    Log.Print('Не вказано паку вхідна');
     Exit;
   end;
 
   if (Trim(LabeledEditDirOut.Text) = '') then
   begin
-    Log('Не вказано паку вихідна');
+    Log.Print('Не вказано паку вихідна');
     Exit;
   end;
 
@@ -61,11 +61,11 @@ begin
     FilesIn := GetDirFiles(LabeledEditDirIn.Text, '*.pdf');
     if (FilesIn.Count = 0) then
     begin
-      Log('Немає PDF файлів для оптимізації');
+      Log.Print('Немає PDF файлів для оптимізації');
       Exit;
     end;
 
-    Log('Оптимізація файлів ...');
+    Log.Print('Оптимізація файлів ...');
     FilesIn.Sort();
     for i := 0 to FilesIn.Count - 1 do
     begin
@@ -73,15 +73,15 @@ begin
         FileName := ChangeFileExt(ExtractFileName(FileIn), '');
         LatFilter := ExtractLatin(FileName);
         if (Length(LatFilter) > 0) Then
-           Log('В назві файла є латинські букви: ' + LatFilter);
+           Log.Print('В назві файла є латинські букви: ' + LatFilter);
 
         FileOut := LabeledEditDirOut.Text + PathDelim + ExtractFileName(FileIn);
         ExecOptimizePDF(FileIn, FileOut);
         FileOutSize := GetFileSize(FileOut);
         Ratio := (1 - (FileOutSize / GetFileSize(FileIn))) * 100;
-        Log(Format('%d/%d %s %dkb (%.0f%%)', [i + 1, FilesIn.Count, FileIn, Round(FileOutSize/1000), Ratio]));
+        Log.Print(Format('%d/%d %s %dkb (%.0f%%)', [i + 1, FilesIn.Count, FileIn, Round(FileOutSize/1000), Ratio]));
     end;
-    Log('Готово');
+    Log.Print('Готово');
   finally
     FilesIn.Free();
   end;

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  uGenericMatrix, uLicence, uForms;
+  uGenericMatrix, uLicence, uForms, uLog;
 
 type
 
@@ -41,7 +41,7 @@ var
 begin
   if not FileExists(FileLic) then
   begin
-      Log('Не знайдено файл ліцензій ' + FileLic);
+      Log.Print('Не знайдено файл ліцензій ' + FileLic);
       Exit;
   end;
 
@@ -49,15 +49,15 @@ begin
     Matrix := MatrixCryptFromFile(FileLic, FileLicPassw);
     if (Matrix.Count = 0) then
     begin
-       Log('Немає ліцензій');
-       Log('Зверніться в обслуговуючу організацію');
+       Log.Print('Немає ліцензій');
+       Log.Print('Зверніться в обслуговуючу організацію');
        Exit;
     end;
 
     for i := 0 to High(Matrix.Matrix) do
     begin
       Lic := 'Ліцензія для ЄДРПУО: ' + Matrix.Cells[i, 0] + ', модуль: ' + Matrix.Cells[i, 1] + ', дійсна до: ' + Matrix.Cells[i, 2];
-      Log(Lic);
+      Log.Print(Lic);
     end;
   finally
     Matrix.Free();
@@ -81,7 +81,7 @@ var
   Matrix: TStringMatrix;
 begin
   try
-    Log('Запит на отримання ліцензій відправлено');
+    Log.Print('Запит на отримання ліцензій відправлено');
 
     Firms := TStringList.Create();
     Firms.AddStrings(['88888801']);
