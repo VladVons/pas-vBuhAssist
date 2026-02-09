@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  uGhostScript, uSettings, uForms, uSys;
+  uGhostScript, uSettings, uForms, uSys, uVarUtil;
 
 type
 
@@ -42,7 +42,7 @@ procedure TFOptimizePDF.ButtonConvertClick(Sender: TObject);
 var
   Ratio: double;
   i, FileOutSize: integer;
-  FileIn, FileOut: string;
+  FileIn, FileOut, LatFilter, FileName: string;
   FilesIn: TStringList;
 begin
   if (Trim(LabeledEditDirIn.Text) = '') then
@@ -70,13 +70,18 @@ begin
     for i := 0 to FilesIn.Count - 1 do
     begin
         FileIn := FilesIn[i];
+        FileName := ChangeFileExt(ExtractFileName(FileIn), '');
+        LatFilter := ExtractLatin(FileName);
+        if (Length(LatFilter) > 0) Then
+           Log('В назві файла є латинські букви: ' + LatFilter);
+
         FileOut := LabeledEditDirOut.Text + PathDelim + ExtractFileName(FileIn);
         ExecOptimizePDF(FileIn, FileOut);
         FileOutSize := GetFileSize(FileOut);
         Ratio := (1 - (FileOutSize / GetFileSize(FileIn))) * 100;
         Log(Format('%d/%d %s %dkb (%.0f%%)', [i + 1, FilesIn.Count, FileIn, Round(FileOutSize/1000), Ratio]));
     end;
-
+    Log('Готово');
   finally
     FilesIn.Free();
   end;

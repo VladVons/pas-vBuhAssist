@@ -13,7 +13,7 @@ uses
   Interfaces, // this includes the LCL widgetset
   Forms, uFMain, uFAbout, uFMedocCheckDocs, uForms, uGenericMatrix,
   uDmFbConnect, uWinReg, uLicence, uFLicense, uSys, uGhostScript, uFOptimizePDF,
-  uSettings;
+  uSettings, uVarUtil;
 
 {$R *.res}
 

@@ -113,6 +113,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="uSettings"/>
       </Unit>
+      <Unit>
+        <Filename Value="Inc/Unit/uvarutil.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uVarUtil"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

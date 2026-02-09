@@ -34,7 +34,6 @@ type
     procedure ActionLicenseExecute(Sender: TObject);
     procedure ActionOptimizePDFExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure PanelClientClick(Sender: TObject);
   private
 
   public
@@ -73,11 +72,6 @@ end;
 procedure TFMain.FormCreate(Sender: TObject);
 begin
   MemoInfo := MemoInfo1;
-end;
-
-procedure TFMain.PanelClientClick(Sender: TObject);
-begin
-
 end;
 
 end.

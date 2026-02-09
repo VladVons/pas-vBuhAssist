@@ -7,7 +7,6 @@ object FAbout: TFAbout
   Caption = 'Про програму'
   ClientHeight = 240
   ClientWidth = 320
-  Enabled = False
   Position = poMainFormCenter
   LCLVersion = '4.4.0.0'
   object Label1: TLabel
