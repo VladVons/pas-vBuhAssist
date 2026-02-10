@@ -10,7 +10,8 @@ uses
 function SetDllDirectoryW(lpPathName: PWideChar): BOOL; stdcall; external 'kernel32.dll';
 function GetDirFiles(const aDir, aMask: string): TStringList;
 procedure SysPathAddd(const aPath: String);
-function GetFileSize(const aFileName: string): Int64;
+function FileGetSize(const aFileName: string): Int64;
+procedure FileAppendText(const aFile, aMsg: string);
 
 
 implementation
@@ -22,7 +23,7 @@ begin
   SetDllDirectoryW('c:\Program Files\Medoc\Medoc\fb3\32');
 end;
 
-function GetFileSize(const aFileName: string): Int64;
+function FileGetSize(const aFileName: string): Int64;
 var
   SR: TSearchRec;
 begin
@@ -49,6 +50,23 @@ begin
         Result.Add(FilePath);
     until (FindNext(SR) <> 0);
     FindClose(SR);
+  end;
+end;
+
+procedure FileAppendText(const aFile, aMsg: string);
+var
+  HFile: TextFile;
+begin
+  AssignFile(HFile, aFile);
+  if FileExists(aFile) then
+    Append(HFile)
+  else
+    Rewrite(HFile);
+
+  try
+    Writeln(HFile, aMsg);
+  finally
+    CloseFile(HFile);
   end;
 end;
 

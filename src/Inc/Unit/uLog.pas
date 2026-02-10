@@ -5,7 +5,8 @@ unit uLog;
 interface
 
 uses
-  Classes, StdCtrls, SysUtils;
+  Classes, StdCtrls, SysUtils,
+  uSys;
 
 type
   TLog = class
@@ -39,29 +40,21 @@ begin
 end;
 
 procedure TLog.ToFile(const aMsg: string);
-var
-  F: TextFile;
 begin
-  AssignFile(F, self.FileLog);
-  // Додаємо рядок у кінець файлу
-  if FileExists(self.FileLog) then
-    Append(F)
-  else
-    Rewrite(F);
-
-  try
-    Writeln(F, aMsg);
-  finally
-    CloseFile(F);
-  end;
+  FileAppendText(self.FileLog, aMsg);
 end;
 
 procedure TLog.Print(const aMsg: String);
 var
-  Str: String;
+  Msg: String;
 begin
-  Str := FormatDateTime('yy-mm-dd hh:nn:ss', Now()) + ' '+ aMsg;
-  Memo.Lines.Add(Str);
+  Msg := FormatDateTime('yy-mm-dd hh:nn:ss', Now()) + ' '+ aMsg;
+
+  if (Memo.Height = 0) then
+    Memo.Height := 75;
+  Memo.Lines.Add(Msg);
+
+  ToFile(Msg);
 end;
 
 end.

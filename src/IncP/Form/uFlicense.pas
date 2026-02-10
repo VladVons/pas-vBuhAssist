@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  uGenericMatrix, uLicence, uForms, uLog;
+  uGenericMatrix, uLicence, uWinManager, uLog;
 
 type
 

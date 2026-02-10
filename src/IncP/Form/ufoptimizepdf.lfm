@@ -1,17 +1,18 @@
 object FOptimizePDF: TFOptimizePDF
   Left = 276
-  Height = 149
+  Height = 190
   Top = 250
-  Width = 391
+  Width = 390
   Caption = 'Оптимізація PDF'
-  ClientHeight = 149
-  ClientWidth = 391
+  ClientHeight = 190
+  ClientWidth = 390
   LCLVersion = '4.4.0.0'
+  OnHide = FormHide
   OnShow = FormShow
   object ButtonConvert: TButton
     Left = 24
     Height = 25
-    Top = 112
+    Top = 136
     Width = 72
     Caption = 'Виконати'
     TabOrder = 0
@@ -55,8 +56,16 @@ object FOptimizePDF: TFOptimizePDF
     TabOrder = 4
     OnClick = ButtonDirOutClick
   end
+  object CheckBoxCheckName: TCheckBox
+    Left = 24
+    Height = 19
+    Top = 104
+    Width = 146
+    Caption = 'Контроль назви файлів'
+    TabOrder = 5
+  end
   object SelectDirectoryDialog1: TSelectDirectoryDialog
     Left = 136
-    Top = 104
+    Top = 136
   end
 end

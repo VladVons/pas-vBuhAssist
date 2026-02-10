@@ -61,7 +61,7 @@
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="Inc/Unit/uForms.pas"/>
+        <Filename Value="Inc/Unit/uWinManager.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
@@ -94,7 +94,6 @@
       <Unit>
         <Filename Value="Inc/Unit/uSys.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="uSys"/>
       </Unit>
       <Unit>
         <Filename Value="Inc/Unit/uGhostScript.pas"/>
@@ -111,7 +110,6 @@
       <Unit>
         <Filename Value="Inc/Unit/uSettings.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="uSettings"/>
       </Unit>
       <Unit>
         <Filename Value="Inc/Unit/uvarutil.pas"/>

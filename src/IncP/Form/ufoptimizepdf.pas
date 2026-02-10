@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  uGhostScript, uLog, uSettings, uForms, uSys, uVarUtil;
+  uGhostScript, uLog, uSettings, uWinManager, uSys, uVarUtil;
 
 type
 
@@ -16,12 +16,14 @@ type
     ButtonConvert: TButton;
     ButtonDirIn: TButton;
     ButtonDirOut: TButton;
+    CheckBoxCheckName: TCheckBox;
     LabeledEditDirIn: TLabeledEdit;
     LabeledEditDirOut: TLabeledEdit;
     SelectDirectoryDialog1: TSelectDirectoryDialog;
     procedure ButtonConvertClick(Sender: TObject);
     procedure ButtonDirInClick(Sender: TObject);
     procedure ButtonDirOutClick(Sender: TObject);
+    procedure FormHide(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
     procedure SelectDir(aLabeledEdit: TLabeledEdit; const aKey: string);
@@ -71,14 +73,17 @@ begin
     begin
         FileIn := FilesIn[i];
         FileName := ChangeFileExt(ExtractFileName(FileIn), '');
-        LatFilter := ExtractLatin(FileName);
-        if (Length(LatFilter) > 0) Then
-           Log.Print('В назві файла є латинські букви: ' + LatFilter);
+        if (CheckBoxCheckName.Checked) then
+        begin
+          LatFilter := ExtractLatin(FileName);
+          if (Length(LatFilter) > 0) Then
+             Log.Print('В назві файла є латинські букви: ' + LatFilter);
+        end;
 
         FileOut := LabeledEditDirOut.Text + PathDelim + ExtractFileName(FileIn);
         ExecOptimizePDF(FileIn, FileOut);
-        FileOutSize := GetFileSize(FileOut);
-        Ratio := (1 - (FileOutSize / GetFileSize(FileIn))) * 100;
+        FileOutSize := FileGetSize(FileOut);
+        Ratio := (1 - (FileOutSize / FileGetSize(FileIn))) * 100;
         Log.Print(Format('%d/%d %s %dkb (%.0f%%)', [i + 1, FilesIn.Count, FileIn, Round(FileOutSize/1000), Ratio]));
     end;
     Log.Print('Готово');
@@ -93,8 +98,10 @@ begin
      SelectDirectoryDialog1.InitialDir := aLabeledEdit.Text;
 
   if SelectDirectoryDialog1.Execute() then
+  begin
      ConfWriteKey('OptimizePDF', aKey, SelectDirectoryDialog1.FileName);
      aLabeledEdit.Text := SelectDirectoryDialog1.FileName;
+  end;
 end;
 
 procedure TFOptimizePDF.ButtonDirInClick(Sender: TObject);
@@ -107,9 +114,16 @@ begin
   SelectDir(LabeledEditDirOut, 'DirOut');
 end;
 
+procedure TFOptimizePDF.FormHide(Sender: TObject);
+begin
+
+end;
+
 procedure TFOptimizePDF.FormShow(Sender: TObject);
 begin
   LabeledEditDirIn.Text := ConfReadKey('OptimizePDF', 'DirIn');
+  LabeledEditDirOut.Text := ConfReadKey('OptimizePDF', 'DirOut');
+  CheckBoxCheckName.Checked := ConfReadKey('OptimizePDF', 'CheckBoxCheckName') = 'true';
   LabeledEditDirOut.Text := ConfReadKey('OptimizePDF', 'DirOut');
 end;
 

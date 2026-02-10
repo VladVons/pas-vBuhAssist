@@ -4,7 +4,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
   Top = 250
   Width = 637
   BorderStyle = bsNone
-  Caption = 'FMedocCheckDocs'
+  Caption = 'Контроль звітів'
   ClientHeight = 356
   ClientWidth = 637
   LCLVersion = '4.4.0.0'

@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList,
   ExtCtrls, ComCtrls, StdCtrls, fpjson,
-  uLog, uFAbout, uFMedocCheckDocs, uFLicense, uFOptimizePDF, uForms, uHttp;
+  uFAbout, uFMedocCheckDocs, uFLicense, uFOptimizePDF, uWinManager, uLog, uHttp;
 
 type
 
@@ -21,21 +21,24 @@ type
     MainMenu1: TMainMenu;
     ManuItemHelp: TMenuItem;
     MemoInfo1: TMemo;
+    MenuItemCloseTab: TMenuItem;
     MenuItemMedoc: TMenuItem;
     MenuItemLicense: TMenuItem;
     MenuItemOprimizePDF: TMenuItem;
     MenuItemModules: TMenuItem;
     MenuItemAboutApp: TMenuItem;
+    PageControl1: TPageControl;
     Panel1: TPanel;
-    PanelClient: TPanel;
+    PopupMenu1: TPopupMenu;
     Splitter1: TSplitter;
     procedure ActionFAboutExecute(Sender: TObject);
     procedure ActionFMedocCheckDocsExecute(Sender: TObject);
     procedure ActionLicenseExecute(Sender: TObject);
     procedure ActionOptimizePDFExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure MenuItemCloseTabClick(Sender: TObject);
   private
-
+    WinManager: TWinManager;
   public
 
   end;
@@ -51,28 +54,50 @@ implementation
 
 procedure TFMain.ActionFAboutExecute(Sender: TObject);
 begin
-    FAbout.Show();
+  ShowOrCreateForm(TFAbout);
 end;
 
 procedure TFMain.ActionFMedocCheckDocsExecute(Sender: TObject);
 begin
-    ShowFormDock(FMedocCheckDocs, PanelClient);
+    WinManager.Add(TFMedocCheckDocs);
 end;
 
 procedure TFMain.ActionLicenseExecute(Sender: TObject);
 begin
-    ShowFormDock(FLicense, PanelClient);
+    WinManager.Add(TFLicense);
 end;
 
 procedure TFMain.ActionOptimizePDFExecute(Sender: TObject);
 begin
-  ShowFormDock(FOptimizePDF, PanelClient);
+  WinManager.Add(TFOptimizePDF);
 end;
 
 procedure TFMain.FormCreate(Sender: TObject);
+var
+  i: integer;
+  Forms: array of TFormClass;
 begin
   Log := TLog.Create(MemoInfo1);
+  Log.Print('Початок');
+
+  WinManager := TWinManager.Create(PageControl1, PopupMenu1);
+
+  Forms := [
+    TFMedocCheckDocs,
+    TFOptimizePDF
+  ];
+
+  for i := 0 to High(Forms) do
+    WinManager.Add(Forms[i]);
+
+  PageControl1.ActivePageIndex := 0;
 end;
+
+procedure TFMain.MenuItemCloseTabClick(Sender: TObject);
+begin
+     WinManager.CloseActive();
+end;
+
 
 end.
 
