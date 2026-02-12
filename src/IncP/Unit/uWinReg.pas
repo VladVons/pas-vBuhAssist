@@ -5,24 +5,25 @@ unit uWinReg;
 interface
 
 uses
-  Registry, SysUtils, Classes, Windows,
-  uGenericMatrix;
+  Registry, SysUtils, Classes, Windows, fpjson, jsonparser;
 
-function FindMedocDB(): TStringList;
+function GetMedocInfoFromReg(): TJSONArray;
 
 implementation
 
-function FindMedocDB(): TStringList;
+
+function GetMedocInfoFromReg(): TJSONArray;
 var
+  Obj: TJSONObject;
   Reg: TRegistry;
   Keys: TStringList;
   i: Integer;
-  FileDb, Port: string;
+  StrDB: string;
 begin
-  Result := TStringList.Create();
+  Result := TJSONArray.Create();
 
   Reg := TRegistry.Create(KEY_READ);
-  Keys := TStringList.Create;
+  Keys := TStringList.Create();
   try
     Reg.RootKey := HKEY_LOCAL_MACHINE;
     if Reg.OpenKeyReadOnly('\SOFTWARE\IntellectService') then
@@ -32,14 +33,19 @@ begin
 
       for i := 0 to Keys.Count - 1 do
       begin
-        if Reg.OpenKeyReadOnly('\SOFTWARE\IntellectService\' + Keys[i]) then
+        if (Reg.OpenKeyReadOnly('\SOFTWARE\IntellectService\' + Keys[i])) then
         begin
-          if Reg.ValueExists('APPDATA') then
+          if (Reg.ValueExists('APPDATA')) then
           begin
-            FileDb := Reg.ReadString('APPDATA') + '/db/zvit.fdb';
-            if FileExists(FileDb) then
-               //Reg.ReadString('fbPort');
-               Result.Add(FileDb);
+            StrDB := Reg.ReadString('APPDATA') + '\db\zvit.fdb';
+            if (FileExists(StrDB)) then
+            begin
+               Obj := TJSONObject.Create();
+               Obj.Add('db', StrDB);
+               Obj.Add('path', Reg.ReadString('PATH'));
+               Obj.Add('port', StrToIntDef(Reg.ReadString('fbPort'), 0));
+               Result.Add(Obj);
+            end;
           end;
           Reg.CloseKey();
         end;
@@ -50,7 +56,6 @@ begin
     Reg.Free();
   end;
 end;
-
 
 
 

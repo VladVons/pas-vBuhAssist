@@ -12,7 +12,7 @@ type
   { TFAbout }
 
   TFAbout = class(TForm)
-    Label1: TLabel;
+    LabelVer: TLabel;
   private
 
   public

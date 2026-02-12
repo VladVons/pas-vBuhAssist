@@ -21,6 +21,7 @@ type
     function FindTabIndex(aFormClass: TFormClass): Integer;
     procedure CloseActive();
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
+    procedure SetActivePage(aIdx: integer);
   end;
 
   procedure ShowOrCreateForm(AClass: TFormClass);
@@ -127,6 +128,26 @@ begin
     PopupMenu.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
 end;
 
+procedure TWinManager.SetActivePage(aIdx: Integer);
+var
+  idx: Integer;
+begin
+  if PageControl.PageCount = 0
+     then Exit; // немає вкладок, нічого не робимо
+
+  if aIdx >= 0 then
+    idx := aIdx
+  else
+    idx := PageControl.PageCount + aIdx; // від’ємне: від останньої
+
+  // перевірка, щоб не вийти за межі
+  if (idx < 0) then
+    idx := 0
+  else if (idx >= PageControl.PageCount) then
+    idx := PageControl.PageCount - 1;
+
+  PageControl.ActivePageIndex := idx;
+end;
 
 procedure ShowOrCreateForm(AClass: TFormClass);
 var

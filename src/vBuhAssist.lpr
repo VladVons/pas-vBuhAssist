@@ -13,7 +13,7 @@ uses
   Interfaces, // this includes the LCL widgetset
   Forms, uFMain, uFAbout, uFMedocCheckDocs, uWinManager, uGenericMatrix,
   uDmFbConnect, uWinReg, uLicence, uFLicense, uSys, uGhostScript, uFOptimizePDF,
-  uSettings, uVarUtil, uLog;
+  uSettings, uVarUtil, uLog, uConst, uFLogin, uFMessageShow;
 
 {$R *.res}
 
@@ -26,6 +26,8 @@ begin
   Application.Initialize();
   Application.CreateForm(TFMain, FMain);
   Application.CreateForm(TDmFbConnect, DmFbConnect);
+  Application.CreateForm(TFLogin, FLogin);
+  Application.CreateForm(TFMessageShow, FMessageShow);
   Application.Run();
 end.
 

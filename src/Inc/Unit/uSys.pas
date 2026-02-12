@@ -40,16 +40,33 @@ function GetDirFiles(const aDir, aMask: string): TStringList;
 var
   SR: TSearchRec;
   FilePath: string;
+  Masks: TStringList;
+  I: Integer;
 begin
-  Result := TStringList.Create();
-  if FindFirst(IncludeTrailingPathDelimiter(aDir) + aMask, faAnyFile, SR) = 0 then
-  begin
-    repeat
-      if (SR.Attr and faDirectory) = 0 then
-        FilePath := aDir + PathDelim + SR.Name;
-        Result.Add(FilePath);
-    until (FindNext(SR) <> 0);
-    FindClose(SR);
+  Result := TStringList.Create;
+  Masks := TStringList.Create;
+  try
+    Masks.StrictDelimiter := True;
+    Masks.Delimiter := ';';
+    Masks.DelimitedText := aMask;
+
+    for I := 0 to Masks.Count - 1 do
+    begin
+      if FindFirst(aDir + PathDelim + Masks[I], faAnyFile, SR) = 0 then
+      begin
+        repeat
+          if (SR.Attr and faDirectory) = 0 then
+          begin
+            FilePath := aDir + PathDelim + SR.Name;
+            Result.Add(FilePath);
+          end;
+        until FindNext(SR) <> 0;
+        FindClose(SR);
+      end;
+    end;
+
+  finally
+    Masks.Free();
   end;
 end;
 

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  uGenericMatrix, uLicence, uWinManager, uLog;
+  uGenericMatrix, uLicence, uLog, uConst;
 
 type
 
@@ -14,16 +14,13 @@ type
 
   TFLicense = class(TForm)
     ButtonGetLicense: TButton;
+    LabeledEditActivationCode: TLabeledEdit;
     Panel1: TPanel;
     procedure ButtonGetLicenseClick(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
-    FileLic: String;
-    FileLicPassw: String;
     procedure LicRead();
   public
-
   end;
 
 var
@@ -39,14 +36,14 @@ var
   Lic: String;
   Matrix: TStringMatrix;
 begin
-  if not FileExists(FileLic) then
+  if not FileExists(cFileLic) then
   begin
-      Log.Print('Не знайдено файл ліцензій ' + FileLic);
+      Log.Print('Не знайдено файл ліцензій ' + cFileLic);
       Exit;
   end;
 
   try
-    Matrix := MatrixCryptFromFile(FileLic, FileLicPassw);
+    Matrix := MatrixCryptFromFile(cFileLic, cFileLicPassw);
     if (Matrix.Count = 0) then
     begin
        Log.Print('Немає ліцензій');
@@ -69,12 +66,6 @@ begin
   LicRead();
 end;
 
-procedure TFLicense.FormCreate(Sender: TObject);
-begin
-   FileLic := 'license.dat';
-   FileLicPassw := 'BuhAssist';
-end;
-
 procedure TFLicense.ButtonGetLicenseClick(Sender: TObject);
 var
   Firms: TStringList;
@@ -85,8 +76,8 @@ begin
 
     Firms := TStringList.Create();
     Firms.AddStrings(['88888801']);
-    Matrix := GetLicence(Firms, 'MedocCheckDoc');
-    MatrixCryptToFile(FileLic, FileLicPassw, Matrix);
+    Matrix := GetLicenceFromHttp(Firms, 'MedocCheckDoc', '');
+    MatrixCryptToFile(cFileLic, cFileLicPassw, Matrix);
     LicRead();
   finally
     Matrix.Free();

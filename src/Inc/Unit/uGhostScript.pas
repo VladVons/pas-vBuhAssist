@@ -5,42 +5,94 @@ unit uGhostScript;
 interface
 
 uses
-  SysUtils, Process;
+  SysUtils, Process, Classes,
+  uFMessageShow;
 
-function ExecOptimizePDF(const aFileIn, aFileOut: String): Integer;
+const
+  cGS_Dir = 'addons\gs';
+
+function GS_OptimizePdf(const aFileIn, aFileOut: String): Integer;
+function GS_JpgToPdf(const aFileIn, aFileOut: String): Integer;
 
 implementation
 
-function ExecOptimizePDF(const aFileIn, aFileOut: String): Integer;
+function GS_Exec(aParam: TStrings): Integer;
 var
-  P: TProcess;
-  GSPath, ExeDir: string;
+  Process: TProcess;
+  FilePath, ExeDir, Str: string;
+  Output: TStringList;
 begin
   ExeDir := ExtractFilePath(ParamStr(0));
-  GSPath := ExeDir + 'addons\gs\gswin32c.exe';
+  FilePath := ExeDir + cGS_Dir + PathDelim + 'gswin32c.exe';
 
-  if (not FileExists(GSPath)) then
-    raise Exception.Create('Не знайдено ' + GSPath);
+  if (not FileExists(FilePath)) then
+    raise Exception.Create('Не знайдено ' + FilePath);
 
-  P := TProcess.Create(nil);
+  Output := TStringList.Create();
+  Process := TProcess.Create(nil);
   try
-    P.Executable := GSPath;
+    Process.Executable := FilePath;
+    Process.Parameters := aParam;
+    Process.CurrentDirectory := ExeDir;
+    Process.Options := [poUsePipes, poWaitOnExit];
+    Process.ShowWindow := swoHide;
+    Process.Execute();
+    Result := Process.ExitStatus;
 
-    P.Parameters.Add('-sDEVICE=pdfwrite');
-    P.Parameters.Add('-dCompatibilityLevel=1.4');
-    P.Parameters.Add('-dPDFSETTINGS=/ebook');
-    P.Parameters.Add('-dNOPAUSE');
-    P.Parameters.Add('-dQUIET');
-    P.Parameters.Add('-dBATCH');
-    P.Parameters.Add('-sOutputFile=' + aFileOut);
-    P.Parameters.Add(aFileIn);
-
-    P.CurrentDirectory := ExeDir;
-    P.Options := [poNoConsole, poWaitOnExit];
-    P.Execute();
-    Result := P.ExitStatus;
+    //Output.LoadFromStream(Process.Stderr);
+    Output.LoadFromStream(Process.Output);
+    Str := Output.Text;
   finally
-    P.Free();
+    Process.Free();
+    Output.Free();
+  end;
+end;
+
+function GS_OptimizePDF(const aFileIn, aFileOut: String): Integer;
+var
+  Params: TStringList;
+begin
+  try
+    Params := TStringList.Create();
+    Params.Add('-sDEVICE=pdfwrite');
+    Params.Add('-dCompatibilityLevel=1.4');
+    Params.Add('-dPDFSETTINGS=/ebook');
+    Params.Add('-dNOPAUSE');
+    Params.Add('-dQUIET');
+    Params.Add('-dBATCH');
+    Params.Add('-sOutputFile=' + aFileOut);
+    Params.Add(aFileIn);
+    Result := GS_Exec(Params);
+  finally
+    Params.Free();
+  end;
+end;
+
+function GS_JpgToPdf(const aFileIn, aFileOut: String): Integer;
+var
+  Params: TStringList;
+  FilePath, FilePathUnix: string;
+begin
+  FilePath := cGS_Dir + PathDelim + 'viewjpeg.ps';
+  if (not FileExists(FilePath)) then
+    raise Exception.Create('Не знайдено ' + FilePath);
+
+  FilePathUnix := StringReplace(aFileIn , '\', '/', [rfReplaceAll]);
+  try
+    Params := TStringList.Create();
+    Params.Add('-dNOSAFER');
+    Params.Add('-sDEVICE=pdfwrite');
+    Params.Add('-dCompatibilityLevel=1.4');
+    Params.Add('-dPDFSETTINGS=/screen');
+    Params.Add('-dNOPAUSE');
+    Params.Add('-dBATCH');
+    Params.Add('-sOutputFile=' + aFileOut);
+    Params.Add(FilePath + ' -c "(' + FilePathUnix  + ')" viewJPEG');
+    FMessageShow.Memo1.Lines := Params;
+    FMessageShow.Show();
+    Result := GS_Exec(Params);
+  finally
+    Params.Free();
   end;
 end;
 

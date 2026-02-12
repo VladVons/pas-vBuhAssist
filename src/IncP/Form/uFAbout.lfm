@@ -9,7 +9,7 @@ object FAbout: TFAbout
   ClientWidth = 320
   Position = poMainFormCenter
   LCLVersion = '4.4.0.0'
-  object Label1: TLabel
+  object LabelVer: TLabel
     Left = 112
     Height = 15
     Top = 96

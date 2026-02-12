@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList,
   ExtCtrls, ComCtrls, StdCtrls, fpjson,
-  uFAbout, uFMedocCheckDocs, uFLicense, uFOptimizePDF, uWinManager, uLog, uHttp;
+  uFAbout, uFMedocCheckDocs, uFLicense, uFOptimizePDF, uWinManager, uLog, uConst;
 
 type
 
@@ -77,6 +77,7 @@ var
   i: integer;
   Forms: array of TFormClass;
 begin
+  Caption := Caption + ' ' + cVersion;
   Log := TLog.Create(MemoInfo1);
   Log.Print('Початок');
 
@@ -90,7 +91,7 @@ begin
   for i := 0 to High(Forms) do
     WinManager.Add(Forms[i]);
 
-  PageControl1.ActivePageIndex := 0;
+  WinManager.SetActivePage(0);
 end;
 
 procedure TFMain.MenuItemCloseTabClick(Sender: TObject);

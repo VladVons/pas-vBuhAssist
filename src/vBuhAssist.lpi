@@ -61,8 +61,20 @@
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="Inc/Unit/uWinManager.pas"/>
+        <Filename Value="IncP/Form/uFlicense.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="FLicense"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uFLicense"/>
+      </Unit>
+      <Unit>
+        <Filename Value="IncP/Form/ufoptimizepdf.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FOptimizePDF"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uFOptimizePDF"/>
       </Unit>
       <Unit>
         <Filename Value="IncP/DataModule/uDmFbConnect.pas"/>
@@ -76,6 +88,10 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
+        <Filename Value="Inc/Unit/uWinManager.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
         <Filename Value="IncP/Unit/uWinReg.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
@@ -84,28 +100,12 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="IncP/Form/uFlicense.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="FLicense"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-        <UnitName Value="uFLicense"/>
-      </Unit>
-      <Unit>
         <Filename Value="Inc/Unit/uSys.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="Inc/Unit/uGhostScript.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="IncP/Form/ufoptimizepdf.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="FOptimizePDF"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-        <UnitName Value="uFOptimizePDF"/>
       </Unit>
       <Unit>
         <Filename Value="Inc/Unit/uSettings.pas"/>
@@ -120,6 +120,27 @@
         <Filename Value="Inc/Unit/uLog.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="IncP/Unit/uConst.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="IncP/Form/uFLogin.lfm"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="IncP/Form/uFLogin.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FLogin"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Inc/Form/uFMessageShow.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FMessageShow"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -129,7 +150,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="Inc/Unit;Inc/Type;IncP/Form;IncP/Unit;IncP/DataModule"/>
+      <OtherUnitFiles Value="Inc/Unit;Inc/Type;IncP/Form;IncP/Unit;IncP/DataModule;Inc/Form"/>
       <UnitOutputDirectory Value="_lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

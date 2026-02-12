@@ -14,6 +14,7 @@ type
   public
     type
     TMatrixType = array of array of T;
+    TArrayType = array of T;
   private
     FData: TMatrixType;
     function GetCount(): Integer;
@@ -30,13 +31,14 @@ type
     // Рядки
     procedure Add(const aRow: array of T);
     procedure AddMatrix(const aMatrix: TMatrixType);
-    procedure Insert(aIndex: Integer; const aRow: array of T);
-    procedure Delete(aIndex: Integer);
-    function Find(aIndexStart, aCol: Integer; const aValue: T): Integer;
+    procedure Insert(aRowIdx: Integer; const aRow: TArrayType);
+    procedure Delete(aRowIdx: Integer);
+    function Find(aRowIdxStart, aColIdx: Integer; const aValue: T): Integer;
 
     // Колонки
-    procedure ColAdd(aRowIndex: Integer; const aValue: T);
-    procedure ColDel(aRowIndex, aColIndex: Integer);
+    procedure ColAdd(aRowIdx: Integer; const aValue: T);
+    procedure ColDel(aRowIdx, aColIdx: Integer);
+    function ColExport(aColIdx: Integer): TArrayType;
   end;
 
   TStringMatrix = specialize TMatrix<string>;
@@ -56,14 +58,8 @@ type
     const aReadItem: specialize TReadItemProc<T>
   ): specialize TMatrix<T>;
 
-  procedure MatrixCryptToFile(const aFileName, aPassword: string; const aMatrix: TStringMatrix);
-  function MatrixCryptFromFile(const aFileName, aPassword: string): TStringMatrix;
-
 
 implementation
-
-type
-THash256 = array[0..31] of Byte;
 
 { TMatrix<T> }
 constructor TMatrix.Create();
@@ -124,79 +120,79 @@ begin
     Add(aMatrix[i]);
 end;
 
-procedure TMatrix.Insert(aIndex: Integer; const aRow: array of T);
+procedure TMatrix.Insert(aRowIdx: Integer; const aRow: TArrayType);
 var
   i: Integer;
 begin
-  if aIndex < 0
-     then aIndex := 0;
+  if (aRowIdx < 0)
+     then aRowIdx := 0;
 
-  if aIndex > Count
-     then aIndex := Count;
+  if (aRowIdx > Count)
+     then aRowIdx := Count;
 
   SetLength(FData, Count + 1);
-  for i := Count - 1 downto aIndex + 1 do
+  for i := Count - 1 downto aRowIdx + 1 do
     FData[i] := FData[i - 1];
 
-  SetLength(FData[aIndex], Length(aRow));
+  SetLength(FData[aRowIdx], Length(aRow));
   for i := 0 to High(aRow) do
-    FData[aIndex][i] := aRow[i];
+    FData[aRowIdx][i] := aRow[i];
 end;
 
-procedure TMatrix.Delete(aIndex: Integer);
+procedure TMatrix.Delete(aRowIdx: Integer);
 var
   i: Integer;
 begin
-  if (aIndex < 0) or (aIndex >= Count)
+  if (aRowIdx < 0) or (aRowIdx >= Count)
      then Exit;
 
-  for i := aIndex to Count - 2 do
+  for i := aRowIdx to Count - 2 do
     FData[i] := FData[i + 1];
 
   SetLength(FData, Count - 1);
 end;
 
-procedure TMatrix.ColAdd(aRowIndex: Integer; const aValue: T);
+procedure TMatrix.ColAdd(aRowIdx: Integer; const aValue: T);
 var
   NewCol: Integer;
 begin
-  if (aRowIndex < 0) or (aRowIndex >= Count)
+  if (aRowIdx < 0) or (aRowIdx >= Count)
      then Exit;
 
-  NewCol := Length(FData[aRowIndex]);
-  SetLength(FData[aRowIndex], NewCol + 1);
-  FData[aRowIndex][NewCol] := aValue;
+  NewCol := Length(FData[aRowIdx]);
+  SetLength(FData[aRowIdx], NewCol + 1);
+  FData[aRowIdx][NewCol] := aValue;
 end;
 
-procedure TMatrix.ColDel(aRowIndex, aColIndex: Integer);
+procedure TMatrix.ColDel(aRowIdx, aColIdx: Integer);
 var
   i, Len: Integer;
 begin
-  if (aRowIndex < 0) or (aRowIndex >= Count)
+  if (aRowIdx < 0) or (aRowIdx >= Count)
      then Exit;
 
-  Len := Length(FData[aRowIndex]);
-  if (aColIndex < 0) or (aColIndex >= Len)
+  Len := Length(FData[aRowIdx]);
+  if (aColIdx < 0) or (aColIdx >= Len)
      then Exit;
 
-  for i := aColIndex to Len - 2 do
-    FData[aRowIndex][i] := FData[aRowIndex][i + 1];
+  for i := aColIdx to Len - 2 do
+    FData[aRowIdx][i] := FData[aRowIdx][i + 1];
 
-  SetLength(FData[aRowIndex], Len - 1);
+  SetLength(FData[aRowIdx], Len - 1);
 end;
 
-function TMatrix.Find(aIndexStart, aCol: Integer; const aValue: T): Integer;
+function TMatrix.Find(aRowIdxStart, aColIdx: Integer; const aValue: T): Integer;
 var
   i: Integer;
 begin
   Result := -1;
 
-  if (aCol < 0) or (Length(FData) = 0) then
+  if (aColIdx < 0) or (Length(FData) = 0) then
     Exit;
 
-  for i := aIndexStart to High(FData) do
+  for i := aRowIdxStart to High(FData) do
   begin
-    if (aCol <= High(FData[i])) and (FData[i][aCol] = aValue) then
+    if (aColIdx <= High(FData[i])) and (FData[i][aColIdx] = aValue) then
     begin
       Result := i;
       Exit;
@@ -204,26 +200,23 @@ begin
   end;
 end;
 
-//---
-
-function SimpleHash256(const aString: string): THash256;
+function TMatrix.ColExport(aColIdx: Integer): TArrayType;
 var
-  i, j: Integer;
-  h: QWord;
+  i: integer;
 begin
-  h := $CBF29CE484222325;
-  for i := 1 to Length(aString) do
-    h := (h xor Ord(aString[i])) * $100000001B3;
+  SetLength(Result, Length(FData));
 
-  for j := 0 to 31 do
+  for i := 0 to High(FData) do
   begin
-    h := h xor (h shr 33);
-    h := h * $FF51AFD7ED558CCD;
-    h := h xor (h shr 33);
-    Result[j] := Byte(h shr ((j mod 8) * 8));
+    if (aColIdx >= 0) and (aColIdx <= High(FData[i])) then
+      Result[i] := FData[i][aColIdx]
+    else
+      Result[i] := Default(T);
   end;
 end;
 
+
+//---
 
 procedure ReadStringItem(aStream: TStream; out aValue: string);
 var
@@ -299,68 +292,6 @@ begin
   end;
 
   Result := M;
-end;
-
-procedure CryptStream(aStreamIn, aStreamOut: TStream; const aPassword: string);
-var
-  Key: THash256;
-  Buf: array[0..4095] of Byte;
-  R, i, p: Integer;
-begin
-  Key := SimpleHash256(aPassword);
-  p := 0;
-
-  while True do
-  begin
-    R := aStreamIn.Read(Buf, SizeOf(Buf));
-    if R = 0 then Break;
-
-    for i := 0 to R - 1 do
-    begin
-      Buf[i] := Buf[i] xor Key[p];
-      Inc(p);
-      if p > High(Key) then p := 0;
-    end;
-
-    aStreamOut.WriteBuffer(Buf, R);
-  end;
-end;
-
-procedure MatrixCryptToFile(const aFileName, aPassword: string; const aMatrix: TStringMatrix);
-var
-  Plain, Crypt: TMemoryStream;
-begin
-  Plain := TMemoryStream.Create();
-  Crypt := TMemoryStream.Create();
-  try
-    specialize MatrixToStream<string>(aMatrix, Plain, @WriteStringItem);
-    Plain.Position := 0;
-    CryptStream(Plain, Crypt, aPassword);
-    Crypt.SaveToFile(aFileName);
-  finally
-    Plain.Free();
-    Crypt.Free();
-  end;
-end;
-
-function MatrixCryptFromFile(const aFileName, aPassword: string): TStringMatrix;
-var
-  Plain, Crypt: TMemoryStream;
-begin
-  Crypt := TMemoryStream.Create();
-  Plain := TMemoryStream.Create();
-  try
-    Crypt.LoadFromFile(aFileName);
-    Crypt.Position := 0;
-
-    CryptStream(Crypt, Plain, aPassword);
-    Plain.Position := 0;
-
-    Result := specialize MatrixFromStream<string>(Plain, @ReadStringItem);
-  finally
-    Plain.Free();
-    Crypt.Free();
-  end;
 end;
 
 end.

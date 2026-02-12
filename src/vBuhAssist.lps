@@ -8,7 +8,7 @@
       <Unit>
         <Filename Value="vBuhAssist.lpr"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="51"/>
+        <UsageCount Value="31"/>
       </Unit>
       <Unit>
         <Filename Value="IncP\Form\uFMain.pas"/>
@@ -16,10 +16,8 @@
         <ComponentName Value="FMain"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
-        <TopLine Value="42"/>
-        <CursorPos X="27" Y="51"/>
-        <UsageCount Value="51"/>
+        <CursorPos X="75" Y="10"/>
+        <UsageCount Value="31"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -29,7 +27,7 @@
         <ComponentName Value="FAbout"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UsageCount Value="51"/>
+        <UsageCount Value="31"/>
       </Unit>
       <Unit>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
@@ -37,44 +35,10 @@
         <ComponentName Value="FMedocCheckDocs"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="87"/>
-        <CursorPos X="45" Y="99"/>
-        <UsageCount Value="51"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="Inc\Unit\uWinManager.pas"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="12"/>
-        <CursorPos X="29" Y="26"/>
-        <UsageCount Value="51"/>
-        <Loaded Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="IncP\DataModule\uDmFbConnect.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="DmFbConnect"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="DataModule"/>
-        <UsageCount Value="51"/>
-      </Unit>
-      <Unit>
-        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UsageCount Value="51"/>
-      </Unit>
-      <Unit>
-        <Filename Value="IncP\Unit\uWinReg.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UsageCount Value="51"/>
-      </Unit>
-      <Unit>
-        <Filename Value="IncP\Unit\uLicence.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UsageCount Value="51"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="307"/>
+        <CursorPos X="48" Y="339"/>
+        <UsageCount Value="31"/>
       </Unit>
       <Unit>
         <Filename Value="IncP\Form\uFlicense.pas"/>
@@ -84,22 +48,9 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="uFLicense"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="73"/>
-        <CursorPos X="14" Y="84"/>
-        <UsageCount Value="51"/>
-      </Unit>
-      <Unit>
-        <Filename Value="Inc\Unit\uSys.pas"/>
-        <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="13"/>
-        <CursorPos X="17" Y="26"/>
-        <UsageCount Value="51"/>
-      </Unit>
-      <Unit>
-        <Filename Value="Inc\Unit\uGhostScript.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UsageCount Value="51"/>
+        <TopLine Value="56"/>
+        <CursorPos Y="81"/>
+        <UsageCount Value="31"/>
       </Unit>
       <Unit>
         <Filename Value="IncP\Form\ufoptimizepdf.pas"/>
@@ -108,176 +59,254 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="uFOptimizePDF"/>
-        <EditorIndex Value="4"/>
-        <TopLine Value="93"/>
-        <CursorPos Y="100"/>
-        <UsageCount Value="51"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="81"/>
+        <CursorPos X="56" Y="86"/>
+        <UsageCount Value="31"/>
+      </Unit>
+      <Unit>
+        <Filename Value="IncP\DataModule\uDmFbConnect.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DmFbConnect"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="DataModule"/>
+        <UsageCount Value="31"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Inc\Unit\uGenericMatrix.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UsageCount Value="31"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Inc\Unit\uWinManager.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UsageCount Value="31"/>
+      </Unit>
+      <Unit>
+        <Filename Value="IncP\Unit\uWinReg.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UsageCount Value="31"/>
+      </Unit>
+      <Unit>
+        <Filename Value="IncP\Unit\uLicence.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="13"/>
+        <CursorPos X="51" Y="26"/>
+        <UsageCount Value="31"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Inc\Unit\uSys.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="44"/>
+        <CursorPos Y="44"/>
+        <UsageCount Value="31"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="66"/>
+        <CursorPos Y="90"/>
+        <UsageCount Value="31"/>
         <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uSettings.pas"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="51"/>
+        <UsageCount Value="31"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uvarutil.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uVarUtil"/>
-        <UsageCount Value="51"/>
+        <UsageCount Value="31"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uLog.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="39"/>
-        <CursorPos X="3" Y="55"/>
-        <UsageCount Value="51"/>
+        <TopLine Value="28"/>
+        <CursorPos X="23" Y="55"/>
+        <UsageCount Value="31"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="C:\lazarus\lcl\stdctrls.pp"/>
-        <UnitName Value="StdCtrls"/>
+        <Filename Value="IncP\Unit\uConst.pas"/>
+        <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="1009"/>
-        <CursorPos X="3" Y="1020"/>
-        <UsageCount Value="8"/>
+        <CursorPos Y="8"/>
+        <UsageCount Value="31"/>
       </Unit>
       <Unit>
-        <Filename Value="C:\lazarus\lcl\include\custommemo.inc"/>
+        <Filename Value="IncP\Form\uFLogin.lfm"/>
+        <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="7"/>
-        <CursorPos X="25" Y="18"/>
-        <UsageCount Value="7"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="31"/>
+        <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit>
       <Unit>
-        <Filename Value="C:\lazarus\fpc\3.2.2\source\rtl\inc\objpash.inc"/>
+        <Filename Value="IncP\Form\uFLogin.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FLogin"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="195"/>
-        <CursorPos Y="208"/>
-        <UsageCount Value="7"/>
+        <TopLine Value="8"/>
+        <CursorPos X="9" Y="17"/>
+        <UsageCount Value="31"/>
       </Unit>
       <Unit>
-        <Filename Value="C:\lazarus\lcl\menus.pp"/>
-        <UnitName Value="Menus"/>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\fcl-process\src\processbody.inc"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="498"/>
-        <CursorPos X="14" Y="506"/>
-        <UsageCount Value="10"/>
+        <TopLine Value="26"/>
+        <CursorPos X="4" Y="39"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\rtl\objpas\classes\classesh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="591"/>
+        <CursorPos X="29" Y="596"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Inc\Form\uFMessageShow.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FMessageShow"/>
+        <ResourceBaseClass Value="Form"/>
+        <EditorIndex Value="3"/>
+        <CursorPos X="3" Y="25"/>
+        <UsageCount Value="22"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit>
     </Units>
-    <JumpHistory HistoryIndex="27">
+    <JumpHistory HistoryIndex="29">
       <Position>
-        <Filename Value="IncP\Form\uFMain.pas"/>
-        <Caret Line="79" Column="31" TopLine="60"/>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="85" TopLine="65"/>
       </Position>
       <Position>
-        <Filename Value="IncP\Form\uFMain.pas"/>
-        <Caret Line="80" Column="15" TopLine="64"/>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="66" TopLine="61"/>
       </Position>
       <Position>
-        <Filename Value="IncP\Form\uFMain.pas"/>
-        <Caret Line="81" Column="7" TopLine="65"/>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="44" Column="19" TopLine="21"/>
       </Position>
       <Position>
-        <Filename Value="IncP\Form\uFMain.pas"/>
-        <Caret Line="74" Column="31" TopLine="65"/>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="42" TopLine="26"/>
       </Position>
       <Position>
-        <Filename Value="IncP\Form\uFMain.pas"/>
-        <Caret Line="90" TopLine="74"/>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="43" TopLine="26"/>
       </Position>
       <Position>
-        <Filename Value="IncP\Form\uFMain.pas"/>
-        <Caret Line="91" TopLine="75"/>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="44" Column="20" TopLine="26"/>
       </Position>
       <Position>
-        <Filename Value="IncP\Form\uFMain.pas"/>
-        <Caret Line="30" Column="21" TopLine="12"/>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="43" TopLine="26"/>
       </Position>
       <Position>
-        <Filename Value="IncP\Form\ufoptimizepdf.pas"/>
-        <Caret Line="100" TopLine="93"/>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="95" Column="33" TopLine="79"/>
       </Position>
       <Position>
-        <Filename Value="IncP\Form\ufoptimizepdf.pas"/>
-        <Caret Line="97" Column="41" TopLine="93"/>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="102" TopLine="82"/>
       </Position>
       <Position>
-        <Filename Value="IncP\Form\ufoptimizepdf.pas"/>
-        <Caret Line="100" TopLine="93"/>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="95" Column="12" TopLine="79"/>
       </Position>
       <Position>
-        <Filename Value="Inc\Unit\uLog.pas"/>
-        <Caret Line="53" TopLine="35"/>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="91" Column="23" TopLine="74"/>
       </Position>
       <Position>
-        <Filename Value="Inc\Unit\uLog.pas"/>
-        <Caret Line="54" Column="24" TopLine="39"/>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="40" Column="24" TopLine="40"/>
       </Position>
       <Position>
-        <Filename Value="Inc\Unit\uLog.pas"/>
-        <Caret Line="53" TopLine="39"/>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="43" TopLine="39"/>
       </Position>
       <Position>
-        <Filename Value="Inc\Unit\uLog.pas"/>
-        <Caret Line="54" TopLine="39"/>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="91" Column="53" TopLine="71"/>
       </Position>
       <Position>
-        <Filename Value="Inc\Unit\uLog.pas"/>
-        <Caret Line="53" TopLine="39"/>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="43" TopLine="27"/>
       </Position>
       <Position>
-        <Filename Value="IncP\Form\uFMain.pas"/>
-        <Caret Line="95" Column="13" TopLine="75"/>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="44" TopLine="27"/>
       </Position>
       <Position>
-        <Filename Value="IncP\Form\uFMain.pas"/>
-        <Caret Line="96" Column="13" TopLine="76"/>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="91" TopLine="70"/>
       </Position>
       <Position>
-        <Filename Value="IncP\Form\uFMain.pas"/>
-        <Caret Line="95" Column="13" TopLine="75"/>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="43" TopLine="27"/>
       </Position>
       <Position>
-        <Filename Value="IncP\Form\uFMain.pas"/>
-        <Caret Line="59" Column="19" TopLine="59"/>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="100" TopLine="70"/>
       </Position>
       <Position>
-        <Filename Value="IncP\Form\uFMain.pas"/>
-        <Caret Line="95" Column="38" TopLine="81"/>
+        <Filename Value="Inc\Form\uFMessageShow.pas"/>
+        <Caret Line="19" Column="3"/>
       </Position>
       <Position>
-        <Filename Value="Inc\Unit\uWinManager.pas"/>
-        <Caret Line="95" TopLine="77"/>
+        <Filename Value="Inc\Form\uFMessageShow.pas"/>
+        <Caret Line="23" Column="3"/>
       </Position>
       <Position>
-        <Filename Value="Inc\Unit\uWinManager.pas"/>
-        <Caret Line="86" TopLine="77"/>
+        <Filename Value="Inc\Form\uFMessageShow.pas"/>
+        <Caret Line="24" Column="3"/>
       </Position>
       <Position>
-        <Filename Value="Inc\Unit\uWinManager.pas"/>
-        <Caret Line="81" Column="20" TopLine="77"/>
+        <Filename Value="Inc\Form\uFMessageShow.pas"/>
+        <Caret Line="25" Column="3"/>
       </Position>
       <Position>
-        <Filename Value="Inc\Unit\uWinManager.pas"/>
-        <Caret Line="98" Column="9" TopLine="83"/>
+        <Filename Value="Inc\Form\uFMessageShow.pas"/>
+        <Caret Line="26" Column="3"/>
       </Position>
       <Position>
-        <Filename Value="Inc\Unit\uWinManager.pas"/>
-        <Caret Line="103" TopLine="84"/>
+        <Filename Value="Inc\Form\uFMessageShow.pas"/>
+        <Caret Line="25" Column="3"/>
       </Position>
       <Position>
-        <Filename Value="Inc\Unit\uWinManager.pas"/>
-        <Caret Line="105" TopLine="86"/>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="92" Column="28" TopLine="67"/>
       </Position>
       <Position>
-        <Filename Value="Inc\Unit\uWinManager.pas"/>
-        <Caret Line="106" TopLine="87"/>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="90" TopLine="66"/>
       </Position>
       <Position>
-        <Filename Value="Inc\Unit\uWinManager.pas"/>
-        <Caret Line="122" TopLine="108"/>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="91" TopLine="66"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="92" TopLine="66"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uGhostScript.pas"/>
+        <Caret Line="93" TopLine="66"/>
       </Position>
     </JumpHistory>
     <RunParams>

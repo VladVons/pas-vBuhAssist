@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  uGhostScript, uLog, uSettings, uWinManager, uSys, uVarUtil;
+  uGhostScript, uLog, uSettings, uSys, uVarUtil;
 
 type
 
@@ -44,7 +44,7 @@ procedure TFOptimizePDF.ButtonConvertClick(Sender: TObject);
 var
   Ratio: double;
   i, FileOutSize: integer;
-  FileIn, FileOut, LatFilter, FileName: string;
+  FileIn, FileOut, LatFilter, FileName, Ext: string;
   FilesIn: TStringList;
 begin
   if (Trim(LabeledEditDirIn.Text) = '') then
@@ -60,7 +60,7 @@ begin
   end;
 
   try
-    FilesIn := GetDirFiles(LabeledEditDirIn.Text, '*.pdf');
+    FilesIn := GetDirFiles(LabeledEditDirIn.Text, '*.pdf;*.jpg');
     if (FilesIn.Count = 0) then
     begin
       Log.Print('Немає PDF файлів для оптимізації');
@@ -80,8 +80,16 @@ begin
              Log.Print('В назві файла є латинські букви: ' + LatFilter);
         end;
 
-        FileOut := LabeledEditDirOut.Text + PathDelim + ExtractFileName(FileIn);
-        ExecOptimizePDF(FileIn, FileOut);
+        Ext := LowerCase(ExtractFileExt(FileIn));
+        if (Ext = '.pdf') then
+        begin
+          FileOut := LabeledEditDirOut.Text + PathDelim + ExtractFileName(FileIn);
+          GS_OptimizePdf(FileIn, FileOut);
+        end else begin
+          FileOut := LabeledEditDirOut.Text + PathDelim + ChangeFileExt(ExtractFileName(FileIn), '.pdf');
+          GS_JpgToPdf(FileIn, FileOut);
+          end;
+
         FileOutSize := FileGetSize(FileOut);
         Ratio := (1 - (FileOutSize / FileGetSize(FileIn))) * 100;
         Log.Print(Format('%d/%d %s %dkb (%.0f%%)', [i + 1, FilesIn.Count, FileIn, Round(FileOutSize/1000), Ratio]));

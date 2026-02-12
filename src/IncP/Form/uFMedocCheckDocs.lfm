@@ -9,7 +9,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
   ClientWidth = 637
   LCLVersion = '4.4.0.0'
   OnCreate = FormCreate
-  OnShow = FormShow
+  OnDestroy = FormDestroy
   object DBGrid1: TDBGrid
     Left = 0
     Height = 244
@@ -21,6 +21,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
     DataSource = DmFbConnect.DataSource1
     TabOrder = 0
     Visible = False
+    OnDrawColumnCell = DBGrid1DrawColumnCell
   end
   object Panel1: TPanel
     Left = 0
@@ -43,6 +44,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
       ItemHeight = 15
       TabOrder = 0
       Text = 'ComboBoxPath'
+      OnChange = ComboBoxPathChange
     end
     object Label1: TLabel
       Left = 15
@@ -87,6 +89,15 @@ object FMedocCheckDocs: TFMedocCheckDocs
       Width = 75
       Caption = 'Друк'
       TabOrder = 2
+    end
+    object ButtonGetLicense: TButton
+      Left = 485
+      Height = 25
+      Top = 80
+      Width = 75
+      Caption = 'Ліцензія'
+      TabOrder = 3
+      OnClick = ButtonGetLicenseClick
     end
   end
   object ComboBoxMonth: TComboBox
@@ -141,9 +152,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
       '  CARDSENDSTT.NAME,'
       '  --CARD.STATUS,'
       '  CARDSTATUS.NAME AS StatusName,'
-      '  FORM.CHARCODE,'
-      '  --FORM.NAME,'
-      '  '''''
+      '  FORM.CHARCODE'
       'FROM'
       '  ORG'
       'LEFT JOIN CARD'
@@ -151,23 +160,29 @@ object FMedocCheckDocs: TFMedocCheckDocs
       '  AND CARD.PERDATE = DATE %_PERDATE'
       'LEFT JOIN FORM'
       '  ON FORM.CODE = CARD.FORM'
+      '  AND LOWER(FORM.CHARCODE) = :_CHARCODE'
       'LEFT JOIN CARDSTATUS'
       '  ON CARDSTATUS.CODE = CARD.STATUS'
       'LEFT JOIN CARDSENDSTT'
       '  ON CARDSENDSTT.CODE = CARD.SENDSTT'
       'WHERE'
       '  TRUE'
-      '  --AND ORG.EDRPOU = ''45747371'''
-      '  --AND FORM.CHARCODE IN (''j0200126'', ''j0500110'')'
+      '  --AND ORG.EDRPOU = ''37938319'''
+      '  --AND LOWER(FORM.CHARCODE) IN (''j0200126'', ''j0500110'', ''j0100129'', ''j0209513'')'
       '  AND (ORG.DEPT <> ''0'' OR ORG.DEPT IS NULL)'
       '  --AND ORG.INDTAXNUM <> '''''
       '  --AND (CARD.STATUS <> 2 OR CARD.IDORG IS NULL)'
       'ORDER BY'
-      '    StatusName,'
-      '    ORG.SHORTNAME'
+      #9'StatusName,'
+      #9'ORG.SHORTNAME'
       ''
     )
-    Params = <>
+    Params = <    
+      item
+        DataType = ftUnknown
+        Name = '_CHARCODE'
+        ParamType = ptInput
+      end>
     Macros = <    
       item
         DataType = ftUnknown
@@ -186,59 +201,24 @@ object FMedocCheckDocs: TFMedocCheckDocs
     Left = 368
     Top = 136
   end
-  object SQLQuery2: TSQLQuery
+  object SQLQueryCodes: TSQLQuery
     FieldDefs = <>
+    AfterOpen = SQLQuery1AfterOpen
     SQL.Strings = (
       'SELECT'
-      '  ORG.EDRPOU,'
-      '  ORG.SHORTNAME,'
-      '  --ORG.INDTAXNUM,'
-      '  CASE WHEN TRIM(ORG.INDTAXNUM) <> ''100000000000'' AND TRIM(ORG.INDTAXNUM) <> '''''
-      '    THEN ''ПДВ'''
-      '    ELSE '''''
-      '  END AS vat,'
-      '  ORG.DEPT,'
-      '  CARD.PERDATE,'
-      '  --CARD.SENDSTT,'
-      '  CAST(CARD.MODDATE AS DATE) AS MODDATE,'
-      '  CARDSENDSTT.NAME,'
-      '  --CARD.STATUS,'
-      '  CARDSTATUS.NAME AS StatusName,'
-      '  FORM.CHARCODE,'
-      '  --FORM.NAME,'
-      '  '''''
+      '  ORG.EDRPOU'
       'FROM'
       '  ORG'
-      'LEFT JOIN CARD'
-      '  ON CARD.IDORG = ORG.Code'
-      '  AND CARD.PERDATE = DATE %_PERDATE'
-      'LEFT JOIN FORM'
-      '  ON FORM.CODE = CARD.FORM'
-      'LEFT JOIN CARDSTATUS'
-      '  ON CARDSTATUS.CODE = CARD.STATUS'
-      'LEFT JOIN CARDSENDSTT'
-      '  ON CARDSENDSTT.CODE = CARD.SENDSTT'
       'WHERE'
-      '  TRUE'
-      '  --AND ORG.EDRPOU = ''45747371'''
-      '  --AND FORM.CHARCODE IN (''j0200126'', ''j0500110'')'
-      '  AND (ORG.DEPT <> ''0'' OR ORG.DEPT IS NULL)'
-      '  --AND ORG.INDTAXNUM <> '''''
-      '  --AND (CARD.STATUS <> 2 OR CARD.IDORG IS NULL)'
+      '  (ORG.DEPT <> ''0'' OR ORG.DEPT IS NULL)'
       'ORDER BY'
-      '    StatusName,'
-      '    ORG.SHORTNAME'
+      '  EDRPOU'
       ''
     )
     Params = <>
-    Macros = <    
-      item
-        DataType = ftUnknown
-        Name = '_PERDATE'
-        ParamType = ptInput
-      end>
+    Macros = <>
     MacroCheck = True
     Left = 296
-    Top = 192
+    Top = 200
   end
 end
