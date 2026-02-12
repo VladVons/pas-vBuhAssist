@@ -1,3 +1,6 @@
+// Created: 2026.02.05
+// Author: Vladimir Vons <VladVons@gmail.com>
+
 unit uGhostScript;
 
 {$mode objfpc}{$H+}
@@ -5,8 +8,7 @@ unit uGhostScript;
 interface
 
 uses
-  SysUtils, Process, Classes,
-  uFMessageShow;
+  SysUtils, Process, Classes;
 
 const
   cGS_Dir = 'addons\gs';
@@ -19,7 +21,7 @@ implementation
 function GS_Exec(aParam: TStrings): Integer;
 var
   Process: TProcess;
-  FilePath, ExeDir, Str: string;
+  FilePath, ExeDir: string;
   Output: TStringList;
 begin
   ExeDir := ExtractFilePath(ParamStr(0));
@@ -40,8 +42,8 @@ begin
     Result := Process.ExitStatus;
 
     //Output.LoadFromStream(Process.Stderr);
-    Output.LoadFromStream(Process.Output);
-    Str := Output.Text;
+    //Output.LoadFromStream(Process.Output);
+    //Str := Output.Text;
   finally
     Process.Free();
     Output.Free();
@@ -88,8 +90,6 @@ begin
     Params.Add('-dBATCH');
     Params.Add('-sOutputFile=' + aFileOut);
     Params.Add(FilePath + ' -c "(' + FilePathUnix  + ')" viewJPEG');
-    FMessageShow.Memo1.Lines := Params;
-    FMessageShow.Show();
     Result := GS_Exec(Params);
   finally
     Params.Free();

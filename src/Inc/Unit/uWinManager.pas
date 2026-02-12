@@ -1,3 +1,6 @@
+// Created: 2026.02.05
+// Author: Vladimir Vons <VladVons@gmail.com>
+
 unit uWinManager;
 
 {$mode objfpc}{$H+}
