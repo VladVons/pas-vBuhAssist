@@ -12,4 +12,5 @@ Api()
      https://windows.cloud-server.com.ua/api
 }
 
-Api '{"type":"get_licenses","app":"vBuhAssist","firms":["88888801"]}'
+Api '{"type":"get_licenses","app":"BuhAssist","firms":["88888801","40050963"]}'
+#Api '{"type":"order_licenses","app":"BuhAssist","user":"yuta","passw":"1234","firms":["88888801"]}'
