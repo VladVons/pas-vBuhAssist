@@ -20,6 +20,7 @@ function GetDirFiles(const aDir, aMask: string): TStringList;
 procedure AddDirDll(const aPath: String);
 function FileGetSize(const aFileName: string): Int64;
 procedure FileAppendText(const aFile, aMsg: string);
+procedure StrToFile(const aStr, aFile: string);
 
 
 implementation
@@ -80,6 +81,18 @@ begin
     end;
   finally
     Masks.Free();
+  end;
+end;
+
+procedure StrToFile(const aStr, aFile: string);
+var
+  FS: TFileStream;
+begin
+  FS := TFileStream.Create(aFile, fmCreate);
+  try
+    FS.WriteBuffer(Pointer(aStr)^, Length(aStr));
+  finally
+    FS.Free();
   end;
 end;
 

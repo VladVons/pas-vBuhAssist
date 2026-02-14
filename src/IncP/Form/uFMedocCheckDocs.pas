@@ -175,7 +175,7 @@ end;
 
 procedure TFMedocCheckDocs.SetComboBoxToCurrentMonth(aComboBox: TComboBox);
 var
-  i, currentMonth: Integer;
+  i, Month: Integer;
 begin
   aComboBox.Items.Clear();
   aComboBox.Items.AddObject('Січень', TObject(1));
@@ -198,11 +198,11 @@ begin
   //aComboBox.Items.AddObject('-- 2 Півріччя', TObject(1002));
   //aComboBox.Items.AddObject('--- Рік', TObject(10000));
 
-  currentMonth := MonthOf(Date());  // 1..12
+  Month := MonthOf(IncMonth(Date, -1));
 
   for i := 0 to aComboBox.Items.Count - 1 do
   begin
-    if Integer(aComboBox.Items.Objects[i]) = currentMonth then
+    if Integer(aComboBox.Items.Objects[i]) = Month then
     begin
       aComboBox.ItemIndex := i;
       Exit;
@@ -211,19 +211,18 @@ begin
 end;
 
 procedure TFMedocCheckDocs.SetComboBoxToCurrentYear(aComboBox: TComboBox);
+const
+  YearsBack: integer = 2;
 var
-  i, currentYear: Integer;
+  i, Year: Integer;
 begin
+  Year := YearOf(IncMonth(Date, -1));
+
   aComboBox.Items.Clear();
-  currentYear := YearOf(Now());
-
-  // Додаємо 3 роки назад
-  for i := currentYear - 3 to currentYear + 1 do
-  begin
+  for i := Year - YearsBack to Year + 1 do
     aComboBox.Items.AddObject(IntToStr(i), TObject(i));
-  end;
 
-  aComboBox.ItemIndex := 3; // індекс поточного року
+  aComboBox.ItemIndex := YearsBack;
 end;
 
 procedure TFMedocCheckDocs.SQLQuery1AfterOpen(DataSet: TDataSet);
