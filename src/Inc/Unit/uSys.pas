@@ -10,20 +10,30 @@ interface
 uses
   Classes, Windows, SysUtils;
 
+function AddDllDirectory(aDir: PWideChar): THandle; stdcall; external 'kernel32.dll';
 function SetDllDirectoryW(lpPathName: PWideChar): BOOL; stdcall; external 'kernel32.dll';
+function SetDefaultDllDirectories(aDirFlags: DWORD): BOOL; stdcall; external 'kernel32.dll';
+
+function GetAppProgramData(): String;
+function GetAppName(): String;
 function GetDirFiles(const aDir, aMask: string): TStringList;
-procedure SysPathAddd(const aPath: String);
+procedure AddDirDll(const aPath: String);
 function FileGetSize(const aFileName: string): Int64;
 procedure FileAppendText(const aFile, aMsg: string);
 
 
 implementation
 
-procedure SysPathAddd(const aPath: String);
+procedure AddDirDll(const aPath: String);
 var
-  Path: string;
+  ws: WideString;
 begin
-  SetDllDirectoryW('c:\Program Files\Medoc\Medoc\fb3\32');
+  if (not DirectoryExists(aPath)) then
+    raise Exception.Create('Directory not found: ' + aPath);
+
+  ws := UTF8Decode(aPath);
+  SetDllDirectoryW(PWideChar(ws));
+  //AddDllDirectory(PWideChar(ws));
 end;
 
 function FileGetSize(const aFileName: string): Int64;
@@ -46,13 +56,14 @@ var
   Masks: TStringList;
   I: Integer;
 begin
-  Result := TStringList.Create;
-  Masks := TStringList.Create;
-  try
-    Masks.StrictDelimiter := True;
-    Masks.Delimiter := ';';
-    Masks.DelimitedText := aMask;
+  Result := TStringList.Create();
 
+  Masks := TStringList.Create;
+  Masks.StrictDelimiter := True;
+  Masks.Delimiter := ';';
+  Masks.DelimitedText := aMask;
+
+  try
     for I := 0 to Masks.Count - 1 do
     begin
       if FindFirst(aDir + PathDelim + Masks[I], faAnyFile, SR) = 0 then
@@ -67,7 +78,6 @@ begin
         FindClose(SR);
       end;
     end;
-
   finally
     Masks.Free();
   end;
@@ -89,6 +99,20 @@ begin
     CloseFile(HFile);
   end;
 end;
+
+function GetAppName(): String;
+begin
+  Result := ChangeFileExt(ExtractFileName(ParamStr(0)), '');
+end;
+
+function GetAppProgramData(): String;
+begin
+  Result := GetEnvironmentVariable('ProgramData') + PathDelim + GetAppName();
+end;
+
+
+initialization
+  //SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
 
 end.
 

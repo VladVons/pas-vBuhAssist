@@ -29,6 +29,9 @@ type
 
   procedure ShowOrCreateForm(AClass: TFormClass);
 
+  var
+    WinManager: TWinManager;
+
 implementation
 
 constructor TWinManager.Create(aPageControl: TPageControl; aPopupMenu: TPopupMenu);

@@ -3,24 +3,25 @@ object FLogin: TFLogin
   Height = 125
   Top = 250
   Width = 216
+  BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Авторизація'
   ClientHeight = 125
   ClientWidth = 216
   Position = poOwnerFormCenter
   LCLVersion = '4.4.0.0'
-  object User: TLabeledEdit
+  object EditUser: TLabeledEdit
     Left = 72
     Height = 23
     Top = 16
     Width = 120
     EditLabel.Height = 23
-    EditLabel.Width = 64
-    EditLabel.Caption = 'Користувач'
+    EditLabel.Width = 30
+    EditLabel.Caption = 'Логін'
     LabelPosition = lpLeft
     TabOrder = 0
   end
-  object Password: TLabeledEdit
+  object EditPassword: TLabeledEdit
     Left = 72
     Height = 23
     Top = 48

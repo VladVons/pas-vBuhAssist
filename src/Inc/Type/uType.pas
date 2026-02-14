@@ -4,6 +4,7 @@
 unit uType;
 
 {$mode objfpc}{$H+}
+{$modeswitch typehelpers}
 
 interface
 
@@ -20,6 +21,9 @@ type
       constructor Create(aArrStr : TStringArray);
     end;
 
+    //TStringHelper = type helper for <T>
+    //  function Len: Integer;
+    //end;
 
 implementation
 
@@ -32,5 +36,11 @@ begin
   for i := Low(aArrStr) to High(aArrStr) do
       Add(aArrStr[i]);
 end;
+
+
+//function TStringHelper.Len(): Integer;
+//begin
+//  Result := Length(Self);
+//end;
 
 end.

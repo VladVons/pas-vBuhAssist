@@ -12,6 +12,7 @@ const
   cFileLic          = 'license.dat';
   cFileLicPassw     = 'BuhAssist';
   cMaxLicensesFree  = 3;
+  cDirAddons        = 'addons';
 
 implementation
 

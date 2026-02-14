@@ -66,7 +66,7 @@ begin
     FilesIn := GetDirFiles(LabeledEditDirIn.Text, '*.pdf;*.jpg');
     if (FilesIn.Count = 0) then
     begin
-      Log.Print('Немає PDF файлів для оптимізації');
+      Log.Print('Немає (PDF, JPG) файлів для оптимізації');
       Exit;
     end;
 
@@ -105,12 +105,12 @@ end;
 
 procedure TFOptimizePDF.SelectDir(aLabeledEdit: TLabeledEdit; const aKey: string);
 begin
-  if DirectoryExists(aLabeledEdit.Text) then
+  if (DirectoryExists(aLabeledEdit.Text)) then
      SelectDirectoryDialog1.InitialDir := aLabeledEdit.Text;
 
-  if SelectDirectoryDialog1.Execute() then
+  if (SelectDirectoryDialog1.Execute()) then
   begin
-     ConfWriteKey('OptimizePDF', aKey, SelectDirectoryDialog1.FileName);
+     ConfKeyWrite('OptimizePDF', aKey, SelectDirectoryDialog1.FileName);
      aLabeledEdit.Text := SelectDirectoryDialog1.FileName;
   end;
 end;
@@ -132,10 +132,10 @@ end;
 
 procedure TFOptimizePDF.FormShow(Sender: TObject);
 begin
-  LabeledEditDirIn.Text := ConfReadKey('OptimizePDF', 'DirIn');
-  LabeledEditDirOut.Text := ConfReadKey('OptimizePDF', 'DirOut');
-  CheckBoxCheckName.Checked := ConfReadKey('OptimizePDF', 'CheckBoxCheckName') = 'true';
-  LabeledEditDirOut.Text := ConfReadKey('OptimizePDF', 'DirOut');
+  LabeledEditDirIn.Text := ConfKeyRead('OptimizePDF', 'DirIn');
+  LabeledEditDirOut.Text := ConfKeyRead('OptimizePDF', 'DirOut');
+  CheckBoxCheckName.Checked := ConfKeyRead('OptimizePDF', 'CheckBoxCheckName') = 'true';
+  LabeledEditDirOut.Text := ConfKeyRead('OptimizePDF', 'DirOut');
 end;
 
 end.

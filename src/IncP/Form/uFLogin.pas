@@ -17,13 +17,13 @@ type
 
   TFLogin = class(TForm)
     Button1: TButton;
-    User: TLabeledEdit;
-    Password: TLabeledEdit;
+    EditUser: TLabeledEdit;
+    EditPassword: TLabeledEdit;
     procedure Button1Click(Sender: TObject);
   private
 
   public
-
+    procedure Clear();
   end;
 
 var
@@ -37,7 +37,19 @@ implementation
 
 procedure TFLogin.Button1Click(Sender: TObject);
 begin
+  if (Trim(EditUser.Text) = '') then
+  begin
+    EditUser.SetFocus();
+    Exit;
+  end;
+
   ModalResult := mrOk;
+end;
+
+procedure TFLogin.Clear();
+begin
+  EditUser.Text := '';
+  EditPassword.Text := '';
 end;
 
 end.

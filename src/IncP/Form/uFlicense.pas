@@ -16,11 +16,6 @@ type
   { TFLicense }
 
   TFLicense = class(TForm)
-    ButtonGetLicense: TButton;
-    LabeledEditActivationCode: TLabeledEdit;
-    Panel1: TPanel;
-    procedure ButtonGetLicenseClick(Sender: TObject);
-    procedure FormShow(Sender: TObject);
   private
     procedure LicRead();
   public
@@ -64,29 +59,6 @@ begin
   end;
 end;
 
-procedure TFLicense.FormShow(Sender: TObject);
-begin
-  LicRead();
-end;
-
-procedure TFLicense.ButtonGetLicenseClick(Sender: TObject);
-var
-  Firms: TStringList;
-  Matrix: TStringMatrix;
-begin
-  try
-    Log.Print('Запит на отримання ліцензій відправлено');
-
-    Firms := TStringList.Create();
-    Firms.AddStrings(['88888801']);
-    Matrix := GetLicenceFromHttp(Firms, 'MedocCheckDoc', '');
-    MatrixCryptToFile(cFileLic, cFileLicPassw, Matrix);
-    LicRead();
-  finally
-    Matrix.Free();
-    Firms.Free();
-  end;
-end;
 
 end.
 

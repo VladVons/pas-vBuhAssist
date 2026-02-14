@@ -10,13 +10,13 @@ interface
 uses
   SysUtils, IniFiles;
 
-function ConfReadKey(const aSect, aItem: string): string;
-procedure ConfWriteKey(const aSect, aItem, aValue: string);
+function ConfKeyRead(const aSect, aItem: string): string;
+procedure ConfKeyWrite(const aSect, aItem, aValue: string);
 
 
 implementation
 
-function ConfReadKey(const aSect, aItem: string): string;
+function ConfKeyRead(const aSect, aItem: string): string;
 var
   Ini: TIniFile;
   ConfFile: String;
@@ -30,7 +30,7 @@ begin
   end;
 end;
 
-procedure ConfWriteKey(const aSect, aItem, aValue: string);
+procedure ConfKeyWrite(const aSect, aItem, aValue: string);
 var
   Ini: TIniFile;
   ConfFile: String;

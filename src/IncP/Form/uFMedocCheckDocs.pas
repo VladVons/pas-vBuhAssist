@@ -18,6 +18,7 @@ type
 
   TFMedocCheckDocs = class(TForm)
     ButtonGetLicense: TButton;
+    ButtonOrderLicense: TButton;
     ButtonPrint: TButton;
     ButtonExec: TButton;
     ComboBoxPath: TComboBox;
@@ -34,6 +35,7 @@ type
     SQLQueryCodes: TSQLQuery;
     procedure ButtonExecClick(Sender: TObject);
     procedure ButtonGetLicenseClick(Sender: TObject);
+    procedure ButtonOrderLicenseClick(Sender: TObject);
     procedure ComboBoxPathChange(Sender: TObject);
     procedure DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure FormCreate(Sender: TObject);
@@ -68,7 +70,7 @@ var
 begin
   JObj := TJSONObject(ComboBoxPath.Items.Objects[aIdx]);
   Path := JObj.Strings['path']  + '\fb3\32';
-  SysPathAddd(Path);
+  AddDirDll(Path);
 end;
 
 function TFMedocCheckDocs.GetFirmCodes(): TStringList;
@@ -99,7 +101,14 @@ var
   Matrix: TStringMatrix;
 begin
   try
-    Matrix := MatrixCryptFromFile(cFileLic, cFileLicPassw);
+    if FileExists (cFileLic) then
+       Matrix := MatrixCryptFromFile(cFileLic, cFileLicPassw)
+    else
+    begin
+      Matrix := TStringMatrix.Create();
+      Log.Print('Файл ліцензій не знайдено ' + cFileLic);
+    end;
+
     Result := TStringListEx.Create(Matrix.ColExport(0));
 
     FirmCodes := GetFirmCodes();
@@ -120,13 +129,14 @@ end;
 
 procedure TFMedocCheckDocs.QueryOpen();
 var
-  Month, Year: Integer;
+  Month, Year, Idx: Integer;
   Str: String;
   JObj: TJSONObject;
   Port: Integer;
 begin
   DmFbConnect.IBConnection1.Connected := False;
-  JObj := TJSONObject(ComboBoxPath.Items.Objects[ComboBoxPath.ItemIndex]);
+  Idx := ComboBoxPath.ItemIndex;
+  JObj := TJSONObject(ComboBoxPath.Items.Objects[Idx]);
 
   // якщо вказаний порт то версія мережна інакше embeded
   Port := JObj.Get('port', 0);
@@ -261,20 +271,40 @@ procedure TFMedocCheckDocs.ButtonGetLicenseClick(Sender: TObject);
 var
   FirmCodes: TStringList;
   Matrix: TStringMatrix;
-  Str: String;
 begin
-   FLogin.Caption := 'Авторизація дилера';
-   if (FLogin.ShowModal = mrOk) then
-   begin
-     if (LeftStr(FLogin.Password.Text, 4) = 'med_') then
+  try
+    Log.Print('Оновлення ліцензі ...');
+    QueryOpen();
+    FirmCodes := GetFirmCodes();
+    Matrix := GetLicenceFromHttp(FirmCodes, 'MedocCheckDoc');
+    MatrixCryptToFile(cFileLic, cFileLicPassw, Matrix);
+  finally
+    Matrix.Free();
+    FirmCodes.Free();
+  end;
+end;
+
+procedure TFMedocCheckDocs.ButtonOrderLicenseClick(Sender: TObject);
+var
+  Auth: boolean;
+  FirmCodes: TStringList;
+begin
+   FirmCodes := nil;
+   try
+     FLogin.Caption := 'Авторизація дилера';
+     if (FLogin.ShowModal = mrOk) then
      begin
        QueryOpen();
        FirmCodes := GetFirmCodes();
-       Matrix := GetLicenceFromHttp(FirmCodes, 'MedocCheckDoc', FLogin.User.Text);
-       Log.Print('Запит на отримання ліцензій відправлено');
-     end
-     else
-         Log.Print('Не вірний пароль');
+       Auth := OrderLicenceFromHttp(FirmCodes, 'MedocCheckDoc', FLogin.EditUser.Text, FLogin.EditPassword.Text);
+       if (Auth) then
+         Log.Print('Запит на отримання ліцензій відправлено')
+       else
+         Log.Print('Помилка авторизації');
+     end;
+     FLogin.Clear();
+   finally
+     FreeAndNil(FirmCodes);
    end;
 end;
 
@@ -300,7 +330,8 @@ end;
 
 procedure TFMedocCheckDocs.FormCreate(Sender: TObject);
 var
-  i: integer;
+  i, x, y: integer;
+  d: double;
   JObj: TJSONObject;
 begin
   JMedocApp := GetMedocInfoFromReg();
@@ -334,8 +365,8 @@ end;
 
 procedure TFMedocCheckDocs.FormDestroy(Sender: TObject);
 begin
-  JMedocApp.Free();
-  FirmCodesLicensed.Free();
+  FreeAndNil(JMedocApp);
+  FreeAndNil(FirmCodesLicensed);
 end;
 
 end.

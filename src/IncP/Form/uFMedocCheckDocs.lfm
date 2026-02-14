@@ -88,15 +88,25 @@ object FMedocCheckDocs: TFMedocCheckDocs
       Top = 80
       Width = 75
       Caption = 'Друк'
+      Enabled = False
       TabOrder = 2
     end
-    object ButtonGetLicense: TButton
-      Left = 485
+    object ButtonOrderLicense: TButton
+      Left = 432
       Height = 25
       Top = 80
       Width = 75
-      Caption = 'Ліцензія'
+      Caption = 'Замовити'
       TabOrder = 3
+      OnClick = ButtonOrderLicenseClick
+    end
+    object ButtonGetLicense: TButton
+      Left = 520
+      Height = 25
+      Top = 80
+      Width = 75
+      Caption = 'Оновити'
+      TabOrder = 4
       OnClick = ButtonGetLicenseClick
     end
   end

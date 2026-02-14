@@ -29,17 +29,16 @@ implementation
 
 constructor TLog.Create(aMemo: TMemo);
 var
-  DirLog, FileBase: string;
+  DirApp: string;
 begin
   inherited Create();
   Memo := aMemo;
 
-  FileBase := ChangeFileExt(ExtractFileName(ParamStr(0)), '');
-  DirLog := GetEnvironmentVariable('ProgramData') + PathDelim + FileBase;
-  if not DirectoryExists(DirLog) then
-     ForceDirectories(DirLog);
+  DirApp := GetAppProgramData();
+  if (not DirectoryExists(DirApp)) then
+     ForceDirectories(DirApp);
 
-  self.FileLog := DirLog + PathDelim + FileBase + '.log';
+  self.FileLog := DirApp + PathDelim + GetAppName() + '.log';
 end;
 
 procedure TLog.ToFile(const aMsg: string);

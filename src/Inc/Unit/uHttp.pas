@@ -8,7 +8,8 @@ unit uHttp;
 interface
 
 uses
-  Classes, SysUtils, fphttpclient, fpjson;
+  Classes, SysUtils, fphttpclient, fpjson,
+  uSys, uConst;
 
 function PostJSON(const aURL: string; aJSON: TJSONObject): TJSONObject;
 
@@ -30,9 +31,11 @@ begin
         Result := TJSONObject(GetJSON(Data));
       end;
     finally
-      FreeAndNil(Client);
+      Client.Free();
     end;
 end;
 
-end.
+initialization
+  //AddDirDll(cDirAddons + PathDelim + 'ssl');
 
+end.

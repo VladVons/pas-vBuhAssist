@@ -8,10 +8,11 @@ unit uLicence;
 interface
 
 uses
-  Classes, fpjson,
+  Classes, SysUtils, fpjson,
   uHttp, uGenericMatrix, uConst;
 
-  function GetLicenceFromHttp(aFirms: TStrings; const aModule, aDealer: String): TStringMatrix;
+  function GetLicenceFromHttp(aFirms: TStrings; const aModule: String): TStringMatrix;
+  function OrderLicenceFromHttp(aFirms: TStrings; const aModule, aDealerName, aDealerPassw: String): boolean;
   procedure GetLicenceFromHttpToFile(const aModule: string; aFirms: TStringList);
   procedure MatrixCryptToFile(const aFileName, aPassword: string; const aMatrix: TStringMatrix);
   function MatrixCryptFromFile(const aFileName, aPassword: string): TStringMatrix;
@@ -21,45 +22,77 @@ implementation
 type
 THash256 = array[0..31] of Byte;
 
-function GetLicenceFromHttp(aFirms: TStrings; const aModule, aDealer: String): TStringMatrix;
+function GetLicenceFromHttp(aFirms: TStrings; const aModule: String): TStringMatrix;
 var
   i: Integer;
-  Json, Row: TJSONObject;
+  JsonReq, JsonRes, Row: TJSONObject;
   ArrLic, Licenses: TJSONArray;
 begin
   try
     Result := TStringMatrix.Create();
+    JsonRes := TJSONObject.Create();
 
-    Json := TJSONObject.Create();
-    Json.Add('type', 'get_licenses');
-    Json.Add('app', 'BuhAssist');
-    Json.Add('module', aModule);
-    Json.Add('dealer', aDealer);
+    JsonReq := TJSONObject.Create();
+    JsonReq.Add('type', 'get_licenses');
+    JsonReq.Add('app', 'BuhAssist');
+    JsonReq.Add('module', aModule);
 
     ArrLic := TJSONArray.Create();
     for i := 0 to aFirms.Count - 1 do
       ArrLic.Add(aFirms[i]);
-    Json.Add('firms', ArrLic);
+    JsonReq.Add('firms', ArrLic);
 
-    Json := PostJSON('https://windows.cloud-server.com.ua/api', Json);
-    Licenses := Json.Arrays['licenses'];
+    JsonRes := PostJSON('https://windows.cloud-server.com.ua/api', JsonReq);
+    Licenses := JsonRes.Arrays['licenses'];
     for i := 0 to Licenses.Count - 1 do
     begin
       Row := Licenses.Objects[I];
       Result.Add([Row.Strings['firm'], Row.Strings['module'], Row.Strings['till']]);
     end;
   finally
-    Json.Free();
-    ArrLic.Free();
+    JsonReq.Free();
+    JsonRes.Free();
+    //ArrLic.Free();
   end;
 end;
+
+function OrderLicenceFromHttp(aFirms: TStrings; const aModule, aDealerName, aDealerPassw: String): boolean;
+var
+  i: Integer;
+  Err: string;
+  JsonReq, JsonRes: TJSONObject;
+  ArrLic: TJSONArray;
+begin
+  try
+    JsonReq := TJSONObject.Create();
+    JsonReq.Add('type', 'order_licenses');
+    JsonReq.Add('app', 'BuhAssist');
+    JsonReq.Add('module', aModule);
+    JsonReq.Add('user', aDealerName);
+    JsonReq.Add('passw', aDealerPassw);
+
+    ArrLic := TJSONArray.Create();
+    for i := 0 to aFirms.Count - 1 do
+      ArrLic.Add(aFirms[i]);
+    JsonReq.Add('firms', ArrLic);
+
+    JsonRes := PostJSON('https://windows.cloud-server.com.ua/api', JsonReq);
+    Err := JsonRes.Get('error', '');
+    Result := Err.IsEmpty();
+  finally
+    JsonRes.Free();
+    JsonReq.Free();
+    //ArrLic.Free(); already by JsonReq
+  end;
+end;
+
 
 procedure GetLicenceFromHttpToFile(const aModule: string; aFirms: TStringList);
 var
   Matrix: TStringMatrix;
 begin
   try
-    Matrix := GetLicenceFromHttp(aFirms, aModule, '');
+    Matrix := GetLicenceFromHttp(aFirms, aModule);
     MatrixCryptToFile(cFileLic, cFileLicPassw, Matrix);
   finally
     Matrix.Free();

@@ -4,39 +4,6 @@ object FLicense: TFLicense
   Top = 250
   Width = 320
   Caption = 'Ліцензія'
-  ClientHeight = 240
-  ClientWidth = 320
   LCLVersion = '4.4.0.0'
   OnShow = FormShow
-  object LabeledEditActivationCode: TLabeledEdit
-    Left = 16
-    Height = 23
-    Top = 40
-    Width = 192
-    EchoMode = emPassword
-    EditLabel.Height = 15
-    EditLabel.Width = 192
-    EditLabel.Caption = 'Код активвації'
-    PasswordChar = '*'
-    TabOrder = 0
-  end
-  object Panel1: TPanel
-    Left = 0
-    Height = 50
-    Top = 190
-    Width = 320
-    Align = alBottom
-    ClientHeight = 50
-    ClientWidth = 320
-    TabOrder = 1
-    object ButtonGetLicense: TButton
-      Left = 8
-      Height = 25
-      Top = 8
-      Width = 75
-      Caption = 'Отримати'
-      TabOrder = 0
-      OnClick = ButtonGetLicenseClick
-    end
-  end
 end

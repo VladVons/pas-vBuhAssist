@@ -16,11 +16,16 @@ uses
   Interfaces, // this includes the LCL widgetset
   Forms, uFMain, uFAbout, uFMedocCheckDocs, uWinManager, uGenericMatrix,
   uDmFbConnect, uWinReg, uLicence, uFLicense, uSys, uGhostScript, uFOptimizePDF,
-  uSettings, uVarUtil, uLog, uConst, uFLogin, uFMessageShow;
+  uSettings, uVarUtil, uLog, uConst, uFLogin, uFMessageShow, uExceptionHandler,
+  uType;
 
 {$R *.res}
-
+var
+  AppException: TAppException;
 begin
+  AppException := TAppException.Create();
+  Application.OnException := @AppException.Handler;
+
   RequireDerivedFormResource:=True;
   Application.Scaled:=True;
   {$PUSH}{$WARN 5044 OFF}

@@ -10,7 +10,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList,
   ExtCtrls, ComCtrls, StdCtrls, fpjson,
-  uFAbout, uFMedocCheckDocs, uFLicense, uFOptimizePDF, uWinManager, uLog, uConst;
+  uType, uFAbout, uFMedocCheckDocs, uFLicense, uFOptimizePDF, uWinManager, uLog, uConst;
 
 type
 
@@ -41,7 +41,6 @@ type
     procedure FormCreate(Sender: TObject);
     procedure MenuItemCloseTabClick(Sender: TObject);
   private
-    WinManager: TWinManager;
   public
 
   end;
@@ -62,12 +61,12 @@ end;
 
 procedure TFMain.ActionFMedocCheckDocsExecute(Sender: TObject);
 begin
-    WinManager.Add(TFMedocCheckDocs);
+  WinManager.Add(TFMedocCheckDocs);
 end;
 
 procedure TFMain.ActionLicenseExecute(Sender: TObject);
 begin
-    WinManager.Add(TFLicense);
+  WinManager.Add(TFLicense);
 end;
 
 procedure TFMain.ActionOptimizePDFExecute(Sender: TObject);
@@ -78,8 +77,14 @@ end;
 procedure TFMain.FormCreate(Sender: TObject);
 var
   i: integer;
+  b: boolean;
   Forms: array of TFormClass;
+  str: string;
+
 begin
+  str := '12345';
+  b := str.IsEmpty();
+
   Caption := Caption + ' ' + cVersion;
   Log := TLog.Create(MemoInfo1);
   Log.Print('Початок');
@@ -99,7 +104,7 @@ end;
 
 procedure TFMain.MenuItemCloseTabClick(Sender: TObject);
 begin
-     WinManager.CloseActive();
+  WinManager.CloseActive();
 end;
 
 
