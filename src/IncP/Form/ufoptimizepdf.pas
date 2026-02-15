@@ -109,7 +109,7 @@ begin
 
   if (SelectDirectoryDialog1.Execute()) then
   begin
-     ConfKeyWrite('OptimizePDF', aKey, SelectDirectoryDialog1.FileName);
+     Conf.KeyWrite(Name, aKey, SelectDirectoryDialog1.FileName);
      aLabeledEdit.Text := SelectDirectoryDialog1.FileName;
   end;
 end;
@@ -126,9 +126,9 @@ end;
 
 procedure TFOptimizePDF.FormShow(Sender: TObject);
 begin
-  LabeledEditDirIn.Text := ConfKeyRead(Name, 'DirIn');
-  LabeledEditDirOut.Text := ConfKeyRead(Name, 'DirOut');
-  CheckBoxCheckName.Checked := ConfKeyRead(Name, 'CheckBoxCheckName') = 'true';
+  LabeledEditDirIn.Text := Conf.KeyRead(Name, 'DirIn');
+  LabeledEditDirOut.Text := Conf.KeyRead(Name, 'DirOut');
+  CheckBoxCheckName.Checked := Conf.KeyRead(Name, 'CheckBoxCheckName') = 'true';
 end;
 
 end.

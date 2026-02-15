@@ -11,22 +11,31 @@ uses
   SysUtils, IniFiles,
   uSys;
 
-const
-  cConfFile = 'app.ini';
+type
+  TConf = class
+  private
+    FileConf: string;
+  public
+    constructor Create();
+    function KeyRead(const aSect, aItem: string): string;
+    procedure KeyWrite(const aSect, aItem, aValue: string);
+  end;
 
-function ConfKeyRead(const aSect, aItem: string): string;
-procedure ConfKeyWrite(const aSect, aItem, aValue: string);
-
+var
+  Conf: TConf;
 
 implementation
 
-function ConfKeyRead(const aSect, aItem: string): string;
+constructor TConf.Create();
+begin
+  FileConf := GetAppFile('app.ini');
+end;
+
+function TConf.KeyRead(const aSect, aItem: string): string;
 var
   Ini: TIniFile;
-  ConfFile: String;
 begin
-  ConfFile := GetAppFile(cConfFile);
-  Ini := TIniFile.Create(ConfFile);
+  Ini := TIniFile.Create(FileConf);
   try
     Result := Ini.ReadString(aSect, aItem, '');
   finally
@@ -34,13 +43,11 @@ begin
   end;
 end;
 
-procedure ConfKeyWrite(const aSect, aItem, aValue: string);
+procedure TConf.KeyWrite(const aSect, aItem, aValue: string);
 var
   Ini: TIniFile;
-  ConfFile: String;
 begin
-  ConfFile := GetAppFile(cConfFile);
-  Ini := TIniFile.Create(ConfFile);
+  Ini := TIniFile.Create(FileConf);
   try
     Ini.WriteString(aSect, aItem, aValue);
   finally

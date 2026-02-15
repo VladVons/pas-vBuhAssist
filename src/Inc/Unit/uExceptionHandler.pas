@@ -24,6 +24,8 @@ uses
      procedure Handler(Sender: TObject; E: Exception);
    end;
 
+var
+  AppException: TAppException;
 
 implementation
 

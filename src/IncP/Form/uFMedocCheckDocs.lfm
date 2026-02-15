@@ -204,14 +204,6 @@ object FMedocCheckDocs: TFMedocCheckDocs
     Left = 296
     Top = 136
   end
-  object frReport1: TfrReport
-    InitialZoom = pzDefault
-    Options = []
-    PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit, pbSettings, pbPageSetup]
-    DataType = dtDataSet
-    Left = 368
-    Top = 136
-  end
   object SQLQueryCodes: TSQLQuery
     FieldDefs = <>
     AfterOpen = SQLQuery1AfterOpen

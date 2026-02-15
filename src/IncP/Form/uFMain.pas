@@ -8,9 +8,9 @@ unit uFMain;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList,
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList, Windows,
   ExtCtrls, ComCtrls, StdCtrls, fpjson,
-  uType, uFAbout, uFMedocCheckDocs, uFLicense, uFOptimizePDF, uWinManager, uLog, uConst;
+  uFAbout, uFMedocCheckDocs, uFLicense, uFOptimizePDF, uWinManager, uLog, uSettings, uConst;
 
 type
 
@@ -74,23 +74,31 @@ begin
   WinManager.Add(TFOptimizePDF);
 end;
 
+procedure TFMain.MenuItemCloseTabClick(Sender: TObject);
+begin
+  WinManager.CloseActive();
+end;
+
 procedure TFMain.FormCreate(Sender: TObject);
 var
   i: integer;
-  b: boolean;
   Forms: array of TFormClass;
-  str: string;
-
 begin
-  str := '12345';
-  b := str.IsEmpty();
-
   Caption := Caption + ' ' + cVersion;
   Log := TLog.Create(MemoInfo1);
   Log.Print('Початок');
 
-  WinManager := TWinManager.Create(PageControl1, PopupMenu1);
+  CreateMutex(nil, True, 'MyUniqMutex_QpTfRRasS_1971');
+  if (GetLastError() = ERROR_ALREADY_EXISTS) then
+  begin
+    ShowMessage('Програма вже запущена');
+    Log.Print('Програма вже запущена');
+    Halt();
+  end;
 
+  Conf := TConf.Create();
+
+  WinManager := TWinManager.Create(PageControl1, PopupMenu1);
   Forms := [
     TFMedocCheckDocs,
     TFOptimizePDF
@@ -100,11 +108,6 @@ begin
     WinManager.Add(Forms[i]);
 
   WinManager.SetActivePage(0);
-end;
-
-procedure TFMain.MenuItemCloseTabClick(Sender: TObject);
-begin
-  WinManager.CloseActive();
 end;
 
 

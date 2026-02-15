@@ -8,8 +8,8 @@ unit uConst;
 interface
 
 const
-  cVersion          = '1.01';
-  cFileLic          = 'license.dat';
+  cVersion          = '1.02';
+  cFileLic          = 'app.lic.dat';
   cFileLicPassw     = 'BuhAssist';
   cMaxLicensesFree  = 3;
   cDirAddons        = 'addons';

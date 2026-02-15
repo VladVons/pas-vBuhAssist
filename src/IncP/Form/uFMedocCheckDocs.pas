@@ -26,7 +26,6 @@ type
     ComboBoxDoc: TComboBox;
     ComboBoxYear: TComboBox;
     DBGrid1: TDBGrid;
-    frReport1: TfrReport;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
@@ -44,6 +43,7 @@ type
   private
     JMedocApp: TJSONArray;
     FirmCodesLicensed: TStringList;
+    FileLic: String;
     procedure SetComboBoxToCurrentMonth(aComboBox: TComboBox);
     procedure SetComboBoxToCurrentYear(aComboBox: TComboBox);
     procedure QueryOpen();
@@ -101,12 +101,12 @@ var
   Matrix: TStringMatrix;
 begin
   try
-    if FileExists (cFileLic) then
-       Matrix := MatrixCryptFromFile(cFileLic, cFileLicPassw)
+    if FileExists (FileLic) then
+       Matrix := MatrixCryptFromFile(FileLic, cFileLicPassw)
     else
     begin
       Matrix := TStringMatrix.Create();
-      Log.Print('Файл ліцензій не знайдено ' + cFileLic);
+      Log.Print('Файл ліцензій не знайдено ' + FileLic);
     end;
 
     Result := TStringListEx.Create(Matrix.ColExport(0));
@@ -279,7 +279,7 @@ begin
     QueryOpen();
     FirmCodes := GetFirmCodes();
     Matrix := GetLicenceFromHttp(FirmCodes, 'MedocCheckDoc');
-    MatrixCryptToFile(cFileLic, cFileLicPassw, Matrix);
+    MatrixCryptToFile(FileLic, cFileLicPassw, Matrix);
   finally
     Matrix.Free();
     FirmCodes.Free();
@@ -352,6 +352,8 @@ var
   d: double;
   JObj: TJSONObject;
 begin
+  FileLic := GetAppFile(cFileLic);
+
   JMedocApp := RegFindMedocInfo();
   for i := 0 to JMedocApp.Count - 1 do
   begin

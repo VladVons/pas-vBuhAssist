@@ -20,8 +20,6 @@ uses
   uType, uCrypt;
 
 {$R *.res}
-var
-  AppException: TAppException;
 begin
   AppException := TAppException.Create();
   Application.OnException := @AppException.Handler;
