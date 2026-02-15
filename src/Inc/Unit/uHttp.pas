@@ -27,9 +27,9 @@ begin
       Client.RequestBody := TStringStream.Create(aJson.AsJSON);
       Data := client.Post(aURL);
       if (Client.ResponseStatusCode = 200) and (Data <> '') then
-      begin
-        Result := TJSONObject(GetJSON(Data));
-      end;
+        Result := TJSONObject(GetJSON(Data))
+      else
+        Result := Nil;
     finally
       Client.Free();
     end;

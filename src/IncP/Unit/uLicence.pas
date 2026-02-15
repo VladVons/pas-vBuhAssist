@@ -77,7 +77,10 @@ begin
     JsonReq.Add('firms', ArrLic);
 
     JsonRes := PostJSON('https://windows.cloud-server.com.ua/api', JsonReq);
-    Err := JsonRes.Get('error', '');
+    if Assigned(JsonRes) then
+      Err := JsonRes.Get('error', '')
+    else
+      Err := 'Request error';
     Result := Err.IsEmpty();
   finally
     JsonRes.Free();

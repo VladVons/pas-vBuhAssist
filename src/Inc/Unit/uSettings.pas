@@ -8,7 +8,11 @@ unit uSettings;
 interface
 
 uses
-  SysUtils, IniFiles;
+  SysUtils, IniFiles,
+  uSys;
+
+const
+  cConfFile = 'app.ini';
 
 function ConfKeyRead(const aSect, aItem: string): string;
 procedure ConfKeyWrite(const aSect, aItem, aValue: string);
@@ -21,7 +25,7 @@ var
   Ini: TIniFile;
   ConfFile: String;
 begin
-  ConfFile := GetAppConfigFile(False);
+  ConfFile := GetAppFile(cConfFile);
   Ini := TIniFile.Create(ConfFile);
   try
     Result := Ini.ReadString(aSect, aItem, '');
@@ -35,7 +39,7 @@ var
   Ini: TIniFile;
   ConfFile: String;
 begin
-  ConfFile := GetAppConfigFile(False);
+  ConfFile := GetAppFile(cConfFile);
   Ini := TIniFile.Create(ConfFile);
   try
     Ini.WriteString(aSect, aItem, aValue);

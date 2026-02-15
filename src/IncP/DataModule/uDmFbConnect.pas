@@ -44,7 +44,6 @@ begin
 
   IBConnection1.Params.Clear();
   IBConnection1.Params.Add('embedded=true');
-  //IBConnection1.Params.Add('lc_ctype=WIN1251');
   //IBConnection1.Connected := True;
 
 

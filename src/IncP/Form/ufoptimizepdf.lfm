@@ -7,7 +7,6 @@ object FOptimizePDF: TFOptimizePDF
   ClientHeight = 190
   ClientWidth = 390
   LCLVersion = '4.4.0.0'
-  OnHide = FormHide
   OnShow = FormShow
   object ButtonConvert: TButton
     Left = 24

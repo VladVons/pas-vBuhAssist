@@ -17,6 +17,7 @@ function SetDefaultDllDirectories(aDirFlags: DWORD): BOOL; stdcall; external 'ke
 function GetAppProgramData(): String;
 function GetAppName(): String;
 function GetDirFiles(const aDir, aMask: string): TStringList;
+function GetAppFile(const aFile: String): String;
 procedure AddDirDll(const aPath: String);
 function FileGetSize(const aFileName: string): Int64;
 procedure FileAppendText(const aFile, aMsg: string);
@@ -142,6 +143,19 @@ function GetAppProgramData(): String;
 begin
   Result := GetEnvironmentVariable('ProgramData') + PathDelim + GetAppName();
 end;
+
+
+function GetAppFile(const aFile: String): String;
+var
+  DirApp: String;
+begin
+  DirApp := GetAppConfigDir(False);
+  if (not DirectoryExists(DirApp)) then
+     ForceDirectories(DirApp);
+
+  Result := ConcatPaths([DirApp, aFile]);
+end;
+
 
 
 initialization

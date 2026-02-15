@@ -26,7 +26,6 @@ type
     procedure ButtonConvertClick(Sender: TObject);
     procedure ButtonDirInClick(Sender: TObject);
     procedure ButtonDirOutClick(Sender: TObject);
-    procedure FormHide(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
     procedure SelectDir(aLabeledEdit: TLabeledEdit; const aKey: string);
@@ -47,7 +46,7 @@ procedure TFOptimizePDF.ButtonConvertClick(Sender: TObject);
 var
   Ratio: double;
   i, FileOutSize: integer;
-  FileIn, FileOut, LatFilter, FileName, Ext: string;
+  FileIn, FileOut, LatinFilter, FileName, Ext: string;
   FilesIn: TStringList;
 begin
   if (Trim(LabeledEditDirIn.Text) = '') then
@@ -55,12 +54,14 @@ begin
     Log.Print('Не вказано паку вхідна');
     Exit;
   end;
+  ForceDirectories(LabeledEditDirIn.Text);
 
   if (Trim(LabeledEditDirOut.Text) = '') then
   begin
     Log.Print('Не вказано паку вихідна');
     Exit;
   end;
+  ForceDirectories(LabeledEditDirOut.Text);
 
   try
     FilesIn := GetDirFiles(LabeledEditDirIn.Text, '*.pdf;*.jpg');
@@ -78,20 +79,18 @@ begin
         FileName := ChangeFileExt(ExtractFileName(FileIn), '');
         if (CheckBoxCheckName.Checked) then
         begin
-          LatFilter := ExtractLatin(FileName);
-          if (Length(LatFilter) > 0) Then
-             Log.Print('В назві файла є латинські букви: ' + LatFilter);
+          FileName := LatinToUkr(FileName);
+          FileName := RemoveChars(FileName, '!@#$%^&_-+{}"|<>,');
         end;
 
+        FileOut := LabeledEditDirOut.Text + PathDelim + FileName + '.pdf';
         Ext := LowerCase(ExtractFileExt(FileIn));
         if (Ext = '.pdf') then
-        begin
-          FileOut := LabeledEditDirOut.Text + PathDelim + ExtractFileName(FileIn);
-          GS_OptimizePdf(FileIn, FileOut);
-        end else begin
-          FileOut := LabeledEditDirOut.Text + PathDelim + ChangeFileExt(ExtractFileName(FileIn), '.pdf');
-          GS_JpgToPdf(FileIn, FileOut);
-          end;
+          GS_OptimizePdf(FileIn, FileOut)
+        else if (Ext = '.jpg') then
+          GS_JpgToPdf(FileIn, FileOut)
+        else
+          continue;
 
         FileOutSize := FileGetSize(FileOut);
         Ratio := (1 - (FileOutSize / FileGetSize(FileIn))) * 100;
@@ -125,17 +124,11 @@ begin
   SelectDir(LabeledEditDirOut, 'DirOut');
 end;
 
-procedure TFOptimizePDF.FormHide(Sender: TObject);
-begin
-
-end;
-
 procedure TFOptimizePDF.FormShow(Sender: TObject);
 begin
-  LabeledEditDirIn.Text := ConfKeyRead('OptimizePDF', 'DirIn');
-  LabeledEditDirOut.Text := ConfKeyRead('OptimizePDF', 'DirOut');
-  CheckBoxCheckName.Checked := ConfKeyRead('OptimizePDF', 'CheckBoxCheckName') = 'true';
-  LabeledEditDirOut.Text := ConfKeyRead('OptimizePDF', 'DirOut');
+  LabeledEditDirIn.Text := ConfKeyRead(Name, 'DirIn');
+  LabeledEditDirOut.Text := ConfKeyRead(Name, 'DirOut');
+  CheckBoxCheckName.Checked := ConfKeyRead(Name, 'CheckBoxCheckName') = 'true';
 end;
 
 end.

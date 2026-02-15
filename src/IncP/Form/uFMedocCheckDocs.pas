@@ -148,7 +148,7 @@ begin
     DmFbConnect.IBConnection1.Password := 'masterkey';
   end;
   DmFbConnect.IBConnection1.DatabaseName := JObj.Get('db');
-  DmFbConnect.IBConnection1.Params.Add('lc_ctype=UTF8');
+  //DmFbConnect.IBConnection1.CharSet := 'UTF8';
   DmFbConnect.IBConnection1.Connected := True;
 
   if (FirmCodesLicensed.Count = 0) then

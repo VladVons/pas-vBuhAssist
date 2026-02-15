@@ -28,22 +28,15 @@ var
 implementation
 
 constructor TLog.Create(aMemo: TMemo);
-var
-  DirApp: string;
 begin
   inherited Create();
   Memo := aMemo;
-
-  DirApp := GetAppProgramData();
-  if (not DirectoryExists(DirApp)) then
-     ForceDirectories(DirApp);
-
-  self.FileLog := DirApp + PathDelim + GetAppName() + '.log';
+  FileLog := GetAppFile('app.log');
 end;
 
 procedure TLog.ToFile(const aMsg: string);
 begin
-  FileAppendText(self.FileLog, aMsg);
+  FileAppendText(FileLog, aMsg);
 end;
 
 procedure TLog.Print(const aMsg: String);
@@ -52,8 +45,8 @@ var
 begin
   Msg := FormatDateTime('yy-mm-dd hh:nn:ss', Now()) + ' '+ aMsg;
 
-  if (Memo.Height = 0) then
-    Memo.Height := 75;
+  //if (Memo.Height = 0) then
+  //  Memo.Height := 75;
   Memo.Lines.Add(Msg);
 
   ToFile(Msg);

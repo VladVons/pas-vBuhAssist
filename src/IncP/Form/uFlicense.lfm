@@ -5,5 +5,4 @@ object FLicense: TFLicense
   Width = 320
   Caption = 'Ліцензія'
   LCLVersion = '4.4.0.0'
-  OnShow = FormShow
 end

@@ -10,13 +10,13 @@ unit uExceptionHandler;
 interface
 
 uses
-  Classes, SysUtils,
+  Classes, SysUtils, Forms,
   uSys;
 
  type
   TAppException = class
    private
-     DirApp: String;
+     FileLog: String;
      FlagHandler: Boolean;
      function GetCallStack(aE: Exception): String;
    public
@@ -30,7 +30,7 @@ implementation
 constructor TAppException.Create();
 begin
   FlagHandler := False;
-  DirApp := GetAppProgramData();
+  FileLog := GetAppFile('app.err');
 end;
 
 function TAppException.GetCallStack(aE: Exception): String;
@@ -55,15 +55,20 @@ end;
 
 procedure TAppException.Handler(Sender: TObject; E: Exception);
 var
-  Msg, Date: String;
+  Msg, Stack: String;
 begin
   if (not FlagHandler) then
   begin
     FlagHandler := True;
 
-    Date := FormatDateTime('yyyy-mm-dd hh:nn:ss', Now());
-    Msg := GetCallStack(E);
-    FileAppendText(DirApp + PathDelim + 'error.log', LineEnding + Date + LineEnding + Msg);
+    Msg := LineEnding;
+    if Assigned(Screen.ActiveForm) then
+       Msg := Msg + 'Form ' + Screen.ActiveForm.Name + LineEnding;
+
+    Msg := Msg + FormatDateTime('yyyy-mm-dd hh:nn:ss', Now()) + LineEnding;
+    Stack := GetCallStack(E);
+    Msg := Msg + Stack + LineEnding;
+    FileAppendText(FileLog, Msg);
 
     FlagHandler := False;
   end;
