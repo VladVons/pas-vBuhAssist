@@ -10,25 +10,25 @@ interface
 uses
   Registry, SysUtils, Classes, Windows, fpjson, jsonparser;
 
-function GetMedocInfoFromReg(): TJSONArray;
+function RegFindMedocInfo(): TJSONArray;
+
 
 implementation
 
 
-function GetMedocInfoFromReg(): TJSONArray;
+function RegGetMedocInfo(aKey: HKEY; aJArray: TJSONArray): Integer;
 var
+  i: Integer;
+  StrDB: string;
   Obj: TJSONObject;
   Reg: TRegistry;
   Keys: TStringList;
-  i: Integer;
-  StrDB: string;
 begin
-  Result := TJSONArray.Create();
-
+  Result := 0;
   Reg := TRegistry.Create(KEY_READ);
   Keys := TStringList.Create();
   try
-    Reg.RootKey := HKEY_LOCAL_MACHINE;
+    Reg.RootKey := aKey;
     if Reg.OpenKeyReadOnly('\SOFTWARE\IntellectService') then
     begin
       Reg.GetKeyNames(Keys);
@@ -47,7 +47,8 @@ begin
                Obj.Add('db', StrDB);
                Obj.Add('path', Reg.ReadString('PATH'));
                Obj.Add('port', StrToIntDef(Reg.ReadString('fbPort'), 0));
-               Result.Add(Obj);
+               aJArray.Add(Obj);
+               inc(Result);
             end;
           end;
           Reg.CloseKey();
@@ -60,7 +61,12 @@ begin
   end;
 end;
 
-
+function RegFindMedocInfo(): TJSONArray;
+begin
+  Result := TJSONArray.Create();
+  RegGetMedocInfo(HKEY_LOCAL_MACHINE, Result);
+  RegGetMedocInfo(HKEY_CURRENT_USER, Result);
+end;
 
 end.
 

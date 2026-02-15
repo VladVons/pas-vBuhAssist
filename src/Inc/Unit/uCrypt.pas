@@ -5,12 +5,13 @@ unit uCrypt;
 interface
 
 uses
-  Classes, SysUtils, base64, BlowFish, fpjson, jsonparser;
+  Classes, SysUtils, base64, BlowFish, fpjson, jsonparser,
+  uSys;
 
-function StrEncrypt(const aStr, aKey: string): string;
-function StrDecrypt(const aStr, aKey: string): string;
-function JsonEncrypt(aJObj: TJSONObject; const aKey: string): string;
-function JsonDecrypt(const aStr, aKey: string): TJSONObject;
+function StrEncrypt(const aStr, aKey: string): Ansistring;
+function StrDecrypt(const aStr: Ansistring; aKey: string): string;
+function JsonEncrypt(aJObj: TJSONObject; const aKey: string): AnsiString;
+function JsonDecrypt(const aStr: AnsiString; const aKey: string): TJSONObject;
 
 implementation
 
@@ -23,39 +24,39 @@ begin
     Result[i] := Chr(Ord(aStr[i]) xor Ord(aKey[(i-1) mod aKey.Length + 1]));
 end;
 
-function StrEncrypt(const aStr, aKey: string): string;
+function StrEncrypt(const aStr, aKey: string): Ansistring;
 var
-  s1: TStringStream;
-  en: TBlowFishEncryptStream;
-  temp: string;
+  Stream: TStringStream;
+  StreamBF: TBlowFishEncryptStream;
+  Str: string;
 begin
-  s1 := TStringStream.Create('');
-  en := TBlowFishEncryptStream.Create(aKey, s1);
-  en.WriteAnsiString(aStr);
-  en.Free();
+  Stream := TStringStream.Create('');
+  StreamBF := TBlowFishEncryptStream.Create(aKey, Stream);
+  StreamBF.WriteAnsiString(aStr);
+  StreamBF.Free();
 
-  temp := s1.DataString;
-  temp := EncodeStringBase64(temp);
-  Result := StrXor(temp, aKey);
-  s1.Free();
+  Str := Stream.DataString;
+  Str := EncodeStringBase64(Str);
+  Result := StrXor(Str, aKey);
+  Stream.Free();
 end;
 
-function StrDecrypt(const aStr, aKey: string): string;
+function StrDecrypt(const aStr: Ansistring; aKey: string): string;
 var
-  s2: TStringStream;
-  de: TBlowFishDecryptStream;
-  temp: string;
+  Stream: TStringStream;
+  StreamBF: TBlowFishDecryptStream;
+  Str: string;
 begin
-  temp := StrXor(aStr, aKey);
-  temp := DecodeStringBase64(temp);
-  s2 := TStringStream.Create(temp);
-  de := TBlowFishDecryptStream.Create(aKey, s2);
-  Result := de.ReadAnsiString();
-  de.Free();
-  s2.Free();
+  Str := StrXor(aStr, aKey);
+  Str := DecodeStringBase64(Str);
+  Stream := TStringStream.Create(Str);
+  StreamBF := TBlowFishDecryptStream.Create(aKey, Stream);
+  Result := StreamBF.ReadAnsiString();
+  StreamBF.Free();
+  Stream.Free();
 end;
 
-function JsonEncrypt(aJObj: TJSONObject; const aKey: string): string;
+function JsonEncrypt(aJObj: TJSONObject; const aKey: string): AnsiString;
 var
   Str: string;
 begin
@@ -63,14 +64,13 @@ begin
   Result := StrEncrypt(Str, aKey);
 end;
 
-function JsonDecrypt(const aStr, aKey: string): TJSONObject;
+function JsonDecrypt(const aStr: AnsiString; const aKey: string): TJSONObject;
 var
   Str: string;
 begin
   Str := StrDecrypt(aStr, aKey);
   Result := TJSONObject(GetJSON(Str));
 end;
-
 
 //var
 //  Original, Encrypted, Decrypted, Str: string;
@@ -81,12 +81,15 @@ end;
 //  Decrypted := StrDecrypt(Encrypted, 'MyKey1234567');
 //
 //  JOriginal := TJSONObject.Create();
-//  JOriginal.Add('name', 'Volodymyr');
+//  JOriginal.Add('name', 'Volodymyr Volodymyr Volodymyr Volodymyr Volodymyr Volodymyr ');
 //  JOriginal.Add('age', 34);
-//  JOriginal.Add('city', 'Kyiv');
+//  JOriginal.Add('city', 'Kyiv Kyiv Kyiv Kyiv Kyiv Kyiv Kyiv Kyiv Kyiv ');
 //  Encrypted := JsonEncrypt(JOriginal, 'MyKey1234567');
+//
 //  StrToFile(Encrypted, 'Encrypted.dat');
-//  JDecrypted := JsonDecrypt(Encrypted, 'MyKey1234567');
+//  Decrypted := StrFromFile('Encrypted.dat');
+//
+//  JDecrypted := JsonDecrypt(Decrypted, 'MyKey1234567');
 //  Str := JDecrypted.Get('name', '')
 end.
 

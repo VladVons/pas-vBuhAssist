@@ -148,6 +148,7 @@ begin
     DmFbConnect.IBConnection1.Password := 'masterkey';
   end;
   DmFbConnect.IBConnection1.DatabaseName := JObj.Get('db');
+  DmFbConnect.IBConnection1.Params.Add('lc_ctype=UTF8');
   DmFbConnect.IBConnection1.Connected := True;
 
   if (FirmCodesLicensed.Count = 0) then
@@ -234,8 +235,10 @@ begin
   Data := [
     ['EDRPOU', 'ЄДРПОУ', '70'],
     ['SHORTNAME', 'Назва', '250'],
+    ['NAME', 'Найменування', '250'],
     ['VAT', 'Тип', '50'],
     ['PERDATE', 'Період', '80'],
+    ['DEPT', 'Філія', '80'],
     ['MODDATE', 'Змінено', '80'],
     ['STATUSNAME', 'Статус', '100'],
     ['CHARCODE', 'Код звіту', '60']
@@ -272,7 +275,7 @@ var
   Matrix: TStringMatrix;
 begin
   try
-    Log.Print('Оновлення ліцензі ...');
+    Log.Print('Завантаження коду доступу ...');
     QueryOpen();
     FirmCodes := GetFirmCodes();
     Matrix := GetLicenceFromHttp(FirmCodes, 'MedocCheckDoc');
@@ -290,7 +293,9 @@ var
 begin
    FirmCodes := nil;
    try
-     FLogin.Caption := 'Авторизація дилера';
+     FLogin.Caption := ' Активація програми';
+     FLogin.EditUser.EditLabel.Caption := 'Дилер';
+     FLogin.EditPassword.EditLabel.Caption := 'Ключ';
      if (FLogin.ShowModal = mrOk) then
      begin
        QueryOpen();
@@ -322,9 +327,23 @@ begin
 
     Code := DBGrid1.DataSource.DataSet.FieldByName('EDRPOU').AsString;
     if ((Column.FieldName = 'STATUSNAME') or (Column.FieldName = 'NAME')) and (FirmCodesLicensed.IndexOf(Code) = -1) then
-      DBGrid1.Canvas.TextRect(Rect, Rect.Left + 4, Rect.Top + 2, 'д е м о')
-    else
-      DBGrid1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+      DBGrid1.Canvas.TextRect(Rect, Rect.Left + 4, Rect.Top + 2, 'д е м о');
+
+    with DBGrid1.Canvas do
+    begin
+      if gdSelected in State then
+      begin
+        Brush.Color := clYellow;
+        Font.Color := clBlack;
+      end else begin
+        Brush.Color := DBGrid1.Color;
+        Font.Color := DBGrid1.Font.Color;
+      end;
+      FillRect(Rect);
+      TextRect(Rect, Rect.Left + 2, Rect.Top + 2, Column.Field.DisplayText);
+    end;
+
+    DBGrid1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
 end;
 
 procedure TFMedocCheckDocs.FormCreate(Sender: TObject);
@@ -333,7 +352,7 @@ var
   d: double;
   JObj: TJSONObject;
 begin
-  JMedocApp := GetMedocInfoFromReg();
+  JMedocApp := RegFindMedocInfo();
   for i := 0 to JMedocApp.Count - 1 do
   begin
     JObj := JMedocApp.Objects[i];
@@ -342,7 +361,7 @@ begin
 
   if (ComboBoxPath.Items.Count = 0) then
   begin
-     Log.Print('Бази МЕДОК не знайдено');
+     Log.Print('Неможливо знайти програму. Зверніться до свого дилера');
      ComboBoxPath.Text := '';
      Enabled := False;
   end

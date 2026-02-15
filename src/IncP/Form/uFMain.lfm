@@ -78,7 +78,7 @@ object FMain: TFMain
       OnExecute = ActionFAboutExecute
     end
     object ActionFMedocCheckDocs: TAction
-      Caption = 'Медок звіти'
+      Caption = 'Звітне стикування'
       OnExecute = ActionFMedocCheckDocsExecute
     end
     object ActionLicense: TAction
