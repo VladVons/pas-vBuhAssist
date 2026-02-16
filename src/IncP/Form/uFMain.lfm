@@ -6,7 +6,6 @@ object FMain: TFMain
   Caption = 'Помічник бухгалтера'
   ClientHeight = 368
   ClientWidth = 741
-  FormStyle = fsStayOnTop
   Menu = MainMenu1
   LCLVersion = '4.4.0.0'
   Visible = True

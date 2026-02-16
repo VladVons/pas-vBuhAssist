@@ -9,9 +9,9 @@ interface
 
 uses
   Classes, SysUtils, fpjson,
-  uHttp, uGenericMatrix, uConst;
+  uHttp, uGenericMatrix, uSys, uConst;
 
-  function GetLicenceFromHttp(aFirms: TStrings; const aModule: String): TStringMatrix;
+  function GetLicenceFromHttp(aFirms: TStrings; const aModule: String): TJSONObject;
   function OrderLicenceFromHttp(aFirms: TStrings; const aModule, aDealerName, aDealerPassw: String): boolean;
   procedure GetLicenceFromHttpToFile(const aModule: string; aFirms: TStringList);
   procedure MatrixCryptToFile(const aFileName, aPassword: string; const aMatrix: TStringMatrix);
@@ -22,36 +22,31 @@ implementation
 type
 THash256 = array[0..31] of Byte;
 
-function GetLicenceFromHttp(aFirms: TStrings; const aModule: String): TStringMatrix;
+function GetLicenceFromHttp(aFirms: TStrings; const aModule: String): TJSONObject;
 var
   i: Integer;
-  JsonReq, JsonRes, Row: TJSONObject;
-  ArrLic, Licenses: TJSONArray;
+  JReq, JResp: TJSONObject;
+  JArrLic: TJSONArray;
 begin
   try
-    Result := TStringMatrix.Create();
-    JsonRes := TJSONObject.Create();
+    JResp := TJSONObject.Create();
 
-    JsonReq := TJSONObject.Create();
-    JsonReq.Add('type', 'get_licenses');
-    JsonReq.Add('app', 'BuhAssist');
-    JsonReq.Add('module', aModule);
+    JReq := TJSONObject.Create();
+    JReq.Add('type', 'get_licenses');
+    JReq.Add('app', GetAppName());
+    JReq.Add('module', aModule);
 
-    ArrLic := TJSONArray.Create();
+    JArrLic := TJSONArray.Create();
     for i := 0 to aFirms.Count - 1 do
-      ArrLic.Add(aFirms[i]);
-    JsonReq.Add('firms', ArrLic);
+      JArrLic.Add(aFirms[i]);
+    JReq.Add('firms', JArrLic);
 
-    JsonRes := PostJSON('https://windows.cloud-server.com.ua/api', JsonReq);
-    Licenses := JsonRes.Arrays['licenses'];
-    for i := 0 to Licenses.Count - 1 do
-    begin
-      Row := Licenses.Objects[I];
-      Result.Add([Row.Strings['firm'], Row.Strings['module'], Row.Strings['till']]);
-    end;
+    JResp := PostJSON('https://windows.cloud-server.com.ua/api', JReq);
+    if (JResp.Find('error') = nil) then
+       Result := JResp;
   finally
-    JsonReq.Free();
-    JsonRes.Free();
+    JReq.Free();
+    JResp.Free();
     //ArrLic.Free();
   end;
 end;
@@ -92,13 +87,13 @@ end;
 
 procedure GetLicenceFromHttpToFile(const aModule: string; aFirms: TStringList);
 var
-  Matrix: TStringMatrix;
+  JObj: TJSONObject;
 begin
   try
-    Matrix := GetLicenceFromHttp(aFirms, aModule);
-    MatrixCryptToFile(cFileLic, cFileLicPassw, Matrix);
+    JObj := GetLicenceFromHttp(aFirms, aModule);
+    //MatrixCryptToFile(cFileLic, cFileLicPassw, Matrix);
   finally
-    Matrix.Free();
+    JObj.Free();
   end;
 end;
 

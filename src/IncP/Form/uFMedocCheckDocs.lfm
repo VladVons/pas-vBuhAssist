@@ -101,7 +101,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
       OnClick = ButtonOrderLicenseClick
     end
     object ButtonGetLicense: TButton
-      Left = 520
+      Left = 509
       Height = 25
       Top = 80
       Width = 75
@@ -162,13 +162,16 @@ object FMedocCheckDocs: TFMedocCheckDocs
       '  CARDSENDSTT.NAME,'
       '  FORM.CHARCODE,'
       '  --CARD.STATUS,'
-      '  CAST(CARD.MODDATE AS DATE) AS MODDATE,'
+      '  CARD.MODDATE,'
+      '  --CAST(CARD.MODDATE AS DATE) AS MODDATE,'
       '  CARDSTATUS.NAME AS StatusName'
       'FROM'
       '  ORG'
       'LEFT JOIN CARD'
       '  ON CARD.IDORG = ORG.Code'
       '  AND CARD.PERDATE = DATE %_PERDATE'
+      '  AND CARD.FORM > 0'
+      '  AND CARD.IDPARENT IS NULL'
       'LEFT JOIN FORM'
       '  ON FORM.CODE = CARD.FORM'
       '  AND LOWER(FORM.CHARCODE) = :_CHARCODE'

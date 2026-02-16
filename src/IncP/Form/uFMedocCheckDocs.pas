@@ -8,9 +8,9 @@ unit uFMedocCheckDocs;
 interface
 
 uses
-  Classes, SysUtils, DateUtils, SQLDB, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  DBGrids, ExtCtrls, LR_Class, DB, fpjson, jsonparser,
-  uFLogin, uDmFbConnect, uType, uGenericMatrix, uLicence, uWinReg, uSys, uLog, uConst, Grids;
+  Classes, SysUtils, DateUtils, SQLDB, Forms, Controls, Graphics, Dialogs,
+  StdCtrls, DBGrids, Grids, ExtCtrls, LR_Class, DB, fpjson, jsonparser, uFLogin,
+  uDmFbConnect, uType, uGenericMatrix, uLicence, uWinReg, uSys, uLog, uConst, uFormState;
 
 type
 
@@ -272,16 +272,16 @@ end;
 procedure TFMedocCheckDocs.ButtonGetLicenseClick(Sender: TObject);
 var
   FirmCodes: TStringList;
-  Matrix: TStringMatrix;
+  JObj: TJSONObject;
 begin
   try
     Log.Print('Завантаження коду доступу ...');
     QueryOpen();
     FirmCodes := GetFirmCodes();
-    Matrix := GetLicenceFromHttp(FirmCodes, 'MedocCheckDoc');
-    MatrixCryptToFile(FileLic, cFileLicPassw, Matrix);
+    JObj := GetLicenceFromHttp(FirmCodes, Name);
+    //MatrixCryptToFile(FileLic, cFileLicPassw, Matrix);
   finally
-    Matrix.Free();
+    JObj.Free();
     FirmCodes.Free();
   end;
 end;
@@ -293,14 +293,14 @@ var
 begin
    FirmCodes := nil;
    try
-     FLogin.Caption := ' Активація програми';
+     FLogin.Caption := 'Активація програми';
      FLogin.EditUser.EditLabel.Caption := 'Дилер';
      FLogin.EditPassword.EditLabel.Caption := 'Ключ';
      if (FLogin.ShowModal = mrOk) then
      begin
        QueryOpen();
        FirmCodes := GetFirmCodes();
-       Auth := OrderLicenceFromHttp(FirmCodes, 'MedocCheckDoc', FLogin.EditUser.Text, FLogin.EditPassword.Text);
+       Auth := OrderLicenceFromHttp(FirmCodes, Name, FLogin.EditUser.Text, FLogin.EditPassword.Text);
        if (Auth) then
          Log.Print('Запит на отримання ліцензій відправлено')
        else
@@ -348,8 +348,7 @@ end;
 
 procedure TFMedocCheckDocs.FormCreate(Sender: TObject);
 var
-  i, x, y: integer;
-  d: double;
+  i: integer;
   JObj: TJSONObject;
 begin
   FileLic := GetAppFile(cFileLic);
@@ -381,10 +380,14 @@ begin
   ComboBoxDoc.ItemIndex := 0;
 
   FirmCodesLicensed := TStringList.Create();
+
+  FormStateRec.Load(self);
 end;
 
 procedure TFMedocCheckDocs.FormDestroy(Sender: TObject);
 begin
+  FormStateRec.Save(self);
+
   FreeAndNil(JMedocApp);
   FreeAndNil(FirmCodesLicensed);
 end;

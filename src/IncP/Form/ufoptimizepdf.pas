@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  uGhostScript, uLog, uSettings, uSys, uVarUtil;
+  uGhostScript, uLog, uSettings, uSys, uVarUtil, uFormState;
 
 type
 
@@ -26,7 +26,8 @@ type
     procedure ButtonConvertClick(Sender: TObject);
     procedure ButtonDirInClick(Sender: TObject);
     procedure ButtonDirOutClick(Sender: TObject);
-    procedure FormShow(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
     procedure SelectDir(aLabeledEdit: TLabeledEdit; const aKey: string);
   public
@@ -124,12 +125,16 @@ begin
   SelectDir(LabeledEditDirOut, 'DirOut');
 end;
 
-procedure TFOptimizePDF.FormShow(Sender: TObject);
+procedure TFOptimizePDF.FormCreate(Sender: TObject);
 begin
-  LabeledEditDirIn.Text := Conf.KeyRead(Name, 'DirIn');
-  LabeledEditDirOut.Text := Conf.KeyRead(Name, 'DirOut');
-  CheckBoxCheckName.Checked := Conf.KeyRead(Name, 'CheckBoxCheckName') = 'true';
+  FormStateRec.Load(self);
 end;
+
+procedure TFOptimizePDF.FormDestroy(Sender: TObject);
+begin
+  FormStateRec.Save(self);
+end;
+
 
 end.
 

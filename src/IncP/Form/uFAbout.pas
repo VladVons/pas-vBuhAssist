@@ -8,7 +8,7 @@ unit uFAbout;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ComCtrls;
 
 type
 
@@ -16,6 +16,10 @@ type
 
   TFAbout = class(TForm)
     LabelVer: TLabel;
+    Memo1: TMemo;
+    PageControl1: TPageControl;
+    TabSheet1: TTabSheet;
+    TabSheet2: TTabSheet;
   private
 
   public

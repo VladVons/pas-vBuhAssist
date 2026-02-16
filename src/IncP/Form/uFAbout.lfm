@@ -1,19 +1,68 @@
 object FAbout: TFAbout
   Left = 1520
-  Height = 240
+  Height = 401
   Top = 250
-  Width = 320
+  Width = 539
   BorderStyle = bsDialog
   Caption = 'Про програму'
-  ClientHeight = 240
-  ClientWidth = 320
+  ClientHeight = 401
+  ClientWidth = 539
   Position = poMainFormCenter
   LCLVersion = '4.4.0.0'
-  object LabelVer: TLabel
-    Left = 112
-    Height = 15
-    Top = 96
-    Width = 59
-    Caption = 'Версія 1.01'
+  object PageControl1: TPageControl
+    Left = 0
+    Height = 401
+    Top = 0
+    Width = 539
+    ActivePage = TabSheet1
+    Align = alClient
+    TabIndex = 0
+    TabOrder = 0
+    object TabSheet1: TTabSheet
+      Caption = 'Версія'
+      ClientHeight = 373
+      ClientWidth = 531
+      object LabelVer: TLabel
+        Left = 208
+        Height = 15
+        Top = 48
+        Width = 59
+        Caption = 'Версія 1.01'
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'Про програму'
+      ClientHeight = 373
+      ClientWidth = 531
+      object Memo1: TMemo
+        Left = 0
+        Height = 373
+        Top = 0
+        Width = 531
+        Align = alClient
+        Font.CharSet = RUSSIAN_CHARSET
+        Font.Height = -13
+        Font.Pitch = fpVariable
+        Font.Quality = fqDraft
+        Lines.Strings = (
+          'Програма «Помічник бухгалтера» призначена для спрощення роботи бухгалтерам та аудиторам.'
+          ''
+          'Для створення програми використовувались відкриті можливості інтеграції COM-об’єктів з відкритої документації до бухгалтерського ПЗ.'
+          ''
+          'Програма не модифікує Ваше програмне забезпечення, не проводить будь-яких маніпуляцій з Вашим ПЗ, базами даних, структурами та/або вмістом бази даних.'
+          ''
+          'Програма не створює, не заповнює, не модифікує будь-яку інформацію у Ваших базах, а також не отримує квитанцій та не відправляє звітів.'
+          ''
+          'Програма не опрацьовує та не передає будь-які персональні дані. Отримуючи код доступу до програми користувач погоджується з умовами використання ПЗ.'
+          ''
+          'Вироблено в Україні.'
+          'Побажання та пропозиції приймаємо на електронну пошту:'
+        )
+        ParentFont = False
+        ReadOnly = True
+        ScrollBars = ssAutoBoth
+        TabOrder = 0
+      end
+    end
   end
 end

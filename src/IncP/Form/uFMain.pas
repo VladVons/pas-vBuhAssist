@@ -10,7 +10,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList, Windows,
   ExtCtrls, ComCtrls, StdCtrls, fpjson,
-  uFAbout, uFMedocCheckDocs, uFLicense, uFOptimizePDF, uWinManager, uLog, uSettings, uConst;
+  uFAbout, uFMedocCheckDocs, uFLicense, uFOptimizePDF, uWinManager, uLog, uSettings, uConst, uFormState;
 
 type
 
@@ -84,6 +84,9 @@ var
   i: integer;
   Forms: array of TFormClass;
 begin
+  Conf := TConf.Create();
+  FormStateRec := TFormStateRec.Create();
+
   Caption := Caption + ' ' + cVersion;
   Log := TLog.Create(MemoInfo1);
   Log.Print('Початок');
@@ -95,8 +98,6 @@ begin
     Log.Print('Програма вже запущена');
     Halt();
   end;
-
-  Conf := TConf.Create();
 
   WinManager := TWinManager.Create(PageControl1, PopupMenu1);
   Forms := [
