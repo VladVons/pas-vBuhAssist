@@ -14,7 +14,7 @@ uses
 type
   TLog = class
   protected
-    FileLog: string;
+    FileName: string;
     Memo: TMemo;
     procedure ToFile(const aMsg: string);
   public
@@ -29,21 +29,20 @@ implementation
 
 constructor TLog.Create(aMemo: TMemo);
 begin
-  inherited Create();
   Memo := aMemo;
-  FileLog := GetAppFile('app.log');
+  FileName := GetAppFile('app.log');
 end;
 
 procedure TLog.ToFile(const aMsg: string);
 begin
-  FileAppendText(FileLog, aMsg);
+  FileAppendText(FileName, aMsg);
 end;
 
 procedure TLog.Print(const aMsg: String);
 var
   Msg: String;
 begin
-  Msg := FormatDateTime('yy-mm-dd hh:nn:ss', Now()) + ' '+ aMsg;
+  Msg := FormatDateTime('yy-mm-dd hh:nn:ss', Now()) + ' ' + aMsg;
 
   //if (Memo.Height = 0) then
   //  Memo.Height := 75;

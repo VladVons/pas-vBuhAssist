@@ -9,74 +9,85 @@ interface
 
 uses
   Classes, SysUtils, fpjson,
-  uHttp, uGenericMatrix, uSys, uConst;
+  uHttp, uCrypt, uSys, uConst;
 
-  function GetLicenceFromHttp(aFirms: TStrings; const aModule: String): TJSONObject;
-  function OrderLicenceFromHttp(aFirms: TStrings; const aModule, aDealerName, aDealerPassw: String): boolean;
-  procedure GetLicenceFromHttpToFile(const aModule: string; aFirms: TStringList);
-  procedure MatrixCryptToFile(const aFileName, aPassword: string; const aMatrix: TStringMatrix);
-  function MatrixCryptFromFile(const aFileName, aPassword: string): TStringMatrix;
+type
+  TLicence = class
+  private
+    FileName: String;
+    CryptKey: String;
+    JObjLic: TJSONObject;
+    function GetFromHttp(aFirmCodes: TStrings): TJSONObject;
+  public
+    LastErr: String;
+    constructor Create();
+    procedure HttpToFile(aFirmCodes: TStrings);
+    procedure LoadFromFile();
+    function GetFirmCodes(const aModule: String): TStringList;
+    function OrderFromHttp(aFirmCodes: TStrings; const aModule, aDealerName, aDealerPassw: String): boolean;
+  end;
+
+var
+  Licence: TLicence;
 
 implementation
 
-type
-THash256 = array[0..31] of Byte;
+constructor TLicence.Create();
+begin
+  FileName := GetAppFile('app.lic');
+  CryptKey := 'Vlad1971';
+end;
 
-function GetLicenceFromHttp(aFirms: TStrings; const aModule: String): TJSONObject;
+function TLicence.GetFromHttp(aFirmCodes: TStrings): TJSONObject;
 var
   i: Integer;
-  JReq, JResp: TJSONObject;
+  JReq: TJSONObject;
   JArrLic: TJSONArray;
 begin
   try
-    JResp := TJSONObject.Create();
-
     JReq := TJSONObject.Create();
-    JReq.Add('type', 'get_licenses');
+    JReq.Add('type', 'get_licences');
     JReq.Add('app', GetAppName());
-    JReq.Add('module', aModule);
 
     JArrLic := TJSONArray.Create();
-    for i := 0 to aFirms.Count - 1 do
-      JArrLic.Add(aFirms[i]);
+    for i := 0 to aFirmCodes.Count - 1 do
+      JArrLic.Add(aFirmCodes[i]);
     JReq.Add('firms', JArrLic);
 
-    JResp := PostJSON('https://windows.cloud-server.com.ua/api', JReq);
-    if (JResp.Find('error') = nil) then
-       Result := JResp;
+    LastErr := '';
+    Result := PostJSON(cHttpApi, JReq);
+    if (Result <> nil) then
+       LastErr := Result.Get('error', '')
   finally
     JReq.Free();
-    JResp.Free();
-    //ArrLic.Free();
   end;
 end;
 
-function OrderLicenceFromHttp(aFirms: TStrings; const aModule, aDealerName, aDealerPassw: String): boolean;
+function TLicence.OrderFromHttp(aFirmCodes: TStrings; const aModule, aDealerName, aDealerPassw: String): boolean;
 var
   i: Integer;
-  Err: string;
   JsonReq, JsonRes: TJSONObject;
   ArrLic: TJSONArray;
 begin
   try
     JsonReq := TJSONObject.Create();
-    JsonReq.Add('type', 'order_licenses');
+    JsonReq.Add('type', 'order_licences');
     JsonReq.Add('app', 'BuhAssist');
     JsonReq.Add('module', aModule);
     JsonReq.Add('user', aDealerName);
     JsonReq.Add('passw', aDealerPassw);
 
     ArrLic := TJSONArray.Create();
-    for i := 0 to aFirms.Count - 1 do
-      ArrLic.Add(aFirms[i]);
+    for i := 0 to aFirmCodes.Count - 1 do
+      ArrLic.Add(aFirmCodes[i]);
     JsonReq.Add('firms', ArrLic);
 
-    JsonRes := PostJSON('https://windows.cloud-server.com.ua/api', JsonReq);
-    if Assigned(JsonRes) then
-      Err := JsonRes.Get('error', '')
+    JsonRes := PostJSON(cHttpApi, JsonReq);
+    if (Assigned(JsonRes)) then
+      LastErr := JsonRes.Get('error', '')
     else
-      Err := 'Request error';
-    Result := Err.IsEmpty();
+      LastErr := 'Request error';
+    Result := LastErr.IsEmpty();
   finally
     JsonRes.Free();
     JsonReq.Free();
@@ -84,97 +95,51 @@ begin
   end;
 end;
 
-
-procedure GetLicenceFromHttpToFile(const aModule: string; aFirms: TStringList);
+procedure TLicence.HttpToFile(aFirmCodes: TStrings);
 var
-  JObj: TJSONObject;
+  Encrypted: String;
 begin
-  try
-    JObj := GetLicenceFromHttp(aFirms, aModule);
-    //MatrixCryptToFile(cFileLic, cFileLicPassw, Matrix);
-  finally
-    JObj.Free();
+  JObjLic := GetFromHttp(aFirmCodes);
+  if (Assigned(JObjLic)) then
+  begin
+    Encrypted := JsonEncrypt(JObjLic, CryptKey);
+    StrToFile(Encrypted, FileName);
   end;
 end;
 
-
-function SimpleHash256(const aString: string): THash256;
+procedure TLicence.LoadFromFile();
 var
-  i, j: Integer;
-  h: QWord;
+  Decrypted: String;
 begin
-  h := $CBF29CE484222325;
-  for i := 1 to Length(aString) do
-    h := (h xor Ord(aString[i])) * $100000001B3;
-
-  for j := 0 to 31 do
+  if (FileExists(FileName)) then
   begin
-    h := h xor (h shr 33);
-    h := h * $FF51AFD7ED558CCD;
-    h := h xor (h shr 33);
-    Result[j] := Byte(h shr ((j mod 8) * 8));
+    Decrypted := StrFromFile(FileName);
+    JObjLic := JsonDecrypt(Decrypted, CryptKey);
   end;
 end;
 
-procedure CryptStream(aStreamIn, aStreamOut: TStream; const aPassword: string);
+function TLicence.GetFirmCodes(const aModule: String): TStringList;
 var
-  Key: THash256;
-  Buf: array[0..4095] of Byte;
-  R, i, p: Integer;
+  i: Integer;
+  Code, Today, Till: String;
+  JArr: TJSONArray;
+  JObjItem: TJSONObject;
 begin
-  Key := SimpleHash256(aPassword);
-  p := 0;
-
-  while True do
+  Result := TStringList.Create();
+  if (Assigned(JObjLic)) and (Assigned(JObjLic.Find('licences'))) then
   begin
-    R := aStreamIn.Read(Buf, SizeOf(Buf));
-    if R = 0 then Break;
-
-    for i := 0 to R - 1 do
+    Today := FormatDateTime('yyyy-mm-dd', Date);
+    JArr := JObjLic.Arrays['licences'];
+    for i := 0 to JArr.Count - 1 do
     begin
-      Buf[i] := Buf[i] xor Key[p];
-      Inc(p);
-      if p > High(Key) then p := 0;
+      JObjItem := JArr.Objects[i];
+      Till := JObjItem.Get('till', '');
+      if (JObjItem.Get('module', '') = aModule) and (Today <= Till) then
+      begin
+        Code := JObjItem.Get('firm', '');
+        Result.Add(Code);
+      end;
     end;
-
-    aStreamOut.WriteBuffer(Buf, R);
-  end;
-end;
-
-procedure MatrixCryptToFile(const aFileName, aPassword: string; const aMatrix: TStringMatrix);
-var
-  Plain, Crypt: TMemoryStream;
-begin
-  Plain := TMemoryStream.Create();
-  Crypt := TMemoryStream.Create();
-  try
-    specialize MatrixToStream<string>(aMatrix, Plain, @WriteStringItem);
-    Plain.Position := 0;
-    CryptStream(Plain, Crypt, aPassword);
-    Crypt.SaveToFile(aFileName);
-  finally
-    Plain.Free();
-    Crypt.Free();
-  end;
-end;
-
-function MatrixCryptFromFile(const aFileName, aPassword: string): TStringMatrix;
-var
-  Plain, Crypt: TMemoryStream;
-begin
-  Crypt := TMemoryStream.Create();
-  Plain := TMemoryStream.Create();
-  try
-    Crypt.LoadFromFile(aFileName);
-    Crypt.Position := 0;
-
-    CryptStream(Crypt, Plain, aPassword);
-    Plain.Position := 0;
-
-    Result := specialize MatrixFromStream<string>(Plain, @ReadStringItem);
-  finally
-    Plain.Free();
-    Crypt.Free();
   end;
 end;
 

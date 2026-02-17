@@ -9,10 +9,10 @@ interface
 
 const
   cVersion          = '1.02';
-  cFileLic          = 'app.lic.dat';
   cFileLicPassw     = 'BuhAssist';
   cMaxLicensesFree  = 3;
   cDirAddons        = 'addons';
+  cHttpApi          = 'https://windows.cloud-server.com.ua/api';
 
 implementation
 

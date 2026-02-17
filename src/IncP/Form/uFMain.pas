@@ -10,7 +10,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList, Windows,
   ExtCtrls, ComCtrls, StdCtrls, fpjson,
-  uFAbout, uFMedocCheckDocs, uFLicense, uFOptimizePDF, uWinManager, uLog, uSettings, uConst, uFormState;
+  uFAbout, uFMedocCheckDocs, uFLicense, uFOptimizePDF, uWinManager, uLicence, uLog, uSettings, uConst, uFormState;
 
 type
 
@@ -86,6 +86,9 @@ var
 begin
   Conf := TConf.Create();
   FormStateRec := TFormStateRec.Create();
+
+  Licence := TLicence.Create();
+  Licence.LoadFromFile();
 
   Caption := Caption + ' ' + cVersion;
   Log := TLog.Create(MemoInfo1);

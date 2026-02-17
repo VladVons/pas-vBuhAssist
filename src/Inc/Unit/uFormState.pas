@@ -63,9 +63,9 @@ end;
 
 procedure TFormStateRec.Walk(aForm: TWinControl; aProc: TCtrlProc);
 var
-  Ini: TIniFile;
   i: Integer;
   Ctrl: TComponent;
+  Ini: TIniFile;
 begin
   Ini := TIniFile.Create(FileName);
   try

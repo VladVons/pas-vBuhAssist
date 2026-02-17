@@ -43,7 +43,6 @@ type
   private
     JMedocApp: TJSONArray;
     FirmCodesLicensed: TStringList;
-    FileLic: String;
     procedure SetComboBoxToCurrentMonth(aComboBox: TComboBox);
     procedure SetComboBoxToCurrentYear(aComboBox: TComboBox);
     procedure QueryOpen();
@@ -100,31 +99,9 @@ var
   FirmCodes: TStringList;
   Matrix: TStringMatrix;
 begin
-  try
-    if FileExists (FileLic) then
-       Matrix := MatrixCryptFromFile(FileLic, cFileLicPassw)
-    else
-    begin
-      Matrix := TStringMatrix.Create();
-      Log.Print('Файл ліцензій не знайдено ' + FileLic);
-    end;
-
-    Result := TStringListEx.Create(Matrix.ColExport(0));
-
-    FirmCodes := GetFirmCodes();
-    for i := 0 to FirmCodes.Count - 1 do
-    begin
-      Code := FirmCodes[i];
-      Idx := Result.IndexOf(Code);
-      if (Idx = -1) and (Result.Count < cMaxLicensesFree) then
-      begin
-         Result.Add(Code);
-      end;
-    end;
-  finally
-    Matrix.Free();
-    FirmCodes.Free();
-  end;
+  Result := Licence.GetFirmCodes(Name);
+  if (Result.Count = 0) then
+    Log.Print('Немає ліцензій для організацій');
 end;
 
 procedure TFMedocCheckDocs.QueryOpen();
@@ -271,24 +248,30 @@ end;
 
 procedure TFMedocCheckDocs.ButtonGetLicenseClick(Sender: TObject);
 var
-  FirmCodes: TStringList;
-  JObj: TJSONObject;
+  FirmCodes, FirmCodesLic: TStringList;
 begin
   try
-    Log.Print('Завантаження коду доступу ...');
+    Log.Print('Завантаження ліцензій ...');
     QueryOpen();
     FirmCodes := GetFirmCodes();
-    JObj := GetLicenceFromHttp(FirmCodes, Name);
-    //MatrixCryptToFile(FileLic, cFileLicPassw, Matrix);
+    Licence.HttpToFile(FirmCodes);
+    if (Licence.LastErr <> '') then
+       Log.Print('Помилка ' + Licence.LastErr)
+    else begin
+      FirmCodesLic := Licence.GetFirmCodes(Name);
+      FirmCodesLic.Delimiter := ',';
+      FirmCodesLic.StrictDelimiter := True;
+      Log.Print('Знайдено ліцензії для кодів ' + FirmCodesLic.DelimitedText);
+    end;
   finally
-    JObj.Free();
+    FreeAndNil(FirmCodesLic);
     FirmCodes.Free();
   end;
 end;
 
 procedure TFMedocCheckDocs.ButtonOrderLicenseClick(Sender: TObject);
 var
-  Auth: boolean;
+  AuthOk: boolean;
   FirmCodes: TStringList;
 begin
    FirmCodes := nil;
@@ -300,11 +283,11 @@ begin
      begin
        QueryOpen();
        FirmCodes := GetFirmCodes();
-       Auth := OrderLicenceFromHttp(FirmCodes, Name, FLogin.EditUser.Text, FLogin.EditPassword.Text);
-       if (Auth) then
+       AuthOk := Licence.OrderFromHttp(FirmCodes, Name, FLogin.EditUser.Text, FLogin.EditPassword.Text);
+       if (AuthOk) then
          Log.Print('Запит на отримання ліцензій відправлено')
        else
-         Log.Print('Помилка авторизації');
+         Log.Print('Помилка авторизації на сервері ліцензій');
      end;
      FLogin.Clear();
    finally
@@ -351,8 +334,6 @@ var
   i: integer;
   JObj: TJSONObject;
 begin
-  FileLic := GetAppFile(cFileLic);
-
   JMedocApp := RegFindMedocInfo();
   for i := 0 to JMedocApp.Count - 1 do
   begin
@@ -362,12 +343,10 @@ begin
 
   if (ComboBoxPath.Items.Count = 0) then
   begin
-     Log.Print('Неможливо знайти програму. Зверніться до свого дилера');
+     Log.Print('Неможливо знайти програму звітності. Зверніться до свого дилера');
      ComboBoxPath.Text := '';
      Enabled := False;
-  end
-  else
-  begin
+  end else begin
      ComboBoxPath.ItemIndex := 0;
      SetEmbededPath(0);
   end;

@@ -15,6 +15,27 @@ function JsonDecrypt(const aStr: AnsiString; const aKey: string): TJSONObject;
 
 implementation
 
+type
+  THash256 = array[0..31] of Byte;
+
+function SimpleHash256(const aString: string): THash256;
+var
+  i, j: Integer;
+  h: QWord;
+begin
+  h := $CBF29CE484222325;
+  for i := 1 to Length(aString) do
+    h := (h xor Ord(aString[i])) * $100000001B3;
+
+  for j := 0 to High(THash256) do
+  begin
+    h := h xor (h shr 33);
+    h := h * $FF51AFD7ED558CCD;
+    h := h xor (h shr 33);
+    Result[j] := Byte(h shr ((j mod 8) * 8));
+  end;
+end;
+
 function StrXor(const aStr, aKey: string): string;
 var
   i: Integer;

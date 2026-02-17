@@ -40,6 +40,8 @@ object FLogin: TFLogin
     Top = 88
     Width = 80
     Caption = 'OK'
+    Default = True
+    ModalResult = 1
     TabOrder = 2
     OnClick = Button1Click
   end
