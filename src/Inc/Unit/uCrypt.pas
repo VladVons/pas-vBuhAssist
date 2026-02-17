@@ -1,3 +1,6 @@
+// Created: 2026.02.15
+// Author: Vladimir Vons <VladVons@gmail.com>
+
 unit uCrypt;
 
 {$mode objfpc}{$H+}
