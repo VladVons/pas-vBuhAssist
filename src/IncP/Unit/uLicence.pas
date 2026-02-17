@@ -54,10 +54,11 @@ begin
       JArrLic.Add(aFirmCodes[i]);
     JReq.Add('firms', JArrLic);
 
-    LastErr := '';
     Result := PostJSON(cHttpApi, JReq);
-    if (Result <> nil) then
-       LastErr := Result.Get('error', '')
+    if (Assigned(Result)) then
+      LastErr := Result.Get('error', '')
+    else
+      LastErr := 'request error';
   finally
     JReq.Free();
   end;
@@ -86,7 +87,7 @@ begin
     if (Assigned(JsonRes)) then
       LastErr := JsonRes.Get('error', '')
     else
-      LastErr := 'Request error';
+      LastErr := 'request error';
     Result := LastErr.IsEmpty();
   finally
     JsonRes.Free();

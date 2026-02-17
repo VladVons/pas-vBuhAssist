@@ -19,6 +19,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
     Color = clWindow
     Columns = <>
     DataSource = DmFbConnect.DataSource1
+    ReadOnly = True
     TabOrder = 0
     Visible = False
     OnDrawColumnCell = DBGrid1DrawColumnCell

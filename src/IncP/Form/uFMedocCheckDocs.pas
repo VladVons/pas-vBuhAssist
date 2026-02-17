@@ -47,7 +47,6 @@ type
     procedure SetComboBoxToCurrentYear(aComboBox: TComboBox);
     procedure QueryOpen();
     function  GetFirmCodes(): TStringList;
-    function GetFirmCodesLicensed(): TStringList;
     procedure SetEmbededPath(aIdx: integer);
   public
 
@@ -92,18 +91,6 @@ begin
   SQLQueryCodes.Close();
 end;
 
-function TFMedocCheckDocs.GetFirmCodesLicensed(): TStringList;
-var
-  i, Idx: integer;
-  Code: String;
-  FirmCodes: TStringList;
-  Matrix: TStringMatrix;
-begin
-  Result := Licence.GetFirmCodes(Name);
-  if (Result.Count = 0) then
-    Log.Print('Немає ліцензій для організацій');
-end;
-
 procedure TFMedocCheckDocs.QueryOpen();
 var
   Month, Year, Idx: Integer;
@@ -127,9 +114,6 @@ begin
   DmFbConnect.IBConnection1.DatabaseName := JObj.Get('db');
   //DmFbConnect.IBConnection1.CharSet := 'UTF8';
   DmFbConnect.IBConnection1.Connected := True;
-
-  if (FirmCodesLicensed.Count = 0) then
-    FirmCodesLicensed := GetFirmCodesLicensed();
 
   SQLQuery1.Close();
   SQLQuery1.DataBase := DmFbConnect.IBConnection1;
@@ -304,29 +288,31 @@ procedure TFMedocCheckDocs.DBGrid1DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
 var
   Code: String;
+  DisplayText: String;
 begin
-    // Малюємо стандартний фон
-    DBGrid1.Canvas.FillRect(Rect);
+  Code := DBGrid1.DataSource.DataSet.FieldByName('EDRPOU').AsString;
 
-    Code := DBGrid1.DataSource.DataSet.FieldByName('EDRPOU').AsString;
-    if ((Column.FieldName = 'STATUSNAME') or (Column.FieldName = 'NAME')) and (FirmCodesLicensed.IndexOf(Code) = -1) then
-      DBGrid1.Canvas.TextRect(Rect, Rect.Left + 4, Rect.Top + 2, 'д е м о');
-
-    with DBGrid1.Canvas do
+  // Встановлюємо колір фону та шрифт
+  with DBGrid1.Canvas do
+  begin
+    if gdSelected in State then
     begin
-      if gdSelected in State then
-      begin
-        Brush.Color := clYellow;
-        Font.Color := clBlack;
-      end else begin
-        Brush.Color := DBGrid1.Color;
-        Font.Color := DBGrid1.Font.Color;
-      end;
-      FillRect(Rect);
-      TextRect(Rect, Rect.Left + 2, Rect.Top + 2, Column.Field.DisplayText);
+      Brush.Color := clYellow;
+      Font.Color := clBlack;
+    end else begin
+      Brush.Color := DBGrid1.Color;
+      Font.Color := DBGrid1.Font.Color;
     end;
+    FillRect(Rect); // малюємо фон
 
-    DBGrid1.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+    // Вибираємо, який текст малювати
+    if ((Column.FieldName = 'STATUSNAME') or (Column.FieldName = 'NAME')) and (FirmCodesLicensed.IndexOf(Code) = -1) then
+      DisplayText := 'Д Е М О'
+    else
+      DisplayText := Column.Field.DisplayText;
+
+    TextRect(Rect, Rect.Left + 2, Rect.Top + 2, DisplayText);
+  end;
 end;
 
 procedure TFMedocCheckDocs.FormCreate(Sender: TObject);
@@ -358,7 +344,7 @@ begin
   ComboBoxDoc.Items.AddPair('J0500110', 'Податковий розрахунок сум доходу ... ЄСВ');
   ComboBoxDoc.ItemIndex := 0;
 
-  FirmCodesLicensed := TStringList.Create();
+  FirmCodesLicensed := Licence.GetFirmCodes(Name);
 
   FormStateRec.Load(self);
 end;
