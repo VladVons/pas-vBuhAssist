@@ -18,8 +18,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="100"/>
-        <CursorPos Y="119"/>
+        <TopLine Value="97"/>
+        <CursorPos X="62" Y="108"/>
         <UsageCount Value="175"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -30,10 +30,9 @@
         <ComponentName Value="FAbout"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <TopLine Value="27"/>
-        <CursorPos X="64" Y="42"/>
+        <CursorPos X="56" Y="42"/>
         <UsageCount Value="175"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -44,7 +43,8 @@
         <ComponentName Value="FMedocCheckDocs"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <TopLine Value="33"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="34"/>
         <CursorPos X="33" Y="42"/>
         <UsageCount Value="175"/>
         <Loaded Value="True"/>
@@ -114,7 +114,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="3"/>
         <TopLine Value="164"/>
-        <CursorPos X="28" Y="173"/>
+        <CursorPos X="45" Y="172"/>
         <UsageCount Value="175"/>
         <Loaded Value="True"/>
       </Unit>
@@ -418,10 +418,6 @@
     <JumpHistory HistoryIndex="29">
       <Position>
         <Filename Value="IncP\Form\uFMain.pas"/>
-        <Caret Line="8"/>
-      </Position>
-      <Position>
-        <Filename Value="IncP\Form\uFMain.pas"/>
         <Caret Line="65" TopLine="58"/>
       </Position>
       <Position>
@@ -535,6 +531,10 @@
       <Position>
         <Filename Value="IncP\Form\uFAbout.pas"/>
         <Caret Line="23" Column="11" TopLine="21"/>
+      </Position>
+      <Position>
+        <Filename Value="IncP\Form\uFAbout.pas"/>
+        <Caret Line="42" Column="56" TopLine="27"/>
       </Position>
     </JumpHistory>
     <RunParams>

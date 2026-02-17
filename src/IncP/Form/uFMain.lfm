@@ -64,6 +64,7 @@ object FMain: TFMain
       Caption = 'Допомога'
       object MenuItemLicense: TMenuItem
         Action = ActionLicense
+        Visible = False
       end
       object MenuItemAboutApp: TMenuItem
         Action = ActionFAbout
