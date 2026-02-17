@@ -8,8 +8,7 @@ unit uCrypt;
 interface
 
 uses
-  Classes, SysUtils, base64, BlowFish, fpjson, jsonparser,
-  uSys;
+  Classes, SysUtils, base64, BlowFish, fpjson, jsonparser;
 
 function StrEncrypt(const aStr, aKey: string): Ansistring;
 function StrDecrypt(const aStr: Ansistring; aKey: string): string;
@@ -96,24 +95,5 @@ begin
   Result := TJSONObject(GetJSON(Str));
 end;
 
-//var
-//  Original, Encrypted, Decrypted, Str: string;
-//  JOriginal, JDecrypted: TJSONObject;
-//begin
-//  Original := 'Привіт, Lazarus! 123';
-//  Encrypted := StrEncrypt(Original, 'MyKey1234567');
-//  Decrypted := StrDecrypt(Encrypted, 'MyKey1234567');
-//
-//  JOriginal := TJSONObject.Create();
-//  JOriginal.Add('name', 'Volodymyr Volodymyr Volodymyr Volodymyr Volodymyr Volodymyr ');
-//  JOriginal.Add('age', 34);
-//  JOriginal.Add('city', 'Kyiv Kyiv Kyiv Kyiv Kyiv Kyiv Kyiv Kyiv Kyiv ');
-//  Encrypted := JsonEncrypt(JOriginal, 'MyKey1234567');
-//
-//  StrToFile(Encrypted, 'Encrypted.dat');
-//  Decrypted := StrFromFile('Encrypted.dat');
-//
-//  JDecrypted := JsonDecrypt(Decrypted, 'MyKey1234567');
-//  Str := JDecrypted.Get('name', '')
 end.
 

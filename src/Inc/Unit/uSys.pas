@@ -8,7 +8,7 @@ unit uSys;
 interface
 
 uses
-  Classes, Windows, SysUtils;
+  Classes, Windows, SysUtils, FileInfo;
 
 function AddDllDirectory(aDir: PWideChar): THandle; stdcall; external 'kernel32.dll';
 function SetDllDirectoryW(lpPathName: PWideChar): BOOL; stdcall; external 'kernel32.dll';
@@ -23,6 +23,7 @@ function FileGetSize(const aFileName: string): Int64;
 procedure FileAppendText(const aFile, aMsg: string);
 procedure StrToFile(const aStr: AnsiString; aFile: string);
 function StrFromFile(const aFile: string): AnsiString;
+function GetAppVer(): string;
 
 
 implementation
@@ -156,7 +157,24 @@ begin
   Result := ConcatPaths([DirApp, aFile]);
 end;
 
-
+function GetAppVer(): string;
+var
+  Info: TVersionInfo;
+begin
+  Info := TVersionInfo.Create;
+  try
+    // Завантажуємо інформацію з поточного виконуваного файлу
+    Info.Load(HINSTANCE);
+    Result := Format('%d.%d.%d.%d', [
+      Info.FixedInfo.FileVersion[0], // Major
+      Info.FixedInfo.FileVersion[1], // Minor
+      Info.FixedInfo.FileVersion[2], // Revision
+      Info.FixedInfo.FileVersion[3]  // Build
+    ]);
+  finally
+    Info.Free();
+  end;
+end;
 
 initialization
   //SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);

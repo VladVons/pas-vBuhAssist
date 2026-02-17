@@ -14,7 +14,7 @@ uses
   {$ENDIF}
   opensslsockets,
   Interfaces, // this includes the LCL widgetset
-  Forms, uFMain, uFAbout, uFMedocCheckDocs, uWinManager, uGenericMatrix,
+  Forms, uFMain, uFAbout, uFMedocCheckDocs, uWinManager,
   uDmFbConnect, uWinReg, uLicence, uFLicense, uSys, uGhostScript, uFOptimizePDF,
   uSettings, uVarUtil, uLog, uConst, uFLogin, uFMessageShow, uExceptionHandler,
   uType, uCrypt, uFormState;

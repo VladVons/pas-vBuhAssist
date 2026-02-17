@@ -47,7 +47,7 @@ procedure TFOptimizePDF.ButtonConvertClick(Sender: TObject);
 var
   Ratio: double;
   i, FileOutSize: integer;
-  FileIn, FileOut, LatinFilter, FileName, Ext: string;
+  FileIn, FileOut, FileName, Ext: string;
   FilesIn: TStringList;
 begin
   if (Trim(LabeledEditDirIn.Text) = '') then

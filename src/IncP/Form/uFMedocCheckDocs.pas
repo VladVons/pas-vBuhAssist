@@ -10,7 +10,7 @@ interface
 uses
   Classes, SysUtils, DateUtils, SQLDB, Forms, Controls, Graphics, Dialogs,
   StdCtrls, DBGrids, Grids, ExtCtrls, LR_Class, DB, fpjson, jsonparser, uFLogin,
-  uDmFbConnect, uType, uGenericMatrix, uLicence, uWinReg, uSys, uLog, uConst, uFormState;
+  uDmFbConnect, uType, uGenericMatrix, uLicence, uWinReg, uSys, uLog, uFormState;
 
 type
 
@@ -111,7 +111,7 @@ begin
     DmFbConnect.IBConnection1.UserName := 'SYSDBA';
     DmFbConnect.IBConnection1.Password := 'masterkey';
   end;
-  DmFbConnect.IBConnection1.DatabaseName := JObj.Get('db');
+  DmFbConnect.IBConnection1.DatabaseName := JObj.Get('db', '');
   //DmFbConnect.IBConnection1.CharSet := 'UTF8';
   DmFbConnect.IBConnection1.Connected := True;
 
@@ -324,7 +324,7 @@ begin
   for i := 0 to JMedocApp.Count - 1 do
   begin
     JObj := JMedocApp.Objects[i];
-    ComboBoxPath.Items.AddObject(JObj.Get('db'), JObj);
+    ComboBoxPath.Items.AddObject(JObj.Get('db', ''), JObj);
   end;
 
   if (ComboBoxPath.Items.Count = 0) then

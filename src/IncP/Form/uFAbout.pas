@@ -8,18 +8,20 @@ unit uFAbout;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ComCtrls;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ComCtrls, ExtCtrls,
+  uSys;
 
 type
 
   { TFAbout }
 
   TFAbout = class(TForm)
-    LabelVer: TLabel;
+    LabeledEditVer: TLabeledEdit;
     Memo1: TMemo;
     PageControl1: TPageControl;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
+    procedure FormCreate(Sender: TObject);
   private
 
   public
@@ -34,5 +36,11 @@ implementation
 {$R *.lfm}
 
 { TFAbout }
+
+procedure TFAbout.FormCreate(Sender: TObject);
+begin
+  LabeledEditVer.Text := GetAppVer() + ' (' + {$I %DATE%} + ')';
+end;
+
 end.
 
