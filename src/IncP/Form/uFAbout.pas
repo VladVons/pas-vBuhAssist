@@ -16,6 +16,7 @@ type
   { TFAbout }
 
   TFAbout = class(TForm)
+    Image1: TImage;
     LabeledEditVer: TLabeledEdit;
     Memo1: TMemo;
     PageControl1: TPageControl;

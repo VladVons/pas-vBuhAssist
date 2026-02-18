@@ -8,7 +8,6 @@ unit uConst;
 interface
 
 const
-  cVersion          = '1.02';
   cFileLicPassw     = 'BuhAssist';
   cMaxLicensesFree  = 3;
   cDirAddons        = 'addons';

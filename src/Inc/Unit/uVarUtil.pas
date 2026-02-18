@@ -13,6 +13,7 @@ uses
 function ExtractLatin(const aString: string): string;
 function LatinToUkr(const aStr: string): string;
 function RemoveChars(const aStr, aRemove: string): string;
+generic function IIF<T>(aCond: Boolean; const aValTrue, aValFalse: T): T; inline;
 
 
 implementation
@@ -78,6 +79,14 @@ begin
     if (Pos(c, aRemove) = 0) then
       Result := Result + c;
   end;
+end;
+
+generic function IIF<T>(aCond: Boolean; const aValTrue, aValFalse: T): T; inline;
+begin
+  if (aCond) then
+    Result := aValTrue
+  else
+    Result := aValFalse;
 end;
 
 end.

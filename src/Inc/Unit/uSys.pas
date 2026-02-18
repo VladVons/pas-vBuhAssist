@@ -8,7 +8,7 @@ unit uSys;
 interface
 
 uses
-  Classes, Windows, SysUtils, FileInfo;
+  Classes, Windows, Forms, SysUtils, FileInfo;
 
 function AddDllDirectory(aDir: PWideChar): THandle; stdcall; external 'kernel32.dll';
 function SetDllDirectoryW(lpPathName: PWideChar): BOOL; stdcall; external 'kernel32.dll';

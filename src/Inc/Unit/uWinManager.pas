@@ -8,7 +8,7 @@ unit uWinManager;
 interface
 
 uses
-  Classes, Forms, ComCtrls, Controls, Menus, DateUtils, SysUtils;
+  Classes, Forms, Windows, Controls, ComCtrls, Menus, DateUtils, SysUtils;
 
 type
   TFormClass = class of TForm;
@@ -27,12 +27,68 @@ type
     procedure SetActivePage(aIdx: integer);
   end;
 
+  TOneInstance = class
+  const
+    WM_SHOWME = WM_USER + 1971;
+  private
+    fUniqName: String;
+    function FindWindow(): HANDLE;
+  public
+    constructor Create();
+    procedure Check();
+    procedure Register(aHandle: HANDLE);
+  end;
+
+
   procedure ShowOrCreateForm(AClass: TFormClass);
 
-  var
-    WinManager: TWinManager;
+var
+  WinManager: TWinManager;
+  OneInstance: TOneInstance;
 
 implementation
+
+constructor TOneInstance.Create();
+begin
+  fUniqName := 'qwerty12345';
+end;
+
+procedure TOneInstance.Register(aHandle: HANDLE);
+begin
+  SetProp(aHandle, PChar(fUniqName), PtrUInt(1));
+end;
+
+function TOneInstance.FindWindow(): HANDLE;
+var
+  h: HANDLE;
+begin
+  Result := 0;
+  h := GetTopWindow(0);
+  while h <> 0 do
+  begin
+    if GetProp(h, PChar(fUniqName)) <> 0 then
+    begin
+      Result := h;
+      Exit();
+    end;
+    h := GetNextWindow(h, GW_HWNDNEXT);
+  end;
+end;
+
+procedure TOneInstance.Check();
+var
+  hWnd: HANDLE;
+begin
+  CreateMutex(nil, True, 'MyUniqMutex_QpTfRRasS_1971');
+  if (GetLastError() = ERROR_ALREADY_EXISTS) then
+  begin
+    //hWnd := FindWindow(nil, PChar(Application.Title));
+    hWnd := FindWindow();
+    if (hWnd <> 0) then
+      PostMessage(hWnd, WM_SHOWME, 0, 0);
+    Halt();
+  end;
+end;
 
 constructor TWinManager.Create(aPageControl: TPageControl; aPopupMenu: TPopupMenu);
 begin

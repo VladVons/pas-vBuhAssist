@@ -10,12 +10,12 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList, Windows,
   ExtCtrls, ComCtrls, StdCtrls, fpjson,
-  uFAbout, uFMedocCheckDocs, uFLicense, uFOptimizePDF, uWinManager, uLicence, uLog, uSettings, uConst, uFormState, uSys;
+  uFAbout, uFMedocCheckDocs, uFLicense, uFOptimizePDF, uWinManager, uLicence, uLog, uSettings, uFormState, uSys;
 
 type
-
   { TFMain }
   TFMain = class(TForm)
+    ActionExit: TAction;
     ActionOptimizePDF: TAction;
     ActionLicense: TAction;
     ActionFMedocCheckDocs: TAction;
@@ -24,16 +24,22 @@ type
     MainMenu1: TMainMenu;
     ManuItemHelp: TMenuItem;
     MemoInfo1: TMemo;
+    Separator2: TMenuItem;
+    MenuItemSettings: TMenuItem;
+    MenuItemPrint: TMenuItem;
+    Separator1: TMenuItem;
+    MenuItemExit: TMenuItem;
     MenuItemCloseTab: TMenuItem;
     MenuItemMedoc: TMenuItem;
     MenuItemLicense: TMenuItem;
     MenuItemOprimizePDF: TMenuItem;
-    MenuItemModules: TMenuItem;
+    MenuItemFile: TMenuItem;
     MenuItemAboutApp: TMenuItem;
     PageControl1: TPageControl;
     Panel1: TPanel;
     PopupMenu1: TPopupMenu;
     Splitter1: TSplitter;
+    procedure ActionExitExecute(Sender: TObject);
     procedure ActionFAboutExecute(Sender: TObject);
     procedure ActionFMedocCheckDocsExecute(Sender: TObject);
     procedure ActionLicenseExecute(Sender: TObject);
@@ -41,6 +47,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure MenuItemCloseTabClick(Sender: TObject);
   private
+    procedure WMShowMe(var aMsg: TMessage); message TOneInstance.WM_SHOWME;
   public
 
   end;
@@ -57,6 +64,11 @@ implementation
 procedure TFMain.ActionFAboutExecute(Sender: TObject);
 begin
   ShowOrCreateForm(TFAbout);
+end;
+
+procedure TFMain.ActionExitExecute(Sender: TObject);
+begin
+  Halt();
 end;
 
 procedure TFMain.ActionFMedocCheckDocsExecute(Sender: TObject);
@@ -79,6 +91,18 @@ begin
   WinManager.CloseActive();
 end;
 
+procedure TFMain.WMShowMe(var aMsg: TMessage);
+begin
+  ShowMessage('Програма вже запущена');
+  Log.Print('Програма вже запущена');
+  if IsIconic(Handle) then
+    ShowWindow(Handle, SW_RESTORE);
+
+  Application.Restore();
+  BringToFront();
+  SetForegroundWindow(Handle);
+end;
+
 procedure TFMain.FormCreate(Sender: TObject);
 var
   i: integer;
@@ -90,22 +114,18 @@ begin
   Licence := TLicence.Create();
   Licence.LoadFromFile();
 
-  Caption := Caption + ' ' +  GetAppVer();
+  OneInstance.Register(Handle);
+  OneInstance.Free();
+
+  Caption := Caption + ' ' + GetAppVer();
+
   Log := TLog.Create(MemoInfo1);
   Log.Print('Початок');
 
-  CreateMutex(nil, True, 'MyUniqMutex_QpTfRRasS_1971');
-  if (GetLastError() = ERROR_ALREADY_EXISTS) then
-  begin
-    ShowMessage('Програма вже запущена');
-    Log.Print('Програма вже запущена');
-    Halt();
-  end;
-
   WinManager := TWinManager.Create(PageControl1, PopupMenu1);
   Forms := [
-    TFMedocCheckDocs,
-    TFOptimizePDF
+    TFMedocCheckDocs
+    //TFOptimizePDF
   ];
 
   for i := 0 to High(Forms) do

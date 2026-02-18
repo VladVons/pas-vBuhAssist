@@ -3,7 +3,7 @@ object FMain: TFMain
   Height = 368
   Top = 250
   Width = 741
-  Caption = 'Помічник бухгалтера'
+  Caption = 'Бджілка - помічник бухгалтера'
   ClientHeight = 368
   ClientWidth = 741
   Menu = MainMenu1
@@ -51,17 +51,35 @@ object FMain: TFMain
   object MainMenu1: TMainMenu
     Left = 264
     Top = 16
-    object MenuItemModules: TMenuItem
-      Caption = 'Модулі'
+    object MenuItemFile: TMenuItem
+      Caption = 'Файл'
       object MenuItemMedoc: TMenuItem
         Action = ActionFMedocCheckDocs
       end
       object MenuItemOprimizePDF: TMenuItem
         Action = ActionOptimizePDF
+        Visible = False
+      end
+      object Separator1: TMenuItem
+        Caption = '-'
+      end
+      object MenuItemPrint: TMenuItem
+        Caption = 'Друк'
+        Enabled = False
+      end
+      object MenuItemSettings: TMenuItem
+        Caption = 'Налаштування'
+        Enabled = False
+      end
+      object Separator2: TMenuItem
+        Caption = '-'
+      end
+      object MenuItemExit: TMenuItem
+        Action = ActionExit
       end
     end
     object ManuItemHelp: TMenuItem
-      Caption = 'Допомога'
+      Caption = 'Довідка'
       object MenuItemLicense: TMenuItem
         Action = ActionLicense
         Visible = False
@@ -89,6 +107,10 @@ object FMain: TFMain
     object ActionOptimizePDF: TAction
       Caption = 'Оптимізація PDF'
       OnExecute = ActionOptimizePDFExecute
+    end
+    object ActionExit: TAction
+      Caption = 'Вихід'
+      OnExecute = ActionExitExecute
     end
   end
   object PopupMenu1: TPopupMenu

@@ -29,6 +29,10 @@ begin
   {$PUSH}{$WARN 5044 OFF}
   Application.MainFormOnTaskbar:=True;
   {$POP}
+  //OneInstanceOnly(cAppName);
+  OneInstance := TOneInstance.Create();
+  OneInstance.Check();
+
   Application.Initialize();
   Application.CreateForm(TFMain, FMain);
   Application.CreateForm(TDmFbConnect, DmFbConnect);

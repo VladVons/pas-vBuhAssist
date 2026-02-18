@@ -8,9 +8,9 @@ unit uFMedocCheckDocs;
 interface
 
 uses
-  Classes, SysUtils, DateUtils, SQLDB, Forms, Controls, Graphics, Dialogs,
+  Classes, SysUtils, StrUtils, DateUtils, SQLDB, Forms, Controls, Graphics, Dialogs,
   StdCtrls, DBGrids, Grids, ExtCtrls, LR_Class, DB, fpjson, jsonparser, uFLogin,
-  uDmFbConnect, uType, uGenericMatrix, uLicence, uWinReg, uSys, uLog, uFormState;
+  uDmFbConnect, uGenericMatrix, uType, uLicence, uWinReg, uSys, uLog, uFormState;
 
 type
 
@@ -21,6 +21,7 @@ type
     ButtonOrderLicense: TButton;
     ButtonPrint: TButton;
     ButtonExec: TButton;
+    ComboBoxFirm: TComboBox;
     ComboBoxPath: TComboBox;
     ComboBoxMonth: TComboBox;
     ComboBoxDoc: TComboBox;
@@ -29,6 +30,7 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
+    Label5: TLabel;
     Panel1: TPanel;
     SQLQuery1: TSQLQuery;
     SQLQueryCodes: TSQLQuery;
@@ -37,12 +39,16 @@ type
     procedure ButtonOrderLicenseClick(Sender: TObject);
     procedure ComboBoxPathChange(Sender: TObject);
     procedure DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure DBGrid1TitleClick(Column: TColumn);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure SQLQuery1AfterOpen(DataSet: TDataSet);
   private
-    JMedocApp: TJSONArray;
-    FirmCodesLicensed: TStringList;
+    fSortField: string;
+    fSortAsc: Boolean;
+    fJMedocApp: TJSONArray;
+    fFirmCodesLicensed: TStringList;
+    fDemoFields: TStringList;
     procedure SetComboBoxToCurrentMonth(aComboBox: TComboBox);
     procedure SetComboBoxToCurrentYear(aComboBox: TComboBox);
     procedure QueryOpen();
@@ -113,7 +119,20 @@ begin
   end;
   DmFbConnect.IBConnection1.DatabaseName := JObj.Get('db', '');
   //DmFbConnect.IBConnection1.CharSet := 'UTF8';
-  DmFbConnect.IBConnection1.Connected := True;
+
+  DmFbConnect.IBConnection1.LoginPrompt := False;
+  DmFbConnect.IBConnection1.Connected := False;
+  try
+    DmFbConnect.IBConnection1.Connected := True;
+  except
+    on E: EDatabaseError do
+    begin
+      if Pos('used by another', LowerCase(E.Message)) > 0 then
+        Log.Print('База занята іншим користувачем')
+      else
+        raise;
+    end;
+  end;
 
   SQLQuery1.Close();
   SQLQuery1.DataBase := DmFbConnect.IBConnection1;
@@ -130,6 +149,14 @@ begin
 
   Str := ComboBoxDoc.Items.Names[ComboBoxDoc.ItemIndex];
   SQLQuery1.ParamByName('_CHARCODE').Value := LowerCase(Str);
+
+  SQLQuery1.MacroByName('_Order').Value := fSortField;
+  SQLQuery1.MacroByName('_Asc').Value := IfThen(fSortAsc, 'ASC', 'DESC');;
+
+  Str := '';
+  if (ComboBoxFirm.Text <> '') then
+    Str := ' AND ORG.EDRPOU=' + TRim(ComboBoxFirm.Text);
+  SQLQuery1.MacroByName('_COND_ORG').Value := Str;
 
   SQLQuery1.Open();
 end;
@@ -226,6 +253,8 @@ begin
 end;
 
 procedure TFMedocCheckDocs.ButtonExecClick(Sender: TObject);
+var
+  FirmCodes: TStringList;
 begin
   QueryOpen();
 end;
@@ -251,6 +280,8 @@ begin
     FreeAndNil(FirmCodesLic);
     FirmCodes.Free();
   end;
+
+  fFirmCodesLicensed := Licence.GetFirmCodes(Name);
 end;
 
 procedure TFMedocCheckDocs.ButtonOrderLicenseClick(Sender: TObject);
@@ -306,7 +337,7 @@ begin
     FillRect(Rect); // малюємо фон
 
     // Вибираємо, який текст малювати
-    if ((Column.FieldName = 'STATUSNAME') or (Column.FieldName = 'NAME')) and (FirmCodesLicensed.IndexOf(Code) = -1) then
+    if (fDemoFields.IndexOf(Column.FieldName) <> -1) and (fFirmCodesLicensed.IndexOf(Code) = -1) then
       DisplayText := 'Д Е М О'
     else
       DisplayText := Column.Field.DisplayText;
@@ -315,15 +346,36 @@ begin
   end;
 end;
 
+procedure TFMedocCheckDocs.DBGrid1TitleClick(Column: TColumn);
+var
+   fld: string;
+begin
+    fld := Column.FieldName;
+
+    // якщо натиснули ту ж колонку — міняємо напрям
+    if (fSortField = fld) then
+      fSortAsc := (not fSortAsc)
+    else begin
+      fSortField := fld;
+      fSortAsc := True;
+    end;
+
+    QueryOpen();
+    DBGrid1.Invalidate();
+end;
+
 procedure TFMedocCheckDocs.FormCreate(Sender: TObject);
 var
   i: integer;
   JObj: TJSONObject;
 begin
-  JMedocApp := RegFindMedocInfo();
-  for i := 0 to JMedocApp.Count - 1 do
+  fSortField := 'StatusName';
+  fSortAsc := True;
+
+  fJMedocApp := RegFindMedocInfo();
+  for i := 0 to fJMedocApp.Count - 1 do
   begin
-    JObj := JMedocApp.Objects[i];
+    JObj := fJMedocApp.Objects[i];
     ComboBoxPath.Items.AddObject(JObj.Get('db', ''), JObj);
   end;
 
@@ -344,8 +396,17 @@ begin
   ComboBoxDoc.Items.AddPair('J0500110', 'Податковий розрахунок сум доходу ... ЄСВ');
   ComboBoxDoc.ItemIndex := 0;
 
-  FirmCodesLicensed := Licence.GetFirmCodes(Name);
+  fFirmCodesLicensed := Licence.GetFirmCodes(Name);
+  ComboBoxFirm.Items.Assign(fFirmCodesLicensed);
+  ComboBoxFirm.Items.Insert(0, '');
 
+  fDemoFields := TStringList.Create();
+  fDemoFields.Add('STATUSNAME');
+  fDemoFields.Add('MODDATE');
+  fDemoFields.Add('CHARCODE');
+  fDemoFields.Add('CARDSENDSTT_NAME');
+
+  Panel1.Font.Size := 10;
   FormStateRec.Load(self);
 end;
 
@@ -353,8 +414,8 @@ procedure TFMedocCheckDocs.FormDestroy(Sender: TObject);
 begin
   FormStateRec.Save(self);
 
-  FreeAndNil(JMedocApp);
-  FreeAndNil(FirmCodesLicensed);
+  FreeAndNil(fJMedocApp);
+  FreeAndNil(fFirmCodesLicensed);
 end;
 
 end.
