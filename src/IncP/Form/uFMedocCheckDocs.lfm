@@ -18,7 +18,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
     Align = alClient
     Color = clWindow
     Columns = <>
-    DataSource = DmFbConnect.DataSource1
+    DataSource = DataSourceGrid
     ReadOnly = True
     TabOrder = 0
     Visible = False
@@ -162,9 +162,82 @@ object FMedocCheckDocs: TFMedocCheckDocs
       OnClick = ButtonGetLicenseClick
     end
   end
-  object SQLQuery1: TSQLQuery
-    FieldDefs = <>
-    AfterOpen = SQLQuery1AfterOpen
+  object Label4: TLabel
+    Left = 139
+    Height = 15
+    Top = 159
+    Width = 34
+    Caption = 'Label4'
+  end
+  object SQLQueryGrid: TSQLQuery
+    FieldDefs = <    
+      item
+        Name = 'EDRPOU'
+        DataType = ftString
+        Precision = -1
+        Size = 10
+      end    
+      item
+        Name = 'DEPT'
+        DataType = ftString
+        Precision = -1
+        Size = 4
+      end    
+      item
+        Name = 'SHORTNAME'
+        DataType = ftString
+        Precision = -1
+        Size = 100
+      end    
+      item
+        Name = 'INDTAXNUM'
+        DataType = ftString
+        Precision = -1
+        Size = 14
+      end    
+      item
+        Name = 'VAT'
+        DataType = ftString
+        Precision = -1
+        Size = 10
+      end    
+      item
+        Name = 'PERDATE'
+        DataType = ftDate
+        Precision = -1
+      end    
+      item
+        Name = 'CHARCODE'
+        DataType = ftString
+        Precision = -1
+        Size = 8
+      end    
+      item
+        Name = 'CARDSENDSTT_NAME'
+        DataType = ftString
+        Precision = -1
+        Size = 50
+      end    
+      item
+        Name = 'MODDATE'
+        DataType = ftDateTime
+        Precision = -1
+      end    
+      item
+        Name = 'CARDSTATUS_NAME'
+        DataType = ftString
+        Precision = -1
+        Size = 30
+      end    
+      item
+        Name = 'XMLVALS'
+        DataType = ftBlob
+        Precision = -1
+        Size = 8
+      end>
+    OnCalcFields = SQLQueryGridCalcFields
+    Database = DmFbConnect.IBConnection1
+    Transaction = DmFbConnect.SQLTransaction1
     SQL.Strings = (
       'SELECT'
       '    ORG.EDRPOU,'
@@ -172,14 +245,15 @@ object FMedocCheckDocs: TFMedocCheckDocs
       '    ORG.SHORTNAME,'
       '    ORG.INDTAXNUM,'
       '    CASE WHEN TRIM(ORG.INDTAXNUM) <> ''100000000000'' AND TRIM(ORG.INDTAXNUM) <> '''''
-      '     THEN CAST(''ПДВ'' AS VARCHAR(10))'
-      '     ELSE '''''
+      '      THEN CAST(''ПДВ'' AS VARCHAR(10))'
+      '      ELSE '''''
       '    END AS vat,'
       '    C.PERDATE,'
       '    C.CHARCODE,'
       '    C.CARDSENDSTT_NAME,'
       '    C.MODDATE,'
-      '    C.StatusName'
+      '    C.CARDSTATUS_NAME,'
+      '    C.XMLVALS'
       'FROM'
       '    ORG'
       'LEFT JOIN ('
@@ -189,7 +263,8 @@ object FMedocCheckDocs: TFMedocCheckDocs
       '        CARDSENDSTT.NAME AS CARDSENDSTT_NAME,'
       '        FORM.CHARCODE,'
       '        CARD.MODDATE,'
-      '        CARDSTATUS.NAME AS StatusName'
+      '        CARDSTATUS.NAME AS CARDSTATUS_NAME,'
+      '        CARDBLOB.XMLVALS'
       '    FROM CARD'
       '    LEFT JOIN FORM'
       '        ON FORM.CODE = CARD.FORM'
@@ -197,6 +272,8 @@ object FMedocCheckDocs: TFMedocCheckDocs
       '        ON CARDSTATUS.CODE = CARD.STATUS'
       '    LEFT JOIN CARDSENDSTT'
       '        ON CARDSENDSTT.CODE = CARD.SENDSTT'
+      '    LEFT JOIN CARDBLOB'
+      '        ON CARDBLOB.CODE = CARD.CODE'
       '    WHERE'
       '        CARD.PERDATE = DATE %_PERDATE'
       '        AND CARD.IDPARENT IS NULL'
@@ -239,12 +316,137 @@ object FMedocCheckDocs: TFMedocCheckDocs
         ParamType = ptInput
       end>
     MacroCheck = True
-    Left = 128
-    Top = 144
+    Left = 120
+    Top = 208
+    object SQLQueryGridEDRPOU: TStringField
+      DisplayLabel = 'Код'
+      FieldKind = fkData
+      FieldName = 'EDRPOU'
+      Index = 0
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 10
+    end
+    object SQLQueryGridDEPT: TStringField
+      DisplayLabel = 'Філія'
+      FieldKind = fkData
+      FieldName = 'DEPT'
+      Index = 1
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 4
+    end
+    object SQLQueryGridSHORTNAME: TStringField
+      DisplayLabel = 'Назва'
+      FieldKind = fkData
+      FieldName = 'SHORTNAME'
+      Index = 2
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 100
+    end
+    object SQLQueryGridINDTAXNUM: TStringField
+      DisplayLabel = 'Податковий код'
+      FieldKind = fkData
+      FieldName = 'INDTAXNUM'
+      Index = 3
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 14
+    end
+    object SQLQueryGridVAT: TStringField
+      DisplayLabel = 'Оподаткування'
+      FieldKind = fkData
+      FieldName = 'VAT'
+      Index = 4
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = True
+      Size = 10
+    end
+    object SQLQueryGridPERDATE: TDateField
+      FieldKind = fkData
+      FieldName = 'PERDATE'
+      Index = 5
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+    object SQLQueryGridCHARCODE: TStringField
+      FieldKind = fkData
+      FieldName = 'CHARCODE'
+      Index = 6
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 8
+    end
+    object SQLQueryGridCARDSENDSTT_NAME: TStringField
+      FieldKind = fkData
+      FieldName = 'CARDSENDSTT_NAME'
+      Index = 7
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 50
+    end
+    object SQLQueryGridMODDATE: TDateTimeField
+      DisplayLabel = 'Дата зміни'
+      FieldKind = fkData
+      FieldName = 'MODDATE'
+      Index = 8
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+    object SQLQueryGridCARDSTATUS_NAME: TStringField
+      FieldKind = fkData
+      FieldName = 'CARDSTATUS_NAME'
+      Index = 9
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 30
+    end
+    object SQLQueryGridXMLVALS: TBlobField
+      FieldKind = fkData
+      FieldName = 'XMLVALS'
+      Index = 10
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Visible = False
+      Size = 8
+    end
+    object SQLQueryGridHZ: TStringField
+      FieldKind = fkCalculated
+      FieldName = 'HZ'
+      Index = 11
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
   end
   object SQLQueryCodes: TSQLQuery
     FieldDefs = <>
-    AfterOpen = SQLQuery1AfterOpen
+    Database = DmFbConnect.IBConnection1
+    Transaction = DmFbConnect.SQLTransaction1
     SQL.Strings = (
       'SELECT'
       '  ORG.EDRPOU'
@@ -259,7 +461,17 @@ object FMedocCheckDocs: TFMedocCheckDocs
     Params = <>
     Macros = <>
     MacroCheck = True
-    Left = 208
-    Top = 144
+    Left = 216
+    Top = 208
+  end
+  object DataSourceGrid: TDataSource
+    DataSet = SQLQueryGrid
+    Left = 120
+    Top = 152
+  end
+  object DataSourceCodes: TDataSource
+    DataSet = SQLQueryCodes
+    Left = 216
+    Top = 152
   end
 end

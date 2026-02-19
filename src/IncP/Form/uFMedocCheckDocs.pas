@@ -9,13 +9,12 @@ interface
 
 uses
   Classes, SysUtils, StrUtils, DateUtils, SQLDB, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, DBGrids, Grids, ExtCtrls, LR_Class, DB, fpjson, jsonparser, uFLogin,
-  uDmFbConnect, uGenericMatrix, uType, uLicence, uWinReg, uSys, uLog, uFormState;
+  StdCtrls, DBGrids, Grids, ExtCtrls, DB, fpjson, jsonparser, uFLogin,
+  uDmFbConnect, uLicence, uWinReg, uSys, uLog, uFormState;
 
 type
 
   { TFMedocCheckDocs }
-
   TFMedocCheckDocs = class(TForm)
     ButtonGetLicense: TButton;
     ButtonOrderLicense: TButton;
@@ -26,14 +25,29 @@ type
     ComboBoxMonth: TComboBox;
     ComboBoxDoc: TComboBox;
     ComboBoxYear: TComboBox;
+    DataSourceGrid: TDataSource;
+    DataSourceCodes: TDataSource;
     DBGrid1: TDBGrid;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
+    Label4: TLabel;
     Label5: TLabel;
     Panel1: TPanel;
-    SQLQuery1: TSQLQuery;
+    SQLQueryGrid: TSQLQuery;
     SQLQueryCodes: TSQLQuery;
+    SQLQueryGridCARDSENDSTT_NAME: TStringField;
+    SQLQueryGridCHARCODE: TStringField;
+    SQLQueryGridDEPT: TStringField;
+    SQLQueryGridEDRPOU: TStringField;
+    SQLQueryGridHZ: TStringField;
+    SQLQueryGridINDTAXNUM: TStringField;
+    SQLQueryGridMODDATE: TDateTimeField;
+    SQLQueryGridPERDATE: TDateField;
+    SQLQueryGridSHORTNAME: TStringField;
+    SQLQueryGridCARDSTATUS_NAME: TStringField;
+    SQLQueryGridVAT: TStringField;
+    SQLQueryGridXMLVALS: TBlobField;
     procedure ButtonExecClick(Sender: TObject);
     procedure ButtonGetLicenseClick(Sender: TObject);
     procedure ButtonOrderLicenseClick(Sender: TObject);
@@ -42,7 +56,7 @@ type
     procedure DBGrid1TitleClick(Column: TColumn);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure SQLQuery1AfterOpen(DataSet: TDataSet);
+    procedure SQLQueryGridCalcFields(DataSet: TDataSet);
   private
     fSortField: string;
     fSortAsc: Boolean;
@@ -51,6 +65,7 @@ type
     fDemoFields: TStringList;
     procedure SetComboBoxToCurrentMonth(aComboBox: TComboBox);
     procedure SetComboBoxToCurrentYear(aComboBox: TComboBox);
+    procedure SetComboBoxDoc();
     procedure QueryOpen();
     function  GetFirmCodes(): TStringList;
     procedure SetEmbededPath(aIdx: integer);
@@ -64,6 +79,7 @@ var
 implementation
 
 {$R *.lfm}
+{$I uFMedocCheckDocs_Comp.inc}
 
 { TFMedocCheckDocs }
 
@@ -73,7 +89,8 @@ var
   Path: string;
 begin
   JObj := TJSONObject(ComboBoxPath.Items.Objects[aIdx]);
-  Path := JObj.Strings['path']  + '\fb3\32';
+  Path := ConcatPaths([JObj.Strings['path'], 'fb3', '32']);
+
   AddDirDll(Path);
 end;
 
@@ -103,6 +120,7 @@ var
   Str: String;
   JObj: TJSONObject;
   Port: Integer;
+  SF_HZ: TStringField;
 begin
   DmFbConnect.IBConnection1.Connected := False;
   Idx := ComboBoxPath.ItemIndex;
@@ -120,136 +138,48 @@ begin
   DmFbConnect.IBConnection1.DatabaseName := JObj.Get('db', '');
   //DmFbConnect.IBConnection1.CharSet := 'UTF8';
 
-  DmFbConnect.IBConnection1.LoginPrompt := False;
-  DmFbConnect.IBConnection1.Connected := False;
   try
     DmFbConnect.IBConnection1.Connected := True;
   except
     on E: EDatabaseError do
     begin
       if Pos('used by another', LowerCase(E.Message)) > 0 then
-        Log.Print('База занята іншим користувачем')
+        Log.Print('Процес занятий іншим користувачем')
       else
         raise;
     end;
   end;
 
-  SQLQuery1.Close();
-  SQLQuery1.DataBase := DmFbConnect.IBConnection1;
-  SQLQuery1.Transaction := DmFbConnect.SQLTransaction1;
+  SQLQueryGrid.Close();
+  //SQLQueryGrid.Fields.Clear();
+  //SQLQueryGrid.FieldDefs.Clear();
+  SQLQueryGrid.DataBase := DmFbConnect.IBConnection1;
+  SQLQueryGrid.Transaction := DmFbConnect.SQLTransaction1;
 
-  DmFbConnect.DataSource1.DataSet := SQLQuery1;
-  DBGrid1.DataSource := DmFbConnect.DataSource1;
   DBGrid1.Visible := True;
 
   Month := Integer(ComboBoxMonth.Items.Objects[ComboBoxMonth.ItemIndex]);
   Year := Integer(ComboBoxYear.Items.Objects[ComboBoxYear.ItemIndex]);
   Str := FormatDateTime('yyyy-mm-dd', EncodeDate(Year, Month, 1));
-  SQLQuery1.MacroByName('_PERDATE').Value := QuotedStr(Str);
+  SQLQueryGrid.MacroByName('_PERDATE').Value := QuotedStr(Str);
 
   Str := ComboBoxDoc.Items.Names[ComboBoxDoc.ItemIndex];
-  SQLQuery1.ParamByName('_CHARCODE').Value := LowerCase(Str);
+  SQLQueryGrid.ParamByName('_CHARCODE').Value := LowerCase(Str);
 
-  SQLQuery1.MacroByName('_Order').Value := fSortField;
-  SQLQuery1.MacroByName('_Asc').Value := IfThen(fSortAsc, 'ASC', 'DESC');;
+  SQLQueryGrid.MacroByName('_Order').Value := fSortField;
+  SQLQueryGrid.MacroByName('_Asc').Value := IfThen(fSortAsc, 'ASC', 'DESC');;
 
   Str := '';
   if (ComboBoxFirm.Text <> '') then
     Str := ' AND ORG.EDRPOU=' + TRim(ComboBoxFirm.Text);
-  SQLQuery1.MacroByName('_COND_ORG').Value := Str;
+  SQLQueryGrid.MacroByName('_COND_ORG').Value := Str;
 
-  SQLQuery1.Open();
-end;
+  //SQLQueryGrid.AfterOpen := nil;
+  //SQLQueryGrid.OnCalcFields := nil;
+  //SQLQueryGrid.AfterScroll := nil;
+  //DBGrid1.OnDrawColumnCell := nil;
 
-
-procedure TFMedocCheckDocs.SetComboBoxToCurrentMonth(aComboBox: TComboBox);
-var
-  i, Month: Integer;
-begin
-  aComboBox.Items.Clear();
-  aComboBox.Items.AddObject('Січень', TObject(1));
-  aComboBox.Items.AddObject('Лютий', TObject(2));
-  aComboBox.Items.AddObject('Березень', TObject(3));
-  //aComboBox.Items.AddObject('- 1 Квартал', TObject(101));
-  //aComboBox.Items.AddObject('-- 1 Півріччя', TObject(1001));
-  aComboBox.Items.AddObject('Квітень', TObject(4));
-  aComboBox.Items.AddObject('Травень', TObject(5));
-  aComboBox.Items.AddObject('Червень', TObject(6));
-  //aComboBox.Items.AddObject('- 2 Квартал', TObject(102));
-  aComboBox.Items.AddObject('Липень', TObject(7));
-  aComboBox.Items.AddObject('Серпень', TObject(8));
-  aComboBox.Items.AddObject('Вересень', TObject(9));
-  //aComboBox.Items.AddObject('- 3 Квартал', TObject(103));
-  aComboBox.Items.AddObject('Жовтень', TObject(10));
-  aComboBox.Items.AddObject('Листопад', TObject(11));
-  aComboBox.Items.AddObject('Грудень', TObject(12));
-  //aComboBox.Items.AddObject('- 4 Квартал', TObject(104));
-  //aComboBox.Items.AddObject('-- 2 Півріччя', TObject(1002));
-  //aComboBox.Items.AddObject('--- Рік', TObject(10000));
-
-  Month := MonthOf(IncMonth(Date, -1));
-
-  for i := 0 to aComboBox.Items.Count - 1 do
-  begin
-    if Integer(aComboBox.Items.Objects[i]) = Month then
-    begin
-      aComboBox.ItemIndex := i;
-      Exit;
-    end;
-  end;
-end;
-
-procedure TFMedocCheckDocs.SetComboBoxToCurrentYear(aComboBox: TComboBox);
-const
-  YearsBack: integer = 2;
-var
-  i, Year: Integer;
-begin
-  Year := YearOf(IncMonth(Date, -1));
-
-  aComboBox.Items.Clear();
-  for i := Year - YearsBack to Year + 1 do
-    aComboBox.Items.AddObject(IntToStr(i), TObject(i));
-
-  aComboBox.ItemIndex := YearsBack;
-end;
-
-procedure TFMedocCheckDocs.SQLQuery1AfterOpen(DataSet: TDataSet);
-var
-  i, Idx: Integer;
-  Data: array of TStringArray;
-  Matrix: TStringMatrix;
-begin
-  Data := [
-    ['EDRPOU', 'ЄДРПОУ', '70'],
-    ['SHORTNAME', 'Назва', '250'],
-    ['NAME', 'Найменування', '250'],
-    ['VAT', 'Тип', '50'],
-    ['PERDATE', 'Період', '80'],
-    ['DEPT', 'Філія', '80'],
-    ['MODDATE', 'Змінено', '80'],
-    ['STATUSNAME', 'Статус', '100'],
-    ['CHARCODE', 'Код звіту', '60']
-  ];
-
-  try
-    Matrix := TStringMatrix.Create();
-    Matrix.AddMatrix(Data);
-
-    for i := 0 to DBGrid1.Columns.Count - 1 do
-    begin
-      Idx := Matrix.Find(0, 0, DBGrid1.Columns[i].FieldName);
-      if Idx >= 0 then
-      begin
-        DBGrid1.Columns[i].Width := StrToInt(Matrix.Cells[Idx, 2]);
-        DBGrid1.Columns[i].Title.Caption := Matrix.Cells[Idx, 1];
-      end
-      else
-          DBGrid1.Columns[i].Width := 100;
-    end;
-  finally
-    Matrix.Free();
-  end;
+  SQLQueryGrid.Open();
 end;
 
 procedure TFMedocCheckDocs.ButtonExecClick(Sender: TObject);
@@ -349,6 +279,7 @@ end;
 procedure TFMedocCheckDocs.DBGrid1TitleClick(Column: TColumn);
 var
    fld: string;
+   s: TStringField;
 begin
     fld := Column.FieldName;
 
@@ -369,7 +300,7 @@ var
   i: integer;
   JObj: TJSONObject;
 begin
-  fSortField := 'StatusName';
+  fSortField := 'CARDSTATUS_NAME';
   fSortAsc := True;
 
   fJMedocApp := RegFindMedocInfo();
@@ -391,17 +322,14 @@ begin
 
   SetComboBoxToCurrentMonth(ComboBoxMonth);
   SetComboBoxToCurrentYear(ComboBoxYear);
-
-  ComboBoxDoc.Items.AddPair('J0200126', 'Податкова декларація з податку на додану вартість');
-  ComboBoxDoc.Items.AddPair('J0500110', 'Податковий розрахунок сум доходу ... ЄСВ');
-  ComboBoxDoc.ItemIndex := 0;
+  SetComboBoxDoc();
 
   fFirmCodesLicensed := Licence.GetFirmCodes(Name);
   ComboBoxFirm.Items.Assign(fFirmCodesLicensed);
   ComboBoxFirm.Items.Insert(0, '');
 
   fDemoFields := TStringList.Create();
-  fDemoFields.Add('STATUSNAME');
+  fDemoFields.Add('CARDSTATUS_NAME');
   fDemoFields.Add('MODDATE');
   fDemoFields.Add('CHARCODE');
   fDemoFields.Add('CARDSENDSTT_NAME');
@@ -416,6 +344,23 @@ begin
 
   FreeAndNil(fJMedocApp);
   FreeAndNil(fFirmCodesLicensed);
+end;
+
+procedure TFMedocCheckDocs.SQLQueryGridCalcFields(DataSet: TDataSet);
+var
+   StrXML: String;
+begin
+  if (not DataSet.FieldByName('XMLVALS').IsNull) then
+  begin
+    StrXML := DataSet.FieldByName('XMLVALS').AsString;
+  end;
+
+  //HZ  := GetXmlValue(StrXML, 'HZ');
+  //HZN := GetXmlValue(StrXML, 'HZN');
+  //HZU := GetXmlValue(StrXML, 'HZU');
+  //
+  //// формуємо обчислене значення
+  //DataSet.FieldByName('HZ_VALUE').AsString := HZ + ',' + HZN + ',' + HZU;
 end;
 
 end.

@@ -17,7 +17,6 @@ type
   { TDmFbConnect }
 
   TDmFbConnect = class(TDataModule)
-    DataSource1: TDataSource;
     IBConnection1: TIBConnection;
     SQLTransaction1: TSQLTransaction;
     procedure DataModuleCreate(Sender: TObject);

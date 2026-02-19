@@ -33,7 +33,7 @@
     </RunParams>
     <RequiredPackages>
       <Item>
-        <PackageName Value="lazreport"/>
+        <PackageName Value="FCL"/>
       </Item>
       <Item>
         <PackageName Value="SQLDBLaz"/>

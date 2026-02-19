@@ -6,21 +6,24 @@ object DmFbConnect: TDmFbConnect
   VerticalOffset = 160
   Width = 356
   object IBConnection1: TIBConnection
-    Connected = False
+    Connected = True
     LoginPrompt = False
+    DatabaseName = 'C:\ProgramData\Medoc\Medoc\db\ZVIT.FDB'
     KeepConnection = False
+    Password = 'masterkey'
+    Transaction = SQLTransaction1
+    UserName = 'SYSDBA'
+    CharSet = 'UTF8'
+    HostName = 'localhost'
     CheckTransactionParams = False
     UseConnectionCharSetIfNone = False
     Left = 40
     Top = 16
   end
-  object DataSource1: TDataSource
-    Left = 32
-    Top = 136
-  end
   object SQLTransaction1: TSQLTransaction
-    Active = False
-    Left = 40
-    Top = 72
+    Active = True
+    Database = IBConnection1
+    Left = 144
+    Top = 16
   end
 end
