@@ -17,7 +17,7 @@ uses
   Forms, uFMain, uFAbout, uFMedocCheckDocs, uWinManager,
   uDmFbConnect, uWinReg, uLicence, uFLicense, uSys, uGhostScript, uFOptimizePDF,
   uSettings, uVarUtil, uLog, uConst, uFLogin, uFMessageShow, uExceptionHandler,
-  uType, uCrypt, uFormState, uMedoc;
+  uType, uCrypt, uFormState, uMedoc, uFSettings;
 
 {$R *.res}
 begin
@@ -36,8 +36,6 @@ begin
   Application.Initialize();
   Application.CreateForm(TFMain, FMain);
   Application.CreateForm(TDmFbConnect, DmFbConnect);
-  Application.CreateForm(TFLogin, FLogin);
-  Application.CreateForm(TFMessageShow, FMessageShow);
   Application.Run();
 end.
 

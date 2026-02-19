@@ -1,0 +1,75 @@
+object FSettings: TFSettings
+  Left = 287
+  Height = 264
+  Top = 250
+  Width = 460
+  Caption = 'Налаштування'
+  ClientHeight = 264
+  ClientWidth = 460
+  LCLVersion = '4.4.0.0'
+  OnCreate = FormCreate
+  object Panel1: TPanel
+    Left = 0
+    Height = 40
+    Top = 224
+    Width = 460
+    Align = alBottom
+    ClientHeight = 40
+    ClientWidth = 460
+    TabOrder = 0
+    object ButtonOk: TButton
+      Left = 8
+      Height = 25
+      Top = 8
+      Width = 75
+      Caption = 'OK'
+      TabOrder = 0
+      OnClick = ButtonOkClick
+    end
+  end
+  object PageControlMain: TPageControl
+    Left = 0
+    Height = 224
+    Top = 0
+    Width = 460
+    Align = alClient
+    TabOrder = 1
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 224
+    Top = 0
+    Width = 460
+    Align = alClient
+    ClientHeight = 224
+    ClientWidth = 460
+    TabOrder = 2
+    object LabeledEditPassword: TLabeledEdit
+      Left = 160
+      Height = 23
+      Top = 40
+      Width = 136
+      EchoMode = emPassword
+      EditLabel.Height = 23
+      EditLabel.Width = 42
+      EditLabel.Caption = 'Пароль'
+      LabelPosition = lpLeft
+      PasswordChar = '*'
+      TabOrder = 0
+    end
+    object SpinEditBeginYear: TSpinEdit
+      Left = 160
+      Height = 23
+      Top = 8
+      Width = 136
+      TabOrder = 1
+    end
+    object Label1: TLabel
+      Left = 8
+      Height = 15
+      Top = 8
+      Width = 146
+      Caption = 'Дата початку експлуатації:'
+    end
+  end
+end

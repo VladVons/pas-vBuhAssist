@@ -51,6 +51,7 @@ type
     procedure ButtonGetLicenseClick(Sender: TObject);
     procedure ButtonOrderLicenseClick(Sender: TObject);
     procedure ComboBoxPathChange(Sender: TObject);
+    procedure ComboBoxYearDropDown(Sender: TObject);
     procedure DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure DBGrid1TitleClick(Column: TColumn);
     procedure FormCreate(Sender: TObject);
@@ -63,7 +64,7 @@ type
     fFirmCodesLicensed: TStringList;
     fDemoFields: TStringList;
     procedure SetComboBoxToCurrentMonth(aComboBox: TComboBox);
-    procedure SetComboBoxToCurrentYear(aComboBox: TComboBox);
+    procedure SetComboBoxToYear(aComboBox: TComboBox; aYear: Integer = 0);
     procedure SetComboBoxDoc();
     procedure QueryOpen();
     function  GetFirmCodes(): TStringList;
@@ -154,6 +155,7 @@ begin
   SQLQueryGrid.DataBase := DmFbConnect.IBConnection1;
   SQLQueryGrid.Transaction := DmFbConnect.SQLTransaction1;
 
+  DBGrid1.Columns.Clear();
   DBGrid1.Visible := True;
 
   Month := Integer(ComboBoxMonth.Items.Objects[ComboBoxMonth.ItemIndex]);
@@ -247,6 +249,14 @@ begin
   SetEmbededPath(ComboBoxPath.ItemIndex)
 end;
 
+procedure TFMedocCheckDocs.ComboBoxYearDropDown(Sender: TObject);
+var
+  Val: Integer;
+begin
+  Val := FormStateRec.GetItem('FSettings', 'SpinEditBeginYear_Value', 0);
+  SetComboBoxToYear(ComboBoxYear, Val);
+end;
+
 procedure TFMedocCheckDocs.DBGrid1DrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
 var
@@ -322,7 +332,7 @@ begin
   end;
 
   SetComboBoxToCurrentMonth(ComboBoxMonth);
-  SetComboBoxToCurrentYear(ComboBoxYear);
+  SetComboBoxToYear(ComboBoxYear);
   SetComboBoxDoc();
 
   fFirmCodesLicensed := Licence.GetFirmCodes(Name);
@@ -335,6 +345,11 @@ begin
   fDemoFields.Add('CHARCODE');
   fDemoFields.Add('CARDSENDSTT_NAME');
   fDemoFields.Add('HZ');
+
+  // Add cloumn visualisation in empty Grid
+  for i := 0 to SQLQueryGrid.Fields.Count - 1 do
+    with DBGrid1.Columns.Add do
+      FieldName := SQLQueryGrid.Fields[i].DisplayLabel;
 
   Panel1.Font.Size := 10;
   FormStateRec.Load(self);

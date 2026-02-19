@@ -10,6 +10,7 @@ object FMain: TFMain
   LCLVersion = '4.4.0.0'
   Visible = True
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   object Panel1: TPanel
     Left = 0
     Height = 74
@@ -68,8 +69,7 @@ object FMain: TFMain
         Enabled = False
       end
       object MenuItemSettings: TMenuItem
-        Caption = 'Налаштування'
-        Enabled = False
+        Action = ActionSettings
       end
       object Separator2: TMenuItem
         Caption = '-'
@@ -111,6 +111,10 @@ object FMain: TFMain
     object ActionExit: TAction
       Caption = 'Вихід'
       OnExecute = ActionExitExecute
+    end
+    object ActionSettings: TAction
+      Caption = 'Налаштування'
+      OnExecute = ActionSettingsExecute
     end
   end
   object PopupMenu1: TPopupMenu

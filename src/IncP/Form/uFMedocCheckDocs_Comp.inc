@@ -35,16 +35,17 @@ begin
   end;
 end;
 
-procedure TFMedocCheckDocs.SetComboBoxToCurrentYear(aComboBox: TComboBox);
+procedure TFMedocCheckDocs.SetComboBoxToYear(aComboBox: TComboBox; aYear: Integer = 0);
 const
   YearsBack: integer = 2;
 var
-  i, Year: Integer;
+  i: Integer;
 begin
-  Year := YearOf(IncMonth(Date, -1));
+  if (aYear = 0) then
+    aYear := YearOf(IncMonth(Date(), -1));
 
   aComboBox.Items.Clear();
-  for i := Year - YearsBack to Year + 1 do
+  for i := aYear - YearsBack to aYear + 1 do
     aComboBox.Items.AddObject(IntToStr(i), TObject(i));
 
   aComboBox.ItemIndex := YearsBack;

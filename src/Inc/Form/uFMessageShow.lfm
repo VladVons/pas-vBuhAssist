@@ -16,6 +16,7 @@ object FMessageShow: TFMessageShow
     ClientHeight = 40
     ClientWidth = 320
     TabOrder = 0
+    Visible = False
     object LabelCaption: TLabel
       Left = 8
       Height = 21

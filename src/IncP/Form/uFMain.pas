@@ -8,13 +8,15 @@ unit uFMain;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList, Windows,
-  ExtCtrls, ComCtrls, StdCtrls, fpjson,
-  uFAbout, uFMedocCheckDocs, uFLicense, uFOptimizePDF, uWinManager, uLicence, uLog, uSettings, uFormState, uSys;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList, Windows, ExtCtrls,
+  ComCtrls, StdCtrls, fpjson,
+  uFAbout, uFMedocCheckDocs, uFOptimizePDF, uFSettings, uFLogin,
+  uWinManager, uLicence, uLog, uSettings, uFormState, uSys;
 
 type
   { TFMain }
   TFMain = class(TForm)
+    ActionSettings: TAction;
     ActionExit: TAction;
     ActionOptimizePDF: TAction;
     ActionLicense: TAction;
@@ -44,7 +46,9 @@ type
     procedure ActionFMedocCheckDocsExecute(Sender: TObject);
     procedure ActionLicenseExecute(Sender: TObject);
     procedure ActionOptimizePDFExecute(Sender: TObject);
+    procedure ActionSettingsExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure MenuItemCloseTabClick(Sender: TObject);
   private
     procedure WMShowMe(var aMsg: TMessage); message TOneInstance.WM_SHOWME;
@@ -78,12 +82,17 @@ end;
 
 procedure TFMain.ActionLicenseExecute(Sender: TObject);
 begin
-  WinManager.Add(TFLicense);
+  //WinManager.Add(TFLicense);
 end;
 
 procedure TFMain.ActionOptimizePDFExecute(Sender: TObject);
 begin
   WinManager.Add(TFOptimizePDF);
+end;
+
+procedure TFMain.ActionSettingsExecute(Sender: TObject);
+begin
+  WinManager.Add(TFSettings);
 end;
 
 procedure TFMain.MenuItemCloseTabClick(Sender: TObject);
@@ -93,7 +102,6 @@ end;
 
 procedure TFMain.WMShowMe(var aMsg: TMessage);
 begin
-  ShowMessage('Програма вже запущена');
   Log.Print('Програма вже запущена');
   if IsIconic(Handle) then
     ShowWindow(Handle, SW_RESTORE);
@@ -106,6 +114,7 @@ end;
 procedure TFMain.FormCreate(Sender: TObject);
 var
   i: integer;
+  Passw: String;
   Forms: array of TFormClass;
 begin
   Conf := TConf.Create();
@@ -132,6 +141,24 @@ begin
     WinManager.Add(Forms[i]);
 
   WinManager.SetActivePage(0);
+
+  Passw := FormStateRec.GetItem('FSettings', 'LabeledEditPassword_Text', '');
+  if (not Passw.IsEmpty()) then
+  begin
+    FLogin := TFLogin.Create(nil);
+    FLogin.Caption := 'Авторизація';
+    FLogin.OnlyPassw();
+    if (FLogin.ShowModal() = mrOk) and (FLogin.EditPassword.Text = Passw) then
+      Log.Print('Вхід по паролю')
+    else
+      Halt();
+    FreeAndNil(FLogin);
+  end;
+end;
+
+procedure TFMain.FormDestroy(Sender: TObject);
+begin
+  Log.Print('Завершення');
 end;
 
 

@@ -6,7 +6,7 @@ object DmFbConnect: TDmFbConnect
   VerticalOffset = 160
   Width = 356
   object IBConnection1: TIBConnection
-    Connected = True
+    Connected = False
     LoginPrompt = False
     DatabaseName = 'C:\ProgramData\Medoc\Medoc\db\ZVIT.FDB'
     KeepConnection = False
@@ -21,9 +21,9 @@ object DmFbConnect: TDmFbConnect
     Top = 16
   end
   object SQLTransaction1: TSQLTransaction
-    Active = True
+    Active = False
     Database = IBConnection1
-    Left = 144
-    Top = 16
+    Left = 40
+    Top = 96
   end
 end

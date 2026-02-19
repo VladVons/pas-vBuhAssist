@@ -21,7 +21,6 @@ object FMedocCheckDocs: TFMedocCheckDocs
     DataSource = DataSourceGrid
     ReadOnly = True
     TabOrder = 0
-    Visible = False
     OnDrawColumnCell = DBGrid1DrawColumnCell
     OnTitleClick = DBGrid1TitleClick
   end
@@ -58,6 +57,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
       ItemHeight = 15
       TabOrder = 6
       Text = 'ComboBoxYear'
+      OnDropDown = ComboBoxYearDropDown
     end
     object ComboBoxMonth: TComboBox
       Left = 128
