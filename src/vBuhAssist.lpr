@@ -17,7 +17,7 @@ uses
   Forms, uFMain, uFAbout, uFMedocCheckDocs, uWinManager,
   uDmFbConnect, uWinReg, uLicence, uFLicense, uSys, uGhostScript, uFOptimizePDF,
   uSettings, uVarUtil, uLog, uConst, uFLogin, uFMessageShow, uExceptionHandler,
-  uType, uCrypt, uFormState;
+  uType, uCrypt, uFormState, uMedoc;
 
 {$R *.res}
 begin

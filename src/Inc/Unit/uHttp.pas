@@ -8,8 +8,7 @@ unit uHttp;
 interface
 
 uses
-  Classes, SysUtils, fphttpclient, fpjson,
-  uSys, uConst;
+  Classes, SysUtils, fphttpclient, fpjson;
 
 function PostJSON(const aURL: string; aJSON: TJSONObject): TJSONObject;
 

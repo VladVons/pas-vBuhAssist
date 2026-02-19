@@ -162,13 +162,6 @@ object FMedocCheckDocs: TFMedocCheckDocs
       OnClick = ButtonGetLicenseClick
     end
   end
-  object Label4: TLabel
-    Left = 139
-    Height = 15
-    Top = 159
-    Width = 34
-    Caption = 'Label4'
-  end
   object SQLQueryGrid: TSQLQuery
     FieldDefs = <    
       item
@@ -331,6 +324,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
     end
     object SQLQueryGridDEPT: TStringField
       DisplayLabel = 'Філія'
+      DisplayWidth = 10
       FieldKind = fkData
       FieldName = 'DEPT'
       Index = 1
@@ -342,6 +336,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
     end
     object SQLQueryGridSHORTNAME: TStringField
       DisplayLabel = 'Назва'
+      DisplayWidth = 30
       FieldKind = fkData
       FieldName = 'SHORTNAME'
       Index = 2
@@ -353,6 +348,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
     end
     object SQLQueryGridINDTAXNUM: TStringField
       DisplayLabel = 'Податковий код'
+      DisplayWidth = 10
       FieldKind = fkData
       FieldName = 'INDTAXNUM'
       Index = 3
@@ -364,6 +360,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
     end
     object SQLQueryGridVAT: TStringField
       DisplayLabel = 'Оподаткування'
+      DisplayWidth = 8
       FieldKind = fkData
       FieldName = 'VAT'
       Index = 4
@@ -383,6 +380,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
       Required = False
     end
     object SQLQueryGridCHARCODE: TStringField
+      DisplayWidth = 10
       FieldKind = fkData
       FieldName = 'CHARCODE'
       Index = 6
@@ -393,6 +391,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
       Size = 8
     end
     object SQLQueryGridCARDSENDSTT_NAME: TStringField
+      DisplayWidth = 10
       FieldKind = fkData
       FieldName = 'CARDSENDSTT_NAME'
       Index = 7
@@ -434,6 +433,8 @@ object FMedocCheckDocs: TFMedocCheckDocs
       Size = 8
     end
     object SQLQueryGridHZ: TStringField
+      DisplayLabel = ' Ознака'
+      DisplayWidth = 10
       FieldKind = fkCalculated
       FieldName = 'HZ'
       Index = 11

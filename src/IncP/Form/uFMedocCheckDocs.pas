@@ -9,8 +9,8 @@ interface
 
 uses
   Classes, SysUtils, StrUtils, DateUtils, SQLDB, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, DBGrids, Grids, ExtCtrls, DB, fpjson, jsonparser, uFLogin,
-  uDmFbConnect, uLicence, uWinReg, uSys, uLog, uFormState;
+  StdCtrls, DBGrids, Grids, ExtCtrls, DB, fpjson, jsonparser,
+  uFLogin, uDmFbConnect, uLicence, uWinReg, uSys, uLog, uFormState, uMedoc;
 
 type
 
@@ -31,7 +31,6 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
-    Label4: TLabel;
     Label5: TLabel;
     Panel1: TPanel;
     SQLQueryGrid: TSQLQuery;
@@ -120,7 +119,6 @@ var
   Str: String;
   JObj: TJSONObject;
   Port: Integer;
-  SF_HZ: TStringField;
 begin
   DmFbConnect.IBConnection1.Connected := False;
   Idx := ComboBoxPath.ItemIndex;
@@ -182,9 +180,13 @@ begin
   SQLQueryGrid.Open();
 end;
 
+procedure TFMedocCheckDocs.SQLQueryGridCalcFields(DataSet: TDataSet);
+begin
+  if (not DataSet.FieldByName('XMLVALS').IsNull) then
+    DataSet.FieldByName('HZ').AsString := GetHzHuman(DataSet.FieldByName('XMLVALS').AsString);
+end;
+
 procedure TFMedocCheckDocs.ButtonExecClick(Sender: TObject);
-var
-  FirmCodes: TStringList;
 begin
   QueryOpen();
 end;
@@ -279,7 +281,6 @@ end;
 procedure TFMedocCheckDocs.DBGrid1TitleClick(Column: TColumn);
 var
    fld: string;
-   s: TStringField;
 begin
     fld := Column.FieldName;
 
@@ -333,6 +334,7 @@ begin
   fDemoFields.Add('MODDATE');
   fDemoFields.Add('CHARCODE');
   fDemoFields.Add('CARDSENDSTT_NAME');
+  fDemoFields.Add('HZ');
 
   Panel1.Font.Size := 10;
   FormStateRec.Load(self);
@@ -344,23 +346,6 @@ begin
 
   FreeAndNil(fJMedocApp);
   FreeAndNil(fFirmCodesLicensed);
-end;
-
-procedure TFMedocCheckDocs.SQLQueryGridCalcFields(DataSet: TDataSet);
-var
-   StrXML: String;
-begin
-  if (not DataSet.FieldByName('XMLVALS').IsNull) then
-  begin
-    StrXML := DataSet.FieldByName('XMLVALS').AsString;
-  end;
-
-  //HZ  := GetXmlValue(StrXML, 'HZ');
-  //HZN := GetXmlValue(StrXML, 'HZN');
-  //HZU := GetXmlValue(StrXML, 'HZU');
-  //
-  //// формуємо обчислене значення
-  //DataSet.FieldByName('HZ_VALUE').AsString := HZ + ',' + HZN + ',' + HZU;
 end;
 
 end.
