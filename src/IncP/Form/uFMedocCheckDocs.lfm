@@ -7,10 +7,14 @@ object FMedocCheckDocs: TFMedocCheckDocs
   Caption = 'Звітне стикування'
   ClientHeight = 356
   ClientWidth = 637
+  Font.CharSet = RUSSIAN_CHARSET
+  Font.Name = 'Verdana'
+  Font.Pitch = fpVariable
+  Font.Quality = fqDraft
   LCLVersion = '4.4.0.0'
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  object s: TDBGrid
+  object DbGrid: TDBGrid
     Left = 0
     Height = 212
     Top = 144
@@ -19,10 +23,11 @@ object FMedocCheckDocs: TFMedocCheckDocs
     Color = clWindow
     Columns = <>
     DataSource = DataSourceGrid
+    Options = [dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
     ReadOnly = True
     TabOrder = 0
-    OnDrawColumnCell = sDrawColumnCell
-    OnTitleClick = sTitleClick
+    OnDrawColumnCell = DbGridDrawColumnCell
+    OnTitleClick = DbGridTitleClick
   end
   object Panel1: TPanel
     Left = 0
@@ -38,87 +43,82 @@ object FMedocCheckDocs: TFMedocCheckDocs
     TabOrder = 1
     object ComboBoxPath: TComboBox
       Left = 128
-      Height = 23
+      Height = 22
       Top = 8
-      Width = 448
-      Color = clYellow
-      ItemHeight = 15
+      Width = 329
+      ItemHeight = 14
       TabOrder = 0
       Text = 'ComboBoxPath'
       OnChange = ComboBoxPathChange
     end
     object ComboBoxYear: TComboBox
       Left = 321
-      Height = 23
+      Height = 22
       Top = 32
       Width = 136
-      Color = clYellow
       DropDownCount = 20
-      ItemHeight = 15
+      ItemHeight = 14
       TabOrder = 6
       Text = 'ComboBoxYear'
       OnDropDown = ComboBoxYearDropDown
     end
     object ComboBoxMonth: TComboBox
       Left = 128
-      Height = 23
+      Height = 22
       Top = 32
       Width = 176
-      Color = clYellow
       DropDownCount = 20
-      ItemHeight = 15
+      ItemHeight = 14
       TabOrder = 7
       Text = 'ComboBoxMonth'
     end
     object ComboBoxDoc: TComboBox
       Left = 129
-      Height = 23
+      Height = 22
       Top = 80
-      Width = 448
-      Color = clYellow
+      Width = 447
       DropDownCount = 20
-      ItemHeight = 15
+      ItemHeight = 14
       TabOrder = 8
       Text = 'ComboBoxDoc'
     end
     object ComboBoxFirm: TComboBox
       Left = 128
-      Height = 23
+      Height = 22
       Top = 56
       Width = 176
-      Color = clYellow
       DropDownCount = 20
-      ItemHeight = 15
+      ItemHeight = 14
       TabOrder = 5
     end
     object Label1: TLabel
       Left = 15
-      Height = 15
+      Height = 14
       Top = 8
-      Width = 87
+      Width = 100
       Caption = 'Шлях програми'
       Color = clMenuHighlight
       ParentColor = False
     end
     object Label2: TLabel
       Left = 15
-      Height = 15
+      Height = 14
       Top = 32
-      Width = 38
+      Width = 44
       Caption = 'Період'
     end
     object Label3: TLabel
       Left = 15
-      Height = 15
+      Height = 14
       Top = 80
-      Width = 82
+      Width = 95
       Caption = 'Тип документу'
     end
     object Label5: TLabel
       Left = 15
-      Height = 15
+      Height = 14
       Top = 56
-      Width = 58
+      Width = 66
       Caption = 'Код фірми'
     end
     object ButtonExec: TButton
@@ -227,6 +227,10 @@ object FMedocCheckDocs: TFMedocCheckDocs
         DataType = ftBlob
         Precision = -1
         Size = 8
+      end    
+      item
+        Name = 'FJ'
+        DataType = ftUnknown
       end>
     OnCalcFields = SQLQueryGridCalcFields
     Database = DmCommon.IBConnection
@@ -241,12 +245,13 @@ object FMedocCheckDocs: TFMedocCheckDocs
       '      THEN CAST(''ПДВ'' AS VARCHAR(10))'
       '      ELSE '''''
       '    END AS vat,'
-      '    C.PERDATE,'
-      '    C.CHARCODE,'
-      '    C.CARDSENDSTT_NAME,'
-      '    C.MODDATE,'
-      '    C.CARDSTATUS_NAME,'
-      '    C.XMLVALS'
+      '    T2.PERDATE,'
+      '    T2.CHARCODE,'
+      '    T2.CARDSENDSTT_NAME,'
+      '    T2.MODDATE,'
+      '    T2.CARDSTATUS_NAME,'
+      '    T2.XMLVALS'
+      '    %_SELECT_T0'
       'FROM'
       '    ORG'
       'LEFT JOIN ('
@@ -258,7 +263,9 @@ object FMedocCheckDocs: TFMedocCheckDocs
       '        CARD.MODDATE,'
       '        CARDSTATUS.NAME AS CARDSTATUS_NAME,'
       '        CARDBLOB.XMLVALS'
-      '    FROM CARD'
+      '        %_SELECT_T2'
+      '    FROM'
+      '      CARD'
       '    LEFT JOIN FORM'
       '        ON FORM.CODE = CARD.FORM'
       '    LEFT JOIN CARDSTATUS'
@@ -267,18 +274,19 @@ object FMedocCheckDocs: TFMedocCheckDocs
       '        ON CARDSENDSTT.CODE = CARD.SENDSTT'
       '    LEFT JOIN CARDBLOB'
       '        ON CARDBLOB.CODE = CARD.CODE'
+      '    %_FROM_T2'
       '    WHERE'
       '        CARD.PERDATE = DATE %_PERDATE'
       '        AND CARD.IDPARENT IS NULL'
       '        AND CARD.FORM > 0'
       '        AND LOWER(FORM.CHARCODE) = :_CHARCODE'
-      ') C'
-      '    ON C.IDORG = ORG.CODE'
+      ') T2'
+      '    ON T2.IDORG = ORG.CODE'
       'WHERE'
       '    (ORG.DEPT IS NULL OR ORG.DEPT <> ''0'')'
       '    %_COND_ORG'
       'ORDER BY'
-      '  %_Order %_Asc'
+      '  %_ORDER %_ASC'
       ''
     )
     Params = <    
@@ -288,6 +296,21 @@ object FMedocCheckDocs: TFMedocCheckDocs
         ParamType = ptInput
       end>
     Macros = <    
+      item
+        DataType = ftUnknown
+        Name = '_SELECT_T0'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = '_SELECT_T2'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = '_FROM_T2'
+        ParamType = ptInput
+      end    
       item
         DataType = ftUnknown
         Name = '_PERDATE'
@@ -300,19 +323,19 @@ object FMedocCheckDocs: TFMedocCheckDocs
       end    
       item
         DataType = ftUnknown
-        Name = '_Order'
+        Name = '_ORDER'
         ParamType = ptInput
       end    
       item
         DataType = ftUnknown
-        Name = '_Asc'
+        Name = '_ASC'
         ParamType = ptInput
       end>
     MacroCheck = True
     Left = 120
     Top = 208
     object SQLQueryGridEDRPOU: TStringField
-      DisplayLabel = 'Код'
+      DisplayLabel = 'ЄДРПОУ'
       FieldKind = fkData
       FieldName = 'EDRPOU'
       Index = 0
@@ -335,7 +358,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
       Size = 4
     end
     object SQLQueryGridSHORTNAME: TStringField
-      DisplayLabel = 'Назва'
+      DisplayLabel = 'Найменування'
       DisplayWidth = 30
       FieldKind = fkData
       FieldName = 'SHORTNAME'
@@ -347,7 +370,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
       Size = 100
     end
     object SQLQueryGridINDTAXNUM: TStringField
-      DisplayLabel = 'Податковий код'
+      DisplayLabel = 'ІПН платника ПДВ'
       DisplayWidth = 10
       FieldKind = fkData
       FieldName = 'INDTAXNUM'
@@ -368,9 +391,11 @@ object FMedocCheckDocs: TFMedocCheckDocs
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
       Required = True
+      Visible = False
       Size = 10
     end
     object SQLQueryGridPERDATE: TDateField
+      DisplayLabel = 'Період'
       FieldKind = fkData
       FieldName = 'PERDATE'
       Index = 5
@@ -380,6 +405,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
       Required = False
     end
     object SQLQueryGridCHARCODE: TStringField
+      DisplayLabel = 'Код'
       DisplayWidth = 10
       FieldKind = fkData
       FieldName = 'CHARCODE'
@@ -390,19 +416,20 @@ object FMedocCheckDocs: TFMedocCheckDocs
       Required = False
       Size = 8
     end
-    object SQLQueryGridCARDSENDSTT_NAME: TStringField
+    object SQLQueryGridHZ: TStringField
+      DisplayLabel = ' Ознака'
       DisplayWidth = 10
-      FieldKind = fkData
-      FieldName = 'CARDSENDSTT_NAME'
+      FieldKind = fkCalculated
+      FieldName = 'HZ'
       Index = 7
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
       Required = False
-      Size = 50
+      Size = 30
     end
     object SQLQueryGridMODDATE: TDateTimeField
-      DisplayLabel = 'Дата зміни'
+      DisplayLabel = 'Дата модифікації'
       FieldKind = fkData
       FieldName = 'MODDATE'
       Index = 8
@@ -412,6 +439,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
       Required = False
     end
     object SQLQueryGridCARDSTATUS_NAME: TStringField
+      DisplayLabel = 'Примітка'
       FieldKind = fkData
       FieldName = 'CARDSTATUS_NAME'
       Index = 9
@@ -421,10 +449,22 @@ object FMedocCheckDocs: TFMedocCheckDocs
       Required = False
       Size = 30
     end
+    object SQLQueryGridCARDSENDSTT_NAME: TStringField
+      DisplayLabel = 'Стан'
+      DisplayWidth = 10
+      FieldKind = fkData
+      FieldName = 'CARDSENDSTT_NAME'
+      Index = 10
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 50
+    end
     object SQLQueryGridXMLVALS: TBlobField
       FieldKind = fkData
       FieldName = 'XMLVALS'
-      Index = 10
+      Index = 11
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -432,17 +472,16 @@ object FMedocCheckDocs: TFMedocCheckDocs
       Visible = False
       Size = 8
     end
-    object SQLQueryGridHZ: TStringField
-      DisplayLabel = ' Ознака'
-      DisplayWidth = 10
-      FieldKind = fkCalculated
-      FieldName = 'HZ'
-      Index = 11
+    object SQLQueryGridFJ: TBlobField
+      FieldKind = fkData
+      FieldName = 'FJ'
+      Index = 12
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
       Required = False
-      Size = 30
+      Visible = False
+      Size = 8
     end
   end
   object DataSourceGrid: TDataSource

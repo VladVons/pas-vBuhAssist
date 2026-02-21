@@ -47,10 +47,16 @@ object FMain: TFMain
     Top = 0
     Width = 741
     Align = alClient
+    Font.CharSet = RUSSIAN_CHARSET
+    Font.Name = 'Segoe UI Semibold'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    Font.Style = [fsBold]
+    ParentFont = False
     TabOrder = 2
   end
   object MainMenu1: TMainMenu
-    Left = 264
+    Left = 32
     Top = 16
     object MenuItemFile: TMenuItem
       Caption = 'Файл'
@@ -90,7 +96,7 @@ object FMain: TFMain
     end
   end
   object ActionList1: TActionList
-    Left = 264
+    Left = 32
     Top = 72
     object ActionFAbout: TAction
       Caption = 'Про програму'
@@ -118,7 +124,7 @@ object FMain: TFMain
     end
   end
   object PopupMenu1: TPopupMenu
-    Left = 264
+    Left = 32
     Top = 128
     object MenuItemCloseTab: TMenuItem
       Caption = 'Закрити'

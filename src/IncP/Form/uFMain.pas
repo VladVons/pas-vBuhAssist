@@ -133,7 +133,8 @@ begin
 
   WinManager := TWinManager.Create(PageControl1, PopupMenu1);
   Forms := [
-    TFMedocCheckDocs
+    TFMedocCheckDocs,
+    TFSettings
     //TFOptimizePDF
   ];
 

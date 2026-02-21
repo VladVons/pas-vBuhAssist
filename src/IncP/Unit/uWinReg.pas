@@ -40,7 +40,7 @@ begin
         begin
           if (Reg.ValueExists('APPDATA')) then
           begin
-            StrDB := Reg.ReadString('APPDATA') + '\db\zvit.fdb';
+            StrDB := ConcatPaths([Reg.ReadString('APPDATA'), 'db', 'zvit.fdb']);
             if (FileExists(StrDB)) then
             begin
                Obj := TJSONObject.Create();

@@ -45,7 +45,7 @@ object FAbout: TFAbout
           'Програма не опрацьовує та не передає будь-які персональні дані. Отримуючи код доступу до програми користувач погоджується з умовами використання ПЗ.'
           ''
           'Вироблено в Україні.'
-          'Побажання та пропозиції приймаємо на електронну пошту:'
+          'Побажання та пропозиції приймаємо на електронну пошту вказану у закладці "версія програми"'
         )
         ParentFont = False
         ReadOnly = True
@@ -67,8 +67,8 @@ object FAbout: TFAbout
         EditLabel.Height = 15
         EditLabel.Width = 93
         EditLabel.Caption = 'Версія програми'
-        Enabled = False
         LabelPosition = lpLeft
+        ReadOnly = True
         TabOrder = 0
       end
       object Image1: TImage
@@ -581,9 +581,10 @@ object FAbout: TFAbout
         EditLabel.Height = 15
         EditLabel.Width = 70
         EditLabel.Caption = 'Середовище'
-        Enabled = False
         LabelPosition = lpLeft
+        ReadOnly = True
         TabOrder = 1
+        Visible = False
       end
       object LabeledEditFpc: TLabeledEdit
         Left = 116
@@ -594,9 +595,10 @@ object FAbout: TFAbout
         EditLabel.Height = 15
         EditLabel.Width = 65
         EditLabel.Caption = 'Компілятор'
-        Enabled = False
         LabelPosition = lpLeft
+        ReadOnly = True
         TabOrder = 2
+        Visible = False
       end
       object LabeledEditDate: TLabeledEdit
         Left = 116
@@ -607,9 +609,23 @@ object FAbout: TFAbout
         EditLabel.Height = 15
         EditLabel.Width = 25
         EditLabel.Caption = 'Дата'
-        Enabled = False
         LabelPosition = lpLeft
+        ReadOnly = True
         TabOrder = 3
+      end
+      object LabeledEdit1: TLabeledEdit
+        Left = 116
+        Height = 15
+        Top = 136
+        Width = 148
+        BorderStyle = bsNone
+        EditLabel.Height = 15
+        EditLabel.Width = 38
+        EditLabel.Caption = 'Пошта'
+        LabelPosition = lpLeft
+        ReadOnly = True
+        TabOrder = 4
+        Text = 'vBuhAssist@gmail.com'
       end
     end
   end

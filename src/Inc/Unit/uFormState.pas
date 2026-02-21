@@ -8,7 +8,7 @@ unit uFormState;
 interface
 
 uses
-  Classes, SysUtils, IniFiles, StdCtrls, ExtCtrls, Controls, Spin,
+  Classes, SysUtils, IniFiles, StdCtrls, ExtCtrls, Controls, Spin, Graphics,
   uSys;
 
 type
@@ -24,6 +24,7 @@ type
     constructor Create();
     function GetItem(const aSect, aItem: String; aDef: String = ''): String;
     function GetItem(const aSect, aItem: String; aDef: Integer = 0): Integer;
+    procedure SetCtrlColor(aForm: TWinControl; aColor: TColor; const aType: String);
     procedure Load(aForm: TWinControl);
     procedure Save(aForm: TWinControl);
   end;
@@ -106,6 +107,39 @@ begin
     end;
   finally
     Ini.Free();
+  end;
+end;
+
+procedure TFormStateRec.SetCtrlColor(aForm: TWinControl; aColor: TColor; const aType: String);
+  procedure AsEdit(aCtrl: TComponent);
+  begin
+    if (aCtrl is TComboBox) then
+      TComboBox(aCtrl).Color := aColor
+    else if (aCtrl is TEdit) or (aCtrl is TLabeledEdit) then
+      TEdit(aCtrl).Color := aColor
+    else if (aCtrl is TCheckBox) then
+      TCheckBox(aCtrl).Color := aColor
+    else if (aCtrl is TSpinEdit) then
+      TSpinEdit(aCtrl).Color := aColor;
+  end;
+
+  procedure AsButton(aCtrl: TComponent);
+  begin
+    if (aCtrl is TButton) then
+      TButton(aCtrl).Color := aColor;
+  end;
+
+var
+  i: Integer;
+  Ctrl: TComponent;
+begin
+  for i := 0 to aForm.ComponentCount - 1 do
+  begin
+    Ctrl := aForm.Components[i];
+    if (aType = 'edit') then
+       AsEdit(Ctrl)
+    else if (aType = 'button') then
+      AsButton(Ctrl);
   end;
 end;
 

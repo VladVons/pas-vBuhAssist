@@ -37,9 +37,6 @@ implementation
 
 procedure TDmCommon.Connect(const aName: String; aPort: Integer);
 begin
-  if (IBConnection.Connected) and (aName = IBConnection.DatabaseName) then
-     Exit;
-
   IBConnection.Params.Clear();
   IBConnection.UserName := 'SYSDBA';
   IBConnection.Password := 'masterkey';
@@ -98,26 +95,26 @@ var
   AuthOk: boolean;
   FirmCodes: TStringList;
 begin
-   FirmCodes := nil;
-   try
-     FLogin := TFLogin.Create(nil);
-     FLogin.Caption := 'Активація програми';
-     FLogin.EditUser.EditLabel.Caption := 'Дилер';
-     FLogin.EditPassword.EditLabel.Caption := 'Ключ';
-     if (FLogin.ShowModal = mrOk) then
-     begin
-       //QueryOpen();
-       FirmCodes := GetQueryField(DataSource, SQLQueryCodes, 'EDRPOU');
-       AuthOk := Licence.OrderFromHttp(FirmCodes, Name, FLogin.EditUser.Text, FLogin.EditPassword.Text);
-       if (AuthOk) then
-         Log.Print('Запит на отримання ліцензій відправлено')
-       else
-         Log.Print('Помилка авторизації на сервері ліцензій');
-     end;
-   finally
-     FreeAndNil(FirmCodes);
-     FreeAndNil(FLogin);
-   end;
+  FirmCodes := nil;
+  try
+    FLogin := TFLogin.Create(nil);
+    FLogin.Caption := 'Активація програми';
+    FLogin.EditUser.EditLabel.Caption := 'Дилер';
+    FLogin.EditPassword.EditLabel.Caption := 'Ключ';
+    if (FLogin.ShowModal = mrOk) then
+    begin
+      //QueryOpen();
+      FirmCodes := GetQueryField(DataSource, SQLQueryCodes, 'EDRPOU');
+      AuthOk := Licence.OrderFromHttp(FirmCodes, Name, FLogin.EditUser.Text, FLogin.EditPassword.Text);
+      if (AuthOk) then
+        Log.Print('Запит на отримання ліцензій відправлено')
+      else
+        Log.Print('Помилка авторизації на сервері ліцензій');
+    end;
+  finally
+    FreeAndNil(FirmCodes);
+    FreeAndNil(FLogin);
+  end;
 end;
 
 function TDmCommon.GetTablesMain(): TStringList;

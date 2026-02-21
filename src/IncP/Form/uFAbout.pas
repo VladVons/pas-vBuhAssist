@@ -18,6 +18,7 @@ type
 
   TFAbout = class(TForm)
     Image1: TImage;
+    LabeledEdit1: TLabeledEdit;
     LabeledEditDate: TLabeledEdit;
     LabeledEditFpc: TLabeledEdit;
     LabeledEdittIde: TLabeledEdit;
