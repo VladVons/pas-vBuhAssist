@@ -18,7 +18,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="8"/>
+      <BuildNr Value="9"/>
       <StringTable ProductName="vBuhAssist"/>
     </VersionInfo>
     <BuildModes>
@@ -71,7 +71,7 @@
       <Unit>
         <Filename Value="IncP/Form/uFlicense.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="FLicense"/>
+        <ComponentName Value="FLicence"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="uFLicense"/>
@@ -85,9 +85,9 @@
         <UnitName Value="uFOptimizePDF"/>
       </Unit>
       <Unit>
-        <Filename Value="IncP/DataModule/uDmFbConnect.pas"/>
+        <Filename Value="IncP/DataModule/uDmCommon.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="DmFbConnect"/>
+        <ComponentName Value="DmCommon"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
       </Unit>
@@ -171,6 +171,10 @@
         <ComponentName Value="FSettings"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Inc/Unit/uQuery.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit>
     </Units>
   </ProjectOptions>

@@ -10,7 +10,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
   LCLVersion = '4.4.0.0'
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  object DBGrid1: TDBGrid
+  object s: TDBGrid
     Left = 0
     Height = 212
     Top = 144
@@ -21,8 +21,8 @@ object FMedocCheckDocs: TFMedocCheckDocs
     DataSource = DataSourceGrid
     ReadOnly = True
     TabOrder = 0
-    OnDrawColumnCell = DBGrid1DrawColumnCell
-    OnTitleClick = DBGrid1TitleClick
+    OnDrawColumnCell = sDrawColumnCell
+    OnTitleClick = sTitleClick
   end
   object Panel1: TPanel
     Left = 0
@@ -143,23 +143,23 @@ object FMedocCheckDocs: TFMedocCheckDocs
       Enabled = False
       TabOrder = 2
     end
-    object ButtonOrderLicense: TButton
+    object ButtonOrderLicence: TButton
       Left = 424
       Height = 25
       Top = 112
       Width = 75
       Caption = 'Замовити'
       TabOrder = 3
-      OnClick = ButtonOrderLicenseClick
+      OnClick = ButtonOrderLicenceClick
     end
-    object ButtonGetLicense: TButton
+    object ButtonGetLicence: TButton
       Left = 501
       Height = 25
       Top = 112
       Width = 75
       Caption = 'Оновити'
       TabOrder = 4
-      OnClick = ButtonGetLicenseClick
+      OnClick = ButtonGetLicenceClick
     end
   end
   object SQLQueryGrid: TSQLQuery
@@ -229,8 +229,8 @@ object FMedocCheckDocs: TFMedocCheckDocs
         Size = 8
       end>
     OnCalcFields = SQLQueryGridCalcFields
-    Database = DmFbConnect.IBConnection1
-    Transaction = DmFbConnect.SQLTransaction1
+    Database = DmCommon.IBConnection
+    Transaction = DmCommon.SQLTransaction
     SQL.Strings = (
       'SELECT'
       '    ORG.EDRPOU,'
@@ -442,37 +442,12 @@ object FMedocCheckDocs: TFMedocCheckDocs
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
       Required = False
+      Size = 30
     end
-  end
-  object SQLQueryCodes: TSQLQuery
-    FieldDefs = <>
-    Database = DmFbConnect.IBConnection1
-    Transaction = DmFbConnect.SQLTransaction1
-    SQL.Strings = (
-      'SELECT'
-      '  ORG.EDRPOU'
-      'FROM'
-      '  ORG'
-      'WHERE'
-      '  (ORG.DEPT <> ''0'' OR ORG.DEPT IS NULL)'
-      'ORDER BY'
-      '  EDRPOU'
-      ''
-    )
-    Params = <>
-    Macros = <>
-    MacroCheck = True
-    Left = 216
-    Top = 208
   end
   object DataSourceGrid: TDataSource
     DataSet = SQLQueryGrid
     Left = 120
-    Top = 152
-  end
-  object DataSourceCodes: TDataSource
-    DataSet = SQLQueryCodes
-    Left = 216
     Top = 152
   end
 end

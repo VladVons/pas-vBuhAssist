@@ -8,18 +8,18 @@ unit uFLicense;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls;
+  Classes, SysUtils, Forms;
 
 type
 
-  { TFLicense }
-  TFLicense = class(TForm)
+  { TFLicence }
+  TFLicence = class(TForm)
   private
   public
   end;
 
 var
-  FLicense: TFLicense;
+  FLicence: TFLicence;
 
 implementation
 

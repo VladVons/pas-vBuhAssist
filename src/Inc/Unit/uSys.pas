@@ -8,7 +8,7 @@ unit uSys;
 interface
 
 uses
-  Classes, Windows, Forms, SysUtils, FileInfo;
+  Classes, Windows, SysUtils, FileInfo;
 
 function AddDllDirectory(aDir: PWideChar): THandle; stdcall; external 'kernel32.dll';
 function SetDllDirectoryW(lpPathName: PWideChar): BOOL; stdcall; external 'kernel32.dll';
@@ -161,7 +161,7 @@ function GetAppVer(): string;
 var
   Info: TVersionInfo;
 begin
-  Info := TVersionInfo.Create;
+  Info := TVersionInfo.Create();
   try
     // Завантажуємо інформацію з поточного виконуваного файлу
     Info.Load(HINSTANCE);

@@ -15,9 +15,9 @@ uses
   opensslsockets,
   Interfaces, // this includes the LCL widgetset
   Forms, uFMain, uFAbout, uFMedocCheckDocs, uWinManager,
-  uDmFbConnect, uWinReg, uLicence, uFLicense, uSys, uGhostScript, uFOptimizePDF,
+  uDmCommon, uWinReg, uLicence, uFLicense, uSys, uGhostScript, uFOptimizePDF,
   uSettings, uVarUtil, uLog, uConst, uFLogin, uFMessageShow, uExceptionHandler,
-  uType, uCrypt, uFormState, uMedoc, uFSettings;
+  uType, uCrypt, uFormState, uMedoc, uFSettings, uQuery;
 
 {$R *.res}
 begin
@@ -35,7 +35,7 @@ begin
 
   Application.Initialize();
   Application.CreateForm(TFMain, FMain);
-  Application.CreateForm(TDmFbConnect, DmFbConnect);
+  Application.CreateForm(TDmCommon, DmCommon);
   Application.Run();
 end.
 

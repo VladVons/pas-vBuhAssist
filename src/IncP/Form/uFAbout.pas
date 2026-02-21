@@ -9,6 +9,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ComCtrls, ExtCtrls,
+  LCLVersion,
   uSys;
 
 type
@@ -17,6 +18,9 @@ type
 
   TFAbout = class(TForm)
     Image1: TImage;
+    LabeledEditDate: TLabeledEdit;
+    LabeledEditFpc: TLabeledEdit;
+    LabeledEdittIde: TLabeledEdit;
     LabeledEditVer: TLabeledEdit;
     Memo1: TMemo;
     PageControl1: TPageControl;
@@ -40,7 +44,10 @@ implementation
 
 procedure TFAbout.FormCreate(Sender: TObject);
 begin
-  LabeledEditVer.Text := GetAppVer() + ' (' + {$I %DATE%} + ')';
+  LabeledEditVer.Text  := GetAppVer();
+  LabeledEditDate.Text := {$I %DATE%};
+  LabeledEdittIde.Text := Format('Lazarus %s', [LCLVersion]);
+  LabeledEditFpc.Text  := Format('FPC %s', [{$I %FPCVERSION%}]);
 end;
 
 end.

@@ -2,9 +2,12 @@
 *.or
 *.ppu
 *.lps
+*.res
 *.dat
-vBuhAssist
-vBuhAssist.exe
+*.exe
+*.dll
+*.res
 
-src/_lib/
+src/lib/
+src/_lib*/
 backup

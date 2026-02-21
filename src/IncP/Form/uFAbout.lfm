@@ -1,33 +1,33 @@
 object FAbout: TFAbout
   Left = 1520
-  Height = 401
+  Height = 296
   Top = 250
-  Width = 539
+  Width = 487
   BorderStyle = bsDialog
   Caption = 'Про програму'
-  ClientHeight = 401
-  ClientWidth = 539
+  ClientHeight = 296
+  ClientWidth = 487
   Position = poMainFormCenter
   LCLVersion = '4.4.0.0'
   OnCreate = FormCreate
   object PageControl1: TPageControl
     Left = 0
-    Height = 401
+    Height = 296
     Top = 0
-    Width = 539
-    ActivePage = TabSheet2
+    Width = 487
+    ActivePage = TabSheet1
     Align = alClient
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 0
     object TabSheet2: TTabSheet
       Caption = 'Про програму'
-      ClientHeight = 373
-      ClientWidth = 531
+      ClientHeight = 268
+      ClientWidth = 479
       object Memo1: TMemo
         Left = 0
-        Height = 373
+        Height = 268
         Top = 0
-        Width = 531
+        Width = 479
         Align = alClient
         Font.CharSet = RUSSIAN_CHARSET
         Font.Height = -13
@@ -55,10 +55,11 @@ object FAbout: TFAbout
     end
     object TabSheet1: TTabSheet
       Caption = 'Версія'
-      ClientHeight = 373
-      ClientWidth = 531
+      ClientHeight = 268
+      ClientWidth = 479
+      Enabled = False
       object LabeledEditVer: TLabeledEdit
-        Left = 120
+        Left = 116
         Height = 15
         Top = 32
         Width = 144
@@ -66,15 +67,15 @@ object FAbout: TFAbout
         EditLabel.Height = 15
         EditLabel.Width = 93
         EditLabel.Caption = 'Версія програми'
+        Enabled = False
         LabelPosition = lpLeft
-        ReadOnly = True
         TabOrder = 0
       end
       object Image1: TImage
-        Left = 24
-        Height = 176
-        Top = 64
-        Width = 208
+        Left = 304
+        Height = 112
+        Top = 8
+        Width = 152
         Center = True
         Picture.Data = {
           0A544A706567496D616765333D0000FFD8FFE000104A46494600010101004800
@@ -570,6 +571,45 @@ object FAbout: TFAbout
           FFD9
         }
         Stretch = True
+      end
+      object LabeledEdittIde: TLabeledEdit
+        Left = 116
+        Height = 15
+        Top = 80
+        Width = 144
+        BorderStyle = bsNone
+        EditLabel.Height = 15
+        EditLabel.Width = 70
+        EditLabel.Caption = 'Середовище'
+        Enabled = False
+        LabelPosition = lpLeft
+        TabOrder = 1
+      end
+      object LabeledEditFpc: TLabeledEdit
+        Left = 116
+        Height = 15
+        Top = 104
+        Width = 144
+        BorderStyle = bsNone
+        EditLabel.Height = 15
+        EditLabel.Width = 65
+        EditLabel.Caption = 'Компілятор'
+        Enabled = False
+        LabelPosition = lpLeft
+        TabOrder = 2
+      end
+      object LabeledEditDate: TLabeledEdit
+        Left = 116
+        Height = 15
+        Top = 56
+        Width = 144
+        BorderStyle = bsNone
+        EditLabel.Height = 15
+        EditLabel.Width = 25
+        EditLabel.Caption = 'Дата'
+        Enabled = False
+        LabelPosition = lpLeft
+        TabOrder = 3
       end
     end
   end

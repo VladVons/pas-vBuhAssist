@@ -1,0 +1,75 @@
+object DmCommon: TDmCommon
+  OldCreateOrder = False
+  Height = 364
+  HorizontalOffset = 661
+  VerticalOffset = 160
+  Width = 727
+  object IBConnection: TIBConnection
+    Connected = False
+    LoginPrompt = False
+    DatabaseName = 'C:\ProgramData\Medoc\Medoc\db\ZVIT.FDB'
+    KeepConnection = False
+    Password = 'masterkey'
+    Transaction = SQLTransaction
+    UserName = 'SYSDBA'
+    CharSet = 'UTF8'
+    HostName = 'localhost'
+    CheckTransactionParams = False
+    UseConnectionCharSetIfNone = False
+    Left = 40
+    Top = 16
+  end
+  object SQLTransaction: TSQLTransaction
+    Active = False
+    Database = IBConnection
+    Left = 40
+    Top = 72
+  end
+  object DataSource: TDataSource
+    Left = 120
+    Top = 16
+  end
+  object SQLQueryCodes: TSQLQuery
+    FieldDefs = <>
+    Database = IBConnection
+    Transaction = SQLTransaction
+    SQL.Strings = (
+      'SELECT'
+      '  ORG.EDRPOU'
+      'FROM'
+      '  ORG'
+      'WHERE'
+      '  (ORG.DEPT <> ''0'' OR ORG.DEPT IS NULL)'
+      'ORDER BY'
+      '  EDRPOU'
+      ''
+    )
+    Params = <>
+    Macros = <>
+    MacroCheck = True
+    Left = 120
+    Top = 72
+  end
+  object SQLQueryTablesMain: TSQLQuery
+    FieldDefs = <>
+    Database = IBConnection
+    Transaction = SQLTransaction
+    SQL.Strings = (
+      'SELECT'
+      '  RDB$RELATION_NAME AS TABLE_NAME'
+      'FROM'
+      '  RDB$RELATIONS'
+      'WHERE'
+      '  (RDB$SYSTEM_FLAG = 0)'
+      '  AND (RDB$RELATION_NAME LIKE ''FJ%_MAIN%'')'
+      'ORDER BY'
+      '  TABLE_NAME'
+      ''
+    )
+    Params = <>
+    Macros = <>
+    MacroCheck = True
+    Left = 120
+    Top = 128
+  end
+end

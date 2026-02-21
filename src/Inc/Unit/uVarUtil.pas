@@ -8,11 +8,12 @@ unit uVarUtil;
 interface
 
 uses
-  Classes, SysUtils, LazUTF8;
+  Classes, SysUtils, LazUTF8, fpjson, Variants;
 
 function ExtractLatin(const aString: string): string;
 function LatinToUkr(const aStr: string): string;
 function RemoveChars(const aStr, aRemove: string): string;
+function GetJsonNested(const aJObj: TJSONObject; const Path: string; aDef: Variant): Variant;
 generic function IIF<T>(aCond: Boolean; const aValTrue, aValFalse: T): T; inline;
 
 
@@ -88,6 +89,45 @@ begin
   else
     Result := aValFalse;
 end;
+
+function GetJsonNested(const aJObj: TJSONObject; const Path: string; aDef: Variant): Variant;
+  function JsonToVariant(const aJData: TJSONData): Variant;
+  begin
+    Result := Nil;
+    if Assigned(aJData) then
+      case aJData.JSONType of
+        jtString:
+          Result := aJData.AsString;
+        jtNumber:
+          Result := aJData.AsInteger;
+        jtBoolean:
+          Result := aJData.AsBoolean;
+      end;
+  end;
+
+var
+  i: Integer;
+  Parts: TStringArray;
+  JObjCur: TJSONObject;
+  JData: TJSONData;
+begin
+  Result := aDef;
+
+  JObjCur := aJObj;
+  Parts := Path.Split(['/']);
+
+  for i := 0 to High(Parts) - 1 do
+  begin
+    JData := JObjCur.Find(Parts[i]);
+    if (JData = nil) or not (JData is TJSONObject) then
+      Exit;
+    JObjCur := TJSONObject(JData);
+  end;
+
+  JData := JObjCur.Find(Parts[High(Parts)]);
+  Result := JsonToVariant(JData)
+end;
+
 
 end.
 

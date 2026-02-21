@@ -8,16 +8,17 @@ unit uFMedocCheckDocs;
 interface
 
 uses
-  Classes, SysUtils, StrUtils, DateUtils, SQLDB, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, DBGrids, Grids, ExtCtrls, DB, fpjson, jsonparser,
-  uFLogin, uDmFbConnect, uLicence, uWinReg, uSys, uLog, uFormState, uMedoc;
+  Classes, SysUtils, StrUtils, DateUtils, SQLDB, Forms, Graphics,
+  StdCtrls, DBGrids, Grids, ExtCtrls, DB, fpjson,
+  uSys, uLog, uLicence, uWinReg, uFormState, uMedoc,
+  uDmCommon;
 
 type
 
   { TFMedocCheckDocs }
   TFMedocCheckDocs = class(TForm)
-    ButtonGetLicense: TButton;
-    ButtonOrderLicense: TButton;
+    ButtonGetLicence: TButton;
+    ButtonOrderLicence: TButton;
     ButtonPrint: TButton;
     ButtonExec: TButton;
     ComboBoxFirm: TComboBox;
@@ -26,15 +27,13 @@ type
     ComboBoxDoc: TComboBox;
     ComboBoxYear: TComboBox;
     DataSourceGrid: TDataSource;
-    DataSourceCodes: TDataSource;
-    DBGrid1: TDBGrid;
+    s: TDBGrid;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label5: TLabel;
     Panel1: TPanel;
     SQLQueryGrid: TSQLQuery;
-    SQLQueryCodes: TSQLQuery;
     SQLQueryGridCARDSENDSTT_NAME: TStringField;
     SQLQueryGridCHARCODE: TStringField;
     SQLQueryGridDEPT: TStringField;
@@ -48,12 +47,12 @@ type
     SQLQueryGridVAT: TStringField;
     SQLQueryGridXMLVALS: TBlobField;
     procedure ButtonExecClick(Sender: TObject);
-    procedure ButtonGetLicenseClick(Sender: TObject);
-    procedure ButtonOrderLicenseClick(Sender: TObject);
+    procedure ButtonGetLicenceClick(Sender: TObject);
+    procedure ButtonOrderLicenceClick(Sender: TObject);
     procedure ComboBoxPathChange(Sender: TObject);
     procedure ComboBoxYearDropDown(Sender: TObject);
-    procedure DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
-    procedure DBGrid1TitleClick(Column: TColumn);
+    procedure sDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure sTitleClick(Column: TColumn);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure SQLQueryGridCalcFields(DataSet: TDataSet);
@@ -61,14 +60,13 @@ type
     fSortField: string;
     fSortAsc: Boolean;
     fJMedocApp: TJSONArray;
-    fFirmCodesLicensed: TStringList;
-    fDemoFields: TStringList;
+    fFirmCodesLicensed, fTablesMain, fDemoFields: TStringList;
     procedure SetComboBoxToCurrentMonth(aComboBox: TComboBox);
     procedure SetComboBoxToYear(aComboBox: TComboBox; aYear: Integer = 0);
     procedure SetComboBoxDoc();
     procedure QueryOpen();
-    function  GetFirmCodes(): TStringList;
     procedure SetEmbededPath(aIdx: integer);
+    procedure ConnectToDb();
   public
 
   end;
@@ -94,69 +92,32 @@ begin
   AddDirDll(Path);
 end;
 
-function TFMedocCheckDocs.GetFirmCodes(): TStringList;
+procedure TFMedocCheckDocs.ConnectToDB();
 var
-  Str: String;
+  Idx: Integer;
+  JObj: TJSONObject;
 begin
-  SQLQueryCodes.DataBase := DmFbConnect.IBConnection1;
-  SQLQueryCodes.Transaction := DmFbConnect.SQLTransaction1;
-  SQLQueryCodes.Open();
-
-  Result := TStringList.Create();
-  SQLQueryCodes.First();
-  while not SQLQueryCodes.EOF do
+  if (not DmCommon.IBConnection.Connected) then
   begin
-    Str := SQLQueryCodes.FieldByName('EDRPOU').AsString;
-    Result.Add(Str);
-    SQLQueryCodes.Next();
-  end;
+    Idx := ComboBoxPath.ItemIndex;
+    JObj := TJSONObject(ComboBoxPath.Items.Objects[Idx]);
+    DmCommon.Connect(JObj.Get('db', ''), JObj.Get('port', 0));
 
-  SQLQueryCodes.Close();
+    fTablesMain := DmCommon.GetTablesMain();
+  end;
 end;
 
 procedure TFMedocCheckDocs.QueryOpen();
 var
-  Month, Year, Idx: Integer;
+  Month, Year: Integer;
   Str: String;
-  JObj: TJSONObject;
-  Port: Integer;
 begin
-  DmFbConnect.IBConnection1.Connected := False;
-  Idx := ComboBoxPath.ItemIndex;
-  JObj := TJSONObject(ComboBoxPath.Items.Objects[Idx]);
-
-  // якщо вказаний порт то версія мережна інакше embeded
-  Port := JObj.Get('port', 0);
-  if (Port > 0) then
-  begin
-    DmFbConnect.IBConnection1.HostName := 'localhost';
-    DmFbConnect.IBConnection1.Port := Port;
-    DmFbConnect.IBConnection1.UserName := 'SYSDBA';
-    DmFbConnect.IBConnection1.Password := 'masterkey';
-  end;
-  DmFbConnect.IBConnection1.DatabaseName := JObj.Get('db', '');
-  //DmFbConnect.IBConnection1.CharSet := 'UTF8';
-
-  try
-    DmFbConnect.IBConnection1.Connected := True;
-  except
-    on E: EDatabaseError do
-    begin
-      if Pos('used by another', LowerCase(E.Message)) > 0 then
-        Log.Print('Процес занятий іншим користувачем')
-      else
-        raise;
-    end;
-  end;
-
   SQLQueryGrid.Close();
-  //SQLQueryGrid.Fields.Clear();
-  //SQLQueryGrid.FieldDefs.Clear();
-  SQLQueryGrid.DataBase := DmFbConnect.IBConnection1;
-  SQLQueryGrid.Transaction := DmFbConnect.SQLTransaction1;
+  SQLQueryGrid.DataBase := DmCommon.IBConnection;
+  SQLQueryGrid.Transaction := DmCommon.SQLTransaction;
 
-  DBGrid1.Columns.Clear();
-  DBGrid1.Visible := True;
+  s.Columns.Clear();
+  s.Visible := True;
 
   Month := Integer(ComboBoxMonth.Items.Objects[ComboBoxMonth.ItemIndex]);
   Year := Integer(ComboBoxYear.Items.Objects[ComboBoxYear.ItemIndex]);
@@ -177,7 +138,7 @@ begin
   //SQLQueryGrid.AfterOpen := nil;
   //SQLQueryGrid.OnCalcFields := nil;
   //SQLQueryGrid.AfterScroll := nil;
-  //DBGrid1.OnDrawColumnCell := nil;
+  //s.OnDrawColumnCell := nil;
 
   SQLQueryGrid.Open();
 end;
@@ -190,58 +151,8 @@ end;
 
 procedure TFMedocCheckDocs.ButtonExecClick(Sender: TObject);
 begin
+  ConnectToDb();
   QueryOpen();
-end;
-
-procedure TFMedocCheckDocs.ButtonGetLicenseClick(Sender: TObject);
-var
-  FirmCodes, FirmCodesLic: TStringList;
-begin
-  try
-    Log.Print('Завантаження ліцензій ...');
-    QueryOpen();
-    FirmCodes := GetFirmCodes();
-    Licence.HttpToFile(FirmCodes);
-    if (Licence.LastErr <> '') then
-       Log.Print('Помилка ' + Licence.LastErr)
-    else begin
-      FirmCodesLic := Licence.GetFirmCodes(Name);
-      FirmCodesLic.Delimiter := ',';
-      FirmCodesLic.StrictDelimiter := True;
-      Log.Print('Знайдено ліцензії для кодів ' + FirmCodesLic.DelimitedText);
-    end;
-  finally
-    FreeAndNil(FirmCodesLic);
-    FirmCodes.Free();
-  end;
-
-  fFirmCodesLicensed := Licence.GetFirmCodes(Name);
-end;
-
-procedure TFMedocCheckDocs.ButtonOrderLicenseClick(Sender: TObject);
-var
-  AuthOk: boolean;
-  FirmCodes: TStringList;
-begin
-   FirmCodes := nil;
-   try
-     FLogin.Caption := 'Активація програми';
-     FLogin.EditUser.EditLabel.Caption := 'Дилер';
-     FLogin.EditPassword.EditLabel.Caption := 'Ключ';
-     if (FLogin.ShowModal = mrOk) then
-     begin
-       QueryOpen();
-       FirmCodes := GetFirmCodes();
-       AuthOk := Licence.OrderFromHttp(FirmCodes, Name, FLogin.EditUser.Text, FLogin.EditPassword.Text);
-       if (AuthOk) then
-         Log.Print('Запит на отримання ліцензій відправлено')
-       else
-         Log.Print('Помилка авторизації на сервері ліцензій');
-     end;
-     FLogin.Clear();
-   finally
-     FreeAndNil(FirmCodes);
-   end;
 end;
 
 procedure TFMedocCheckDocs.ComboBoxPathChange(Sender: TObject);
@@ -257,24 +168,24 @@ begin
   SetComboBoxToYear(ComboBoxYear, Val);
 end;
 
-procedure TFMedocCheckDocs.DBGrid1DrawColumnCell(Sender: TObject;
+procedure TFMedocCheckDocs.sDrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
 var
   Code: String;
   DisplayText: String;
 begin
-  Code := DBGrid1.DataSource.DataSet.FieldByName('EDRPOU').AsString;
+  Code := s.DataSource.DataSet.FieldByName('EDRPOU').AsString;
 
   // Встановлюємо колір фону та шрифт
-  with DBGrid1.Canvas do
+  with s.Canvas do
   begin
     if gdSelected in State then
     begin
       Brush.Color := clYellow;
       Font.Color := clBlack;
     end else begin
-      Brush.Color := DBGrid1.Color;
-      Font.Color := DBGrid1.Font.Color;
+      Brush.Color := s.Color;
+      Font.Color := s.Font.Color;
     end;
     FillRect(Rect); // малюємо фон
 
@@ -288,7 +199,7 @@ begin
   end;
 end;
 
-procedure TFMedocCheckDocs.DBGrid1TitleClick(Column: TColumn);
+procedure TFMedocCheckDocs.sTitleClick(Column: TColumn);
 var
    fld: string;
 begin
@@ -303,7 +214,19 @@ begin
     end;
 
     QueryOpen();
-    DBGrid1.Invalidate();
+    s.Invalidate();
+end;
+
+procedure TFMedocCheckDocs.ButtonGetLicenceClick(Sender: TObject);
+begin
+  ConnectToDb();
+  fFirmCodesLicensed := DmCommon.Licence_GetFromHttp();
+end;
+
+procedure TFMedocCheckDocs.ButtonOrderLicenceClick(Sender: TObject);
+begin
+  ConnectToDb();
+  DmCommon.Licence_OrderToHttp();
 end;
 
 procedure TFMedocCheckDocs.FormCreate(Sender: TObject);
@@ -348,7 +271,7 @@ begin
 
   // Add cloumn visualisation in empty Grid
   for i := 0 to SQLQueryGrid.Fields.Count - 1 do
-    with DBGrid1.Columns.Add do
+    with s.Columns.Add do
       FieldName := SQLQueryGrid.Fields[i].DisplayLabel;
 
   Panel1.Font.Size := 10;
