@@ -43,6 +43,9 @@ object FSettings: TFSettings
     Align = alClient
     ClientHeight = 224
     ClientWidth = 460
+    Color = clWhite
+    ParentBackground = False
+    ParentColor = False
     TabOrder = 2
     object LabeledEditPassword: TLabeledEdit
       Left = 160

@@ -23,7 +23,7 @@ begin
   //aComboBox.Items.AddObject('-- 2 Півріччя', TObject(1002));
   //aComboBox.Items.AddObject('--- Рік', TObject(10000));
 
-  Month := MonthOf(IncMonth(Date, -1));
+  Month := MonthOf(IncMonth(Date(), -1));
 
   for i := 0 to aComboBox.Items.Count - 1 do
   begin

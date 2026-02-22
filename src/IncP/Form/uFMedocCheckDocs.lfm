@@ -1,12 +1,12 @@
 object FMedocCheckDocs: TFMedocCheckDocs
   Left = 342
-  Height = 356
+  Height = 343
   Top = 250
-  Width = 637
+  Width = 595
   BorderStyle = bsNone
   Caption = 'Звітне стикування'
-  ClientHeight = 356
-  ClientWidth = 637
+  ClientHeight = 343
+  ClientWidth = 595
   Font.CharSet = RUSSIAN_CHARSET
   Font.Name = 'Verdana'
   Font.Pitch = fpVariable
@@ -16,9 +16,9 @@ object FMedocCheckDocs: TFMedocCheckDocs
   OnDestroy = FormDestroy
   object DbGrid: TDBGrid
     Left = 0
-    Height = 212
+    Height = 199
     Top = 144
-    Width = 637
+    Width = 595
     Align = alClient
     Color = clWindow
     Columns = <>
@@ -33,10 +33,10 @@ object FMedocCheckDocs: TFMedocCheckDocs
     Left = 0
     Height = 144
     Top = 0
-    Width = 637
+    Width = 595
     Align = alTop
     ClientHeight = 144
-    ClientWidth = 637
+    ClientWidth = 595
     Color = clWhite
     ParentBackground = False
     ParentColor = False
@@ -140,8 +140,8 @@ object FMedocCheckDocs: TFMedocCheckDocs
       Top = 112
       Width = 75
       Caption = 'Друк'
-      Enabled = False
       TabOrder = 2
+      OnClick = ButtonPrintClick
     end
     object ButtonOrderLicence: TButton
       Left = 424
@@ -262,7 +262,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
       '        CARD.PERDATE,'
       '        CARDSENDSTT.NAME AS CARDSENDSTT_NAME,'
       '        FORM.CHARCODE,'
-      '        CARD.MODDATE,'
+      '        CAST(CARD.MODDATE AS DATE) AS MODDATE,'
       '        CARDSTATUS.NAME AS CARDSTATUS_NAME,'
       '        CARDBLOB.XMLVALS'
       '        %_SELECT_T2'
@@ -356,7 +356,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
     end
     object SQLQueryGridSHORTNAME: TStringField
       DisplayLabel = 'Найменування'
-      DisplayWidth = 30
+      DisplayWidth = 20
       FieldKind = fkData
       FieldName = 'SHORTNAME'
       Index = 2
@@ -364,10 +364,10 @@ object FMedocCheckDocs: TFMedocCheckDocs
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
       Required = False
-      Size = 100
+      Size = 50
     end
     object SQLQueryGridINDTAXNUM: TStringField
-      DisplayLabel = 'ІПН платника ПДВ'
+      DisplayLabel = 'ІПН'
       DisplayWidth = 10
       FieldKind = fkData
       FieldName = 'INDTAXNUM'
@@ -415,7 +415,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
     end
     object SQLQueryGridHZ: TStringField
       DisplayLabel = ' Ознака'
-      DisplayWidth = 10
+      DisplayWidth = 8
       FieldKind = fkCalculated
       FieldName = 'HZ'
       Index = 7
@@ -426,7 +426,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
       Size = 30
     end
     object SQLQueryGridMODDATE: TDateTimeField
-      DisplayLabel = 'Дата модифікації'
+      DisplayLabel = 'Модифікація'
       FieldKind = fkData
       FieldName = 'MODDATE'
       Index = 8
@@ -444,7 +444,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
       Required = False
-      Size = 30
+      Size = 10
     end
     object SQLQueryGridCARDSENDSTT_NAME: TStringField
       DisplayLabel = 'Стан'
@@ -485,5 +485,29 @@ object FMedocCheckDocs: TFMedocCheckDocs
     DataSet = SQLQueryGrid
     Left = 120
     Top = 152
+  end
+  object FrPrintGrid1: TFrPrintGrid
+    DBGrid = DbGrid
+    Orientation = poLandscape
+    Caption = 'Grid'
+    PrinterIndex = -1
+    ShowCaption = True
+    Left = 200
+    Top = 264
+  end
+  object frReport1: TfrReport
+    Dataset = frDBDataSet1
+    InitialZoom = pzDefault
+    Options = []
+    PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit, pbSettings, pbPageSetup]
+    DataType = dtDataSet
+    Left = 200
+    Top = 160
+  end
+  object frDBDataSet1: TfrDBDataSet
+    DataSet = SQLQueryGrid
+    DataSource = DataSourceGrid
+    Left = 200
+    Top = 216
   end
 end

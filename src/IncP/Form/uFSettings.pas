@@ -8,7 +8,7 @@ unit uFSettings;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls,
+  Classes, SysUtils,DateUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls,
   StdCtrls, Spin,
   uFormState, uLog;
 
@@ -50,6 +50,9 @@ end;
 procedure TFSettings.FormCreate(Sender: TObject);
 begin
   FormStateRec.Load(self);
+
+  if (SpinEditBeginYear.Value = 0) then
+    SpinEditBeginYear.Value := YearOf(IncYear(Date(), -2));
 end;
 
 end.

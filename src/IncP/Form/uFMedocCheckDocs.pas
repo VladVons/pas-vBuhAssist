@@ -8,10 +8,9 @@ unit uFMedocCheckDocs;
 interface
 
 uses
-  Classes, SysUtils, StrUtils, DateUtils, SQLDB, Forms, Graphics,
-  StdCtrls, DBGrids, Grids, ExtCtrls, Buttons, DB, fpjson,
-  uSys, uLog, uLicence, uWinReg, uFormState, uQuery, uMedoc,
-  uDmCommon;
+  Classes, SysUtils, StrUtils, DateUtils, SQLDB, Forms, Graphics, StdCtrls,
+  DBGrids, Grids, ExtCtrls, Buttons, LR_Class, LR_DBSet, LR_PGrid, DB, fpjson,
+  uSys, uLog, uLicence, uWinReg, uFormState, uQuery, uMedoc, uDmCommon;
 
 type
 
@@ -28,6 +27,9 @@ type
     ComboBoxYear: TComboBox;
     DataSourceGrid: TDataSource;
     DbGrid: TDBGrid;
+    frDBDataSet1: TfrDBDataSet;
+    FrPrintGrid1: TFrPrintGrid;
+    frReport1: TfrReport;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
@@ -50,6 +52,7 @@ type
     procedure ButtonExecClick(Sender: TObject);
     procedure ButtonGetLicenceClick(Sender: TObject);
     procedure ButtonOrderLicenceClick(Sender: TObject);
+    procedure ButtonPrintClick(Sender: TObject);
     procedure ComboBoxPathChange(Sender: TObject);
     procedure ComboBoxYearDropDown(Sender: TObject);
     procedure DbGridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
@@ -113,7 +116,7 @@ end;
 procedure TFMedocCheckDocs.QueryOpen();
 var
   Month, Year: Integer;
-  Str, StrDb: String;
+  Str, StrDb, StrMacro: String;
 begin
   SQLQueryGrid.Close();
   SQLQueryGrid.DataBase := DmCommon.IBConnection;
@@ -138,17 +141,17 @@ begin
     Str := ' AND ORG.EDRPOU=' + TRim(ComboBoxFirm.Text);
   SQLQueryGrid.MacroByName('_COND_ORG').Value := Str;
 
-  SQLQueryGrid.MacroByName('_SELECT_T2').Value := ', '''' AS FJ';
+  StrMacro := ', '''' AS FJ';
   if (Pos('J0500110', ComboBoxDoc.Text) = 1) then
   begin
     StrDb := 'FJ0500106_MAIN';
     if (fTablesMain.IndexOf(StrDb) <> 0) then
     begin
-      Str := ' LEFT JOIN ' + StrDb + ' TFJ ON TFJ.CARDCODE = CARD.CODE';
-      SQLQueryGrid.MacroByName('_SELECT_T2').Value := ', TFJ.HZ || ''-'' || TFJ.HZN || ''-'' || TFJ.HZU AS FJ';
-      SQLQueryGrid.MacroByName('_FROM_T2').Value := Str;
+      StrMacro := ', TFJ.HZ || ''-'' || TFJ.HZN || ''-'' || TFJ.HZU AS FJ';
+      SQLQueryGrid.MacroByName('_FROM_T2').Value := ' LEFT JOIN ' + StrDb + ' TFJ ON TFJ.CARDCODE = CARD.CODE';
     end;
   end;
+  SQLQueryGrid.MacroByName('_SELECT_T2').Value := StrMacro;
 
   //SQLQueryGrid.AfterOpen := nil;
   //SQLQueryGrid.OnCalcFields := nil;
@@ -162,16 +165,24 @@ end;
 
 procedure TFMedocCheckDocs.SQLQueryGridCalcFields(DataSet: TDataSet);
 var
-  FieldXML, FieldFJ, FieldHZ: TField;
+  i: Integer;
+  FieldXML, FieldFJ, FieldHZ, FieldCode: TField;
+  Code: String;
 begin
   FieldXML := DataSet.FieldByName('XMLVALS');
   FieldFJ := DataSet.FieldByName('FJ');
   FieldHZ := DataSet.FieldByName('HZ');
-
   if (not FieldXML.IsNull) and (not FieldXML.AsString.IsEmpty()) then
     FieldHZ.AsString := GetHzXml(FieldXML.AsString)
   else if (not FieldFJ.AsString.IsEmpty()) then
     FieldHZ.AsString := GetHzStr(FieldFJ.AsString);
+
+  Code := DataSet.FieldByName('EDRPOU').AsString;
+  if (fFirmCodesLicensed.IndexOf(Code) = -1) then
+  begin
+    for i := 0 to fDemoFields.Count - 1 do
+      DataSet.FieldByName(fDemoFields[i]).AsString := 'ДЕМО';
+  end;
 end;
 
 procedure TFMedocCheckDocs.ButtonExecClick(Sender: TObject);
@@ -214,12 +225,7 @@ begin
     end;
     FillRect(Rect); // малюємо фон
 
-    // Вибираємо, який текст малювати
-    if (fDemoFields.IndexOf(Column.FieldName) <> -1) and (fFirmCodesLicensed.IndexOf(Code) = -1) then
-      DisplayText := 'Д Е М О'
-    else
-      DisplayText := Column.Field.DisplayText;
-
+    DisplayText := Column.Field.DisplayText;
     TextRect(Rect, Rect.Left + 2, Rect.Top + 2, DisplayText);
   end;
 end;
@@ -252,6 +258,22 @@ procedure TFMedocCheckDocs.ButtonOrderLicenceClick(Sender: TObject);
 begin
   ConnectToDb();
   DmCommon.Licence_OrderToHttp();
+end;
+
+procedure TFMedocCheckDocs.ButtonPrintClick(Sender: TObject);
+var
+  i: Integer;
+begin
+  if (SQLQueryGrid.RecordCount = 0) then
+  begin
+    Log.Print('Немає даних для друку');
+    Exit;
+  end;
+
+  FrPrintGrid1.PreviewReport();
+  //frReport1.LoadFromFile('Report\FMedocCheckDocs1.lrf');
+  //if (frReport1.PrepareReport()) then
+  //  frReport1.ShowReport();
 end;
 
 procedure TFMedocCheckDocs.FormCreate(Sender: TObject);
@@ -289,7 +311,7 @@ begin
 
   fDemoFields := TStringList.Create();
   fDemoFields.Add('CARDSTATUS_NAME');
-  fDemoFields.Add('MODDATE');
+  //fDemoFields.Add('MODDATE');
   fDemoFields.Add('CHARCODE');
   fDemoFields.Add('CARDSENDSTT_NAME');
   fDemoFields.Add('HZ');
