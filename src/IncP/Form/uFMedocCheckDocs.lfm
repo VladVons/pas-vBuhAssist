@@ -230,7 +230,9 @@ object FMedocCheckDocs: TFMedocCheckDocs
       end    
       item
         Name = 'FJ'
-        DataType = ftUnknown
+        DataType = ftString
+        Precision = -1
+        Size = 10
       end>
     OnCalcFields = SQLQueryGridCalcFields
     Database = DmCommon.IBConnection
@@ -250,8 +252,8 @@ object FMedocCheckDocs: TFMedocCheckDocs
       '    T2.CARDSENDSTT_NAME,'
       '    T2.MODDATE,'
       '    T2.CARDSTATUS_NAME,'
-      '    T2.XMLVALS'
-      '    %_SELECT_T0'
+      '    T2.XMLVALS,'
+      '    T2.FJ'
       'FROM'
       '    ORG'
       'LEFT JOIN ('
@@ -296,11 +298,6 @@ object FMedocCheckDocs: TFMedocCheckDocs
         ParamType = ptInput
       end>
     Macros = <    
-      item
-        DataType = ftUnknown
-        Name = '_SELECT_T0'
-        ParamType = ptInput
-      end    
       item
         DataType = ftUnknown
         Name = '_SELECT_T2'
@@ -472,7 +469,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
       Visible = False
       Size = 8
     end
-    object SQLQueryGridFJ: TBlobField
+    object SQLQueryGridFJ: TStringField
       FieldKind = fkData
       FieldName = 'FJ'
       Index = 12
@@ -481,7 +478,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
       ReadOnly = False
       Required = False
       Visible = False
-      Size = 8
+      Size = 5
     end
   end
   object DataSourceGrid: TDataSource

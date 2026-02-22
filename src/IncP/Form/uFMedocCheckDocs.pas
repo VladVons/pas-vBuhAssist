@@ -10,7 +10,7 @@ interface
 uses
   Classes, SysUtils, StrUtils, DateUtils, SQLDB, Forms, Graphics,
   StdCtrls, DBGrids, Grids, ExtCtrls, Buttons, DB, fpjson,
-  uSys, uLog, uLicence, uWinReg, uFormState, uMedoc, uQuery,
+  uSys, uLog, uLicence, uWinReg, uFormState, uQuery, uMedoc,
   uDmCommon;
 
 type
@@ -46,7 +46,7 @@ type
     SQLQueryGridCARDSTATUS_NAME: TStringField;
     SQLQueryGridVAT: TStringField;
     SQLQueryGridXMLVALS: TBlobField;
-    SQLQueryGridFJ: TBlobField;
+    SQLQueryGridFJ: TStringField;
     procedure ButtonExecClick(Sender: TObject);
     procedure ButtonGetLicenceClick(Sender: TObject);
     procedure ButtonOrderLicenceClick(Sender: TObject);
@@ -138,13 +138,13 @@ begin
     Str := ' AND ORG.EDRPOU=' + TRim(ComboBoxFirm.Text);
   SQLQueryGrid.MacroByName('_COND_ORG').Value := Str;
 
+  SQLQueryGrid.MacroByName('_SELECT_T2').Value := ', '''' AS FJ';
   if (Pos('J0500110', ComboBoxDoc.Text) = 1) then
   begin
     StrDb := 'FJ0500106_MAIN';
     if (fTablesMain.IndexOf(StrDb) <> 0) then
     begin
       Str := ' LEFT JOIN ' + StrDb + ' TFJ ON TFJ.CARDCODE = CARD.CODE';
-      SQLQueryGrid.MacroByName('_SELECT_T0').Value := ', T2.FJ';
       SQLQueryGrid.MacroByName('_SELECT_T2').Value := ', TFJ.HZ || ''-'' || TFJ.HZN || ''-'' || TFJ.HZU AS FJ';
       SQLQueryGrid.MacroByName('_FROM_T2').Value := Str;
     end;
@@ -155,17 +155,23 @@ begin
   //SQLQueryGrid.AfterScroll := nil;
   //DbGrid.OnDrawColumnCell := nil;
 
-  Str := ExpandSQL(SQLQueryGrid);
-  Log.Print(Str);
+  //Str := ExpandSQL(SQLQueryGrid);
+  //Log.Print(Str);
   SQLQueryGrid.Open();
 end;
 
 procedure TFMedocCheckDocs.SQLQueryGridCalcFields(DataSet: TDataSet);
+var
+  FieldXML, FieldFJ, FieldHZ: TField;
 begin
-  if (not DataSet.FieldByName('XMLVALS').IsNull) then
-    DataSet.FieldByName('HZ').AsString := GetHzHuman(DataSet.FieldByName('XMLVALS').AsString)
-  else if (not DataSet.FieldByName('FJ').IsNull) then
-    DataSet.FieldByName('HZ').AsString := '1';
+  FieldXML := DataSet.FieldByName('XMLVALS');
+  FieldFJ := DataSet.FieldByName('FJ');
+  FieldHZ := DataSet.FieldByName('HZ');
+
+  if (not FieldXML.IsNull) and (not FieldXML.AsString.IsEmpty()) then
+    FieldHZ.AsString := GetHzXml(FieldXML.AsString)
+  else if (not FieldFJ.AsString.IsEmpty()) then
+    FieldHZ.AsString := GetHzStr(FieldFJ.AsString);
 end;
 
 procedure TFMedocCheckDocs.ButtonExecClick(Sender: TObject);

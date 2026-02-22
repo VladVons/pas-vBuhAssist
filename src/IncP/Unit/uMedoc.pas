@@ -7,7 +7,8 @@ interface
 uses
   Classes, SysUtils, StrUtils, XMLRead, DOM, LConvEncoding;
 
-function GetHzHuman(const aXML: String): String;
+function GetHzXml(const aXML: String): String;
+function GetHzStr(const aStr: String): String;
 
 implementation
 
@@ -23,7 +24,19 @@ begin
       Result := '';
 end;
 
-procedure GetHzVal(const aXML: string; out aHZ, aHZN, aHZU: string);
+function GetHzStr(const aStr: String): String;
+var
+  HZ, HZN, HZU: String;
+  Arr: TStringArray;
+begin
+  Arr := aStr.Split('-');
+  HZ := Arr[0];
+  HZN := Arr[1];
+  HZU := Arr[2];
+  Result := GetHzValToHuman(HZ, HZN, HZU);
+end;
+
+procedure GetHz(const aXML: string; out aHZ, aHZN, aHZU: string);
 var
   Doc: TXMLDocument;
   NodeList: TDOMNodeList;
@@ -63,14 +76,14 @@ begin
   end;
 end;
 
-function GetHzHuman(const aXML: String): String;
+function GetHzXml(const aXML: String): String;
 var
    StrXML, HZ, HZN, HZU: String;
 begin
   StrXML := CP1251ToUTF8(aXML);
   StrXML := StringReplace(StrXML, 'encoding="windows-1251"', 'encoding="utf-8"', [rfIgnoreCase]);
 
-  GetHzVal(StrXML, HZ, HZN, HZU);
+  GetHz(StrXML, HZ, HZN, HZU);
   Result := GetHzValToHuman(HZ, HZN, HZU);
 end;
 
