@@ -6,17 +6,6 @@ inherited FSettings: TFSettings
   ClientHeight = 264
   ClientWidth = 460
   OnCreate = FormCreate
-  inherited PanelTitle: TPanel
-    Width = 460
-    ClientWidth = 460
-    TabOrder = 3
-    inherited LabelTitle: TLabel
-      Left = 6
-      Top = 8
-      Width = 330
-      Anchors = []
-    end
-  end
   object Panel1: TPanel[1]
     Left = 0
     Height = 40

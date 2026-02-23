@@ -2,10 +2,10 @@ object FBase: TFBase
   Left = 362
   Height = 240
   Top = 250
-  Width = 320
+  Width = 403
   Caption = 'FBase'
   ClientHeight = 240
-  ClientWidth = 320
+  ClientWidth = 403
   LCLVersion = '4.4.0.0'
   OnCreate = FormCreate
   OnShow = FormShow
@@ -13,11 +13,11 @@ object FBase: TFBase
     Left = 0
     Height = 32
     Top = 0
-    Width = 320
+    Width = 403
     Align = alTop
     BevelOuter = bvNone
     ClientHeight = 32
-    ClientWidth = 320
+    ClientWidth = 403
     TabOrder = 0
     object LabelTitle: TLabel
       Left = 16
@@ -28,9 +28,6 @@ object FBase: TFBase
       Caption = 'Title'
       Font.CharSet = RUSSIAN_CHARSET
       Font.Height = -16
-      Font.Name = 'Segoe UI Semibold'
-      Font.Pitch = fpVariable
-      Font.Quality = fqDraft
       Font.Style = [fsBold]
       ParentFont = False
     end

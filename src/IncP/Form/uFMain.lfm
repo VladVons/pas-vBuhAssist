@@ -1,10 +1,10 @@
 object FMain: TFMain
   Left = 342
-  Height = 368
+  Height = 393
   Top = 250
-  Width = 741
-  ClientHeight = 368
-  ClientWidth = 741
+  Width = 800
+  ClientHeight = 393
+  ClientWidth = 800
   Menu = MainMenu1
   LCLVersion = '4.4.0.0'
   Visible = True
@@ -13,18 +13,18 @@ object FMain: TFMain
   object Panel1: TPanel
     Left = 0
     Height = 74
-    Top = 294
-    Width = 741
+    Top = 319
+    Width = 800
     Align = alBottom
     Caption = 'Panel1'
     ClientHeight = 74
-    ClientWidth = 741
+    ClientWidth = 800
     TabOrder = 0
     object MemoInfo1: TMemo
       Left = 1
       Height = 72
       Top = 1
-      Width = 739
+      Width = 798
       Align = alClient
       ReadOnly = True
       ScrollBars = ssAutoVertical
@@ -35,16 +35,16 @@ object FMain: TFMain
     Cursor = crVSplit
     Left = 0
     Height = 5
-    Top = 289
-    Width = 741
+    Top = 314
+    Width = 800
     Align = alBottom
     ResizeAnchor = akBottom
   end
   object PageControl1: TPageControl
     Left = 0
-    Height = 289
+    Height = 314
     Top = 0
-    Width = 741
+    Width = 800
     Align = alClient
     Font.CharSet = RUSSIAN_CHARSET
     Font.Name = 'Segoe UI Semibold'

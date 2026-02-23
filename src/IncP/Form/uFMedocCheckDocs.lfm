@@ -1,10 +1,10 @@
 inherited FMedocCheckDocs: TFMedocCheckDocs
   Left = 342
-  Height = 343
+  Height = 384
   Width = 595
   BorderStyle = bsNone
   Caption = 'Звітне стикування'
-  ClientHeight = 343
+  ClientHeight = 384
   ClientWidth = 595
   Font.CharSet = RUSSIAN_CHARSET
   Font.Name = 'Verdana'
@@ -19,7 +19,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
   end
   object DbGrid: TDBGrid[1]
     Left = 0
-    Height = 167
+    Height = 208
     Top = 176
     Width = 595
     Align = alClient
@@ -27,7 +27,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     Columns = <>
     DataSource = DataSourceGrid
     Font.CharSet = RUSSIAN_CHARSET
-    Font.Height = -15
+    Font.Height = -13
     Font.Name = 'Verdana'
     Font.Pitch = fpVariable
     Font.Quality = fqDraft
@@ -35,6 +35,11 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     ParentFont = False
     ReadOnly = True
     TabOrder = 0
+    TitleFont.CharSet = RUSSIAN_CHARSET
+    TitleFont.Height = -12
+    TitleFont.Name = 'Verdana'
+    TitleFont.Pitch = fpVariable
+    TitleFont.Quality = fqDraft
     OnDrawColumnCell = DbGridDrawColumnCell
     OnTitleClick = DbGridTitleClick
   end
@@ -142,7 +147,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Left = 296
       Height = 25
       Top = 112
-      Width = 75
+      Width = 51
       Caption = 'Друк'
       TabOrder = 2
       OnClick = ButtonPrintClick
@@ -166,9 +171,9 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       OnClick = ButtonGetLicenceClick
     end
     object ButtonRunMedoc: TButton
-      Left = 512
+      Left = 352
       Height = 25
-      Top = 8
+      Top = 112
       Width = 64
       Caption = 'Запуск'
       TabOrder = 9
@@ -351,8 +356,8 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
         ParamType = ptInput
       end>
     MacroCheck = True
-    Left = 120
-    Top = 208
+    Left = 104
+    Top = 248
     object SQLQueryGridEDRPOU: TStringField
       DisplayLabel = 'ЄДРПОУ'
       FieldKind = fkData
@@ -461,7 +466,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Size = 30
     end
     object SQLQueryGridMODDATE: TDateTimeField
-      DisplayLabel = 'Модифікація'
+      DisplayLabel = 'Модифік'
       FieldKind = fkData
       FieldName = 'MODDATE'
       Index = 9
@@ -518,19 +523,19 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
   end
   object DataSourceGrid: TDataSource[4]
     DataSet = SQLQueryGrid
-    Left = 120
-    Top = 152
+    Left = 104
+    Top = 192
   end
   object FrPrintGrid1: TFrPrintGrid[5]
     DBGrid = DbGrid
     Orientation = poLandscape
     Font.CharSet = RUSSIAN_CHARSET
-    Font.Height = -15
+    Font.Height = -11
     Font.Name = 'Verdana'
     Font.Pitch = fpVariable
     Font.Quality = fqDraft
     TitleFont.CharSet = RUSSIAN_CHARSET
-    TitleFont.Height = -15
+    TitleFont.Height = -10
     TitleFont.Name = 'Verdana'
     TitleFont.Pitch = fpVariable
     TitleFont.Quality = fqDraft
@@ -538,7 +543,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     PrinterIndex = -1
     ShowCaption = True
     Left = 200
-    Top = 264
+    Top = 288
   end
   object frReport1: TfrReport[6]
     Dataset = frDBDataSet1
@@ -548,11 +553,11 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     DataType = dtDataSet
     OnGetValue = frReport1GetValue
     Left = 200
-    Top = 152
+    Top = 176
   end
   object frDBDataSet1: TfrDBDataSet[7]
     DataSet = SQLQueryGrid
     Left = 200
-    Top = 216
+    Top = 232
   end
 end

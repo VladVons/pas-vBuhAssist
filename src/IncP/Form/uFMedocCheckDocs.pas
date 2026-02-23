@@ -12,7 +12,7 @@ uses
   DBGrids, Grids, ExtCtrls, Buttons, LR_Class, LR_DBSet, LR_PGrid, LR_Desgn, DB,
   fpjson,
   uFBase, uSys, uLog, uLicence, uWinReg, uFormState, uQuery, uMedoc, uDmCommon,
-  uConst;
+  uProtect, uConst;
 
 type
 
@@ -115,7 +115,6 @@ begin
   end;
 end;
 
-
 procedure TFMedocCheckDocs.ConnectToDB();
 var
   JObj: TJSONObject;
@@ -190,6 +189,7 @@ var
   i, Month: Integer;
   Field, FieldXML, FieldFJ, FieldHZ: TField;
   Code: String;
+  Protected: Boolean;
 begin
   FieldXML := DataSet.FieldByName('XMLVALS');
   FieldFJ := DataSet.FieldByName('FJ');
@@ -199,12 +199,11 @@ begin
   else if (not FieldFJ.AsString.IsEmpty()) then
     FieldHZ.AsString := GetHzStr(FieldFJ.AsString);
 
+  Protected := Protect.CompareRnd();
   Code := DataSet.FieldByName('EDRPOU').AsString;
-  if (fFirmCodesLicensed.IndexOf(Code) = -1) then
-  begin
+  if (fFirmCodesLicensed.IndexOf(Code) = -1) or (not Protected) then
     for i := 0 to fDemoFields.Count - 1 do
-      DataSet.FieldByName(fDemoFields[i]).AsString := 'ДЕМО';
-  end;
+      DataSet.FieldByName(fDemoFields[i]).AsString := IfThen(Protected, 'ДЕМО', 'Д Е М О');
 
   Field := DataSet.FindField('PERDATE');
   if (Assigned(Field)) and (not Field.IsNull) then
@@ -237,8 +236,7 @@ begin
   SetComboBoxToYear(ComboBoxYear, Val);
 end;
 
-procedure TFMedocCheckDocs.DbGridDrawColumnCell(Sender: TObject;
-  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+procedure TFMedocCheckDocs.DbGridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
 var
   Code: String;
   DisplayText: String;
@@ -302,6 +300,7 @@ end;
 procedure TFMedocCheckDocs.ButtonPrintClick(Sender: TObject);
 var
   i: Integer;
+  PrevVisible: Boolean;
 begin
   if (SQLQueryGrid.RecordCount = 0) then
   begin
@@ -309,8 +308,14 @@ begin
     Exit;
   end;
 
-  FrPrintGrid1.Caption := Format('%s (%s)', [Caption, cAppName]);
+  PrevVisible := SQLQueryGridINDTAXNUM.Visible;
+  SQLQueryGridINDTAXNUM.Visible := False;
+  FrPrintGrid1.Caption := Format(
+   '%s -- Період: %s %s року--Звіт: %s)',
+   [cAppName, ComboBoxMonth.Text, ComboBoxYear.Text, ComboBoxDoc.Text]
+  );
   FrPrintGrid1.PreviewReport();
+  SQLQueryGridINDTAXNUM.Visible := PrevVisible;
 
   //frReport1.LoadFromFile('Report\FMedocCheckDocs1.lrf');
   //if (frReport1.PrepareReport()) then
@@ -324,8 +329,10 @@ begin
   JObj := GetCurPathObj();
   if (JObj.Get('port', 0) = 0) then
     Log.Print('Не мережева версія програми')
-  else
+  else begin
+    Log.Print('Запуск програми ' + ComboBoxPath.Text);
     ExecProcess(ComboBoxPath.Text);
+  end;
 end;
 
 procedure TFMedocCheckDocs.FormCreate(Sender: TObject);

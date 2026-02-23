@@ -84,7 +84,7 @@
         <UnitName Value="uFLicense"/>
       </Unit>
       <Unit>
-        <Filename Value="IncP/Form/ufoptimizepdf.pas"/>
+        <Filename Value="IncP/Form/ufoptimizePDF.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FOptimizePDF"/>
         <HasResources Value="True"/>
@@ -193,6 +193,10 @@
         <ComponentName Value="FBase"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Inc/Unit/uProtect.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit>
     </Units>
   </ProjectOptions>
