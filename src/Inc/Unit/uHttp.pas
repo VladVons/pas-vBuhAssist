@@ -22,18 +22,21 @@ function PostJSON(const aURL: string; aJSON: TJSONObject): TJSONObject;
 var
   Data: String;
   Client: TFPHTTPClient;
+  Body: TStringStream;
 begin
+    Result := Nil;
+    Body := TStringStream.Create(aJson.AsJSON);
+
     Client := TFPHTTPClient.Create(nil);
     Client.AddHeader('Content-Type', 'application/json; charset=UTF-8');
     Client.AddHeader('Accept', 'application/json');
     try
-      Client.RequestBody := TStringStream.Create(aJson.AsJSON);
+      Client.RequestBody := Body;
       Data := client.Post(aURL);
       if (Client.ResponseStatusCode = 200) and (Data <> '') then
-        Result := TJSONObject(GetJSON(Data))
-      else
-        Result := Nil;
+        Result := TJSONObject(GetJSON(Data));
     finally
+      Body.Free();
       Client.Free();
     end;
 end;

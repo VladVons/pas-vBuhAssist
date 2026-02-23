@@ -1,11 +1,11 @@
 inherited FMedocCheckDocs: TFMedocCheckDocs
   Left = 342
   Height = 384
-  Width = 595
+  Width = 638
   BorderStyle = bsNone
   Caption = 'Звітне стикування'
   ClientHeight = 384
-  ClientWidth = 595
+  ClientWidth = 638
   Font.CharSet = RUSSIAN_CHARSET
   Font.Name = 'Verdana'
   Font.Pitch = fpVariable
@@ -13,15 +13,15 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   inherited PanelTitle: TPanel
-    Width = 595
-    ClientWidth = 595
+    Width = 638
+    ClientWidth = 638
     TabOrder = 2
   end
   object DbGrid: TDBGrid[1]
     Left = 0
     Height = 208
     Top = 176
-    Width = 595
+    Width = 638
     Align = alClient
     Color = clWindow
     Columns = <>
@@ -47,23 +47,23 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     Left = 0
     Height = 144
     Top = 32
-    Width = 595
+    Width = 638
     Align = alTop
     ClientHeight = 144
-    ClientWidth = 595
+    ClientWidth = 638
     ParentBackground = False
     TabOrder = 1
     object ComboBoxPath: TComboBox
       Left = 128
       Height = 22
       Top = 8
-      Width = 385
+      Width = 448
       ItemHeight = 14
       ReadOnly = True
       TabOrder = 0
     end
     object ComboBoxYear: TComboBox
-      Left = 352
+      Left = 347
       Height = 22
       Top = 32
       Width = 160
@@ -137,14 +137,13 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Left = 128
       Height = 25
       Top = 112
-      Width = 160
+      Width = 168
       Caption = 'Знайти за параметрами'
-      ParentFont = False
       TabOrder = 1
       OnClick = ButtonExecClick
     end
     object ButtonPrint: TButton
-      Left = 296
+      Left = 304
       Height = 25
       Top = 112
       Width = 51
@@ -153,16 +152,16 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       OnClick = ButtonPrintClick
     end
     object ButtonOrderLicence: TButton
-      Left = 424
+      Left = 472
       Height = 25
       Top = 112
-      Width = 75
+      Width = 67
       Caption = 'Замовити'
       TabOrder = 3
       OnClick = ButtonOrderLicenceClick
     end
     object ButtonGetLicence: TButton
-      Left = 501
+      Left = 544
       Height = 25
       Top = 112
       Width = 75
@@ -171,11 +170,11 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       OnClick = ButtonGetLicenceClick
     end
     object ButtonRunMedoc: TButton
-      Left = 352
+      Left = 360
       Height = 25
       Top = 112
-      Width = 64
-      Caption = 'Запуск'
+      Width = 80
+      Caption = 'Запустити'
       TabOrder = 9
       OnClick = ButtonRunMedocClick
     end
