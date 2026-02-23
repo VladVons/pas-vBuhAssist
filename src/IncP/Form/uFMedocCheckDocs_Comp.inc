@@ -53,7 +53,7 @@ end;
 
 procedure TFMedocCheckDocs.SetComboBoxDoc();
 begin
-  ComboBoxDoc.Items.AddPair('', '');
+  //ComboBoxDoc.Items.AddPair('', '');
   ComboBoxDoc.Items.AddPair('J0200126', 'Податкова декларація з податку на додану вартість');
   ComboBoxDoc.Items.AddPair('J0500110', 'Податковий розрахунок сум доходу ... ЄСВ');
   ComboBoxDoc.Items.AddPair('J0209513', 'Податкова декларація акцизного податку');

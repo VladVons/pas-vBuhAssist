@@ -174,8 +174,8 @@ begin
   //SQLQueryGrid.AfterScroll := nil;
   //DbGrid.OnDrawColumnCell := nil;
 
-  Str := ExpandSQL(SQLQueryGrid);
-  Log.Print(Str);
+  //Str := ExpandSQL(SQLQueryGrid);
+  //Log.Print(Str);
 
   //DmCommon.SQLTransaction.CommitRetaining();
   //DmCommon.SQLTransaction.Commit();
