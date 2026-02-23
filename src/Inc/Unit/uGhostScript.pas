@@ -8,7 +8,8 @@ unit uGhostScript;
 interface
 
 uses
-  SysUtils, Process, Classes;
+  SysUtils, Process, Classes,
+  uSys;
 
 const
   cGS_Dir = 'addons\gs';
@@ -21,29 +22,20 @@ implementation
 function GS_Exec(aParam: TStrings): Integer;
 var
   Process: TProcess;
-  FilePath, ExeDir: string;
+  FilePath, Dir: string;
   Output: TStringList;
 begin
-  ExeDir := ExtractFilePath(ParamStr(0));
-  FilePath := ExeDir + cGS_Dir + PathDelim + 'gswin32c.exe';
-
-  if (not FileExists(FilePath)) then
-    raise Exception.Create('Не знайдено ' + FilePath);
-
   Output := TStringList.Create();
-  Process := TProcess.Create(nil);
+
+  Dir := ExtractFilePath(ParamStr(0));
+  FilePath := Dir + cGS_Dir + PathDelim + 'gswin32c.exe';
   try
-    Process.Executable := FilePath;
-    Process.Parameters := aParam;
-    Process.CurrentDirectory := ExeDir;
-    Process.Options := [poUsePipes, poWaitOnExit];
-    Process.ShowWindow := swoHide;
-    Process.Execute();
+    Process := ExecProcess(FilePath, aParam);
     Result := Process.ExitStatus;
 
-    //Output.LoadFromStream(Process.Stderr);
-    //Output.LoadFromStream(Process.Output);
-    //Str := Output.Text;
+    Output.LoadFromStream(Process.Stderr);
+    Output.LoadFromStream(Process.Output);
+    //WriteLn(Output.Text);
   finally
     Process.Free();
     Output.Free();

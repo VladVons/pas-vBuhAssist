@@ -10,16 +10,19 @@ interface
 uses
   Classes, SysUtils,DateUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls,
   StdCtrls, Spin,
-  uFormState, uLog;
+  uFBase, uFormState, uLog, uSys, uConst;
 
 type
 
   { TFSettings }
 
-  TFSettings = class(TForm)
+  TFSettings = class(TFBase)
     ButtonOk: TButton;
+    GroupBox1: TGroupBox;
+    GroupBox2: TGroupBox;
     Label1: TLabel;
     LabeledEditPassword: TLabeledEdit;
+    LabelVer: TLabel;
     PageControlMain: TPageControl;
     Panel1: TPanel;
     Panel2: TPanel;
@@ -53,6 +56,8 @@ begin
 
   if (SpinEditBeginYear.Value = 0) then
     SpinEditBeginYear.Value := YearOf(IncYear(Date(), -2));
+
+  LabelVer.Caption := cAppName + ' ' + GetAppVer();
 end;
 
 end.

@@ -8,12 +8,14 @@ unit uSys;
 interface
 
 uses
-  Classes, Windows, SysUtils, FileInfo;
+  Classes, Windows, SysUtils, FileInfo, Process;
 
 function AddDllDirectory(aDir: PWideChar): THandle; stdcall; external 'kernel32.dll';
 function SetDllDirectoryW(lpPathName: PWideChar): BOOL; stdcall; external 'kernel32.dll';
 function SetDefaultDllDirectories(aDirFlags: DWORD): BOOL; stdcall; external 'kernel32.dll';
 
+function ExecProcess(const aFile: String; aParam: TStrings = Nil): TProcess;
+function GetMonthNameUa(aMonthNum: Integer): string;
 function GetAppProgramData(): String;
 function GetAppName(): String;
 function GetDirFiles(const aDir, aMask: string): TStringList;
@@ -27,6 +29,25 @@ function GetAppVer(): string;
 
 
 implementation
+
+function ExecProcess(const aFile: String; aParam: TStrings = Nil): TProcess;
+var
+  Dir: String;
+begin
+  if (not FileExists(aFile)) then
+    raise Exception.Create('Не знайдено ' + aFile);
+
+  Dir := ExtractFilePath(aFile);
+
+  Result := TProcess.Create(nil);
+  Result.Executable := aFile;
+  Result.CurrentDirectory := Dir;
+  Result.Options := [poUsePipes, poWaitOnExit];
+  Result.ShowWindow := swoHide;
+  if (Assigned(aParam)) then
+    Result.Parameters := aParam;
+  Result.Execute();
+end;
 
 procedure AddDirDll(const aPath: String);
 var
@@ -174,6 +195,19 @@ begin
   finally
     Info.Free();
   end;
+end;
+
+function GetMonthNameUa(aMonthNum: Integer): string;
+const
+  Months: array[1..12] of string = (
+    'Січень','Лютий','Березень','Квітень', 'Травень','Червень',
+    'Липень','Серпень', 'Вересень','Жовтень','Листопад','Грудень'
+  );
+begin
+  if (aMonthNum < 1) or (aMonthNum > 12) then
+    Exit('');
+
+  Result := Months[aMonthNum];
 end;
 
 initialization

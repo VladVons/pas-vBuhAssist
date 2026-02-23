@@ -3,7 +3,6 @@ object FMain: TFMain
   Height = 368
   Top = 250
   Width = 741
-  Caption = 'Бджілка - помічник бухгалтера'
   ClientHeight = 368
   ClientWidth = 741
   Menu = MainMenu1

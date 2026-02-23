@@ -9,13 +9,13 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  uGhostScript, uLog, uSettings, uSys, uVarUtil, uFormState;
+  uFBase, uGhostScript, uLog, uSettings, uSys, uVarUtil, uFormState;
 
 type
 
   { TFOptimizePDF }
 
-  TFOptimizePDF = class(TForm)
+  TFOptimizePDF = class(TFBase)
     ButtonConvert: TButton;
     ButtonDirIn: TButton;
     ButtonDirOut: TButton;

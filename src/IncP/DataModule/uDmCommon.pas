@@ -17,6 +17,7 @@ type
   TDmCommon = class(TDataModule)
     DataSource: TDataSource;
     IBConnection: TIBConnection;
+    ImageList1: TImageList;
     SQLQueryCodes: TSQLQuery;
     SQLQueryTablesMain: TSQLQuery;
     SQLTransaction: TSQLTransaction;

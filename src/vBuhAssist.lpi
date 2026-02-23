@@ -19,7 +19,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="11"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="11"/>
+      <BuildNr Value="13"/>
       <StringTable ProductName="vBuhAssist"/>
     </VersionInfo>
     <BuildModes>
@@ -33,6 +33,9 @@
       <FormatVersion Value="2"/>
     </RunParams>
     <RequiredPackages>
+      <Item>
+        <PackageName Value="dcpcrypt"/>
+      </Item>
       <Item>
         <PackageName Value="lazreport"/>
       </Item>
@@ -179,6 +182,17 @@
       <Unit>
         <Filename Value="Inc/Unit/uQuery.pas"/>
         <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Inc/Unit/uCryptAES.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Inc/Form/uFBase.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FBase"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
       </Unit>
     </Units>
   </ProjectOptions>

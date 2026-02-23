@@ -10,10 +10,11 @@ interface
 uses
   Classes, SysUtils, base64, BlowFish, fpjson, jsonparser;
 
-function StrEncrypt(const aStr, aKey: string): Ansistring;
-function StrDecrypt(const aStr: Ansistring; aKey: string): string;
+function StrEncrypt_BlowFish(const aStr, aKey: string): Ansistring;
+function StrDecrypt_BlowFish(const aStr: Ansistring; aKey: string): string;
 function JsonEncrypt(aJObj: TJSONObject; const aKey: string): AnsiString;
 function JsonDecrypt(const aStr: AnsiString; const aKey: string): TJSONObject;
+
 
 implementation
 
@@ -47,7 +48,7 @@ begin
     Result[i] := Chr(Ord(aStr[i]) xor Ord(aKey[(i-1) mod aKey.Length + 1]));
 end;
 
-function StrEncrypt(const aStr, aKey: string): Ansistring;
+function StrEncrypt_BlowFish(const aStr, aKey: string): Ansistring;
 var
   Stream: TStringStream;
   StreamBF: TBlowFishEncryptStream;
@@ -64,7 +65,7 @@ begin
   Stream.Free();
 end;
 
-function StrDecrypt(const aStr: Ansistring; aKey: string): string;
+function StrDecrypt_BlowFish(const aStr: Ansistring; aKey: string): string;
 var
   Stream: TStringStream;
   StreamBF: TBlowFishDecryptStream;
@@ -84,14 +85,14 @@ var
   Str: string;
 begin
   Str := aJObj.AsJSON;
-  Result := StrEncrypt(Str, aKey);
+  Result := StrEncrypt_BlowFish(Str, aKey);
 end;
 
 function JsonDecrypt(const aStr: AnsiString; const aKey: string): TJSONObject;
 var
   Str: string;
 begin
-  Str := StrDecrypt(aStr, aKey);
+  Str := StrDecrypt_BlowFish(aStr, aKey);
   Result := TJSONObject(GetJSON(Str));
 end;
 

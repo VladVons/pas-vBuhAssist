@@ -9,13 +9,16 @@ interface
 
 uses
   Classes, SysUtils, StrUtils, DateUtils, SQLDB, Forms, Graphics, StdCtrls,
-  DBGrids, Grids, ExtCtrls, Buttons, LR_Class, LR_DBSet, LR_PGrid, DB, fpjson,
-  uSys, uLog, uLicence, uWinReg, uFormState, uQuery, uMedoc, uDmCommon;
+  DBGrids, Grids, ExtCtrls, Buttons, LR_Class, LR_DBSet, LR_PGrid, LR_Desgn, DB,
+  fpjson,
+  uFBase, uSys, uLog, uLicence, uWinReg, uFormState, uQuery, uMedoc, uDmCommon,
+  uConst;
 
 type
 
   { TFMedocCheckDocs }
-  TFMedocCheckDocs = class(TForm)
+  TFMedocCheckDocs = class(TFBase)
+    ButtonRunMedoc: TButton;
     ButtonGetLicence: TButton;
     ButtonOrderLicence: TButton;
     ButtonPrint: TButton;
@@ -44,6 +47,7 @@ type
     SQLQueryGridINDTAXNUM: TStringField;
     SQLQueryGridMODDATE: TDateTimeField;
     SQLQueryGridPERDATE: TDateField;
+    SQLQueryGridPERDATE_STR: TStringField;	
     SQLQueryGridSHORTNAME: TStringField;
     SQLQueryGridCARDSTATUS_NAME: TStringField;
     SQLQueryGridVAT: TStringField;
@@ -53,12 +57,14 @@ type
     procedure ButtonGetLicenceClick(Sender: TObject);
     procedure ButtonOrderLicenceClick(Sender: TObject);
     procedure ButtonPrintClick(Sender: TObject);
+    procedure ButtonRunMedocClick(Sender: TObject);
     procedure ComboBoxPathChange(Sender: TObject);
     procedure ComboBoxYearDropDown(Sender: TObject);
     procedure DbGridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure DbGridTitleClick(Column: TColumn);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure frReport1GetValue(const aParName: String; var aParValue: Variant);
     procedure SQLQueryGridCalcFields(DataSet: TDataSet);
   private
     fSortField: string;
@@ -72,6 +78,7 @@ type
     procedure QueryOpen();
     procedure SetEmbededPath(aIdx: integer);
     procedure ConnectToDb();
+    function GetCurPathObj(): TJSONObject;
   public
 
   end;
@@ -97,14 +104,24 @@ begin
   AddDirDll(Path);
 end;
 
-procedure TFMedocCheckDocs.ConnectToDB();
+function TFMedocCheckDocs.GetCurPathObj(): TJSONObject;
 var
   Idx: Integer;
+begin
+  if (ComboBoxPath.Items.Count > 0) then
+  begin
+    Idx := ComboBoxPath.ItemIndex;
+    Result := TJSONObject(ComboBoxPath.Items.Objects[Idx]);
+  end;
+end;
+
+
+procedure TFMedocCheckDocs.ConnectToDB();
+var
   JObj: TJSONObject;
   DbName: String;
 begin
-  Idx := ComboBoxPath.ItemIndex;
-  JObj := TJSONObject(ComboBoxPath.Items.Objects[Idx]);
+  JObj := GetCurPathObj();
   DbName := JObj.Get('db', '');
   if (not DmCommon.IBConnection.Connected) or (DmCommon.IBConnection.DatabaseName <> DbName) then
   begin
@@ -160,13 +177,18 @@ begin
 
   //Str := ExpandSQL(SQLQueryGrid);
   //Log.Print(Str);
+
+  //DmCommon.SQLTransaction.CommitRetaining();
+  //DmCommon.SQLTransaction.Commit();
+  DmCommon.SQLTransaction.Rollback();  //refresh
   SQLQueryGrid.Open();
+  //SQLQueryGrid.Refresh();
 end;
 
 procedure TFMedocCheckDocs.SQLQueryGridCalcFields(DataSet: TDataSet);
 var
-  i: Integer;
-  FieldXML, FieldFJ, FieldHZ, FieldCode: TField;
+  i, Month: Integer;
+  Field, FieldXML, FieldFJ, FieldHZ: TField;
   Code: String;
 begin
   FieldXML := DataSet.FieldByName('XMLVALS');
@@ -183,10 +205,21 @@ begin
     for i := 0 to fDemoFields.Count - 1 do
       DataSet.FieldByName(fDemoFields[i]).AsString := 'ДЕМО';
   end;
+
+  Field := DataSet.FindField('PERDATE');
+  if (Assigned(Field)) and (not Field.IsNull) then
+  begin
+    //DataSet.FindField('PERDATE_STR').AsString := FormatDateTime('mmmm', Field.AsDateTime);
+    Month := MonthOf(Field.AsDateTime);
+    DataSet.FindField('PERDATE_STR').AsString := GetMonthNameUa(Month);
+  end;
 end;
 
 procedure TFMedocCheckDocs.ButtonExecClick(Sender: TObject);
 begin
+  // we are not so fast comparing to MEDOC
+  //Sleep(1000 + Random(500));
+
   ConnectToDb();
   QueryOpen();
 end;
@@ -217,7 +250,7 @@ begin
   begin
     if gdSelected in State then
     begin
-      Brush.Color := RGBToColor(254, 240, 120);
+      Brush.Color := RGBToColor(254, 240, 220);
       Font.Color := clBlack;
     end else begin
       Brush.Color := DbGrid.Color;
@@ -260,6 +293,12 @@ begin
   DmCommon.Licence_OrderToHttp();
 end;
 
+procedure TFMedocCheckDocs.frReport1GetValue(const aParName: String; var aParValue: Variant);
+begin
+  if (aParName = 'AppName') then
+    aParValue := cAppName;
+end;
+
 procedure TFMedocCheckDocs.ButtonPrintClick(Sender: TObject);
 var
   i: Integer;
@@ -270,15 +309,29 @@ begin
     Exit;
   end;
 
+  FrPrintGrid1.Caption := Format('%s (%s)', [Caption, cAppName]);
   FrPrintGrid1.PreviewReport();
+
   //frReport1.LoadFromFile('Report\FMedocCheckDocs1.lrf');
   //if (frReport1.PrepareReport()) then
   //  frReport1.ShowReport();
 end;
 
+procedure TFMedocCheckDocs.ButtonRunMedocClick(Sender: TObject);
+var
+  JObj: TJSONObject;
+begin
+  JObj := GetCurPathObj();
+  if (JObj.Get('port', 0) = 0) then
+    Log.Print('Не мережева версія програми')
+  else
+    ExecProcess(ComboBoxPath.Text);
+end;
+
 procedure TFMedocCheckDocs.FormCreate(Sender: TObject);
 var
   i: integer;
+  Str: String;
   JObj: TJSONObject;
 begin
   fSortField := 'CARDSTATUS_NAME';
@@ -288,8 +341,10 @@ begin
   for i := 0 to fJMedocApp.Count - 1 do
   begin
     JObj := fJMedocApp.Objects[i];
-    ComboBoxPath.Items.AddObject(JObj.Get('path', ''), JObj);
+    Str := JObj.Get('path', '') + PathDelim + 'ezvit.exe';
+    ComboBoxPath.Items.AddObject(Str, JObj);
   end;
+  ButtonRunMedoc.Enabled := ComboBoxPath.Items.Count > 0;
 
   if (ComboBoxPath.Items.Count = 0) then
   begin
@@ -318,8 +373,8 @@ begin
 
   // Add cloumn visualisation in empty Grid
   for i := 0 to SQLQueryGrid.Fields.Count - 1 do
-    with DbGrid.Columns.Add do
-      if (SQLQueryGrid.Fields[i].Visible) then
+    if SQLQueryGrid.Fields[i].Visible then
+      with DbGrid.Columns.Add do
         FieldName := SQLQueryGrid.Fields[i].DisplayLabel;
 
   Panel1.Font.Size := 10;

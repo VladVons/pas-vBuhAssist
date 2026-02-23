@@ -1,78 +1,121 @@
-object FSettings: TFSettings
+inherited FSettings: TFSettings
   Left = 287
   Height = 264
-  Top = 250
   Width = 460
   Caption = 'Налаштування'
   ClientHeight = 264
   ClientWidth = 460
-  LCLVersion = '4.4.0.0'
   OnCreate = FormCreate
-  object Panel1: TPanel
+  inherited PanelTitle: TPanel
+    Width = 460
+    ClientWidth = 460
+    TabOrder = 3
+    inherited LabelTitle: TLabel
+      Left = 6
+      Top = 8
+      Width = 330
+      Anchors = []
+    end
+  end
+  object Panel1: TPanel[1]
     Left = 0
     Height = 40
-    Top = 224
+    Top = 32
     Width = 460
-    Align = alBottom
+    Align = alTop
     ClientHeight = 40
     ClientWidth = 460
     TabOrder = 0
     object ButtonOk: TButton
-      Left = 8
+      Left = 16
       Height = 25
       Top = 8
       Width = 75
-      Caption = 'OK'
+      Caption = 'Зберегти'
       TabOrder = 0
       OnClick = ButtonOkClick
     end
   end
-  object PageControlMain: TPageControl
+  object PageControlMain: TPageControl[2]
     Left = 0
-    Height = 224
-    Top = 0
+    Height = 192
+    Top = 72
     Width = 460
     Align = alClient
     TabOrder = 1
   end
-  object Panel2: TPanel
+  object Panel2: TPanel[3]
     Left = 0
-    Height = 224
-    Top = 0
+    Height = 192
+    Top = 72
     Width = 460
     Align = alClient
-    ClientHeight = 224
+    ClientHeight = 192
     ClientWidth = 460
-    Color = clWhite
+    Font.CharSet = RUSSIAN_CHARSET
+    Font.Height = -13
+    Font.Name = 'Verdana'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
     ParentBackground = False
-    ParentColor = False
+    ParentFont = False
     TabOrder = 2
-    object LabeledEditPassword: TLabeledEdit
-      Left = 160
-      Height = 23
-      Top = 40
-      Width = 136
-      EchoMode = emPassword
-      EditLabel.Height = 23
-      EditLabel.Width = 42
-      EditLabel.Caption = 'Пароль'
-      LabelPosition = lpLeft
-      PasswordChar = '*'
+    object GroupBox1: TGroupBox
+      Left = 16
+      Height = 48
+      Top = 8
+      Width = 432
+      Caption = 'Версія'
+      ClientHeight = 27
+      ClientWidth = 428
+      ParentBackground = False
       TabOrder = 0
+      object LabelVer: TLabel
+        Left = 8
+        Height = 16
+        Top = 0
+        Width = 416
+        AutoSize = False
+        Caption = 'LabelVer'
+      end
     end
-    object SpinEditBeginYear: TSpinEdit
-      Left = 160
-      Height = 23
-      Top = 8
-      Width = 136
+    object GroupBox2: TGroupBox
+      Left = 16
+      Height = 89
+      Top = 72
+      Width = 433
+      Caption = 'Програма'
+      ClientHeight = 68
+      ClientWidth = 429
+      ParentBackground = False
       TabOrder = 1
-    end
-    object Label1: TLabel
-      Left = 8
-      Height = 15
-      Top = 8
-      Width = 146
-      Caption = 'Дата початку експлуатації:'
+      object SpinEditBeginYear: TSpinEdit
+        Left = 120
+        Height = 24
+        Top = 0
+        Width = 136
+        TabOrder = 0
+      end
+      object Label1: TLabel
+        Left = 8
+        Height = 16
+        Top = 8
+        Width = 93
+        Caption = 'Дата початку'
+      end
+      object LabeledEditPassword: TLabeledEdit
+        Left = 120
+        Height = 24
+        Top = 32
+        Width = 136
+        EchoMode = emPassword
+        EditLabel.Height = 24
+        EditLabel.Width = 48
+        EditLabel.Caption = 'Пароль'
+        LabelPosition = lpLeft
+        PasswordChar = '*'
+        TabOrder = 1
+      end
     end
   end
 end

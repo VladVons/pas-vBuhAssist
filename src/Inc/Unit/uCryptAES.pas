@@ -1,0 +1,103 @@
+// Created: 2026.02.22
+// Author: Vladimir Vons <VladVons@gmail.com>
+
+unit uCryptAES;
+
+{$mode objfpc}{$H+}
+
+interface
+
+uses
+  Classes, SysUtils,
+  DCPcrypt2, DCPblockciphers, DCPsha256, DCPrijndael, Base64;
+
+
+function StrEncrypt_AES(const aText, aKey: string): AnsiString;
+function StrDecrypt_AES(const aBase64, aKey: string): string;
+
+implementation
+
+function StrEncrypt_AES(const aText, aKey: string): AnsiString;
+var
+  Cipher: TDCP_rijndael;
+  InStream, OutStream: TMemoryStream;
+  IV: array[0..15] of byte;
+begin
+  try
+    Cipher := TDCP_rijndael.Create(nil);
+    InStream := TMemoryStream.Create();
+    OutStream := TMemoryStream.Create();
+
+    // записуємо текст у потік
+    InStream.WriteBuffer(Pointer(aText)^, aText.Length);
+    InStream.Position := 0;
+
+    // генеруємо IV
+    Randomize();
+    FillChar(IV, SizeOf(IV), 0);
+    Move(Random(MaxInt), IV, SizeOf(IV));
+
+    // запис IV на початок вихідного потоку
+    OutStream.WriteBuffer(IV, SizeOf(IV));
+
+    // ініціалізація AES-256
+    Cipher.InitStr(aKey, TDCP_sha256);
+    Cipher.SetIV(IV);
+
+    Cipher.EncryptStream(InStream, OutStream, InStream.Size);
+    Cipher.Burn();
+
+    // повертаємо Base64
+    OutStream.Position := 0;
+    SetLength(Result, OutStream.Size);
+    OutStream.ReadBuffer(Pointer(Result)^, OutStream.Size);
+    Result := EncodeStringBase64(Result);
+  finally
+    InStream.Free();
+    OutStream.Free();
+    Cipher.Free();
+  end;
+end;
+
+function StrDecrypt_AES(const aBase64, aKey: string): string;
+var
+  Cipher: TDCP_rijndael;
+  InStream, OutStream: TMemoryStream;
+  IV: array[0..15] of byte;
+  EncBytes: string;
+  DataSize: Int64;
+begin
+  try
+    Cipher := TDCP_rijndael.Create(nil);
+    InStream := TMemoryStream.Create;
+    OutStream := TMemoryStream.Create;
+
+    // декодуємо Base64 у байти
+    EncBytes := DecodeStringBase64(ABase64);
+    InStream.WriteBuffer(Pointer(EncBytes)^, Length(EncBytes));
+    InStream.Position := 0;
+
+    // читаємо IV
+    InStream.ReadBuffer(IV, SizeOf(IV));
+
+    Cipher.InitStr(aKey, TDCP_sha256);
+    Cipher.SetIV(IV);
+
+    DataSize := InStream.Size - SizeOf(IV);
+    Cipher.DecryptStream(InStream, OutStream, DataSize);
+    Cipher.Burn;
+
+    // повертаємо як рядок
+    SetLength(Result, OutStream.Size);
+    OutStream.Position := 0;
+    OutStream.ReadBuffer(Pointer(Result)^, OutStream.Size);
+
+  finally
+    InStream.Free();
+    OutStream.Free();
+    Cipher.Free();
+  end;
+end;
+
+end.
+

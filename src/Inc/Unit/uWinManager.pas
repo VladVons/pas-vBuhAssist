@@ -8,7 +8,8 @@ unit uWinManager;
 interface
 
 uses
-  Classes, Forms, Windows, Controls, ComCtrls, Menus, DateUtils, SysUtils;
+  Classes, Forms, Windows, Controls, ComCtrls, Menus, DateUtils, SysUtils,
+  uFBase;
 
 type
   TFormClass = class of TForm;
@@ -40,7 +41,7 @@ type
   end;
 
 
-  procedure ShowOrCreateForm(AClass: TFormClass);
+procedure ShowOrCreateForm(AClass: TFormClass);
 
 var
   WinManager: TWinManager;

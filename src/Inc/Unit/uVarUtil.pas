@@ -14,6 +14,8 @@ function ExtractLatin(const aString: string): string;
 function LatinToUkr(const aStr: string): string;
 function RemoveChars(const aStr, aRemove: string): string;
 function GetJsonNested(const aJObj: TJSONObject; const Path: string; aDef: Variant): Variant;
+function ReplMacros(const aText: string; aDict: TStringList): string;
+
 generic function IIF<T>(aCond: Boolean; const aValTrue, aValFalse: T): T; inline;
 
 
@@ -88,6 +90,15 @@ begin
     Result := aValTrue
   else
     Result := aValFalse;
+end;
+
+function ReplMacros(const aText: string; aDict: TStringList): string;
+var
+  i: Integer;
+begin
+  Result := aText;
+  for i := 0 to aDict.Count - 1 do
+    Result := StringReplace(Result, '{' + aDict.Names[i] + '}', aDict.ValueFromIndex[i], [rfReplaceAll]);
 end;
 
 function GetJsonNested(const aJObj: TJSONObject; const Path: string; aDef: Variant): Variant;

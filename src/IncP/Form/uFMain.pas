@@ -11,7 +11,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList, Windows, ExtCtrls,
   ComCtrls, StdCtrls, fpjson,
   uFAbout, uFMedocCheckDocs, uFOptimizePDF, uFSettings, uFLogin,
-  uWinManager, uLicence, uLog, uSettings, uFormState, uSys;
+  uWinManager, uLicence, uLog, uSettings, uFormState, uSys, uConst;
 
 type
   { TFMain }
@@ -126,7 +126,7 @@ begin
   OneInstance.Register(Handle);
   OneInstance.Free();
 
-  Caption := Caption + ' ' + GetAppVer();
+  Caption := cAppName + ' ' + GetAppVer();
 
   Log := TLog.Create(MemoInfo1);
   Log.Print('Початок');
@@ -134,8 +134,8 @@ begin
   WinManager := TWinManager.Create(PageControl1, PopupMenu1);
   Forms := [
     TFMedocCheckDocs,
+    //TFOptimizePDF,
     TFSettings
-    //TFOptimizePDF
   ];
 
   for i := 0 to High(Forms) do

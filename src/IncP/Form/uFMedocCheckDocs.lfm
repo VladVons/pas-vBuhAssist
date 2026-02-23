@@ -1,7 +1,6 @@
-object FMedocCheckDocs: TFMedocCheckDocs
+inherited FMedocCheckDocs: TFMedocCheckDocs
   Left = 342
   Height = 343
-  Top = 250
   Width = 595
   BorderStyle = bsNone
   Caption = 'Звітне стикування'
@@ -11,66 +10,73 @@ object FMedocCheckDocs: TFMedocCheckDocs
   Font.Name = 'Verdana'
   Font.Pitch = fpVariable
   Font.Quality = fqDraft
-  LCLVersion = '4.4.0.0'
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  object DbGrid: TDBGrid
+  inherited PanelTitle: TPanel
+    Width = 595
+    ClientWidth = 595
+    TabOrder = 2
+  end
+  object DbGrid: TDBGrid[1]
     Left = 0
-    Height = 199
-    Top = 144
+    Height = 167
+    Top = 176
     Width = 595
     Align = alClient
     Color = clWindow
     Columns = <>
     DataSource = DataSourceGrid
+    Font.CharSet = RUSSIAN_CHARSET
+    Font.Height = -15
+    Font.Name = 'Verdana'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
     Options = [dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+    ParentFont = False
     ReadOnly = True
     TabOrder = 0
     OnDrawColumnCell = DbGridDrawColumnCell
     OnTitleClick = DbGridTitleClick
   end
-  object Panel1: TPanel
+  object Panel1: TPanel[2]
     Left = 0
     Height = 144
-    Top = 0
+    Top = 32
     Width = 595
     Align = alTop
     ClientHeight = 144
     ClientWidth = 595
-    Color = clWhite
     ParentBackground = False
-    ParentColor = False
     TabOrder = 1
     object ComboBoxPath: TComboBox
       Left = 128
       Height = 22
       Top = 8
-      Width = 329
+      Width = 385
       ItemHeight = 14
+      ReadOnly = True
       TabOrder = 0
-      Text = 'ComboBoxPath'
-      OnChange = ComboBoxPathChange
     end
     object ComboBoxYear: TComboBox
-      Left = 321
+      Left = 352
       Height = 22
       Top = 32
-      Width = 136
+      Width = 160
       DropDownCount = 20
       ItemHeight = 14
+      ReadOnly = True
       TabOrder = 6
-      Text = 'ComboBoxYear'
       OnDropDown = ComboBoxYearDropDown
     end
     object ComboBoxMonth: TComboBox
       Left = 128
       Height = 22
       Top = 32
-      Width = 176
+      Width = 208
       DropDownCount = 20
       ItemHeight = 14
+      ReadOnly = True
       TabOrder = 7
-      Text = 'ComboBoxMonth'
     end
     object ComboBoxDoc: TComboBox
       Left = 129
@@ -79,16 +85,17 @@ object FMedocCheckDocs: TFMedocCheckDocs
       Width = 447
       DropDownCount = 20
       ItemHeight = 14
+      ReadOnly = True
       TabOrder = 8
-      Text = 'ComboBoxDoc'
     end
     object ComboBoxFirm: TComboBox
       Left = 128
       Height = 22
       Top = 56
-      Width = 176
+      Width = 206
       DropDownCount = 20
       ItemHeight = 14
+      ReadOnly = True
       TabOrder = 5
     end
     object Label1: TLabel
@@ -118,24 +125,21 @@ object FMedocCheckDocs: TFMedocCheckDocs
       Left = 15
       Height = 14
       Top = 56
-      Width = 66
-      Caption = 'Код фірми'
+      Width = 53
+      Caption = 'ЄДРПОУ'
     end
     object ButtonExec: TButton
       Left = 128
       Height = 25
       Top = 112
-      Width = 91
-      Caption = 'Сформувати'
-      Font.CharSet = RUSSIAN_CHARSET
-      Font.Pitch = fpVariable
-      Font.Quality = fqDraft
+      Width = 160
+      Caption = 'Знайти за параметрами'
       ParentFont = False
       TabOrder = 1
       OnClick = ButtonExecClick
     end
     object ButtonPrint: TButton
-      Left = 232
+      Left = 296
       Height = 25
       Top = 112
       Width = 75
@@ -161,8 +165,17 @@ object FMedocCheckDocs: TFMedocCheckDocs
       TabOrder = 4
       OnClick = ButtonGetLicenceClick
     end
+    object ButtonRunMedoc: TButton
+      Left = 512
+      Height = 25
+      Top = 8
+      Width = 64
+      Caption = 'Запуск'
+      TabOrder = 9
+      OnClick = ButtonRunMedocClick
+    end
   end
-  object SQLQueryGrid: TSQLQuery
+  object SQLQueryGrid: TSQLQuery[3]
     FieldDefs = <    
       item
         Name = 'EDRPOU'
@@ -196,8 +209,15 @@ object FMedocCheckDocs: TFMedocCheckDocs
       end    
       item
         Name = 'PERDATE'
-        DataType = ftDate
+        DataType = ftString
         Precision = -1
+        Size = 8
+      end    
+      item
+        Name = 'PERDATE_STR'
+        DataType = ftString
+        Precision = -1
+        Size = 10
       end    
       item
         Name = 'CHARCODE'
@@ -248,6 +268,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
       '      ELSE '''''
       '    END AS vat,'
       '    T2.PERDATE,'
+      '    CAST(T2.PERDATE AS VARCHAR(10)) AS PERDATE_STR,'
       '    T2.CHARCODE,'
       '    T2.CARDSENDSTT_NAME,'
       '    T2.MODDATE,'
@@ -278,10 +299,11 @@ object FMedocCheckDocs: TFMedocCheckDocs
       '        ON CARDBLOB.CODE = CARD.CODE'
       '    %_FROM_T2'
       '    WHERE'
-      '        CARD.PERDATE = DATE %_PERDATE'
-      '        AND CARD.IDPARENT IS NULL'
-      '        AND CARD.FORM > 0'
-      '        AND LOWER(FORM.CHARCODE) = :_CHARCODE'
+      '        (CARD.PERDATE = DATE %_PERDATE)'
+      '        AND (CARD.IDPARENT IS NULL)'
+      '        AND (CARD.FORM > 0)'
+      '        AND (CARD.INTRASH = 0)'
+      '        AND (LOWER(FORM.CHARCODE) = :_CHARCODE)'
       ') T2'
       '    ON T2.IDORG = ORG.CODE'
       'WHERE'
@@ -400,13 +422,26 @@ object FMedocCheckDocs: TFMedocCheckDocs
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
       Required = False
+      Visible = False
+    end
+    object SQLQueryGridPERDATE_STR: TStringField
+      DisplayLabel = 'Період'
+      DisplayWidth = 10
+      FieldKind = fkData
+      FieldName = 'PERDATE_STR'
+      Index = 6
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 8
     end
     object SQLQueryGridCHARCODE: TStringField
       DisplayLabel = 'Код'
       DisplayWidth = 10
       FieldKind = fkData
       FieldName = 'CHARCODE'
-      Index = 6
+      Index = 7
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -418,7 +453,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
       DisplayWidth = 8
       FieldKind = fkCalculated
       FieldName = 'HZ'
-      Index = 7
+      Index = 8
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -429,7 +464,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
       DisplayLabel = 'Модифікація'
       FieldKind = fkData
       FieldName = 'MODDATE'
-      Index = 8
+      Index = 9
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -439,7 +474,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
       DisplayLabel = 'Примітка'
       FieldKind = fkData
       FieldName = 'CARDSTATUS_NAME'
-      Index = 9
+      Index = 10
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -451,7 +486,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
       DisplayWidth = 10
       FieldKind = fkData
       FieldName = 'CARDSENDSTT_NAME'
-      Index = 10
+      Index = 11
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -461,7 +496,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
     object SQLQueryGridXMLVALS: TBlobField
       FieldKind = fkData
       FieldName = 'XMLVALS'
-      Index = 11
+      Index = 12
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -472,7 +507,7 @@ object FMedocCheckDocs: TFMedocCheckDocs
     object SQLQueryGridFJ: TStringField
       FieldKind = fkData
       FieldName = 'FJ'
-      Index = 12
+      Index = 13
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -481,32 +516,42 @@ object FMedocCheckDocs: TFMedocCheckDocs
       Size = 5
     end
   end
-  object DataSourceGrid: TDataSource
+  object DataSourceGrid: TDataSource[4]
     DataSet = SQLQueryGrid
     Left = 120
     Top = 152
   end
-  object FrPrintGrid1: TFrPrintGrid
+  object FrPrintGrid1: TFrPrintGrid[5]
     DBGrid = DbGrid
     Orientation = poLandscape
+    Font.CharSet = RUSSIAN_CHARSET
+    Font.Height = -15
+    Font.Name = 'Verdana'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    TitleFont.CharSet = RUSSIAN_CHARSET
+    TitleFont.Height = -15
+    TitleFont.Name = 'Verdana'
+    TitleFont.Pitch = fpVariable
+    TitleFont.Quality = fqDraft
     Caption = 'Grid'
     PrinterIndex = -1
     ShowCaption = True
     Left = 200
     Top = 264
   end
-  object frReport1: TfrReport
+  object frReport1: TfrReport[6]
     Dataset = frDBDataSet1
     InitialZoom = pzDefault
     Options = []
     PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit, pbSettings, pbPageSetup]
     DataType = dtDataSet
+    OnGetValue = frReport1GetValue
     Left = 200
-    Top = 160
+    Top = 152
   end
-  object frDBDataSet1: TfrDBDataSet
+  object frDBDataSet1: TfrDBDataSet[7]
     DataSet = SQLQueryGrid
-    DataSource = DataSourceGrid
     Left = 200
     Top = 216
   end
