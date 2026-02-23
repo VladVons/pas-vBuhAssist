@@ -5,22 +5,27 @@ program vAppUpd;
 
 uses
   Classes, SysUtils, CustApp, opensslsockets, URIParser, fpjson, jsonparser,
-  uSys, uHttp, uArchive, uVarUtil;
-type
+  uSys, uHttp, uArchive, uVarUtil, uProtect;
 
+type
   TAppUpd = class(TCustomApplication)
   protected
     procedure DoRun(); override;
     procedure Quit(aErr: Integer = 0; const aMsg: String = '');
     function GetVerRemote(const aUrl: String): String;
+    procedure AppProtect(const aPath: String);
+    procedure Update(const aUrl: String);
+    procedure ShowHelp(); virtual;
   public
     constructor Create(aOwner: TComponent); override;
     destructor Destroy(); override;
-    procedure ShowHelp(); virtual;
-    procedure Update(const aUrl: String);
   end;
 
-{ TMyApplication }
+var
+  AppUpd: TAppUpd;
+  {$R *.res}
+
+{ TAppUpd }
 procedure TAppUpd.Quit(aErr: Integer = 0; const aMsg: String = '');
 begin
   if (not aMsg.IsEmpty()) then
@@ -34,6 +39,29 @@ begin
 
   Terminate();
   Halt(aErr);
+end;
+
+procedure TAppUpd.AppProtect(const aPath: String);
+var
+  BodyCRC, TailCRC: Cardinal;
+  Protect: TProtect;
+begin
+  Protect := TProtect.Create(aPath);
+  BodyCRC := Protect.GetFileBodyCRC(cSkipTailLen);
+  Protect.WriteFileTailAsCardinal(BodyCRC);
+  TailCRC := Protect.ReadFileTailAsCardinal();
+  WriteLn('Tail CRC: ', IntToHex(BodyCRC), ' ', IntToHex(TailCRC));
+
+  BodyCRC := Protect.GetFileBodyCRC(cSkipTailLen);
+  //TailCRC := Protect.ReadFileTailAsCardinal();
+
+  BodyCRC := Protect.GetFileBodyCRC(cSkipTailLen);
+  //TailCRC := Protect.ReadFileTailAsCardinal();
+
+  BodyCRC := Protect.GetFileBodyCRC(cSkipTailLen);
+  //TailCRC := Protect.ReadFileTailAsCardinal();
+
+  Protect.Free();
 end;
 
 function TAppUpd.GetVerRemote(const aUrl: String): String;
@@ -77,11 +105,18 @@ begin
     Quit();
   end;
 
-  Update('https://collector:col2024@download.1x1.com.ua/private/update/Test/ver.json');
+  Str := GetOptionValue('a', 'app');
+  if (not Str.IsEmpty()) then
+  begin
+    AppProtect(Str);
+    Quit();
+  end;
+
+
+  //Update('https://collector:col2024@download.1x1.com.ua/private/update/Test/ver.json');
 
   //WriteLn(Str);
   //Str := GetOptionValue('s', 'sleep');
-
   //UnZipToDir('c:\temp\pdf_small.zip', 'c:\temp\12\34');
   Quit();
 end;
@@ -105,11 +140,9 @@ begin
   WriteLn('  -s, --sleep');
   WriteLn('  -p, --pause');
   WriteLn('  -d, --dir');
+  WriteLn('  -a, --app');
 end;
 
-var
-  AppUpd: TAppUpd;
-  {$R *.res}
 begin
   AppUpd:=TAppUpd.Create(nil);
   AppUpd.Title:='App Updater';

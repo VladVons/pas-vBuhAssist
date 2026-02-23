@@ -5,25 +5,25 @@ unit uProtect;
 interface
 
 uses
-  Classes, SysUtils, ExtCtrls, crc;
+  Classes, SysUtils, crc;
 
 const
-  cSkipTailLen = 128;
+  cSkipTailLen = 32;
 
 type
   TProtect = class
   private
     fFile: String;
+  protected
     fBodyCRC, fTailCRC: Cardinal;
-    Timer1: TTimer;
-    procedure OnTimer(Sender: TObject);
+    fProtected: Boolean;
   public
     constructor Create(const aFile: String);
     function CompareRnd(): Boolean;
-    function GetFileBodyCRC(SkipLastBytes: Integer = 0): Cardinal;
+    function GetFileBodyCRC(aSkipLastBytes: Integer = 0): Cardinal;
     function ReadFileTailAsCardinal(): Cardinal;
     procedure WriteFileTailAsCardinal(aVal: Cardinal);
-    procedure TimerRunRnd(aMod: boolean; aInterval: Integer = 10000 );
+    procedure ReadCRC();
   end;
 
 var
@@ -36,28 +36,9 @@ begin
   fFile := aFile;
   fBodyCRC := 0;
   fTailCRC := 0;
-
-  Timer1 := TTimer.Create(Nil);
-  Timer1.Enabled := False;
 end;
 
-procedure TProtect.TimerRunRnd(aMod: boolean; aInterval: Integer = 10000 );
-begin
-  Timer1.Enabled := aMod;
-  Timer1.Interval := aInterval + Random(aInterval);
-  Timer1.OnTimer := @OnTimer;
-end;
-
-procedure TProtect.OnTimer(Sender: TObject);
-begin
-  Timer1.Enabled := False;
-
-  fBodyCRC := GetFileBodyCRC(cSkipTailLen);
-  fTailCRC := ReadFileTailAsCardinal();
-end;
-
-
-function TProtect.GetFileBodyCRC(SkipLastBytes: Integer = 0): Cardinal;
+function TProtect.GetFileBodyCRC(aSkipLastBytes: Integer = 0): Cardinal;
 const
   BUF_SIZE = 64 * 1024;
 var
@@ -67,32 +48,33 @@ var
   Remaining: Int64;
 begin
   Result := 0;
-  if (not FileExists(fFile)) then
-    Exit;
+  if not FileExists(fFile) then
+     Exit;
 
   FS := TFileStream.Create(fFile, fmOpenRead or fmShareDenyWrite);
   try
-    if (FS.Size < SkipLastBytes) then
+    if FS.Size <= Int64(aSkipLastBytes) then
       Exit;
 
-    Remaining := FS.Size - SkipLastBytes;
+    FS.Position := 0;
+    Remaining := FS.Size - aSkipLastBytes;
     Result := crc32(0, nil, 0);
 
-    while (Remaining > 0) do
+    while Remaining > 0 do
     begin
       ToRead := BUF_SIZE;
-      if (Remaining < ToRead) then
-        ToRead := Remaining;
+      if Remaining < ToRead then
+        ToRead := Integer(Remaining);
 
       Readed := FS.Read(Buffer, ToRead);
-      if (Readed <= 0) then
-        Break;
+      if Readed <= 0 then
+         Break;
 
       Result := crc32(Result, @Buffer[0], Readed);
       Dec(Remaining, Readed);
     end;
   finally
-    FS.Free();
+    FS.Free;
   end;
 end;
 
@@ -120,7 +102,7 @@ begin
   FS := TFileStream.Create(fFile, fmOpenReadWrite or fmShareDenyWrite);
   try
     FS.Position := FS.Size;              // перейти в кінець
-    FS.WriteBuffer(aVal, SizeOf(aVal)); // записати 4 байти
+    FS.WriteBuffer(aVal, SizeOf(Cardinal));
   finally
     FS.Free;
   end;
@@ -132,6 +114,13 @@ begin
     Result := True
   else
     Result := Random(4) = 0;
+end;
+
+procedure TProtect.ReadCRC();
+begin
+  fBodyCRC := GetFileBodyCRC(cSkipTailLen);
+  fTailCRC := ReadFileTailAsCardinal();
+  fProtected := fBodyCRC = fTailCRC;
 end;
 
 end.

@@ -12,7 +12,7 @@ uses
   DBGrids, Grids, ExtCtrls, Buttons, LR_Class, LR_DBSet, LR_PGrid, LR_Desgn, DB,
   fpjson,
   uFBase, uSys, uLog, uLicence, uWinReg, uFormState, uQuery, uMedoc, uDmCommon,
-  uProtect, uConst;
+  uProtectTimer, uConst;
 
 type
 
@@ -199,7 +199,7 @@ begin
   else if (not FieldFJ.AsString.IsEmpty()) then
     FieldHZ.AsString := GetHzStr(FieldFJ.AsString);
 
-  Protected := Protect.CompareRnd();
+  Protected := ProtectTimer.CompareRnd();
   Code := DataSet.FieldByName('EDRPOU').AsString;
   if (fFirmCodesLicensed.IndexOf(Code) = -1) or (not Protected) then
     for i := 0 to fDemoFields.Count - 1 do

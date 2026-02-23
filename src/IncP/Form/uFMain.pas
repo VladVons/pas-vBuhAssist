@@ -11,7 +11,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList, Windows, ExtCtrls,
   ComCtrls, StdCtrls, fpjson,
   uFAbout, uFMedocCheckDocs, uFOptimizePDF, uFSettings, uFLogin,
-  uWinManager, uLicence, uLog, uSettings, uFormState, uSys, uConst, uProtect;
+  uWinManager, uLicence, uLog, uSettings, uFormState, uSys, uConst, uProtectTimer;
 
 type
   { TFMain }
@@ -158,8 +158,8 @@ begin
 
   WindowState := wsMaximized;
 
-  Protect := TProtect.Create(ParamStr(0));
-  //Protect.TimerRunRnd(True, 3000);
+  ProtectTimer := TProtectTimer.Create(ParamStr(0));
+  ProtectTimer.TimerRunRnd(True, 5000);
 end;
 
 procedure TFMain.FormDestroy(Sender: TObject);

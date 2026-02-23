@@ -195,11 +195,11 @@
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="Inc/Unit/uProtect.pas"/>
+        <Filename Value="Inc/Unit/uHttp.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="Inc/Unit/uHttp.pas"/>
+        <Filename Value="Inc/Unit/uProtectTimer.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
     </Units>
