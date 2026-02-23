@@ -146,16 +146,13 @@ begin
   Str := FormatDateTime('yyyy-mm-dd', EncodeDate(Year, Month, 1));
   SQLQueryGrid.MacroByName('_PERDATE').Value := QuotedStr(Str);
 
-  Str := ComboBoxDoc.Items.Names[ComboBoxDoc.ItemIndex];
-  SQLQueryGrid.ParamByName('_CHARCODE').Value := LowerCase(Str);
+  Str := LowerCase(ComboBoxDoc.Items.Names[ComboBoxDoc.ItemIndex]);
+  if (not Str.IsEmpty()) then
+    SQLQueryGrid.MacroByName('_COND_CHARCODE').Value :=  ' AND (LOWER(FORM.CHARCODE) = ' + QuotedStr(Str) + ')';
 
-  SQLQueryGrid.MacroByName('_ORDER').Value := fSortField;
-  SQLQueryGrid.MacroByName('_ASC').Value := IfThen(fSortAsc, 'ASC', 'DESC');
-
-  Str := '';
-  if (ComboBoxFirm.Text <> '') then
-    Str := ' AND ORG.EDRPOU=' + TRim(ComboBoxFirm.Text);
-  SQLQueryGrid.MacroByName('_COND_ORG').Value := Str;
+  Str := TRim(ComboBoxFirm.Text);
+  if (not Str.IsEmpty()) then
+    SQLQueryGrid.MacroByName('_COND_ORG').Value := ' AND ORG.EDRPOU = ' + Str;
 
   StrMacro := ', '''' AS FJ';
   if (Pos('J0500110', ComboBoxDoc.Text) = 1) then
@@ -169,13 +166,16 @@ begin
   end;
   SQLQueryGrid.MacroByName('_SELECT_T2').Value := StrMacro;
 
+  SQLQueryGrid.MacroByName('_ORDER').Value := fSortField;
+  SQLQueryGrid.MacroByName('_ASC').Value := IfThen(fSortAsc, 'ASC', 'DESC');
+
   //SQLQueryGrid.AfterOpen := nil;
   //SQLQueryGrid.OnCalcFields := nil;
   //SQLQueryGrid.AfterScroll := nil;
   //DbGrid.OnDrawColumnCell := nil;
 
-  //Str := ExpandSQL(SQLQueryGrid);
-  //Log.Print(Str);
+  Str := ExpandSQL(SQLQueryGrid);
+  Log.Print(Str);
 
   //DmCommon.SQLTransaction.CommitRetaining();
   //DmCommon.SQLTransaction.Commit();

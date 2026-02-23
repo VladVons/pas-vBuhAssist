@@ -308,7 +308,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       '        AND (CARD.IDPARENT IS NULL)'
       '        AND (CARD.FORM > 0)'
       '        AND (CARD.INTRASH = 0)'
-      '        AND (LOWER(FORM.CHARCODE) = :_CHARCODE)'
+      '        %_COND_CHARCODE'
       ') T2'
       '    ON T2.IDORG = ORG.CODE'
       'WHERE'
@@ -318,12 +318,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       '  %_ORDER %_ASC'
       ''
     )
-    Params = <    
-      item
-        DataType = ftUnknown
-        Name = '_CHARCODE'
-        ParamType = ptInput
-      end>
+    Params = <>
     Macros = <    
       item
         DataType = ftUnknown
@@ -338,6 +333,11 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       item
         DataType = ftUnknown
         Name = '_PERDATE'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = '_COND_CHARCODE'
         ParamType = ptInput
       end    
       item
@@ -530,12 +530,12 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     DBGrid = DbGrid
     Orientation = poLandscape
     Font.CharSet = RUSSIAN_CHARSET
-    Font.Height = -11
+    Font.Height = -13
     Font.Name = 'Verdana'
     Font.Pitch = fpVariable
     Font.Quality = fqDraft
     TitleFont.CharSet = RUSSIAN_CHARSET
-    TitleFont.Height = -10
+    TitleFont.Height = -12
     TitleFont.Name = 'Verdana'
     TitleFont.Pitch = fpVariable
     TitleFont.Quality = fqDraft
