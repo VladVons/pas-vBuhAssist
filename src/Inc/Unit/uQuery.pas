@@ -1,3 +1,6 @@
+// Created: 2026.02.21
+// Author: Vladimir Vons <VladVons@gmail.com>
+
 unit uQuery;
 
 {$mode ObjFPC}{$H+}

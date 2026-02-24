@@ -14,7 +14,7 @@ uses
 type
   TConf = class
   private
-    FileName: string;
+    fFileName: string;
   public
     constructor Create();
     function KeyRead(const aSect, aItem: string): string;
@@ -28,14 +28,14 @@ implementation
 
 constructor TConf.Create();
 begin
-  FileName := GetAppFile('app.ini');
+  fFileName := GetAppFile('app.ini');
 end;
 
 function TConf.KeyRead(const aSect, aItem: string): string;
 var
   Ini: TIniFile;
 begin
-  Ini := TIniFile.Create(FileName);
+  Ini := TIniFile.Create(fFileName);
   try
     Result := Ini.ReadString(aSect, aItem, '');
   finally
@@ -47,7 +47,7 @@ procedure TConf.KeyWrite(const aSect, aItem, aValue: string);
 var
   Ini: TIniFile;
 begin
-  Ini := TIniFile.Create(FileName);
+  Ini := TIniFile.Create(fFileName);
   try
     Ini.WriteString(aSect, aItem, aValue);
   finally

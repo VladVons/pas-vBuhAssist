@@ -8,12 +8,11 @@ unit uConst;
 interface
 
 const
-  cAppName          = 'Бджілка - помічник бухгалтера';
-  cFileLicPassw     = 'BuhAssist';
-  cMaxLicensesFree  = 3;
+  cAppName          = 'Бджілка - Помічник бухгалтера';
   cDirAddons        = 'addons';
   cHttpApi          = 'https://windows.cloud-server.com.ua/api';
   cMail             = 'vBuhAssist@gmail.com';
+  cYearsBack        = 3;
 
 implementation
 

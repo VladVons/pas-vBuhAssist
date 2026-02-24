@@ -10,7 +10,7 @@ interface
 uses
   Classes, SysUtils, StrUtils, DateUtils, SQLDB, Forms, Graphics, StdCtrls,
   DBGrids, Grids, ExtCtrls, Buttons, LR_Class, LR_DBSet, LR_PGrid, LR_Desgn, DB,
-  fpjson,
+  fpjson, Math,
   uFBase, uSys, uLog, uLicence, uWinReg, uFormState, uQuery, uMedoc, uDmCommon,
   uProtectTimer, uConst;
 
@@ -146,13 +146,17 @@ begin
   Str := FormatDateTime('yyyy-mm-dd', EncodeDate(Year, Month, 1));
   SQLQueryGrid.MacroByName('_PERDATE').Value := QuotedStr(Str);
 
+  StrMacro := '';
   Str := LowerCase(ComboBoxDoc.Items.Names[ComboBoxDoc.ItemIndex]);
   if (not Str.IsEmpty()) then
-    SQLQueryGrid.MacroByName('_COND_CHARCODE').Value :=  ' AND (LOWER(FORM.CHARCODE) = ' + QuotedStr(Str) + ')';
+    StrMacro := ' AND (LOWER(FORM.CHARCODE) = ' + QuotedStr(Str) + ')';
+  SQLQueryGrid.MacroByName('_COND_CHARCODE').Value :=  StrMacro;
 
+  StrMacro := '';
   Str := TRim(ComboBoxFirm.Text);
   if (not Str.IsEmpty()) then
-    SQLQueryGrid.MacroByName('_COND_ORG').Value := ' AND ORG.EDRPOU = ' + Str;
+    StrMacro := ' AND ORG.EDRPOU = ' + Str;
+  SQLQueryGrid.MacroByName('_COND_ORG').Value := StrMacro;
 
   StrMacro := ', '''' AS FJ';
   if (Pos('J0500110', ComboBoxDoc.Text) = 1) then
@@ -238,10 +242,10 @@ end;
 
 procedure TFMedocCheckDocs.DbGridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
 var
-  Code: String;
+  //Code: String;
   DisplayText: String;
 begin
-  Code := DbGrid.DataSource.DataSet.FieldByName('EDRPOU').AsString;
+  //Code := DbGrid.DataSource.DataSet.FieldByName('EDRPOU').AsString;
 
   // Встановлюємо колір фону та шрифт
   with DbGrid.Canvas do
@@ -299,12 +303,11 @@ end;
 
 procedure TFMedocCheckDocs.ButtonPrintClick(Sender: TObject);
 var
-  i: Integer;
   PrevVisible: Boolean;
 begin
   if (SQLQueryGrid.RecordCount = 0) then
   begin
-    Log.Print('Немає даних для друку');
+    Log.Print('i', 'Немає даних для друку');
     Exit;
   end;
 
@@ -328,9 +331,9 @@ var
 begin
   JObj := GetCurPathObj();
   if (JObj.Get('port', 0) = 0) then
-    Log.Print('Не мережева версія програми')
+    Log.Print('i', 'Не мережева версія програми')
   else begin
-    Log.Print('Запуск програми ' + ComboBoxPath.Text);
+    Log.Print('i', 'Запуск програми ' + ComboBoxPath.Text);
     ExecProcess(ComboBoxPath.Text);
   end;
 end;
@@ -341,6 +344,11 @@ var
   Str: String;
   JObj: TJSONObject;
 begin
+  fJMedocApp := Nil;
+  fFirmCodesLicensed := Nil;
+  fTablesMain := Nil;
+  fDemoFields := Nil;
+
   fSortField := 'CARDSTATUS_NAME';
   fSortAsc := True;
 
@@ -355,7 +363,7 @@ begin
 
   if (ComboBoxPath.Items.Count = 0) then
   begin
-     Log.Print('Неможливо знайти програму звітності. Зверніться до свого дилера');
+     Log.Print('w', 'Неможливо знайти програму звітності. Зверніться до свого дилера');
      ComboBoxPath.Text := '';
      Enabled := False;
   end else begin
@@ -364,8 +372,8 @@ begin
   end;
 
   SetComboBoxToCurrentMonth(ComboBoxMonth);
-  SetComboBoxToYear(ComboBoxYear);
   SetComboBoxDoc();
+  ComboBoxYearDropDown(Nil);
 
   fFirmCodesLicensed := Licence.GetFirmCodes(Name);
   ComboBoxFirm.Items.Assign(fFirmCodesLicensed);
@@ -398,6 +406,8 @@ begin
 
   FreeAndNil(fJMedocApp);
   FreeAndNil(fFirmCodesLicensed);
+  FreeAndNil(fTablesMain);
+  FreeAndNil(fDemoFields);
 end;
 
 end.

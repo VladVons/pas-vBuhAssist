@@ -1,3 +1,6 @@
+// Created: 2026.02.23
+// Author: Vladimir Vons <VladVons@gmail.com>
+
 unit uProtectTimer;
 
 {$mode ObjFPC}{$H+}
@@ -5,12 +8,13 @@ unit uProtectTimer;
 interface
 
 uses
-  uProtect, ExtCtrls;
+  SysUtils, ExtCtrls,
+  uProtect;
 
 type
   TProtectTimer = class(TProtect)
   private
-    Timer1: TTimer;
+    fTimer: TTimer;
     procedure OnTimer(Sender: TObject);
   public
     constructor Create(const aFile: String);
@@ -28,26 +32,26 @@ begin
   inherited;
 
   Randomize();
-  Timer1 := TTimer.Create(Nil);
-  Timer1.Enabled := False;
+  fTimer := TTimer.Create(Nil);
+  fTimer.Enabled := False;
 end;
 
 destructor TProtectTimer.Destroy();
 begin
-  Timer1.Free();
-  inherited Destroy;
+  FreeAndNil(fTimer);
+  inherited;
 end;
 
 procedure TProtectTimer.TimerRunRnd(aMod: boolean; aInterval: Integer = 10000 );
 begin
-  Timer1.Enabled := aMod;
-  Timer1.Interval := aInterval + Random(aInterval);
-  Timer1.OnTimer := @OnTimer;
+  fTimer.Enabled := aMod;
+  fTimer.Interval := aInterval + Random(aInterval);
+  fTimer.OnTimer := @OnTimer;
 end;
 
 procedure TProtectTimer.OnTimer(Sender: TObject);
 begin
-  Timer1.Enabled := False;
+  fTimer.Enabled := False;
   ReadCRC();
 end;
 

@@ -53,7 +53,6 @@ type
   private
     procedure WMShowMe(var aMsg: TMessage); message TOneInstance.WM_SHOWME;
   public
-
   end;
 
 var
@@ -102,7 +101,7 @@ end;
 
 procedure TFMain.WMShowMe(var aMsg: TMessage);
 begin
-  Log.Print('Програма вже запущена');
+  Log.Print('w', 'Програма вже запущена');
   if IsIconic(Handle) then
     ShowWindow(Handle, SW_RESTORE);
 
@@ -117,6 +116,9 @@ var
   Passw: String;
   Forms: array of TFormClass;
 begin
+  Log := TLog.Create(MemoInfo1);
+  Log.Print('i', 'Початок');
+
   Conf := TConf.Create();
   FormStateRec := TFormStateRec.Create();
 
@@ -127,9 +129,6 @@ begin
   OneInstance.Free();
 
   Caption := cAppName + ' ' + GetAppVer();
-
-  Log := TLog.Create(MemoInfo1);
-  Log.Print('Початок');
 
   WinManager := TWinManager.Create(PageControl1, PopupMenu1);
   Forms := [
@@ -150,7 +149,7 @@ begin
     FLogin.Caption := 'Авторизація';
     FLogin.OnlyPassw();
     if (FLogin.ShowModal() = mrOk) and (FLogin.EditPassword.Text = Passw) then
-      Log.Print('Вхід по паролю')
+      Log.Print('i', 'Вхід по паролю')
     else
       Halt();
     FreeAndNil(FLogin);
@@ -159,12 +158,12 @@ begin
   WindowState := wsMaximized;
 
   ProtectTimer := TProtectTimer.Create(ParamStr(0));
-  ProtectTimer.TimerRunRnd(True, 5000);
+  ProtectTimer.TimerRunRnd(True, 10000);
 end;
 
 procedure TFMain.FormDestroy(Sender: TObject);
 begin
-  Log.Print('Завершення');
+  Log.Print('i', 'Завершення');
 end;
 
 

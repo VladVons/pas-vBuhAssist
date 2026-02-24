@@ -1,11 +1,11 @@
 inherited FMedocCheckDocs: TFMedocCheckDocs
   Left = 342
   Height = 384
-  Width = 638
+  Width = 636
   BorderStyle = bsNone
   Caption = 'Звітне стикування'
   ClientHeight = 384
-  ClientWidth = 638
+  ClientWidth = 636
   Font.CharSet = RUSSIAN_CHARSET
   Font.Name = 'Verdana'
   Font.Pitch = fpVariable
@@ -13,15 +13,15 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   inherited PanelTitle: TPanel
-    Width = 638
-    ClientWidth = 638
+    Width = 636
+    ClientWidth = 636
     TabOrder = 2
   end
   object DbGrid: TDBGrid[1]
     Left = 0
     Height = 208
     Top = 176
-    Width = 638
+    Width = 636
     Align = alClient
     Color = clWindow
     Columns = <>
@@ -47,10 +47,10 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     Left = 0
     Height = 144
     Top = 32
-    Width = 638
+    Width = 636
     Align = alTop
     ClientHeight = 144
-    ClientWidth = 638
+    ClientWidth = 636
     ParentBackground = False
     TabOrder = 1
     object ComboBoxPath: TComboBox

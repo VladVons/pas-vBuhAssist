@@ -14,40 +14,36 @@ uses
 type
   TLog = class
   protected
-    FileName: string;
-    Memo: TMemo;
+    fFileName: string;
+    fMemo: TMemo;
     procedure ToFile(const aMsg: string);
   public
     constructor Create(aMemo: TMemo);
-    procedure Print(const aMsg: string);
+    procedure Print(aType: Char; const aMsg: string);
   end;
 
 var
-  Log: TLog;
+  Log: TLog = Nil;
 
 implementation
 
 constructor TLog.Create(aMemo: TMemo);
 begin
-  Memo := aMemo;
-  FileName := GetAppFile('app.log');
+  fMemo := aMemo;
+  fFileName := GetAppFile('app.log');
 end;
 
 procedure TLog.ToFile(const aMsg: string);
 begin
-  FileAppendText(FileName, aMsg);
+  FileAppendText(fFileName, aMsg);
 end;
 
-procedure TLog.Print(const aMsg: String);
+procedure TLog.Print(aType: Char; const aMsg: String);
 var
   Msg: String;
 begin
-  Msg := FormatDateTime('yy-mm-dd hh:nn:ss', Now()) + ' ' + aMsg;
-
-  //if (Memo.Height = 0) then
-  //  Memo.Height := 75;
-  Memo.Lines.Add(Msg);
-
+  Msg := FormatDateTime('yy-mm-dd hh:nn:ss', Now()) + ', ' + aType + ', ' + aMsg;
+  fMemo.Lines.Add(Msg);
   ToFile(Msg);
 end;
 

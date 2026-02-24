@@ -1,3 +1,6 @@
+// Created: 2026.02.24
+// Author: Vladimir Vons <VladVons@gmail.com>
+
 unit uProtect;
 
 {$mode ObjFPC}{$H+}
@@ -5,24 +8,33 @@ unit uProtect;
 interface
 
 uses
-  Classes, SysUtils, crc;
+  Classes, SysUtils, crc,
+  uSys;
 
 const
-  cSkipTailLen = 32;
+  cTailSign = 1971;
 
 type
+  TTail = packed record
+    Sign: Integer;
+    BlockLen: Cardinal;
+    CheckSum: Cardinal;
+    ModDate: TDateTime;
+    Pretend: array[0..32] of Char;
+  end;
+
   TProtect = class
   private
     fFile: String;
   protected
-    fBodyCRC, fTailCRC: Cardinal;
+    fTail: TTail;
     fProtected: Boolean;
   public
     constructor Create(const aFile: String);
     function CompareRnd(): Boolean;
-    function GetFileBodyCRC(aSkipLastBytes: Integer = 0): Cardinal;
-    function ReadFileTailAsCardinal(): Cardinal;
-    procedure WriteFileTailAsCardinal(aVal: Cardinal);
+    function CalculateFileTail(aLen: Integer): TTail;
+    function ReadFileTail(): TTail;
+    procedure WriteFileTail(aTail: TTail);
     procedure ReadCRC();
   end;
 
@@ -34,11 +46,11 @@ implementation
 constructor TProtect.Create(const aFile: String);
 begin
   fFile := aFile;
-  fBodyCRC := 0;
-  fTailCRC := 0;
+  fProtected := True;
+  FillChar(fTail, SizeOf(TTail), 0);
 end;
 
-function TProtect.GetFileBodyCRC(aSkipLastBytes: Integer = 0): Cardinal;
+function TProtect.CalculateFileTail(aLen: Integer): TTail;
 const
   BUF_SIZE = 64 * 1024;
 var
@@ -47,19 +59,22 @@ var
   ToRead, Readed: Integer;
   Remaining: Int64;
 begin
-  Result := 0;
+  FillChar(Result, SizeOf(TTail), 0);
   if not FileExists(fFile) then
      Exit;
 
   FS := TFileStream.Create(fFile, fmOpenRead or fmShareDenyWrite);
   try
-    if FS.Size <= Int64(aSkipLastBytes) then
-      Exit;
+    Result.ModDate := FileGetModDate(fFile);
+
+    if (aLen = 0) then
+      aLen := FS.Size;
+    Result.BlockLen := aLen;
 
     FS.Position := 0;
-    Remaining := FS.Size - aSkipLastBytes;
-    Result := crc32(0, nil, 0);
+    Result.CheckSum := crc32(0, nil, 0);
 
+    Remaining := aLen;
     while Remaining > 0 do
     begin
       ToRead := BUF_SIZE;
@@ -70,57 +85,65 @@ begin
       if Readed <= 0 then
          Break;
 
-      Result := crc32(Result, @Buffer[0], Readed);
+      Result.CheckSum := crc32(Result.CheckSum, @Buffer[0], Readed);
       Dec(Remaining, Readed);
     end;
-  finally
-    FS.Free;
-  end;
-end;
-
-function TProtect.ReadFileTailAsCardinal(): Cardinal;
-var
-  FS: TFileStream;
-begin
-  Result := 0;
-  if not FileExists(fFile) then
-    Exit;
-
-  FS := TFileStream.Create(fFile, fmOpenRead or fmShareDenyWrite);
-  try
-    FS.Position := FS.Size - SizeOf(Cardinal);
-    FS.ReadBuffer(Result, SizeOf(Cardinal));
   finally
     FS.Free();
   end;
 end;
 
-procedure TProtect.WriteFileTailAsCardinal(aVal: Cardinal);
+function TProtect.ReadFileTail(): TTail;
 var
   FS: TFileStream;
 begin
+  FillChar(Result, SizeOf(TTail), 0);
+  if not FileExists(fFile) then
+    Exit;
+
+  FS := TFileStream.Create(fFile, fmOpenRead or fmShareDenyWrite);
+  try
+    FS.Position := FS.Size - SizeOf(TTail);
+    FS.ReadBuffer(Result, SizeOf(TTail));
+  finally
+    FS.Free();
+  end;
+end;
+
+procedure TProtect.WriteFileTail(aTail: TTail);
+var
+  FS: TFileStream;
+begin
+  aTail.Sign := cTailSign;
+  StrPLCopy(@aTail.Pretend[0], 'HEAP_LOADER_$', SizeOf(aTail.Pretend) - 1);
+
   FS := TFileStream.Create(fFile, fmOpenReadWrite or fmShareDenyWrite);
   try
     FS.Position := FS.Size;              // перейти в кінець
-    FS.WriteBuffer(aVal, SizeOf(Cardinal));
+    FS.WriteBuffer(aTail, SizeOf(TTail));
   finally
-    FS.Free;
+    FS.Free();
+  end;
+end;
+
+procedure TProtect.ReadCRC();
+var
+  TailRec, TailNow: TTail;
+begin
+  TailRec := ReadFileTail();
+  if (TailRec.Sign = cTailSign) then
+  begin
+    TailNow := CalculateFileTail(TailRec.BlockLen);
+    fProtected := TailRec.CheckSum = TailNow.CheckSum;
   end;
 end;
 
 function TProtect.CompareRnd(): Boolean;
 begin
-  if (fBodyCRC = fTailCRC) then
+  if (fProtected) then
     Result := True
   else
     Result := Random(4) = 0;
-end;
-
-procedure TProtect.ReadCRC();
-begin
-  fBodyCRC := GetFileBodyCRC(cSkipTailLen);
-  fTailCRC := ReadFileTailAsCardinal();
-  fProtected := fBodyCRC = fTailCRC;
 end;
 
 end.

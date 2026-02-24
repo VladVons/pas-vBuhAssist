@@ -16,13 +16,14 @@ type
 
   TWinManager = class
   protected
-    PageControl: TPageControl;
-    PopupMenu: TPopupMenu;
-    procedure PageControlMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    fPageControl: TPageControl;
+    fPopupMenu: TPopupMenu;
+    procedure PageControlMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: integer);
   public
     constructor Create(aPageControl: TPageControl; aPopupMenu: TPopupMenu);
     procedure Add(aFormClass: TFormClass);
-    function FindTabIndex(aFormClass: TFormClass): Integer;
+    function FindTabIndex(aFormClass: TFormClass): integer;
     procedure CloseActive();
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure SetActivePage(aIdx: integer);
@@ -31,8 +32,9 @@ type
   TOneInstance = class
   const
     WM_SHOWME = WM_USER + 1971;
+
   private
-    fUniqName: String;
+    fUniqName: string;
     function FindWindow(): HANDLE;
   public
     constructor Create();
@@ -94,19 +96,20 @@ end;
 constructor TWinManager.Create(aPageControl: TPageControl; aPopupMenu: TPopupMenu);
 begin
   inherited Create();
-  PageControl := aPageControl;
-  PopupMenu := aPopupMenu;
+  fPageControl := aPageControl;
+  fPopupMenu := aPopupMenu;
 
-  PageControl.OnMouseDown := @PageControlMouseDown;
+  fPageControl.OnMouseDown := @PageControlMouseDown;
 end;
 
-function TWinManager.FindTabIndex(aFormClass: TFormClass): Integer;
+function TWinManager.FindTabIndex(aFormClass: TFormClass): integer;
 var
-  i: Integer;
+  i: integer;
 begin
   Result := -1; // не знайдено
-  for i := 0 to PageControl.PageCount - 1 do
-    if (PageControl.Pages[i].ControlCount > 0) and (PageControl.Pages[i].Controls[0] is aFormClass) then
+  for i := 0 to fPageControl.PageCount - 1 do
+    if (fPageControl.Pages[i].ControlCount > 0) and
+      (fPageControl.Pages[i].Controls[0] is aFormClass) then
     begin
       Result := i;
       Exit;
@@ -116,7 +119,7 @@ end;
 procedure TWinManager.Add(aFormClass: TFormClass);
 var
   Form: TForm;
-  TabIndex: Integer;
+  TabIndex: integer;
   Tab: TTabSheet;
 begin
   TabIndex := FindTabIndex(aFormClass);
@@ -124,8 +127,8 @@ begin
   if TabIndex = -1 then
   begin
     // Створюємо нову вкладку та форму
-    Tab := TTabSheet.Create(PageControl);
-    Tab.PageControl := PageControl;
+    Tab := TTabSheet.Create(fPageControl);
+    Tab.PageControl := fPageControl;
 
     Form := aFormClass.Create(Application);
     Form.Parent := Tab;
@@ -135,12 +138,12 @@ begin
     Form.Show();
 
     Tab.Caption := Form.Caption;
-    PageControl.ActivePage := Tab;
+    fPageControl.ActivePage := Tab;
   end
   else
   begin
     // Вкладка вже існує — робимо її активною
-    PageControl.ActivePage := PageControl.Pages[TabIndex];
+    fPageControl.ActivePage := fPageControl.Pages[TabIndex];
   end;
 end;
 
@@ -149,7 +152,7 @@ var
   Tab: TTabSheet;
   Form: TForm;
 begin
-  Tab := PageControl.ActivePage;
+  Tab := fPageControl.ActivePage;
   if (Tab = nil) or (Tab.ControlCount = 0) then Exit;
 
   if Tab.Controls[0] is TForm then
@@ -172,50 +175,51 @@ begin
   end;
 end;
 
-procedure TWinManager.PageControlMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TWinManager.PageControlMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: integer);
 var
-  TabIndex: Integer;
+  TabIndex: integer;
 begin
   if Button <> mbRight then
-     Exit; // тільки правий клік
+    Exit; // тільки правий клік
 
-  TabIndex := PageControl.IndexOfTabAt(X, Y);
+  TabIndex := fPageControl.IndexOfTabAt(X, Y);
   if TabIndex < 0 then
-     Exit; // клік не по вкладці
+    Exit; // клік не по вкладці
 
   // робимо вкладку активною
-  PageControl.ActivePageIndex := TabIndex;
+  fPageControl.ActivePageIndex := TabIndex;
 
   // відкриваємо попап меню прямо на курсорі
-  if Assigned(PopupMenu) then
-    PopupMenu.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
+  if Assigned(fPopupMenu) then
+    fPopupMenu.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
 end;
 
-procedure TWinManager.SetActivePage(aIdx: Integer);
+procedure TWinManager.SetActivePage(aIdx: integer);
 var
-  idx: Integer;
+  idx: integer;
 begin
-  if PageControl.PageCount = 0
-     then Exit; // немає вкладок, нічого не робимо
+  if fPageControl.PageCount = 0 then Exit;
+  // немає вкладок, нічого не робимо
 
   if aIdx >= 0 then
     idx := aIdx
   else
-    idx := PageControl.PageCount + aIdx; // від’ємне: від останньої
+    idx := fPageControl.PageCount + aIdx; // від’ємне: від останньої
 
   // перевірка, щоб не вийти за межі
   if (idx < 0) then
     idx := 0
-  else if (idx >= PageControl.PageCount) then
-    idx := PageControl.PageCount - 1;
+  else if (idx >= fPageControl.PageCount) then
+    idx := fPageControl.PageCount - 1;
 
-  PageControl.ActivePageIndex := idx;
+  fPageControl.ActivePageIndex := idx;
 end;
 
 procedure ShowOrCreateForm(AClass: TFormClass);
 var
   Form: TForm;
-  i: Integer;
+  i: integer;
 begin
   Form := nil;
 

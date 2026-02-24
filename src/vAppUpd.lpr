@@ -43,23 +43,26 @@ end;
 
 procedure TAppUpd.AppProtect(const aPath: String);
 var
-  BodyCRC, TailCRC: Cardinal;
+  Tail, Tail2: TTail;
   Protect: TProtect;
 begin
   Protect := TProtect.Create(aPath);
-  BodyCRC := Protect.GetFileBodyCRC(cSkipTailLen);
-  Protect.WriteFileTailAsCardinal(BodyCRC);
-  TailCRC := Protect.ReadFileTailAsCardinal();
-  WriteLn('Tail CRC: ', IntToHex(BodyCRC), ' ', IntToHex(TailCRC));
+  Tail := Protect.ReadFileTail();
+  if (Tail.Sign = cTailSign) then
+  begin
+     WriteLn('Already protected ' + aPath);
+     Quit();
+  end;
 
-  BodyCRC := Protect.GetFileBodyCRC(cSkipTailLen);
-  //TailCRC := Protect.ReadFileTailAsCardinal();
+  Tail := Protect.CalculateFileTail(0);
+  Protect.WriteFileTail(Tail);
 
-  BodyCRC := Protect.GetFileBodyCRC(cSkipTailLen);
-  //TailCRC := Protect.ReadFileTailAsCardinal();
-
-  BodyCRC := Protect.GetFileBodyCRC(cSkipTailLen);
-  //TailCRC := Protect.ReadFileTailAsCardinal();
+  Tail2 := Protect.ReadFileTail();
+  Tail2 := Protect.CalculateFileTail(Tail2.BlockLen);
+  if (Tail.CheckSum = Tail2.CheckSum) then
+    WriteLn('Protected. CRC is ', IntToHex(Tail.CheckSum))
+  else
+    WriteLn('Error. CRC mismatch ', IntToHex(Tail.CheckSum), ' ', IntToHex(Tail2.CheckSum));
 
   Protect.Free();
 end;
@@ -140,7 +143,6 @@ begin
   WriteLn('  -s, --sleep');
   WriteLn('  -p, --pause');
   WriteLn('  -d, --dir');
-  WriteLn('  -a, --app');
 end;
 
 begin

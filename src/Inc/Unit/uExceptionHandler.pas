@@ -16,8 +16,8 @@ uses
  type
   TAppException = class
    private
-     FileLog: String;
-     FlagHandler: Boolean;
+     fFileLog: String;
+     fFlagHandler: Boolean;
      function GetCallStack(aE: Exception): String;
    public
      constructor Create();
@@ -31,8 +31,8 @@ implementation
 
 constructor TAppException.Create();
 begin
-  FlagHandler := False;
-  FileLog := GetAppFile('app.err');
+  fFlagHandler := False;
+  fFileLog := GetAppFile('app.err');
 end;
 
 function TAppException.GetCallStack(aE: Exception): String;
@@ -59,9 +59,9 @@ procedure TAppException.Handler(Sender: TObject; E: Exception);
 var
   Msg, Stack: String;
 begin
-  if (not FlagHandler) then
+  if (not fFlagHandler) then
   begin
-    FlagHandler := True;
+    fFlagHandler := True;
 
     Msg := LineEnding;
     if Assigned(Screen.ActiveForm) then
@@ -70,9 +70,9 @@ begin
     Msg := Msg + FormatDateTime('yyyy-mm-dd hh:nn:ss', Now()) + LineEnding;
     Stack := GetCallStack(E);
     Msg := Msg + Stack + LineEnding;
-    FileAppendText(FileLog, Msg);
+    FileAppendText(fFileLog, Msg);
 
-    FlagHandler := False;
+    fFlagHandler := False;
   end;
 end;
 

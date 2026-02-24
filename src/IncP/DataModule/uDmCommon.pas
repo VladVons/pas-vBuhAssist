@@ -59,7 +59,7 @@ begin
     begin
       IBConnection.DatabaseName := '';
       if Pos('used by another', LowerCase(E.Message)) > 0 then
-        Log.Print('Процес занятий іншим користувачем')
+        Log.Print('e', 'Процес занятий іншим користувачем')
       else
         raise;
     end;
@@ -72,17 +72,17 @@ var
 begin
   Result := TStringList.Create();
   try
-    Log.Print('Завантаження ліцензій ...');
+    Log.Print('i', 'Завантаження ліцензій ...');
     //QueryOpen();
     FirmCodes := GetQueryField(DataSource, SQLQueryCodes, 'EDRPOU');
-    Licence.HttpToFile(FirmCodes);
+    Licence.HttpToFileEncrypt(FirmCodes);
     if (Licence.LastErr <> '') then
-       Log.Print('Помилка ' + Licence.LastErr)
+       Log.Print('e', 'Помилка ' + Licence.LastErr)
     else begin
       FirmCodesLic := Licence.GetFirmCodes('FMedocCheckDocs');
       FirmCodesLic.Delimiter := ',';
       FirmCodesLic.StrictDelimiter := True;
-      Log.Print('Знайдено ліцензії для кодів ' + FirmCodesLic.DelimitedText);
+      Log.Print('i', 'Знайдено ліцензії для кодів ' + FirmCodesLic.DelimitedText);
       Result.Assign(FirmCodesLic);
     end;
   finally
@@ -108,9 +108,9 @@ begin
       FirmCodes := GetQueryField(DataSource, SQLQueryCodes, 'EDRPOU');
       AuthOk := Licence.OrderFromHttp(FirmCodes, Name, FLogin.EditUser.Text, FLogin.EditPassword.Text);
       if (AuthOk) then
-        Log.Print('Запит на отримання ліцензій відправлено')
+        Log.Print('i', 'Запит на отримання ліцензій відправлено')
       else
-        Log.Print('Помилка авторизації на сервері ліцензій');
+        Log.Print('w', 'Помилка авторизації на сервері ліцензій');
     end;
   finally
     FreeAndNil(FirmCodes);

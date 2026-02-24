@@ -1,3 +1,6 @@
+// Created: 2026.02.20
+// Author: Vladimir Vons <VladVons@gmail.com>
+
 unit uArchive;
 
 {$mode ObjFPC}{$H+}

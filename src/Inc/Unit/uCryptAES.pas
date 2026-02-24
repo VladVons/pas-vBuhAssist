@@ -67,31 +67,42 @@ var
   EncBytes: string;
   DataSize: Int64;
 begin
-  try
-    Cipher := TDCP_rijndael.Create(nil);
-    InStream := TMemoryStream.Create;
-    OutStream := TMemoryStream.Create;
+  Result := '';
+  if (aBase64.Length = 0) then
+    Exit;
 
-    // декодуємо Base64 у байти
-    EncBytes := DecodeStringBase64(ABase64);
-    InStream.WriteBuffer(Pointer(EncBytes)^, Length(EncBytes));
+  EncBytes := DecodeStringBase64(aBase64);
+
+  // 🔴 КРИТИЧНА перевірка
+  if (EncBytes.Length < SizeOf(IV)) then
+    Exit; // або raise
+
+  Cipher := TDCP_rijndael.Create(nil);
+  InStream := TMemoryStream.Create;
+  OutStream := TMemoryStream.Create;
+  try
+    InStream.WriteBuffer(EncBytes[1], Length(EncBytes));
     InStream.Position := 0;
 
-    // читаємо IV
     InStream.ReadBuffer(IV, SizeOf(IV));
 
     Cipher.InitStr(aKey, TDCP_sha256);
     Cipher.SetIV(IV);
 
     DataSize := InStream.Size - SizeOf(IV);
+    if (DataSize <= 0) then
+      Exit;
+
     Cipher.DecryptStream(InStream, OutStream, DataSize);
     Cipher.Burn;
 
-    // повертаємо як рядок
-    SetLength(Result, OutStream.Size);
-    OutStream.Position := 0;
-    OutStream.ReadBuffer(Pointer(Result)^, OutStream.Size);
-
+    // результат
+    if (OutStream.Size > 0) then
+    begin
+      SetLength(Result, OutStream.Size);
+      OutStream.Position := 0;
+      OutStream.ReadBuffer(Result[1], OutStream.Size);
+    end;
   finally
     InStream.Free();
     OutStream.Free();

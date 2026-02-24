@@ -9,19 +9,20 @@ interface
 
 uses
   Classes, SysUtils, fpjson,
-  uHttp, uCrypt, uSys, uConst;
+  uHttp, uCryptAES, uSys, uConst, uLog;
 
 type
   TLicence = class
   private
-    FileName: String;
-    CryptKey: String;
-    JObjLic: TJSONObject;
+    fFileName: String;
+    fCryptKey: String;
+    fJObjLic: TJSONObject;
     function GetFromHttp(aFirmCodes: TStrings): TJSONObject;
   public
     LastErr: String;
     constructor Create();
-    procedure HttpToFile(aFirmCodes: TStrings);
+    destructor Destroy(); override;
+    procedure HttpToFileEncrypt(aFirmCodes: TStrings);
     procedure LoadFromFile();
     function GetFirmCodes(const aModule: String): TStringList;
     function OrderFromHttp(aFirmCodes: TStrings; const aModule, aDealerName, aDealerPassw: String): boolean;
@@ -34,8 +35,15 @@ implementation
 
 constructor TLicence.Create();
 begin
-  FileName := GetAppFile('app.lic');
-  CryptKey := 'Vlad1971';
+  fFileName := GetAppFile('app.lic');
+  fCryptKey := 'Vlad1971';
+  fJObjLic := Nil;
+end;
+
+destructor TLicence.Destroy();
+begin
+  FreeAndNil(fJObjLic);
+  inherited;
 end;
 
 function TLicence.GetFromHttp(aFirmCodes: TStrings): TJSONObject;
@@ -96,26 +104,34 @@ begin
   end;
 end;
 
-procedure TLicence.HttpToFile(aFirmCodes: TStrings);
+procedure TLicence.HttpToFileEncrypt(aFirmCodes: TStrings);
 var
-  Encrypted: String;
+  Str, Encrypted: String;
 begin
-  JObjLic := GetFromHttp(aFirmCodes);
-  if (Assigned(JObjLic)) then
+  fJObjLic := GetFromHttp(aFirmCodes);
+  if (Assigned(fJObjLic)) then
   begin
-    Encrypted := JsonEncrypt(JObjLic, CryptKey);
-    StrToFile(Encrypted, FileName);
+    Str := fJObjLic.AsJSON;
+    Encrypted := StrEncrypt_AES(Str, fCryptKey);
+    StrToFile(Encrypted, fFileName);
   end;
 end;
 
 procedure TLicence.LoadFromFile();
 var
-  Decrypted: String;
+  Str, Decrypted: String;
 begin
-  if (FileExists(FileName)) then
+  if (FileExists(fFileName)) then
   begin
-    Decrypted := StrFromFile(FileName);
-    JObjLic := JsonDecrypt(Decrypted, CryptKey);
+    Str := StrFromFile(fFileName);
+    Decrypted := StrDecrypt_AES(Str, fCryptKey);
+
+    FreeAndNil(fJObjLic);
+    try
+      fJObjLic := TJSONObject(GetJSON(Decrypted));
+    except on E: Exception do
+      Log.Print('x', 'Wrong file type');
+    end;
   end;
 end;
 
@@ -127,10 +143,10 @@ var
   JObjItem: TJSONObject;
 begin
   Result := TStringList.Create();
-  if (Assigned(JObjLic)) and (Assigned(JObjLic.Find('licences'))) then
+  if (Assigned(fJObjLic)) and (Assigned(fJObjLic.Find('licences'))) then
   begin
     Today := FormatDateTime('yyyy-mm-dd', Date);
-    JArr := JObjLic.Arrays['licences'];
+    JArr := fJObjLic.Arrays['licences'];
     for i := 0 to JArr.Count - 1 do
     begin
       JObjItem := JArr.Objects[i];

@@ -1,3 +1,6 @@
+// Created: 2026.02.18
+// Author: Vladimir Vons <VladVons@gmail.com>
+
 unit uMedoc;
 
 {$mode ObjFPC}{$H+}

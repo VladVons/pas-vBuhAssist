@@ -22,6 +22,7 @@ function GetDirFiles(const aDir, aMask: string): TStringList;
 function GetAppFile(const aFile: String): String;
 procedure AddDirDll(const aPath: String);
 function FileGetSize(const aFileName: string): Int64;
+function FileGetModDate(const aFile: string): TDateTime;
 procedure FileAppendText(const aFile, aMsg: string);
 procedure StrToFile(const aStr: AnsiString; aFile: string);
 function StrFromFile(const aFile: string): AnsiString;
@@ -69,9 +70,20 @@ begin
   begin
     Result := SR.Size;
     FindClose(SR);
-  end
-  else
+  end else
     Result := -1; // файл не знайдено
+end;
+
+function FileGetModDate(const aFile: string): TDateTime;
+var
+  SR: TSearchRec;
+begin
+  if FindFirst(AFile, faAnyFile, SR) = 0 then
+  begin
+    Result := FileDateToDateTime(SR.Time);
+    FindClose(SR);
+  end else
+    Result := 0;
 end;
 
 function GetDirFiles(const aDir, aMask: string): TStringList;

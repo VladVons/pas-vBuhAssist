@@ -52,14 +52,14 @@ var
 begin
   if (Trim(LabeledEditDirIn.Text) = '') then
   begin
-    Log.Print('Не вказано паку вхідна');
+    Log.Print('w', 'Не вказано паку вхідна');
     Exit;
   end;
   ForceDirectories(LabeledEditDirIn.Text);
 
   if (Trim(LabeledEditDirOut.Text) = '') then
   begin
-    Log.Print('Не вказано паку вихідна');
+    Log.Print('w', 'Не вказано паку вихідна');
     Exit;
   end;
   ForceDirectories(LabeledEditDirOut.Text);
@@ -68,11 +68,11 @@ begin
     FilesIn := GetDirFiles(LabeledEditDirIn.Text, '*.pdf;*.jpg');
     if (FilesIn.Count = 0) then
     begin
-      Log.Print('Немає (PDF, JPG) файлів для оптимізації');
+      Log.Print('w', 'Немає (PDF, JPG) файлів для оптимізації');
       Exit;
     end;
 
-    Log.Print('Оптимізація файлів ...');
+    Log.Print('i', 'Оптимізація файлів ...');
     FilesIn.Sort();
     for i := 0 to FilesIn.Count - 1 do
     begin
@@ -95,9 +95,9 @@ begin
 
         FileOutSize := FileGetSize(FileOut);
         Ratio := (1 - (FileOutSize / FileGetSize(FileIn))) * 100;
-        Log.Print(Format('%d/%d %s %dkb (%.0f%%)', [i + 1, FilesIn.Count, FileIn, Round(FileOutSize/1000), Ratio]));
+        Log.Print('i', Format('%d/%d %s %dkb (%.0f%%)', [i + 1, FilesIn.Count, FileIn, Round(FileOutSize/1000), Ratio]));
     end;
-    Log.Print('Готово');
+    Log.Print('i', 'Готово');
   finally
     FilesIn.Free();
   end;

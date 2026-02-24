@@ -30,9 +30,7 @@ type
     procedure ButtonOkClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
-
   public
-
   end;
 
 var
@@ -47,7 +45,7 @@ implementation
 procedure TFSettings.ButtonOkClick(Sender: TObject);
 begin
   FormStateRec.Save(self);
-  Log.Print('Збережено');
+  Log.Print('i', 'Збережено');
 end;
 
 procedure TFSettings.FormCreate(Sender: TObject);
@@ -55,7 +53,7 @@ begin
   FormStateRec.Load(self);
 
   if (SpinEditBeginYear.Value = 0) then
-    SpinEditBeginYear.Value := YearOf(IncYear(Date(), -2));
+    SpinEditBeginYear.Value := YearOf(IncYear(Date(), -cYearsBack));
 
   LabelVer.Caption := cAppName + ' ' + GetAppVer();
 end;

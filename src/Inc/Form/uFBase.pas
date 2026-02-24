@@ -1,3 +1,6 @@
+// Created: 2026.02.23
+// Author: Vladimir Vons <VladVons@gmail.com>
+
 unit uFBase;
 
 {$mode ObjFPC}{$H+}
@@ -16,7 +19,6 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
-
   protected
   public
 

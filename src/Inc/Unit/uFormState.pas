@@ -16,7 +16,7 @@ type
 
   TFormStateRec = class
   private
-    FileName: string;
+    fFileName: string;
     procedure Walk(aForm: TWinControl; aProc: TCtrlProc);
     procedure SaveProc(aForm: TWinControl; aCtrl: TComponent; aIni: TIniFile);
     procedure LoadProc(aForm: TWinControl; aCtrl: TComponent; aIni: TIniFile);
@@ -36,7 +36,7 @@ implementation
 
 constructor TFormStateRec.Create();
 begin
-  FileName := GetAppFile('app_state.ini');
+  fFileName := GetAppFile('app_state.ini');
 end;
 
 procedure TFormStateRec.LoadProc(aForm: TWinControl; aCtrl: TComponent; aIni: TIniFile);
@@ -73,7 +73,7 @@ var
   Ini: TIniFile;
 begin
   try
-    Ini := TIniFile.Create(FileName);
+    Ini := TIniFile.Create(fFileName);
     Result := Ini.ReadString(aSect, aItem, aDef);
   finally
     Ini.Free();
@@ -85,7 +85,7 @@ var
   Ini: TIniFile;
 begin
   try
-    Ini := TIniFile.Create(FileName);
+    Ini := TIniFile.Create(fFileName);
     Result := Ini.ReadInteger(aSect, aItem, aDef);
   finally
     Ini.Free();
@@ -98,7 +98,7 @@ var
   Ctrl: TComponent;
   Ini: TIniFile;
 begin
-  Ini := TIniFile.Create(FileName);
+  Ini := TIniFile.Create(fFileName);
   try
     for i := 0 to aForm.ComponentCount - 1 do
     begin

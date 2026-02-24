@@ -36,19 +36,17 @@ begin
 end;
 
 procedure TFMedocCheckDocs.SetComboBoxToYear(aComboBox: TComboBox; aYear: Integer = 0);
-const
-  YearsBack: integer = 2;
 var
-  i: Integer;
+  i, YearNext: Integer;
 begin
+  YearNext := YearOf(IncYear(Date(), 1));
   if (aYear = 0) then
-    aYear := YearOf(IncMonth(Date(), -1));
+    aYear := YearOf(IncYear(Date(), -cYearsBack));
+  aYear := Max(aYear, YearNext - 15);
 
   aComboBox.Items.Clear();
-  for i := aYear - YearsBack to aYear + 1 do
+  for i := aYear to YearNext do
     aComboBox.Items.AddObject(IntToStr(i), TObject(i));
-
-  aComboBox.ItemIndex := YearsBack;
 end;
 
 procedure TFMedocCheckDocs.SetComboBoxDoc();
