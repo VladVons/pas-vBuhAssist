@@ -375,6 +375,9 @@ begin
   SetComboBoxDoc();
   ComboBoxYearDropDown(Nil);
 
+  if (not Licence.IsFile()) then
+     Log.Print('w', 'Файл ліцензій не знайдено');
+
   fFirmCodesLicensed := Licence.GetFirmCodes(Name);
   ComboBoxFirm.Items.Assign(fFirmCodesLicensed);
   ComboBoxFirm.Items.Insert(0, '');

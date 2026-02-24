@@ -26,6 +26,7 @@ type
     procedure LoadFromFile();
     function GetFirmCodes(const aModule: String): TStringList;
     function OrderFromHttp(aFirmCodes: TStrings; const aModule, aDealerName, aDealerPassw: String): boolean;
+    function IsFile(): Boolean;
   end;
 
 var
@@ -121,7 +122,7 @@ procedure TLicence.LoadFromFile();
 var
   Str, Decrypted: String;
 begin
-  if (FileExists(fFileName)) then
+  if (IsFile()) then
   begin
     Str := StrFromFile(fFileName);
     Decrypted := StrDecrypt_AES(Str, fCryptKey);
@@ -133,6 +134,11 @@ begin
       Log.Print('x', 'Wrong file type');
     end;
   end;
+end;
+
+function TLicence.IsFile(): Boolean;
+begin
+  Result := FileExists(fFileName);
 end;
 
 function TLicence.GetFirmCodes(const aModule: String): TStringList;
