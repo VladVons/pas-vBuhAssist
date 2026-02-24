@@ -26,7 +26,7 @@ type
     procedure Connect(const aName: String; aPort: Integer);
     function GetTablesMain(): TStringList;
     function Licence_GetFromHttp(): TStringList;
-    procedure Licence_OrderToHttp();
+    procedure Licence_OrderToHttp(const aModule: string);
   end;
 
 var
@@ -91,7 +91,7 @@ begin
   end;
 end;
 
-procedure TDmCommon.Licence_OrderToHttp();
+procedure TDmCommon.Licence_OrderToHttp(const aModule: string);
 var
   AuthOk: boolean;
   FirmCodes: TStringList;
@@ -106,7 +106,7 @@ begin
     begin
       //QueryOpen();
       FirmCodes := GetQueryField(DataSource, SQLQueryCodes, 'EDRPOU');
-      AuthOk := Licence.OrderFromHttp(FirmCodes, Name, FLogin.EditUser.Text, FLogin.EditPassword.Text);
+      AuthOk := Licence.OrderFromHttp(FirmCodes, aModule, FLogin.EditUser.Text, FLogin.EditPassword.Text);
       if (AuthOk) then
         Log.Print('i', 'Запит на отримання ліцензій відправлено')
       else

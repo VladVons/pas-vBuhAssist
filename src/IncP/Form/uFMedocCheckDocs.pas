@@ -292,7 +292,7 @@ end;
 procedure TFMedocCheckDocs.ButtonOrderLicenceClick(Sender: TObject);
 begin
   ConnectToDb();
-  DmCommon.Licence_OrderToHttp();
+  DmCommon.Licence_OrderToHttp(Name);
 end;
 
 procedure TFMedocCheckDocs.frReport1GetValue(const aParName: String; var aParValue: Variant);
