@@ -18,15 +18,15 @@ type
 
   { TFMedocCheckDocs }
   TFMedocCheckDocs = class(TFBase)
-    ButtonRunMedoc: TButton;
+    ButtonExec: TButton;
     ButtonGetLicence: TButton;
     ButtonOrderLicence: TButton;
     ButtonPrint: TButton;
-    ButtonExec: TButton;
-    ComboBoxFirm: TComboBox;
-    ComboBoxPath: TComboBox;
-    ComboBoxMonth: TComboBox;
+    ButtonRunMedoc: TButton;
     ComboBoxDoc: TComboBox;
+    ComboBoxFirm: TComboBox;
+    ComboBoxMonth: TComboBox;
+    ComboBoxPath: TComboBox;
     ComboBoxYear: TComboBox;
     DataSourceGrid: TDataSource;
     DbGrid: TDBGrid;

@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, fpjson,
-  uHttp, uCryptAES, uSys, uConst, uLog;
+  uHttp, uCryptAES, uSys, uConst, uLog, uComputerInfo;
 
 type
   TLicence = class
@@ -76,31 +76,35 @@ end;
 function TLicence.OrderFromHttp(aFirmCodes: TStrings; const aModule, aDealerName, aDealerPassw: String): boolean;
 var
   i: Integer;
-  JsonReq, JsonRes: TJSONObject;
-  ArrLic: TJSONArray;
+  JReq, JRes: TJSONObject;
+  JArrLic: TJSONArray;
+  WMI: TWMI;
 begin
+  WMI := TWMI.Create();
+  JReq := TJSONObject.Create();
   try
-    JsonReq := TJSONObject.Create();
-    JsonReq.Add('type', 'order_licences');
-    JsonReq.Add('app', 'BuhAssist');
-    JsonReq.Add('module', aModule);
-    JsonReq.Add('user', aDealerName);
-    JsonReq.Add('passw', aDealerPassw);
+    JReq.Add('type', 'order_licences');
+    JReq.Add('app', 'BuhAssist');
+    JReq.Add('module', aModule);
+    JReq.Add('user', aDealerName);
+    JReq.Add('passw', aDealerPassw);
+    JReq.Add('computer', WMI.GetInfoAsJson());
 
-    ArrLic := TJSONArray.Create();
+    JArrLic := TJSONArray.Create();
     for i := 0 to aFirmCodes.Count - 1 do
-      ArrLic.Add(aFirmCodes[i]);
-    JsonReq.Add('firms', ArrLic);
+      JArrLic.Add(aFirmCodes[i]);
+    JReq.Add('firms', JArrLic);
 
-    JsonRes := PostJSON(cHttpApi, JsonReq);
-    if (Assigned(JsonRes)) then
-      LastErr := JsonRes.Get('error', '')
+    JRes := PostJSON(cHttpApi, JReq);
+    if (Assigned(JRes)) then
+      LastErr := JRes.Get('error', '')
     else
       LastErr := 'request error';
     Result := LastErr.IsEmpty();
   finally
-    JsonRes.Free();
-    JsonReq.Free();
+    WMI.Free();
+    JRes.Free();
+    JReq.Free();
     //ArrLic.Free(); already by JsonReq
   end;
 end;

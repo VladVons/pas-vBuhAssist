@@ -15,7 +15,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
   inherited PanelTitle: TPanel
     Width = 636
     ClientWidth = 636
-    TabOrder = 2
+    TabOrder = 1
   end
   object DbGrid: TDBGrid[1]
     Left = 0
@@ -51,8 +51,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     Align = alTop
     ClientHeight = 144
     ClientWidth = 636
-    ParentBackground = False
-    TabOrder = 1
+    TabOrder = 2
     object ComboBoxPath: TComboBox
       Left = 128
       Height = 22
@@ -63,10 +62,10 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       TabOrder = 0
     end
     object ComboBoxYear: TComboBox
-      Left = 347
+      Left = 352
       Height = 22
       Top = 32
-      Width = 160
+      Width = 223
       DropDownCount = 20
       ItemHeight = 14
       ReadOnly = True
@@ -77,14 +76,14 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Left = 128
       Height = 22
       Top = 32
-      Width = 208
+      Width = 224
       DropDownCount = 20
       ItemHeight = 14
       ReadOnly = True
       TabOrder = 7
     end
     object ComboBoxDoc: TComboBox
-      Left = 129
+      Left = 128
       Height = 22
       Top = 80
       Width = 447
@@ -97,7 +96,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Left = 128
       Height = 22
       Top = 56
-      Width = 206
+      Width = 208
       DropDownCount = 20
       ItemHeight = 14
       ReadOnly = True
