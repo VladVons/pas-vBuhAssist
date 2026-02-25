@@ -15,6 +15,7 @@ function LatinToUkr(const aStr: string): string;
 function RemoveChars(const aStr, aRemove: string): string;
 function GetJsonNested(const aJObj: TJSONObject; const Path: string; aDef: Variant): Variant;
 function ReplMacros(const aText: string; aDict: TStringList): string;
+function Between(aVal, aMin, aMax: integer): boolean;
 
 generic function IIF<T>(aCond: boolean; const aValTrue, aValFalse: T): T; inline;
 
@@ -138,6 +139,12 @@ begin
   JData := JObjCur.Find(Parts[High(Parts)]);
   Result := JsonToVariant(JData)
 end;
+
+function Between(aVal, aMin, aMax: integer): boolean;
+begin
+  Result := (aVal >= aMin) and (aVal <= aMax)
+end;
+
 
 end.
 

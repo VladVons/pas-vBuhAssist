@@ -294,10 +294,12 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       '    %_FROM_T2'
       '    WHERE'
       '        (CARD.PERDATE = DATE %_PERDATE)'
+      '        AND (CARD.PERTYPE = :_PERTYPE)'
       '        AND (CARD.IDPARENT IS NULL)'
       '        AND (CARD.FORM > 0)'
       '        AND (CARD.INTRASH = 0)'
-      '        AND (FORM.CHARCODE NOT LIKE ''F130000%'') AND (FORM.CHARCODE NOT LIKE ''J130000%'')'
+      '        AND (FORM.CHARCODE NOT LIKE ''F1300%'') AND (FORM.CHARCODE NOT LIKE ''J1300%'')'
+      '        AND (FORM.CHARCODE NOT LIKE ''F1400%'') AND (FORM.CHARCODE NOT LIKE ''J1400%'')'
       '        %_COND_CHARCODE'
       ') T2'
       '    ON T2.IDORG = ORG.CODE'
@@ -308,7 +310,12 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       '  %_ORDER %_ASC'
       ''
     )
-    Params = <>
+    Params = <    
+      item
+        DataType = ftUnknown
+        Name = '_PERTYPE'
+        ParamType = ptInput
+      end>
     Macros = <    
       item
         DataType = ftUnknown

@@ -18,8 +18,8 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="11"/>
-      <RevisionNr Value="1"/>
-      <BuildNr Value="17"/>
+      <RevisionNr Value="2"/>
+      <BuildNr Value="19"/>
       <StringTable ProductName="vBuhAssist"/>
     </VersionInfo>
     <BuildModes>

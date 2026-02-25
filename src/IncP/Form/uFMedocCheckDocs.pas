@@ -9,8 +9,9 @@ interface
 
 uses
   Classes, SysUtils, StrUtils, DateUtils, SQLDB, Forms, Graphics, StdCtrls,
-  DBGrids, Grids, ExtCtrls, Buttons, Menus, LR_Class, LR_DBSet, LR_PGrid,
-  LR_Desgn, DB, fpjson, Math, uFBase, uSys, uLog, uLicence, uWinReg, uSettings,
+  DBGrids, Grids, ExtCtrls, Buttons, Menus, LR_Class, LR_DBSet, LR_PGrid, LR_Desgn,
+  DB, fpjson, Math,
+  uFBase, uSys, uLog, uLicence, uWinReg, uSettings, uVarUtil,
   uStateStore, uQuery, uMedoc, uDmCommon, uProtectTimer, uConst;
 
 type
@@ -133,7 +134,7 @@ end;
 
 procedure TFMedocCheckDocs.QueryOpen();
 var
-  Month, Year: integer;
+  Month, Year, PerType: integer;
   Str, StrDb, StrMacro: string;
 begin
   SQLQueryGrid.Close();
@@ -143,10 +144,23 @@ begin
   DbGrid.Columns.Clear();
   DbGrid.Visible := True;
 
-  Month := integer(ComboBoxMonth.Items.Objects[ComboBoxMonth.ItemIndex]);
   Year := integer(ComboBoxYear.Items.Objects[ComboBoxYear.ItemIndex]);
+  Month := integer(ComboBoxMonth.Items.Objects[ComboBoxMonth.ItemIndex]);
+  if (Between(Month, 1, 12)) then
+    PerType := 0
+  else if (Between(Month, 101, 104)) then
+  begin
+    PerType := 10;
+    Month := (Month - 100) * 3;
+  end else if (Between(Month, 201, 202)) then
+  begin
+    PerType := 20;
+    Month := (Month - 200) * 6;
+  end;
+  SQLQueryGrid.ParamByName('_PERTYPE').Value := PerType;
   Str := FormatDateTime('yyyy-mm-dd', EncodeDate(Year, Month, 1));
   SQLQueryGrid.MacroByName('_PERDATE').Value := QuotedStr(Str);
+
 
   StrMacro := '';
   Str := UpperCase(ComboBoxDoc.Items.Names[ComboBoxDoc.ItemIndex]);
@@ -223,9 +237,11 @@ end;
 procedure TFMedocCheckDocs.ButtonExecClick(Sender: TObject);
 var
   Msg, LastUpdate: string;
+  Delay: integer;
 begin
   // we are not so fast comparing to MEDOC
-  //Sleep(1000 + Random(500));
+  Delay := Settings.GetItem('Common', 'Delay', 1500);
+  Sleep(Delay + Random(Delay));
 
   LastUpdate := Settings.GetItem('Licence', 'LastUpdate', '');
   if (LastUpdate.IsEmpty()) then
