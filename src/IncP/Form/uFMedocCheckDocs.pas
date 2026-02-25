@@ -156,6 +156,10 @@ begin
   begin
     PerType := 20;
     Month := (Month - 200) * 6;
+  end else if (Month = 301) then
+  begin
+    PerType := 30;
+    Month := 12;
   end;
   SQLQueryGrid.ParamByName('_PERTYPE').Value := PerType;
   Str := FormatDateTime('yyyy-mm-dd', EncodeDate(Year, Month, 1));

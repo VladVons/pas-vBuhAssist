@@ -1,6 +1,7 @@
 inherited FMedocCheckDocs: TFMedocCheckDocs
-  Left = 342
+  Left = 336
   Height = 384
+  Top = 210
   Width = 589
   BorderStyle = bsNone
   Caption = 'Звітне стикування'
@@ -298,6 +299,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       '        AND (CARD.IDPARENT IS NULL)'
       '        AND (CARD.FORM > 0)'
       '        AND (CARD.INTRASH = 0)'
+      '        AND (FORM.CHARCODE NOT LIKE ''F1200%'') AND (FORM.CHARCODE NOT LIKE ''J1200%'')'
       '        AND (FORM.CHARCODE NOT LIKE ''F1300%'') AND (FORM.CHARCODE NOT LIKE ''J1300%'')'
       '        AND (FORM.CHARCODE NOT LIKE ''F1400%'') AND (FORM.CHARCODE NOT LIKE ''J1400%'')'
       '        %_COND_CHARCODE'
