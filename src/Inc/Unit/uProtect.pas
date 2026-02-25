@@ -8,7 +8,7 @@ unit uProtect;
 interface
 
 uses
-  Classes, SysUtils, crc,
+  Classes, SysUtils, Windows, crc,
   uSys;
 
 const
@@ -26,16 +26,20 @@ type
   TProtect = class
   private
     fFile: string;
+    fTimingStart: Cardinal;
   protected
     fTail: TTail;
     fProtected: boolean;
   public
+    fTimingCnt: Cardinal;
     constructor Create(const aFile: string);
     function CompareRnd(): boolean;
     function CalculateFileTail(aLen: integer): TTail;
     function ReadFileTail(): TTail;
     procedure WriteFileTail(aTail: TTail);
     procedure ReadCRC();
+    procedure TimingStart();
+    function TimingCheck(aDif: integer = 100): boolean;
   end;
 
 var
@@ -47,7 +51,10 @@ constructor TProtect.Create(const aFile: string);
 begin
   fFile := aFile;
   fProtected := True;
+  fTimingCnt := 0;
   FillChar(fTail, SizeOf(TTail), 0);
+
+  Randomize();
 end;
 
 function TProtect.CalculateFileTail(aLen: integer): TTail;
@@ -144,6 +151,26 @@ begin
     Result := True
   else
     Result := Random(4) = 0;
+end;
+
+procedure TProtect.TimingStart();
+begin
+  fTimingStart := GetTickCount();
+end;
+
+function TProtect.TimingCheck(aDif: integer = 100): boolean;
+var
+  Dif: integer;
+begin
+  Dif := GetTickCount() - fTimingStart;
+  Result := Dif > aDif;
+  if (Result) then
+  begin
+    Inc(fTimingCnt);
+    Result := Random(2) = 0;
+  end;
+
+  fTimingStart := GetTickCount();
 end;
 
 end.

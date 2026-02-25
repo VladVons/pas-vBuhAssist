@@ -19,7 +19,6 @@ function GetMonthNameUa(aMonthNum: integer): string;
 function GetAppProgramData(): string;
 function GetAppName(): string;
 function GetDirFiles(const aDir, aMask: string): TStringList;
-function GetAppFile(const aFile: string): string;
 procedure AddDirDll(const aPath: string);
 function FileGetSize(const aFileName: string): Int64;
 function FileGetModDate(const aFile: string): TDateTime;
@@ -176,18 +175,6 @@ end;
 function GetAppProgramData(): string;
 begin
   Result := GetEnvironmentVariable('ProgramData') + PathDelim + GetAppName();
-end;
-
-
-function GetAppFile(const aFile: string): String;
-var
-  DirApp: string;
-begin
-  DirApp := GetAppConfigDir(False);
-  if (not DirectoryExists(DirApp)) then
-     ForceDirectories(DirApp);
-
-  Result := ConcatPaths([DirApp, aFile]);
 end;
 
 function GetAppVer(): string;

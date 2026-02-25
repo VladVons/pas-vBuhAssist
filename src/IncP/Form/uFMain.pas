@@ -19,7 +19,7 @@ type
     ActionSettings: TAction;
     ActionExit: TAction;
     ActionOptimizePDF: TAction;
-    ActionLicense: TAction;
+    ActionUserAgreement: TAction;
     ActionFMedocCheckDocs: TAction;
     ActionFAbout: TAction;
     ActionList1: TActionList;
@@ -44,13 +44,14 @@ type
     procedure ActionExitExecute(Sender: TObject);
     procedure ActionFAboutExecute(Sender: TObject);
     procedure ActionFMedocCheckDocsExecute(Sender: TObject);
-    procedure ActionLicenseExecute(Sender: TObject);
+    procedure ActionUserAgreementExecute(Sender: TObject);
     procedure ActionOptimizePDFExecute(Sender: TObject);
     procedure ActionSettingsExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure MenuItemCloseTabClick(Sender: TObject);
   private
+    function UserAgreement(aConfirm: boolean): boolean;
     procedure WMShowMe(var aMsg: TMessage); message TOneInstance.WM_SHOWME;
   public
   end;
@@ -79,9 +80,9 @@ begin
   WinManager.Add(TFMedocCheckDocs);
 end;
 
-procedure TFMain.ActionLicenseExecute(Sender: TObject);
+procedure TFMain.ActionUserAgreementExecute(Sender: TObject);
 begin
-  //WinManager.Add(TFLicense);
+  UserAgreement(False);
 end;
 
 procedure TFMain.ActionOptimizePDFExecute(Sender: TObject);
@@ -110,6 +111,18 @@ begin
   SetForegroundWindow(Handle);
 end;
 
+function TFMain.UserAgreement(aConfirm: boolean): boolean;
+begin
+  FMessage := TFMessage.Create(nil);
+  FMessage.Caption := 'Ліцензійна угода користувача';
+  FMessage.Confirm := aConfirm;
+  FMessage.Memo1.Lines.Assign(DmCommon.TextStoreLicence.Lines);
+  Log.Print('i', FMessage.Caption);
+  Result:= FMessage.ShowModal() = mrOK;
+  FreeAndNil(FMessage);
+end;
+
+
 procedure TFMain.FormCreate(Sender: TObject);
 var
   i: integer;
@@ -117,24 +130,22 @@ var
   Forms: array of TFormClass;
   //SL: TStringList;
 begin
+  ProtectTimer := TProtectTimer.Create(ParamStr(0));
+  ProtectTimer.TimerRunRnd(True, 10000);
+
   Log := TLog.Create('app.log', MemoInfo1);
   Log.Print('i', 'Початок');
 
   Settings := TSettings.Create('app.ini');
   if (Settings.GetItem('UserAgreement', 'Accepted', '').IsEmpty()) then
-  begin
-    FMessage := TFMessage.Create(nil);
-    FMessage.Caption := 'Ліцензійна угода';
-    FMessage.Confirm := True;
-    FMessage.Memo1.Lines.Assign(DmCommon.TextStoreLicence.Lines);
-    Log.Print('i', FMessage.Caption);
-    if (FMessage.ShowModal() <> mrOk) then
+    if (UserAgreement(True)) then
+    begin
+      Settings.SetItem('UserAgreement', 'Accepted', DateTimeToStr(Now()));
+      Log.Print('i', 'Ліцензійна угода прийнята');
+    end else begin
+      ShowMessage('Для роботи з програмою потрібно підтвердити згоду');
       Halt();
-
-    Settings.SetItem('UserAgreement', 'Accepted', DateTimeToStr(Now()));
-    Log.Print('i', 'Ліцензійна угода прийнята');
-    FreeAndNil(FMessage);
-  end;
+    end;
 
   StateStore := TStateStore.Create('app_state.ini');
 
@@ -172,9 +183,6 @@ begin
   end;
 
   WindowState := wsMaximized;
-
-  ProtectTimer := TProtectTimer.Create(ParamStr(0));
-  ProtectTimer.TimerRunRnd(True, 10000);
 end;
 
 procedure TFMain.FormDestroy(Sender: TObject);

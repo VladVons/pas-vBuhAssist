@@ -161,7 +161,6 @@ begin
   Str := FormatDateTime('yyyy-mm-dd', EncodeDate(Year, Month, 1));
   SQLQueryGrid.MacroByName('_PERDATE').Value := QuotedStr(Str);
 
-
   StrMacro := '';
   Str := UpperCase(ComboBoxDoc.Items.Names[ComboBoxDoc.ItemIndex]);
   if (not Str.IsEmpty()) then
@@ -211,6 +210,8 @@ var
   Code: string;
   Protected: boolean;
 begin
+  ProtectTimer.TimingStart();
+
   FieldXML := DataSet.FieldByName('XMLVALS');
   FieldFJ := DataSet.FieldByName('FJ');
   FieldHZ := DataSet.FieldByName('HZ');
@@ -232,6 +233,9 @@ begin
     Month := MonthOf(Field.AsDateTime);
     DataSet.FindField('PERDATE_STR').AsString := GetMonthNameUa(Month);
   end;
+
+  if (ProtectTimer.TimingCheck()) then
+    fFirmCodesLicensed.Clear();
 end;
 
 procedure TFMedocCheckDocs.ButtonExecClick(Sender: TObject);
@@ -239,21 +243,21 @@ var
   Msg, LastUpdate: string;
   Delay: integer;
 begin
-  // we are not so fast comparing to MEDOC
-  Delay := Settings.GetItem('Common', 'Delay', 1500);
-  Sleep(Delay + Random(Delay));
-
   LastUpdate := Settings.GetItem('Licence', 'LastUpdate', '');
   if (LastUpdate.IsEmpty()) then
     MenuItemRefreshClick(Nil)
   else if (DaysBetween(Now(), StrToDateTime(LastUpdate)) > cLicenceRefrehDays) then
     MenuItemRefreshClick(Nil);
 
-  Msg := Format('%s %s, %s', [ComboBoxMonth.Text, ComboBoxYear.Text, ComboBoxDoc.Text]);
+  Msg := Format('%s: %s %s, %s', [TButton(Sender).Caption, ComboBoxMonth.Text, ComboBoxYear.Text, ComboBoxDoc.Text]);
   Log.Print('i', Msg);
 
   ConnectToDb();
   QueryOpen();
+
+  // we are not so fast comparing to MEDOC
+  Delay := Settings.GetItem('Common', 'Delay', 1500);
+  Sleep(Delay + Random(Delay));
 end;
 
 procedure TFMedocCheckDocs.ButtonActivationClick(Sender: TObject);
@@ -390,6 +394,8 @@ begin
   fTablesMain := Nil;
   fDemoFields := Nil;
 
+  ProtectTimer.TimingStart();
+
   fSortField := 'CARDSTATUS_NAME';
   fSortAsc := True;
 
@@ -442,6 +448,12 @@ begin
   fColorYelow := RGBToColor(255, 255, 153);
   StateStore.SetCtrlColor(self, fColorYelow, 'edit');
   //StateStore.SetCtrlColor(self, clWhite, 'button');
+
+  if (ProtectTimer.TimingCheck()) then
+  begin
+    ComboBoxMonth.Clear();
+    fFirmCodesLicensed.Clear();
+  end;
 end;
 
 procedure TFMedocCheckDocs.FormDestroy(Sender: TObject);

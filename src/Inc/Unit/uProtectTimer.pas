@@ -23,15 +23,13 @@ type
   end;
 
 var
-  ProtectTimer: TProtectTimer;
+  ProtectTimer: TProtectTimer = Nil;
 
 implementation
 
 constructor TProtectTimer.Create(const aFile: string);
 begin
   inherited;
-
-  Randomize();
   fTimer := TTimer.Create(Nil);
   fTimer.Enabled := False;
 end;

@@ -14,6 +14,7 @@ uses
 type
   TSettings = class(TUserData)
   public
+    procedure DelItem(const aSect, aKey: string);
     function GetItem(const aSect, aKey: string; aDef: string = ''): string;
     function GetItem(const aSect, aKey: string; aDef: integer = 0): integer;
     procedure SetItem(const aSect, aKey, aValue: string);
@@ -24,6 +25,18 @@ var
   Settings: TSettings;
 
 implementation
+
+procedure TSettings.DelItem(const aSect, aKey: string);
+var
+  Ini: TIniFile;
+begin
+  Ini := TIniFile.Create(fFile);
+  try
+    Ini.DeleteKey(aSect, aKey);
+  finally
+    Ini.Free();
+  end;
+end;
 
 function TSettings.GetItem(const aSect, aKey: string; aDef: integer = 0): integer;
 var

@@ -8,11 +8,12 @@ unit uUserData;
 interface
 
 uses
-  Classes, SysUtils,
-  uSys;
+  Classes, SysUtils;
 
 type
   TUserData = class
+  private
+    function GetAppFile(const aFile: string): String;
   protected
     fFile: string;
   public
@@ -30,6 +31,17 @@ end;
 function TUserData.IsFile(): boolean;
 begin
   Result := FileExists(fFile);
+end;
+
+function TUserData.GetAppFile(const aFile: string): String;
+var
+  Dir: string;
+begin
+  Dir := GetAppConfigDir(False);
+  if (not DirectoryExists(Dir)) then
+     ForceDirectories(Dir);
+
+  Result := ConcatPaths([Dir, aFile]);
 end;
 
 end.

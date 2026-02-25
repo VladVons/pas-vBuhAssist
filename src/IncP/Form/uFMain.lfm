@@ -87,8 +87,7 @@ object FMain: TFMain
     object ManuItemHelp: TMenuItem
       Caption = 'Довідка'
       object MenuItemLicense: TMenuItem
-        Action = ActionLicense
-        Visible = False
+        Action = ActionUserAgreement
       end
       object MenuItemAboutApp: TMenuItem
         Action = ActionFAbout
@@ -106,9 +105,9 @@ object FMain: TFMain
       Caption = 'Звітне стикування'
       OnExecute = ActionFMedocCheckDocsExecute
     end
-    object ActionLicense: TAction
-      Caption = 'Ліцензія'
-      OnExecute = ActionLicenseExecute
+    object ActionUserAgreement: TAction
+      Caption = 'Ліцензійна угода'
+      OnExecute = ActionUserAgreementExecute
     end
     object ActionOptimizePDF: TAction
       Caption = 'Оптимізація PDF'
