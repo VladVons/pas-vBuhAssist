@@ -149,9 +149,9 @@ begin
   SQLQueryGrid.MacroByName('_PERDATE').Value := QuotedStr(Str);
 
   StrMacro := '';
-  Str := LowerCase(ComboBoxDoc.Items.Names[ComboBoxDoc.ItemIndex]);
+  Str := UpperCase(ComboBoxDoc.Items.Names[ComboBoxDoc.ItemIndex]);
   if (not Str.IsEmpty()) then
-    StrMacro := ' AND (LOWER(FORM.CHARCODE) = ' + QuotedStr(Str) + ')';
+    StrMacro := ' AND (UPPER(FORM.CHARCODE) = ' + QuotedStr(Str) + ')';
   SQLQueryGrid.MacroByName('_COND_CHARCODE').Value :=  StrMacro;
 
   StrMacro := '';
@@ -222,7 +222,7 @@ end;
 
 procedure TFMedocCheckDocs.ButtonExecClick(Sender: TObject);
 var
-  LastUpdate: string;
+  Msg, LastUpdate: string;
 begin
   // we are not so fast comparing to MEDOC
   //Sleep(1000 + Random(500));
@@ -232,6 +232,9 @@ begin
     MenuItemRefreshClick(Nil)
   else if (DaysBetween(Now(), StrToDateTime(LastUpdate)) > cLicenceRefrehDays) then
     MenuItemRefreshClick(Nil);
+
+  Msg := Format('%s %s, %s', [ComboBoxMonth.Text, ComboBoxYear.Text, ComboBoxDoc.Text]);
+  Log.Print('i', Msg);
 
   ConnectToDb();
   QueryOpen();

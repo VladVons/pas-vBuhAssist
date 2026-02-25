@@ -9,7 +9,7 @@
         <Filename Value="vBuhAssist.lpr"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <CursorPos Y="4"/>
+        <CursorPos X="26" Y="8"/>
         <UsageCount Value="27"/>
       </Unit>
       <Unit>
@@ -40,8 +40,8 @@
         <ComponentName Value="FMedocCheckDocs"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <TopLine Value="310"/>
-        <CursorPos X="28" Y="313"/>
+        <IsVisibleTab Value="True"/>
+        <CursorPos X="46"/>
         <UsageCount Value="27"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -73,11 +73,10 @@
         <ComponentName Value="DmCommon"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="95"/>
         <CursorPos Y="126"/>
         <UsageCount Value="27"/>
-        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uWinManager.pas"/>
@@ -222,12 +221,10 @@
       <Unit>
         <Filename Value="Inc\Unit\uComputerInfo.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="56"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="52"/>
         <CursorPos X="5" Y="64"/>
         <UsageCount Value="27"/>
-        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uUserData.pas"/>
@@ -296,8 +293,16 @@
         <CursorPos X="53" Y="141"/>
         <UsageCount Value="10"/>
       </Unit>
+      <Unit>
+        <Filename Value="IncP\Form\uFMedocCheckDocs_Comp.inc"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="29"/>
+        <CursorPos X="31" Y="55"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit>
     </Units>
-    <JumpHistory HistoryIndex="25">
+    <JumpHistory HistoryIndex="28">
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
         <Caret Line="232" TopLine="214"/>
@@ -395,12 +400,24 @@
         <Caret Line="319" Column="59" TopLine="310"/>
       </Position>
       <Position>
-        <Filename Value="IncP\DataModule\uDmCommon.pas"/>
-        <Caret Line="30" Column="24" TopLine="14"/>
+        <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
+        <Caret Line="295" TopLine="274"/>
       </Position>
       <Position>
-        <Filename Value="IncP\DataModule\uDmCommon.pas"/>
-        <Caret Line="115" TopLine="84"/>
+        <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
+        <Caret Line="230" Column="25" TopLine="223"/>
+      </Position>
+      <Position>
+        <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
+        <Caret Line="99" Column="22" TopLine="68"/>
+      </Position>
+      <Position>
+        <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
+        <Caret Line="78" TopLine="78"/>
+      </Position>
+      <Position>
+        <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
+        <Caret Line="90" TopLine="75"/>
       </Position>
     </JumpHistory>
     <RunParams>

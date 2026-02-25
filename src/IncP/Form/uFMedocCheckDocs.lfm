@@ -297,6 +297,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       '        AND (CARD.IDPARENT IS NULL)'
       '        AND (CARD.FORM > 0)'
       '        AND (CARD.INTRASH = 0)'
+      '        AND (FORM.CHARCODE NOT LIKE ''F130000%'') AND (FORM.CHARCODE NOT LIKE ''J130000%'')'
       '        %_COND_CHARCODE'
       ') T2'
       '    ON T2.IDORG = ORG.CODE'
