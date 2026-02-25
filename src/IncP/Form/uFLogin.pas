@@ -16,10 +16,10 @@ type
   { TFLogin }
 
   TFLogin = class(TForm)
-    Button1: TButton;
+    ButtonOk: TButton;
     EditUser: TLabeledEdit;
     EditPassword: TLabeledEdit;
-    procedure Button1Click(Sender: TObject);
+    procedure ButtonOkClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
   public
@@ -36,7 +36,7 @@ implementation
 
 { TFLogin }
 
-procedure TFLogin.Button1Click(Sender: TObject);
+procedure TFLogin.ButtonOkClick(Sender: TObject);
 begin
   if (EditUser.Enabled) and (Trim(EditUser.Text) = '') then
     EditUser.SetFocus()
@@ -59,7 +59,7 @@ end;
 
 procedure TFLogin.FormCreate(Sender: TObject);
 begin
-  Button1.Default := True;
+  ButtonOk.Default := True;
 end;
 
 end.

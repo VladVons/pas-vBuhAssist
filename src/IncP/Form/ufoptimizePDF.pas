@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  uFBase, uGhostScript, uLog, uSettings, uSys, uVarUtil, uFormState;
+  uFBase, uGhostScript, uLog, uSettings, uSys, uVarUtil, uStateStore;
 
 type
 
@@ -110,7 +110,7 @@ begin
 
   if (SelectDirectoryDialog1.Execute()) then
   begin
-     Conf.KeyWrite(Name, aKey, SelectDirectoryDialog1.FileName);
+     Settings.SetItem(Name, aKey, SelectDirectoryDialog1.FileName);
      aLabeledEdit.Text := SelectDirectoryDialog1.FileName;
   end;
 end;
@@ -127,12 +127,12 @@ end;
 
 procedure TFOptimizePDF.FormCreate(Sender: TObject);
 begin
-  FormStateRec.Load(self);
+  StateStore.Load(self);
 end;
 
 procedure TFOptimizePDF.FormDestroy(Sender: TObject);
 begin
-  FormStateRec.Save(self);
+  StateStore.Save(self);
 end;
 
 

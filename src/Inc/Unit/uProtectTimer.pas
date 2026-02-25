@@ -17,9 +17,9 @@ type
     fTimer: TTimer;
     procedure OnTimer(Sender: TObject);
   public
-    constructor Create(const aFile: String);
+    constructor Create(const aFile: string);
     destructor Destroy(); override;
-    procedure TimerRunRnd(aMod: boolean; aInterval: Integer = 10000 );
+    procedure TimerRunRnd(aMod: boolean; aInterval: integer = 10000 );
   end;
 
 var
@@ -27,7 +27,7 @@ var
 
 implementation
 
-constructor TProtectTimer.Create(const aFile: String);
+constructor TProtectTimer.Create(const aFile: string);
 begin
   inherited;
 
@@ -42,7 +42,7 @@ begin
   inherited;
 end;
 
-procedure TProtectTimer.TimerRunRnd(aMod: boolean; aInterval: Integer = 10000 );
+procedure TProtectTimer.TimerRunRnd(aMod: boolean; aInterval: integer = 10000 );
 begin
   fTimer.Enabled := aMod;
   fTimer.Interval := aInterval + Random(aInterval);

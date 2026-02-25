@@ -16,13 +16,13 @@ uses
   Interfaces, // this includes the LCL widgetset
   Forms, uFMain, uFAbout, uFMedocCheckDocs, uWinManager, uDmCommon, uWinReg,
   uLicence, uFLicense, uSys, uGhostScript, uFOptimizePDF, uSettings, uVarUtil,
-  uLog, uConst, uFLogin, uFMessageShow, uExceptionHandler, uType, uCrypt,
-  uFormState, uMedoc, uFSettings, uQuery, uFBase, uHttp, uProtectTimer, 
-uComputerInfo;
+  uLog, uConst, uFLogin, uFMessage, uExceptionHandler, uType, uCrypt,
+  uMedoc, uFSettings, uQuery, uFBase, uHttp, uProtectTimer, 
+  uComputerInfo, uUserData, uStateStore;
 
 {$R *.res}
 begin
-  AppException := TAppException.Create();
+  AppException := TAppException.Create('app.err');
   Application.OnException := @AppException.Handler;
 
   RequireDerivedFormResource:=True;
@@ -35,8 +35,8 @@ begin
   OneInstance.Check();
 
   Application.Initialize();
-  Application.CreateForm(TFMain, FMain);
   Application.CreateForm(TDmCommon, DmCommon);
+  Application.CreateForm(TFMain, FMain);
   Application.Run();
 end.
 

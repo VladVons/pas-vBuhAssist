@@ -10,8 +10,8 @@ interface
 uses
   Classes, SysUtils, StrUtils, XMLRead, DOM, LConvEncoding;
 
-function GetHzXml(const aXML: String): String;
-function GetHzStr(const aStr: String): String;
+function GetHzXml(const aXML: string): string;
+function GetHzStr(const aStr: string): string;
 
 implementation
 
@@ -27,9 +27,9 @@ begin
       Result := '';
 end;
 
-function GetHzStr(const aStr: String): String;
+function GetHzStr(const aStr: string): string;
 var
-  HZ, HZN, HZU: String;
+  HZ, HZN, HZU: string;
   Arr: TStringArray;
 begin
   Arr := aStr.Split('-');
@@ -44,7 +44,7 @@ var
   Doc: TXMLDocument;
   NodeList: TDOMNodeList;
   RowNode, ValueNode: TDOMNode;
-  i: Integer;
+  i: integer;
   NameAttr: string;
 begin
   aHZ := '';  aHZN := ''; aHZU := '';
@@ -79,9 +79,9 @@ begin
   end;
 end;
 
-function GetHzXml(const aXML: String): String;
+function GetHzXml(const aXML: string): string;
 var
-   StrXML, HZ, HZN, HZU: String;
+   StrXML, HZ, HZN, HZU: string;
 begin
   StrXML := CP1251ToUTF8(aXML);
   StrXML := StringReplace(StrXML, 'encoding="windows-1251"', 'encoding="utf-8"', [rfIgnoreCase]);

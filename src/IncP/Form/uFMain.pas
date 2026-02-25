@@ -10,8 +10,8 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList, Windows, ExtCtrls,
   ComCtrls, StdCtrls, fpjson,
-  uFAbout, uFMedocCheckDocs, uFOptimizePDF, uFSettings, uFLogin,
-  uWinManager, uLicence, uLog, uSettings, uFormState, uSys, uConst, uProtectTimer;
+  uFAbout, uFMedocCheckDocs, uFOptimizePDF, uFSettings, uFLogin, uFMessage, uDmCommon,
+  uWinManager, uLicence, uLog, uSettings, uStateStore, uSys, uConst, uProtectTimer;
 
 type
   { TFMain }
@@ -113,16 +113,32 @@ end;
 procedure TFMain.FormCreate(Sender: TObject);
 var
   i: integer;
-  Passw: String;
+  Passw: string;
   Forms: array of TFormClass;
+  //SL: TStringList;
 begin
-  Log := TLog.Create(MemoInfo1);
+  Log := TLog.Create('app.log', MemoInfo1);
   Log.Print('i', 'Початок');
 
-  Conf := TConf.Create();
-  FormStateRec := TFormStateRec.Create();
+  Settings := TSettings.Create('app.ini');
+  if (Settings.GetItem('UserAgreement', 'Accepted', '').IsEmpty()) then
+  begin
+    FMessage := TFMessage.Create(nil);
+    FMessage.Caption := 'Ліцензійна угода';
+    FMessage.Confirm := True;
+    FMessage.Memo1.Lines.Assign(DmCommon.TextStoreLicence.Lines);
+    Log.Print('i', FMessage.Caption);
+    if (FMessage.ShowModal() <> mrOk) then
+      Halt();
 
-  Licence := TLicence.Create();
+    Settings.SetItem('UserAgreement', 'Accepted', DateTimeToStr(Now()));
+    Log.Print('i', 'Ліцензійна угода прийнята');
+    FreeAndNil(FMessage);
+  end;
+
+  StateStore := TStateStore.Create('app_state.ini');
+
+  Licence := TLicence.Create('app.lic');
   Licence.LoadFromFile();
 
   OneInstance.Register(Handle);
@@ -142,7 +158,7 @@ begin
 
   WinManager.SetActivePage(0);
 
-  Passw := FormStateRec.GetItem('FSettings', 'LabeledEditPassword_Text', '');
+  Passw := StateStore.GetItem('FSettings', 'LabeledEditPassword_Text', '');
   if (not Passw.IsEmpty()) then
   begin
     FLogin := TFLogin.Create(nil);

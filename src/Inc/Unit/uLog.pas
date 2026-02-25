@@ -9,17 +9,16 @@ interface
 
 uses
   Classes, StdCtrls, SysUtils,
-  uSys;
+  uUserData, uSys;
 
 type
-  TLog = class
+  TLog = class(TUserData)
   protected
-    fFileName: string;
     fMemo: TMemo;
     procedure ToFile(const aMsg: string);
   public
-    constructor Create(aMemo: TMemo);
-    procedure Print(aType: Char; const aMsg: string);
+    constructor Create(const aFile: string; aMemo: TMemo);
+    procedure Print(aType: char; const aMsg: string);
   end;
 
 var
@@ -27,20 +26,20 @@ var
 
 implementation
 
-constructor TLog.Create(aMemo: TMemo);
+constructor TLog.Create(const aFile: string; aMemo: TMemo);
 begin
+  inherited Create(aFile);
   fMemo := aMemo;
-  fFileName := GetAppFile('app.log');
 end;
 
 procedure TLog.ToFile(const aMsg: string);
 begin
-  FileAppendText(fFileName, aMsg);
+  FileAppendText(fFile, aMsg);
 end;
 
-procedure TLog.Print(aType: Char; const aMsg: String);
+procedure TLog.Print(aType: char; const aMsg: string);
 var
-  Msg: String;
+  Msg: string;
 begin
   Msg := FormatDateTime('yy-mm-dd hh:nn:ss', Now()) + ', ' + aType + ', ' + aMsg;
   fMemo.Lines.Add(Msg);

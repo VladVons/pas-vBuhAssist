@@ -16,9 +16,9 @@ function RegFindMedocInfo(): TJSONArray;
 implementation
 
 
-function RegGetMedocInfo(aKey: HKEY; aJArray: TJSONArray): Integer;
+function RegGetMedocInfo(aKey: HKEY; aJArray: TJSONArray): integer;
 var
-  i: Integer;
+  i: integer;
   StrDB: string;
   Obj: TJSONObject;
   Reg: TRegistry;

@@ -14,13 +14,13 @@ function AddDllDirectory(aDir: PWideChar): THandle; stdcall; external 'kernel32.
 function SetDllDirectoryW(lpPathName: PWideChar): BOOL; stdcall; external 'kernel32.dll';
 function SetDefaultDllDirectories(aDirFlags: DWORD): BOOL; stdcall; external 'kernel32.dll';
 
-function ExecProcess(const aFile: String; aParam: TStrings = Nil): TProcess;
-function GetMonthNameUa(aMonthNum: Integer): string;
-function GetAppProgramData(): String;
-function GetAppName(): String;
+function ExecProcess(const aFile: string; aParam: TStrings = Nil): TProcess;
+function GetMonthNameUa(aMonthNum: integer): string;
+function GetAppProgramData(): string;
+function GetAppName(): string;
 function GetDirFiles(const aDir, aMask: string): TStringList;
-function GetAppFile(const aFile: String): String;
-procedure AddDirDll(const aPath: String);
+function GetAppFile(const aFile: string): string;
+procedure AddDirDll(const aPath: string);
 function FileGetSize(const aFileName: string): Int64;
 function FileGetModDate(const aFile: string): TDateTime;
 procedure FileAppendText(const aFile, aMsg: string);
@@ -31,9 +31,9 @@ function GetAppVer(): string;
 
 implementation
 
-function ExecProcess(const aFile: String; aParam: TStrings = Nil): TProcess;
+function ExecProcess(const aFile: string; aParam: TStrings = Nil): TProcess;
 var
-  Dir: String;
+  Dir: string;
 begin
   if (not FileExists(aFile)) then
     raise Exception.Create('Не знайдено ' + aFile);
@@ -50,7 +50,7 @@ begin
   Result.Execute();
 end;
 
-procedure AddDirDll(const aPath: String);
+procedure AddDirDll(const aPath: string);
 var
   ws: WideString;
 begin
@@ -91,7 +91,7 @@ var
   SR: TSearchRec;
   FilePath: string;
   Masks: TStringList;
-  I: Integer;
+  I: integer;
 begin
   Result := TStringList.Create();
 
@@ -143,7 +143,7 @@ begin
     Size := FS.Size;
     if (Size > 0) then
     begin
-      SetLength(Result, Size div SizeOf(Char));
+      SetLength(Result, Size div SizeOf(char));
       FS.ReadBuffer(Pointer(Result)^, Size);
     end;
   finally
@@ -168,20 +168,20 @@ begin
   end;
 end;
 
-function GetAppName(): String;
+function GetAppName(): string;
 begin
   Result := ChangeFileExt(ExtractFileName(ParamStr(0)), '');
 end;
 
-function GetAppProgramData(): String;
+function GetAppProgramData(): string;
 begin
   Result := GetEnvironmentVariable('ProgramData') + PathDelim + GetAppName();
 end;
 
 
-function GetAppFile(const aFile: String): String;
+function GetAppFile(const aFile: string): String;
 var
-  DirApp: String;
+  DirApp: string;
 begin
   DirApp := GetAppConfigDir(False);
   if (not DirectoryExists(DirApp)) then
@@ -209,7 +209,7 @@ begin
   end;
 end;
 
-function GetMonthNameUa(aMonthNum: Integer): string;
+function GetMonthNameUa(aMonthNum: integer): string;
 const
   Months: array[1..12] of string = (
     'Січень','Лютий','Березень','Квітень', 'Травень','Червень',
@@ -221,8 +221,6 @@ begin
 
   Result := Months[aMonthNum];
 end;
-
-
 
 initialization
   //SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);

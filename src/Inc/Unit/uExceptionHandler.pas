@@ -11,16 +11,14 @@ interface
 
 uses
   Classes, SysUtils, Forms,
-  uSys;
+  uUserData, uSys;
 
  type
-  TAppException = class
+  TAppException = class(TUserData)
    private
-     fFileLog: String;
-     fFlagHandler: Boolean;
-     function GetCallStack(aE: Exception): String;
+     fFlagHandler: boolean;
+     function GetCallStack(aE: Exception): string;
    public
-     constructor Create();
      procedure Handler(Sender: TObject; E: Exception);
    end;
 
@@ -29,16 +27,10 @@ var
 
 implementation
 
-constructor TAppException.Create();
-begin
-  fFlagHandler := False;
-  fFileLog := GetAppFile('app.err');
-end;
-
-function TAppException.GetCallStack(aE: Exception): String;
+function TAppException.GetCallStack(aE: Exception): string;
 var
-  I: Integer;
-  Str: String;
+  I: integer;
+  Str: string;
   Frames: PPointer;
 begin
   Result := '';
@@ -57,7 +49,7 @@ end;
 
 procedure TAppException.Handler(Sender: TObject; E: Exception);
 var
-  Msg, Stack: String;
+  Msg, Stack: string;
 begin
   if (not fFlagHandler) then
   begin
@@ -70,7 +62,7 @@ begin
     Msg := Msg + FormatDateTime('yyyy-mm-dd hh:nn:ss', Now()) + LineEnding;
     Stack := GetCallStack(E);
     Msg := Msg + Stack + LineEnding;
-    FileAppendText(fFileLog, Msg);
+    FileAppendText(fFile, Msg);
 
     fFlagHandler := False;
   end;

@@ -36,7 +36,7 @@ end;
 function TWMI.GetValue(const WmiClass, WmiField: string): string;
 var
   Locator, Services, ObjSet, Obj: Variant;
-  Query: String;
+  Query: string;
 begin
   Result := '';
 
@@ -61,20 +61,16 @@ begin
   Result.Values['Memory'] := FormatFloat('#,##0 MB', StrToInt64Def(GetValue('Win32_ComputerSystem', 'TotalPhysicalMemory'),0)/1024/1024);
   Result.Values['DiskDrive'] := GetValue('Win32_DiskDrive', 'Model') + ' | '+
                                 FormatFloat('#,##0 GB', StrToInt64Def(GetValue('Win32_DiskDrive', 'Size'),0)/1024/1024/1024);
-  Result.Values['Video'] := GetValue('Win32_VideoController', 'Name');
+  //Result.Values['Video'] := GetValue('Win32_VideoController', 'Name');
   Result.Values['OS'] := GetValue('Win32_OperatingSystem', 'Caption') + ' | ' +
                          GetValue('Win32_OperatingSystem', 'Version') + ' | ' +
                          Copy(GetValue('Win32_OperatingSystem', 'InstallDate'), 1, 8);
-  Result.Values['Motherboard'] := GetValue('Win32_ComputerSystemProduct', 'Vendor') + ' | ' +
-                                  GetValue('Win32_ComputerSystemProduct', 'Name') + ' | ' +
-                                  GetValue('Win32_ComputerSystem', 'Model');
   Result.Values['UUID'] := GetValue('Win32_ComputerSystemProduct', 'UUID');
-  Result.Values['System Manufacturer'] := GetValue('Win32_ComputerSystem', 'Manufacturer');
 end;
 
 function TWMI.GetInfoAsJson():TJSONObject;
 var
-  i: Integer;
+  i: integer;
   SL: TStringList;
 begin
   SL := GetInfo();

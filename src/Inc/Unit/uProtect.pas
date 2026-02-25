@@ -16,23 +16,23 @@ const
 
 type
   TTail = packed record
-    Sign: Integer;
+    Sign: integer;
     BlockLen: Cardinal;
     CheckSum: Cardinal;
     ModDate: TDateTime;
-    Pretend: array[0..32] of Char;
+    Pretend: array[0..32] of char;
   end;
 
   TProtect = class
   private
-    fFile: String;
+    fFile: string;
   protected
     fTail: TTail;
-    fProtected: Boolean;
+    fProtected: boolean;
   public
-    constructor Create(const aFile: String);
-    function CompareRnd(): Boolean;
-    function CalculateFileTail(aLen: Integer): TTail;
+    constructor Create(const aFile: string);
+    function CompareRnd(): boolean;
+    function CalculateFileTail(aLen: integer): TTail;
     function ReadFileTail(): TTail;
     procedure WriteFileTail(aTail: TTail);
     procedure ReadCRC();
@@ -43,20 +43,20 @@ var
 
 implementation
 
-constructor TProtect.Create(const aFile: String);
+constructor TProtect.Create(const aFile: string);
 begin
   fFile := aFile;
   fProtected := True;
   FillChar(fTail, SizeOf(TTail), 0);
 end;
 
-function TProtect.CalculateFileTail(aLen: Integer): TTail;
+function TProtect.CalculateFileTail(aLen: integer): TTail;
 const
   BUF_SIZE = 64 * 1024;
 var
   FS: TFileStream;
-  Buffer: array[0..BUF_SIZE - 1] of Byte;
-  ToRead, Readed: Integer;
+  Buffer: array[0..BUF_SIZE - 1] of byte;
+  ToRead, Readed: integer;
   Remaining: Int64;
 begin
   FillChar(Result, SizeOf(TTail), 0);
@@ -79,7 +79,7 @@ begin
     begin
       ToRead := BUF_SIZE;
       if Remaining < ToRead then
-        ToRead := Integer(Remaining);
+        ToRead := integer(Remaining);
 
       Readed := FS.Read(Buffer, ToRead);
       if Readed <= 0 then
@@ -138,7 +138,7 @@ begin
   end;
 end;
 
-function TProtect.CompareRnd(): Boolean;
+function TProtect.CompareRnd(): boolean;
 begin
   if (fProtected) then
     Result := True

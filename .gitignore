@@ -8,6 +8,6 @@
 *.dll
 *.res
 
-src/lib/
-src/_lib*/
+lib/
+_lib*/
 backup

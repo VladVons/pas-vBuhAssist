@@ -14,12 +14,12 @@ uses
 const
   cGS_Dir = 'addons\gs';
 
-function GS_OptimizePdf(const aFileIn, aFileOut: String): Integer;
-function GS_JpgToPdf(const aFileIn, aFileOut: String): Integer;
+function GS_OptimizePdf(const aFileIn, aFileOut: string): integer;
+function GS_JpgToPdf(const aFileIn, aFileOut: string): integer;
 
 implementation
 
-function GS_Exec(aParam: TStrings): Integer;
+function GS_Exec(aParam: TStrings): integer;
 var
   Process: TProcess;
   FilePath, Dir: string;
@@ -42,7 +42,7 @@ begin
   end;
 end;
 
-function GS_OptimizePDF(const aFileIn, aFileOut: String): Integer;
+function GS_OptimizePDF(const aFileIn, aFileOut: string): integer;
 var
   Params: TStringList;
 begin
@@ -62,7 +62,7 @@ begin
   end;
 end;
 
-function GS_JpgToPdf(const aFileIn, aFileOut: String): Integer;
+function GS_JpgToPdf(const aFileIn, aFileOut: string): integer;
 var
   Params: TStringList;
   FilePath, FilePathUnix: string;

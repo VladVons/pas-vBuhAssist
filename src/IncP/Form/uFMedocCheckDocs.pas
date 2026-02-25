@@ -9,18 +9,16 @@ interface
 
 uses
   Classes, SysUtils, StrUtils, DateUtils, SQLDB, Forms, Graphics, StdCtrls,
-  DBGrids, Grids, ExtCtrls, Buttons, LR_Class, LR_DBSet, LR_PGrid, LR_Desgn, DB,
-  fpjson, Math,
-  uFBase, uSys, uLog, uLicence, uWinReg, uFormState, uQuery, uMedoc, uDmCommon,
-  uProtectTimer, uConst;
+  DBGrids, Grids, ExtCtrls, Buttons, Menus, LR_Class, LR_DBSet, LR_PGrid,
+  LR_Desgn, DB, fpjson, Math, uFBase, uSys, uLog, uLicence, uWinReg, uSettings,
+  uStateStore, uQuery, uMedoc, uDmCommon, uProtectTimer, uConst;
 
 type
 
   { TFMedocCheckDocs }
   TFMedocCheckDocs = class(TFBase)
     ButtonExec: TButton;
-    ButtonGetLicence: TButton;
-    ButtonOrderLicence: TButton;
+    ButtonActivation: TButton;
     ButtonPrint: TButton;
     ButtonRunMedoc: TButton;
     ComboBoxDoc: TComboBox;
@@ -37,7 +35,10 @@ type
     Label2: TLabel;
     Label3: TLabel;
     Label5: TLabel;
+    MenuItemOrder: TMenuItem;
+    MenuItemRefresh: TMenuItem;
     Panel1: TPanel;
+    PopupMenuActivation: TPopupMenu;
     SQLQueryGrid: TSQLQuery;
     SQLQueryGridCARDSENDSTT_NAME: TStringField;
     SQLQueryGridCHARCODE: TStringField;
@@ -54,26 +55,27 @@ type
     SQLQueryGridXMLVALS: TBlobField;
     SQLQueryGridFJ: TStringField;
     procedure ButtonExecClick(Sender: TObject);
-    procedure ButtonGetLicenceClick(Sender: TObject);
-    procedure ButtonOrderLicenceClick(Sender: TObject);
+    procedure ButtonActivationClick(Sender: TObject);
     procedure ButtonPrintClick(Sender: TObject);
     procedure ButtonRunMedocClick(Sender: TObject);
     procedure ComboBoxPathChange(Sender: TObject);
     procedure ComboBoxYearDropDown(Sender: TObject);
-    procedure DbGridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure DbGridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: integer; Column: TColumn; State: TGridDrawState);
     procedure DbGridTitleClick(Column: TColumn);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure frReport1GetValue(const aParName: String; var aParValue: Variant);
+    procedure frReport1GetValue(const aParName: string; var aParValue: Variant);
+    procedure MenuItemOrderClick(Sender: TObject);
+    procedure MenuItemRefreshClick(Sender: TObject);
     procedure SQLQueryGridCalcFields(DataSet: TDataSet);
   private
     fSortField: string;
-    fSortAsc: Boolean;
+    fSortAsc: boolean;
     fJMedocApp: TJSONArray;
     fFirmCodesLicensed, fTablesMain, fDemoFields: TStringList;
     fColorYelow: TColor;
     procedure SetComboBoxToCurrentMonth(aComboBox: TComboBox);
-    procedure SetComboBoxToYear(aComboBox: TComboBox; aYear: Integer = 0);
+    procedure SetComboBoxToYear(aComboBox: TComboBox; aYear: integer = 0);
     procedure SetComboBoxDoc();
     procedure QueryOpen();
     procedure SetEmbededPath(aIdx: integer);
@@ -106,7 +108,7 @@ end;
 
 function TFMedocCheckDocs.GetCurPathObj(): TJSONObject;
 var
-  Idx: Integer;
+  Idx: integer;
 begin
   if (ComboBoxPath.Items.Count > 0) then
   begin
@@ -118,7 +120,7 @@ end;
 procedure TFMedocCheckDocs.ConnectToDB();
 var
   JObj: TJSONObject;
-  DbName: String;
+  DbName: string;
 begin
   JObj := GetCurPathObj();
   DbName := JObj.Get('db', '');
@@ -131,8 +133,8 @@ end;
 
 procedure TFMedocCheckDocs.QueryOpen();
 var
-  Month, Year: Integer;
-  Str, StrDb, StrMacro: String;
+  Month, Year: integer;
+  Str, StrDb, StrMacro: string;
 begin
   SQLQueryGrid.Close();
   SQLQueryGrid.DataBase := DmCommon.IBConnection;
@@ -141,8 +143,8 @@ begin
   DbGrid.Columns.Clear();
   DbGrid.Visible := True;
 
-  Month := Integer(ComboBoxMonth.Items.Objects[ComboBoxMonth.ItemIndex]);
-  Year := Integer(ComboBoxYear.Items.Objects[ComboBoxYear.ItemIndex]);
+  Month := integer(ComboBoxMonth.Items.Objects[ComboBoxMonth.ItemIndex]);
+  Year := integer(ComboBoxYear.Items.Objects[ComboBoxYear.ItemIndex]);
   Str := FormatDateTime('yyyy-mm-dd', EncodeDate(Year, Month, 1));
   SQLQueryGrid.MacroByName('_PERDATE').Value := QuotedStr(Str);
 
@@ -190,10 +192,10 @@ end;
 
 procedure TFMedocCheckDocs.SQLQueryGridCalcFields(DataSet: TDataSet);
 var
-  i, Month: Integer;
+  i, Month: integer;
   Field, FieldXML, FieldFJ, FieldHZ: TField;
-  Code: String;
-  Protected: Boolean;
+  Code: string;
+  Protected: boolean;
 begin
   FieldXML := DataSet.FieldByName('XMLVALS');
   FieldFJ := DataSet.FieldByName('FJ');
@@ -219,12 +221,28 @@ begin
 end;
 
 procedure TFMedocCheckDocs.ButtonExecClick(Sender: TObject);
+var
+  LastUpdate: string;
 begin
   // we are not so fast comparing to MEDOC
   //Sleep(1000 + Random(500));
 
+  LastUpdate := Settings.GetItem('Licence', 'LastUpdate', '');
+  if (LastUpdate.IsEmpty()) then
+    MenuItemRefreshClick(Nil)
+  else if (DaysBetween(Now(), StrToDateTime(LastUpdate)) > cLicenceRefrehDays) then
+    MenuItemRefreshClick(Nil);
+
   ConnectToDb();
   QueryOpen();
+end;
+
+procedure TFMedocCheckDocs.ButtonActivationClick(Sender: TObject);
+var
+  P: TPoint;
+begin
+  P := ButtonActivation.ClientToScreen(Point(0, ButtonActivation.Height));
+  PopupMenuActivation.PopUp(P.X, P.Y);
 end;
 
 procedure TFMedocCheckDocs.ComboBoxPathChange(Sender: TObject);
@@ -234,16 +252,16 @@ end;
 
 procedure TFMedocCheckDocs.ComboBoxYearDropDown(Sender: TObject);
 var
-  Val: Integer;
+  Val: integer;
 begin
-  Val := FormStateRec.GetItem('FSettings', 'SpinEditBeginYear_Value', 0);
+  Val := StateStore.GetItem('FSettings', 'SpinEditBeginYear_Value', 0);
   SetComboBoxToYear(ComboBoxYear, Val);
 end;
 
-procedure TFMedocCheckDocs.DbGridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+procedure TFMedocCheckDocs.DbGridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: integer; Column: TColumn; State: TGridDrawState);
 var
-  //Code: String;
-  DisplayText: String;
+  //Code: string;
+  DisplayText: string;
 begin
   //Code := DbGrid.DataSource.DataSet.FieldByName('EDRPOU').AsString;
 
@@ -283,27 +301,31 @@ begin
     DbGrid.Invalidate();
 end;
 
-procedure TFMedocCheckDocs.ButtonGetLicenceClick(Sender: TObject);
-begin
-  ConnectToDb();
-  fFirmCodesLicensed := DmCommon.Licence_GetFromHttp();
-end;
-
-procedure TFMedocCheckDocs.ButtonOrderLicenceClick(Sender: TObject);
-begin
-  ConnectToDb();
-  DmCommon.Licence_OrderToHttp(Name);
-end;
-
-procedure TFMedocCheckDocs.frReport1GetValue(const aParName: String; var aParValue: Variant);
+procedure TFMedocCheckDocs.frReport1GetValue(const aParName: string; var aParValue: Variant);
 begin
   if (aParName = 'AppName') then
     aParValue := cAppName;
 end;
 
+procedure TFMedocCheckDocs.MenuItemOrderClick(Sender: TObject);
+begin
+  ConnectToDb();
+  DmCommon.Licence_OrderToHttp(Name);
+end;
+
+procedure TFMedocCheckDocs.MenuItemRefreshClick(Sender: TObject);
+begin
+  ConnectToDb();
+
+  Log.Print('i', 'Завантаження ліцензій ...');
+  fFirmCodesLicensed := DmCommon.Licence_GetFromHttp();
+  Log.Print('i', 'Знайдено ліцензії для кодів ' + fFirmCodesLicensed.DelimitedText);
+  Settings.SetItem('Licence', 'LastUpdate', DateTimeToStr(Now()));
+end;
+
 procedure TFMedocCheckDocs.ButtonPrintClick(Sender: TObject);
 var
-  PrevVisible: Boolean;
+  PrevVisible: boolean;
 begin
   if (SQLQueryGrid.RecordCount = 0) then
   begin
@@ -341,7 +363,7 @@ end;
 procedure TFMedocCheckDocs.FormCreate(Sender: TObject);
 var
   i: integer;
-  Str: String;
+  Str: string;
   JObj: TJSONObject;
 begin
   fJMedocApp := Nil;
@@ -396,16 +418,16 @@ begin
         FieldName := SQLQueryGrid.Fields[i].DisplayLabel;
 
   Panel1.Font.Size := 10;
-  FormStateRec.Load(self);
+  StateStore.Load(self);
 
   fColorYelow := RGBToColor(255, 255, 153);
-  FormStateRec.SetCtrlColor(self, fColorYelow, 'edit');
-  //FormStateRec.SetCtrlColor(self, clWhite, 'button');
+  StateStore.SetCtrlColor(self, fColorYelow, 'edit');
+  //StateStore.SetCtrlColor(self, clWhite, 'button');
 end;
 
 procedure TFMedocCheckDocs.FormDestroy(Sender: TObject);
 begin
-  FormStateRec.Save(self);
+  StateStore.Save(self);
 
   FreeAndNil(fJMedocApp);
   FreeAndNil(fFirmCodesLicensed);

@@ -1,11 +1,11 @@
 inherited FMedocCheckDocs: TFMedocCheckDocs
   Left = 342
   Height = 384
-  Width = 636
+  Width = 589
   BorderStyle = bsNone
   Caption = 'Звітне стикування'
   ClientHeight = 384
-  ClientWidth = 636
+  ClientWidth = 589
   Font.CharSet = RUSSIAN_CHARSET
   Font.Name = 'Verdana'
   Font.Pitch = fpVariable
@@ -13,15 +13,15 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   inherited PanelTitle: TPanel
-    Width = 636
-    ClientWidth = 636
+    Width = 589
+    ClientWidth = 589
     TabOrder = 1
   end
   object DbGrid: TDBGrid[1]
     Left = 0
     Height = 208
     Top = 176
-    Width = 636
+    Width = 589
     Align = alClient
     Color = clWindow
     Columns = <>
@@ -47,10 +47,10 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     Left = 0
     Height = 144
     Top = 32
-    Width = 636
+    Width = 589
     Align = alTop
     ClientHeight = 144
-    ClientWidth = 636
+    ClientWidth = 589
     TabOrder = 2
     object ComboBoxPath: TComboBox
       Left = 128
@@ -69,7 +69,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       DropDownCount = 20
       ItemHeight = 14
       ReadOnly = True
-      TabOrder = 6
+      TabOrder = 5
       OnDropDown = ComboBoxYearDropDown
     end
     object ComboBoxMonth: TComboBox
@@ -80,7 +80,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       DropDownCount = 20
       ItemHeight = 14
       ReadOnly = True
-      TabOrder = 7
+      TabOrder = 6
     end
     object ComboBoxDoc: TComboBox
       Left = 128
@@ -90,7 +90,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       DropDownCount = 20
       ItemHeight = 14
       ReadOnly = True
-      TabOrder = 8
+      TabOrder = 7
     end
     object ComboBoxFirm: TComboBox
       Left = 128
@@ -100,7 +100,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       DropDownCount = 20
       ItemHeight = 14
       ReadOnly = True
-      TabOrder = 5
+      TabOrder = 4
     end
     object Label1: TLabel
       Left = 15
@@ -136,13 +136,13 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Left = 128
       Height = 25
       Top = 112
-      Width = 168
+      Width = 184
       Caption = 'Знайти за параметрами'
       TabOrder = 1
       OnClick = ButtonExecClick
     end
     object ButtonPrint: TButton
-      Left = 304
+      Left = 320
       Height = 25
       Top = 112
       Width = 51
@@ -150,31 +150,22 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       TabOrder = 2
       OnClick = ButtonPrintClick
     end
-    object ButtonOrderLicence: TButton
-      Left = 472
+    object ButtonActivation: TButton
+      Left = 496
       Height = 25
       Top = 112
-      Width = 67
-      Caption = 'Замовити'
+      Width = 79
+      Caption = 'Активація'
       TabOrder = 3
-      OnClick = ButtonOrderLicenceClick
-    end
-    object ButtonGetLicence: TButton
-      Left = 544
-      Height = 25
-      Top = 112
-      Width = 75
-      Caption = 'Оновити'
-      TabOrder = 4
-      OnClick = ButtonGetLicenceClick
+      OnClick = ButtonActivationClick
     end
     object ButtonRunMedoc: TButton
-      Left = 360
+      Left = 376
       Height = 25
       Top = 112
       Width = 80
       Caption = 'Запустити'
-      TabOrder = 9
+      TabOrder = 8
       OnClick = ButtonRunMedocClick
     end
   end
@@ -557,5 +548,17 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     DataSet = SQLQueryGrid
     Left = 200
     Top = 232
+  end
+  object PopupMenuActivation: TPopupMenu[8]
+    Left = 512
+    Top = 192
+    object MenuItemRefresh: TMenuItem
+      Caption = 'Оновити'
+      OnClick = MenuItemRefreshClick
+    end
+    object MenuItemOrder: TMenuItem
+      Caption = 'Замовити'
+      OnClick = MenuItemOrderClick
+    end
   end
 end

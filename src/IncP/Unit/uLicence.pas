@@ -9,24 +9,23 @@ interface
 
 uses
   Classes, SysUtils, fpjson,
-  uHttp, uCryptAES, uSys, uConst, uLog, uComputerInfo;
+  uUserData, uHttp, uCryptAES, uSys, uConst, uLog, uComputerInfo;
 
 type
-  TLicence = class
+  TLicence = class(TUserData)
   private
-    fFileName: String;
-    fCryptKey: String;
+    fCryptKey: string;
     fJObjLic: TJSONObject;
     function GetFromHttp(aFirmCodes: TStrings): TJSONObject;
   public
-    LastErr: String;
-    constructor Create();
+    LastErr: string;
+    constructor Create(const aFile: string);
     destructor Destroy(); override;
     procedure HttpToFileEncrypt(aFirmCodes: TStrings);
     procedure LoadFromFile();
-    function GetFirmCodes(const aModule: String): TStringList;
-    function OrderFromHttp(aFirmCodes: TStrings; const aModule, aDealerName, aDealerPassw: String): boolean;
-    function IsFile(): Boolean;
+    function GetFirmCodes(const aModule: string): TStringList;
+    function OrderFromHttp(aFirmCodes: TStrings; const aModule, aDealerName, aDealerPassw: string): boolean;
+    function IsFile(): boolean;
   end;
 
 var
@@ -34,9 +33,10 @@ var
 
 implementation
 
-constructor TLicence.Create();
+constructor TLicence.Create(const aFile: string);
 begin
-  fFileName := GetAppFile('app.lic');
+  inherited Create(aFile);
+
   fCryptKey := 'Vlad1971';
   fJObjLic := Nil;
 end;
@@ -49,7 +49,7 @@ end;
 
 function TLicence.GetFromHttp(aFirmCodes: TStrings): TJSONObject;
 var
-  i: Integer;
+  i: integer;
   JReq: TJSONObject;
   JArrLic: TJSONArray;
 begin
@@ -57,6 +57,7 @@ begin
     JReq := TJSONObject.Create();
     JReq.Add('type', 'get_licences');
     JReq.Add('app', GetAppName());
+    JReq.Add('ver', GetAppVer());
 
     JArrLic := TJSONArray.Create();
     for i := 0 to aFirmCodes.Count - 1 do
@@ -73,9 +74,9 @@ begin
   end;
 end;
 
-function TLicence.OrderFromHttp(aFirmCodes: TStrings; const aModule, aDealerName, aDealerPassw: String): boolean;
+function TLicence.OrderFromHttp(aFirmCodes: TStrings; const aModule, aDealerName, aDealerPassw: string): boolean;
 var
-  i: Integer;
+  i: integer;
   JReq, JRes: TJSONObject;
   JArrLic: TJSONArray;
   WMI: TWMI;
@@ -84,7 +85,8 @@ begin
   JReq := TJSONObject.Create();
   try
     JReq.Add('type', 'order_licences');
-    JReq.Add('app', 'BuhAssist');
+    JReq.Add('app', GetAppName());
+    JReq.Add('ver', GetAppVer());
     JReq.Add('module', aModule);
     JReq.Add('user', aDealerName);
     JReq.Add('passw', aDealerPassw);
@@ -111,24 +113,24 @@ end;
 
 procedure TLicence.HttpToFileEncrypt(aFirmCodes: TStrings);
 var
-  Str, Encrypted: String;
+  Str, Encrypted: string;
 begin
   fJObjLic := GetFromHttp(aFirmCodes);
   if (Assigned(fJObjLic)) then
   begin
     Str := fJObjLic.AsJSON;
     Encrypted := StrEncrypt_AES(Str, fCryptKey);
-    StrToFile(Encrypted, fFileName);
+    StrToFile(Encrypted, fFile);
   end;
 end;
 
 procedure TLicence.LoadFromFile();
 var
-  Str, Decrypted: String;
+  Str, Decrypted: string;
 begin
   if (IsFile()) then
   begin
-    Str := StrFromFile(fFileName);
+    Str := StrFromFile(fFile);
     Decrypted := StrDecrypt_AES(Str, fCryptKey);
 
     FreeAndNil(fJObjLic);
@@ -140,15 +142,15 @@ begin
   end;
 end;
 
-function TLicence.IsFile(): Boolean;
+function TLicence.IsFile(): boolean;
 begin
-  Result := FileExists(fFileName);
+  Result := FileExists(fFile);
 end;
 
-function TLicence.GetFirmCodes(const aModule: String): TStringList;
+function TLicence.GetFirmCodes(const aModule: string): TStringList;
 var
-  i: Integer;
-  Code, Today, Till: String;
+  i: integer;
+  Code, Today, Till: string;
   JArr: TJSONArray;
   JObjItem: TJSONObject;
 begin

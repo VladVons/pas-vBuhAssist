@@ -19,7 +19,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="11"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="16"/>
+      <BuildNr Value="17"/>
       <StringTable ProductName="vBuhAssist"/>
     </VersionInfo>
     <BuildModes>
@@ -33,6 +33,9 @@
       <FormatVersion Value="2"/>
     </RunParams>
     <RequiredPackages>
+      <Item>
+        <PackageName Value="TextStore"/>
+      </Item>
       <Item>
         <PackageName Value="dcpcrypt"/>
       </Item>
@@ -142,9 +145,9 @@
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="Inc/Form/uFMessageShow.pas"/>
+        <Filename Value="Inc/Form/uFMessage.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="FMessageShow"/>
+        <ComponentName Value="FMessage"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
@@ -158,10 +161,6 @@
       </Unit>
       <Unit>
         <Filename Value="Inc/Unit/uCrypt.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="Inc/Unit/uFormState.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
@@ -200,6 +199,14 @@
       </Unit>
       <Unit>
         <Filename Value="Inc/Unit/uComputerInfo.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Inc/Unit/uUserData.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Inc/Unit/uStateStore.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
     </Units>

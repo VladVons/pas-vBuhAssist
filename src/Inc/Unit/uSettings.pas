@@ -9,47 +9,65 @@ interface
 
 uses
   SysUtils, IniFiles,
-  uSys;
+  uUserData;
 
 type
-  TConf = class
-  private
-    fFileName: string;
+  TSettings = class(TUserData)
   public
-    constructor Create();
-    function KeyRead(const aSect, aItem: string): string;
-    procedure KeyWrite(const aSect, aItem, aValue: string);
+    function GetItem(const aSect, aKey: string; aDef: string = ''): string;
+    function GetItem(const aSect, aKey: string; aDef: integer = 0): integer;
+    procedure SetItem(const aSect, aKey, aValue: string);
+    procedure SetItem(const aSect, aKey: string; aValue: integer);
   end;
 
 var
-  Conf: TConf;
+  Settings: TSettings;
 
 implementation
 
-constructor TConf.Create();
-begin
-  fFileName := GetAppFile('app.ini');
-end;
-
-function TConf.KeyRead(const aSect, aItem: string): string;
+function TSettings.GetItem(const aSect, aKey: string; aDef: integer = 0): integer;
 var
   Ini: TIniFile;
 begin
-  Ini := TIniFile.Create(fFileName);
+  Ini := TIniFile.Create(fFile);
   try
-    Result := Ini.ReadString(aSect, aItem, '');
+    Result := Ini.ReadInteger(aSect, aKey, aDef);
   finally
     Ini.Free();
   end;
 end;
 
-procedure TConf.KeyWrite(const aSect, aItem, aValue: string);
+function TSettings.GetItem(const aSect, aKey: string; aDef: string = ''): string;
 var
   Ini: TIniFile;
 begin
-  Ini := TIniFile.Create(fFileName);
+  Ini := TIniFile.Create(fFile);
   try
-    Ini.WriteString(aSect, aItem, aValue);
+    Result := Ini.ReadString(aSect, aKey, aDef);
+  finally
+    Ini.Free();
+  end;
+end;
+
+procedure TSettings.SetItem(const aSect, aKey, aValue: string);
+var
+  Ini: TIniFile;
+begin
+  Ini := TIniFile.Create(fFile);
+  try
+    Ini.WriteString(aSect, aKey, aValue);
+  finally
+    Ini.Free();
+  end;
+end;
+
+procedure TSettings.SetItem(const aSect, aKey: string; aValue: integer);
+var
+  Ini: TIniFile;
+begin
+  Ini := TIniFile.Create(fFile);
+  try
+    Ini.WriteInteger(aSect, aKey, aValue);
   finally
     Ini.Free();
   end;

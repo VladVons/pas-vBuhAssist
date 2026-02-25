@@ -10,7 +10,7 @@ interface
 uses
   Classes, SysUtils,DateUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls,
   StdCtrls, Spin,
-  uFBase, uFormState, uLog, uSys, uConst;
+  uFBase, uStateStore, uLog, uSys, uConst;
 
 type
 
@@ -44,13 +44,13 @@ implementation
 
 procedure TFSettings.ButtonOkClick(Sender: TObject);
 begin
-  FormStateRec.Save(self);
+  StateStore.Save(self);
   Log.Print('i', 'Збережено');
 end;
 
 procedure TFSettings.FormCreate(Sender: TObject);
 begin
-  FormStateRec.Load(self);
+  StateStore.Load(self);
 
   if (SpinEditBeginYear.Value = 0) then
     SpinEditBeginYear.Value := YearOf(IncYear(Date(), -cYearsBack));

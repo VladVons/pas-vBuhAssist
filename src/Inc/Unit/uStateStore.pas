@@ -1,7 +1,7 @@
 // Created: 2026.02.06
 // Author: Vladimir Vons <VladVons@gmail.com>
 
-unit uFormState;
+unit uStateStore;
 
 {$mode ObjFPC}{$H+}
 
@@ -9,37 +9,28 @@ interface
 
 uses
   Classes, SysUtils, IniFiles, StdCtrls, ExtCtrls, Controls, Spin, Graphics,
-  uSys;
+  uSettings, uSys;
 
 type
   TCtrlProc = procedure(aForm: TWinControl; aCtrl: TComponent; aIni: TIniFile) of object;
 
-  TFormStateRec = class
+  TStateStore = class(TSettings)
   private
-    fFileName: string;
     procedure Walk(aForm: TWinControl; aProc: TCtrlProc);
     procedure SaveProc(aForm: TWinControl; aCtrl: TComponent; aIni: TIniFile);
     procedure LoadProc(aForm: TWinControl; aCtrl: TComponent; aIni: TIniFile);
   public
-    constructor Create();
-    function GetItem(const aSect, aItem: String; aDef: String = ''): String;
-    function GetItem(const aSect, aItem: String; aDef: Integer = 0): Integer;
-    procedure SetCtrlColor(aForm: TWinControl; aColor: TColor; const aType: String);
+    procedure SetCtrlColor(aForm: TWinControl; aColor: TColor; const aType: string);
     procedure Load(aForm: TWinControl);
     procedure Save(aForm: TWinControl);
   end;
 
 var
-  FormStateRec: TFormStateRec;
+  StateStore: TStateStore = Nil;
 
 implementation
 
-constructor TFormStateRec.Create();
-begin
-  fFileName := GetAppFile('app_state.ini');
-end;
-
-procedure TFormStateRec.LoadProc(aForm: TWinControl; aCtrl: TComponent; aIni: TIniFile);
+procedure TStateStore.LoadProc(aForm: TWinControl; aCtrl: TComponent; aIni: TIniFile);
 var
   Idx: integer;
 begin
@@ -56,7 +47,7 @@ begin
      TSpinEdit(aCtrl).Value := aIni.ReadInteger(aForm.Name, aCtrl.Name + '_Value', 0);
 end;
 
-procedure TFormStateRec.SaveProc(aForm: TWinControl; aCtrl: TComponent; aIni: TIniFile);
+procedure TStateStore.SaveProc(aForm: TWinControl; aCtrl: TComponent; aIni: TIniFile);
 begin
   if (aCtrl is TComboBox) then
     aIni.WriteInteger(aForm.Name, aCtrl.Name + '_Index', TComboBox(aCtrl).ItemIndex)
@@ -68,37 +59,13 @@ begin
     aIni.WriteInteger(aForm.Name, aCtrl.Name + '_Value', TSpinEdit(aCtrl).Value);
 end;
 
-function TFormStateRec.GetItem(const aSect, aItem: String; aDef: String = ''): String;
+procedure TStateStore.Walk(aForm: TWinControl; aProc: TCtrlProc);
 var
-  Ini: TIniFile;
-begin
-  try
-    Ini := TIniFile.Create(fFileName);
-    Result := Ini.ReadString(aSect, aItem, aDef);
-  finally
-    Ini.Free();
-  end;
-end;
-
-function TFormStateRec.GetItem(const aSect, aItem: String; aDef: Integer = 0): Integer;
-var
-  Ini: TIniFile;
-begin
-  try
-    Ini := TIniFile.Create(fFileName);
-    Result := Ini.ReadInteger(aSect, aItem, aDef);
-  finally
-    Ini.Free();
-  end;
-end;
-
-procedure TFormStateRec.Walk(aForm: TWinControl; aProc: TCtrlProc);
-var
-  i: Integer;
+  i: integer;
   Ctrl: TComponent;
   Ini: TIniFile;
 begin
-  Ini := TIniFile.Create(fFileName);
+  Ini := TIniFile.Create(fFile);
   try
     for i := 0 to aForm.ComponentCount - 1 do
     begin
@@ -110,7 +77,7 @@ begin
   end;
 end;
 
-procedure TFormStateRec.SetCtrlColor(aForm: TWinControl; aColor: TColor; const aType: String);
+procedure TStateStore.SetCtrlColor(aForm: TWinControl; aColor: TColor; const aType: string);
   procedure AsEdit(aCtrl: TComponent);
   begin
     if (aCtrl is TComboBox) then
@@ -130,7 +97,7 @@ procedure TFormStateRec.SetCtrlColor(aForm: TWinControl; aColor: TColor; const a
   end;
 
 var
-  i: Integer;
+  i: integer;
   Ctrl: TComponent;
 begin
   for i := 0 to aForm.ComponentCount - 1 do
@@ -143,12 +110,12 @@ begin
   end;
 end;
 
-procedure TFormStateRec.Save(aForm: TWinControl);
+procedure TStateStore.Save(aForm: TWinControl);
 begin
   Walk(aForm, @SaveProc);
 end;
 
-procedure TFormStateRec.Load(aForm: TWinControl);
+procedure TStateStore.Load(aForm: TWinControl);
 begin
   Walk(aForm, @LoadProc);
 end;

@@ -1,7 +1,7 @@
 object FLogin: TFLogin
-  Left = 329
+  Left = 399
   Height = 125
-  Top = 250
+  Top = 310
   Width = 216
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
@@ -35,13 +35,13 @@ object FLogin: TFLogin
     PasswordChar = '*'
     TabOrder = 1
   end
-  object Button1: TButton
+  object ButtonOk: TButton
     Left = 72
     Height = 25
     Top = 88
     Width = 80
     Caption = 'OK'
     TabOrder = 2
-    OnClick = Button1Click
+    OnClick = ButtonOkClick
   end
 end

@@ -20,28 +20,28 @@ type
     TArrayType = array of T;
   private
     FData: TMatrixType;
-    function GetCount(): Integer;
-    function GetCells(aRow, aCol: Integer): T;
-    procedure SetCells(aRow, aCol: Integer; const Value: T);
+    function GetCount(): integer;
+    function GetCells(aRow, aCol: integer): T;
+    procedure SetCells(aRow, aCol: integer; const Value: T);
   public
     constructor Create();
     destructor Destroy(); override;
 
     property Matrix: TMatrixType read FData write FData;
-    property Count: Integer read GetCount;
-    property Cells[aRow, aCol: Integer]: T read GetCells write SetCells;
+    property Count: integer read GetCount;
+    property Cells[aRow, aCol: integer]: T read GetCells write SetCells;
 
     // Рядки
     procedure Add(const aRow: array of T);
     procedure AddMatrix(const aMatrix: TMatrixType);
-    procedure Insert(aRowIdx: Integer; const aRow: TArrayType);
-    procedure Delete(aRowIdx: Integer);
-    function Find(aRowIdxStart, aColIdx: Integer; const aValue: T): Integer;
+    procedure Insert(aRowIdx: integer; const aRow: TArrayType);
+    procedure Delete(aRowIdx: integer);
+    function Find(aRowIdxStart, aColIdx: integer; const aValue: T): integer;
 
     // Колонки
-    procedure ColAdd(aRowIdx: Integer; const aValue: T);
-    procedure ColDel(aRowIdx, aColIdx: Integer);
-    function ColExport(aColIdx: Integer): TArrayType;
+    procedure ColAdd(aRowIdx: integer; const aValue: T);
+    procedure ColDel(aRowIdx, aColIdx: integer);
+    function ColExport(aColIdx: integer): TArrayType;
   end;
 
   TStringMatrix = specialize TMatrix<string>;
@@ -77,12 +77,12 @@ begin
   inherited;
 end;
 
-function TMatrix.GetCount: Integer;
+function TMatrix.GetCount: integer;
 begin
   Result := Length(FData);
 end;
 
-function TMatrix.GetCells(aRow, aCol: Integer): T;
+function TMatrix.GetCells(aRow, aCol: integer): T;
 begin
   if (aRow < 0) or (aRow >= Count) then
      Exit(Default(T));
@@ -93,7 +93,7 @@ begin
   Result := FData[aRow][aCol];
 end;
 
-procedure TMatrix.SetCells(aRow, aCol: Integer; const Value: T);
+procedure TMatrix.SetCells(aRow, aCol: integer; const Value: T);
 begin
   if (aRow < 0) or (aRow >= Count)
      then Exit;
@@ -106,7 +106,7 @@ end;
 
 procedure TMatrix.Add(const aRow: array of T);
 var
-  NewIndex, i: Integer;
+  NewIndex, i: integer;
 begin
   NewIndex := Length(FData);
   SetLength(FData, NewIndex + 1);
@@ -117,15 +117,15 @@ end;
 
 procedure TMatrix.AddMatrix(const aMatrix: TMatrixType);
 var
-  i: Integer;
+  i: integer;
 begin
   for i := 0 to High(aMatrix) do
     Add(aMatrix[i]);
 end;
 
-procedure TMatrix.Insert(aRowIdx: Integer; const aRow: TArrayType);
+procedure TMatrix.Insert(aRowIdx: integer; const aRow: TArrayType);
 var
-  i: Integer;
+  i: integer;
 begin
   if (aRowIdx < 0)
      then aRowIdx := 0;
@@ -142,9 +142,9 @@ begin
     FData[aRowIdx][i] := aRow[i];
 end;
 
-procedure TMatrix.Delete(aRowIdx: Integer);
+procedure TMatrix.Delete(aRowIdx: integer);
 var
-  i: Integer;
+  i: integer;
 begin
   if (aRowIdx < 0) or (aRowIdx >= Count)
      then Exit;
@@ -155,9 +155,9 @@ begin
   SetLength(FData, Count - 1);
 end;
 
-procedure TMatrix.ColAdd(aRowIdx: Integer; const aValue: T);
+procedure TMatrix.ColAdd(aRowIdx: integer; const aValue: T);
 var
-  NewCol: Integer;
+  NewCol: integer;
 begin
   if (aRowIdx < 0) or (aRowIdx >= Count)
      then Exit;
@@ -167,9 +167,9 @@ begin
   FData[aRowIdx][NewCol] := aValue;
 end;
 
-procedure TMatrix.ColDel(aRowIdx, aColIdx: Integer);
+procedure TMatrix.ColDel(aRowIdx, aColIdx: integer);
 var
-  i, Len: Integer;
+  i, Len: integer;
 begin
   if (aRowIdx < 0) or (aRowIdx >= Count)
      then Exit;
@@ -184,9 +184,9 @@ begin
   SetLength(FData[aRowIdx], Len - 1);
 end;
 
-function TMatrix.Find(aRowIdxStart, aColIdx: Integer; const aValue: T): Integer;
+function TMatrix.Find(aRowIdxStart, aColIdx: integer; const aValue: T): integer;
 var
-  i: Integer;
+  i: integer;
 begin
   Result := -1;
 
@@ -203,7 +203,7 @@ begin
   end;
 end;
 
-function TMatrix.ColExport(aColIdx: Integer): TArrayType;
+function TMatrix.ColExport(aColIdx: integer): TArrayType;
 var
   i: integer;
 begin
@@ -223,7 +223,7 @@ end;
 
 procedure ReadStringItem(aStream: TStream; out aValue: string);
 var
-  L: Integer;
+  L: integer;
   B: TBytes;
 begin
   L := aStream.ReadDWord();
@@ -240,7 +240,7 @@ end;
 procedure WriteStringItem(const aValue: string; aStream: TStream);
 var
   B: TBytes;
-  L: Integer;
+  L: integer;
 begin
   B := TEncoding.UTF8.GetBytes(aValue);
   L := Length(B);
@@ -255,7 +255,7 @@ generic procedure MatrixToStream<T>(
   const aWriteItem: specialize TWriteItemProc<T>
 );
 var
-  i, j: Integer;
+  i, j: integer;
   M: specialize TMatrix<T>.TMatrixType;
 begin
   M := aMatrix.Matrix;
@@ -275,7 +275,7 @@ generic function MatrixFromStream<T>(
   const aReadItem: specialize TReadItemProc<T>
 ): specialize TMatrix<T>;
 var
-  i, j, R, C: Integer;
+  i, j, R, C: integer;
   M: specialize TMatrix<T>;
   Row: array of T;
 begin

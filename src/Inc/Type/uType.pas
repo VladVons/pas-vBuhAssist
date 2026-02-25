@@ -14,7 +14,7 @@ uses
 type
     TStringArray = array of string;
 
-    TStringIntMap = specialize TFPGMap<string, Integer>;
+    TStringIntMap = specialize TFPGMap<string, integer>;
 
     TStringListEx = class(TStringList)
     public
@@ -22,14 +22,14 @@ type
     end;
 
     //TStringHelper = type helper for <T>
-    //  function Len: Integer;
+    //  function Len: integer;
     //end;
 
 implementation
 
 constructor TStringListEx.Create(aArrStr : TStringArray);
 var
-  i:  Integer;
+  i:  integer;
 begin
   inherited Create();
 
@@ -38,7 +38,7 @@ begin
 end;
 
 
-//function TStringHelper.Len(): Integer;
+//function TStringHelper.Len(): integer;
 //begin
 //  Result := Length(Self);
 //end;

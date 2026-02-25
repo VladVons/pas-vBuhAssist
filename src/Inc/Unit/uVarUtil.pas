@@ -16,7 +16,7 @@ function RemoveChars(const aStr, aRemove: string): string;
 function GetJsonNested(const aJObj: TJSONObject; const Path: string; aDef: Variant): Variant;
 function ReplMacros(const aText: string; aDict: TStringList): string;
 
-generic function IIF<T>(aCond: Boolean; const aValTrue, aValFalse: T): T; inline;
+generic function IIF<T>(aCond: boolean; const aValTrue, aValFalse: T): T; inline;
 
 
 implementation
@@ -45,8 +45,8 @@ const
   StrIn: string  = 'ABCDEFGHIKLMNOPQRSTUVWYZabcdefghiklmnopqrstuvwyz';
   StrOut: string = 'АБЦДЕФГХІКЛМНОПКРСТУВВЙЗабцдефгхіклмнопкрстуввйз';
 var
-  i, Idx: Integer;
-  c: String;
+  i, Idx: integer;
+  c: string;
 begin
   Result := '';
   if (UTF8Length(StrIn) = UTF8Length(StrOut)) then
@@ -72,7 +72,7 @@ end;
 
 function RemoveChars(const aStr, aRemove: string): string;
 var
-  i: Integer;
+  i: integer;
   c: string;
 begin
   Result := '';
@@ -84,7 +84,7 @@ begin
   end;
 end;
 
-generic function IIF<T>(aCond: Boolean; const aValTrue, aValFalse: T): T; inline;
+generic function IIF<T>(aCond: boolean; const aValTrue, aValFalse: T): T; inline;
 begin
   if (aCond) then
     Result := aValTrue
@@ -94,7 +94,7 @@ end;
 
 function ReplMacros(const aText: string; aDict: TStringList): string;
 var
-  i: Integer;
+  i: integer;
 begin
   Result := aText;
   for i := 0 to aDict.Count - 1 do
@@ -117,7 +117,7 @@ function GetJsonNested(const aJObj: TJSONObject; const Path: string; aDef: Varia
   end;
 
 var
-  i: Integer;
+  i: integer;
   Parts: TStringArray;
   JObjCur: TJSONObject;
   JData: TJSONData;
@@ -138,7 +138,6 @@ begin
   JData := JObjCur.Find(Parts[High(Parts)]);
   Result := JsonToVariant(JData)
 end;
-
 
 end.
 

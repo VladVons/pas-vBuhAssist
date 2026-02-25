@@ -8,7 +8,7 @@ unit uDmCommon;
 interface
 
 uses
-  Classes, SysUtils, IBConnection, SQLDB, DB, Controls,
+  Classes, SysUtils, IBConnection, SQLDB, DB, Controls, uTextStore,
   uLicence, uLog, uQuery,
   uFLogin;
 
@@ -21,9 +21,10 @@ type
     SQLQueryCodes: TSQLQuery;
     SQLQueryTablesMain: TSQLQuery;
     SQLTransaction: TSQLTransaction;
+    TextStoreLicence: TTextStore;
   private
   public
-    procedure Connect(const aName: String; aPort: Integer);
+    procedure Connect(const aName: string; aPort: integer);
     function GetTablesMain(): TStringList;
     function Licence_GetFromHttp(): TStringList;
     procedure Licence_OrderToHttp(const aModule: string);
@@ -36,7 +37,7 @@ implementation
 
 {$R *.lfm}
 
-procedure TDmCommon.Connect(const aName: String; aPort: Integer);
+procedure TDmCommon.Connect(const aName: string; aPort: integer);
 begin
   IBConnection.Params.Clear();
   IBConnection.UserName := 'SYSDBA';
@@ -72,7 +73,6 @@ var
 begin
   Result := TStringList.Create();
   try
-    Log.Print('i', 'Завантаження ліцензій ...');
     //QueryOpen();
     FirmCodes := GetQueryField(DataSource, SQLQueryCodes, 'EDRPOU');
     Licence.HttpToFileEncrypt(FirmCodes);
@@ -82,7 +82,6 @@ begin
       FirmCodesLic := Licence.GetFirmCodes('FMedocCheckDocs');
       FirmCodesLic.Delimiter := ',';
       FirmCodesLic.StrictDelimiter := True;
-      Log.Print('i', 'Знайдено ліцензії для кодів ' + FirmCodesLic.DelimitedText);
       Result.Assign(FirmCodesLic);
     end;
   finally
@@ -110,7 +109,7 @@ begin
       if (AuthOk) then
         Log.Print('i', 'Запит на отримання ліцензій відправлено')
       else
-        Log.Print('w', 'Помилка авторизації на сервері ліцензій');
+        Log.Print('w', 'Помилка авторизації');
     end;
   finally
     FreeAndNil(FirmCodes);

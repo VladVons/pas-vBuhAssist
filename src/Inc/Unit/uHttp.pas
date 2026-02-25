@@ -20,7 +20,7 @@ implementation
 
 function PostJSON(const aURL: string; aJSON: TJSONObject): TJSONObject;
 var
-  Data: String;
+  Data: string;
   Client: TFPHTTPClient;
   Body: TStringStream;
 begin

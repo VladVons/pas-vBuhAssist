@@ -23,7 +23,7 @@ type
 
 function SimpleHash256(const aString: string): THash256;
 var
-  i, j: Integer;
+  i, j: integer;
   h: QWord;
 begin
   h := $CBF29CE484222325;
@@ -41,7 +41,7 @@ end;
 
 function StrXor(const aStr, aKey: string): string;
 var
-  i: Integer;
+  i: integer;
 begin
   SetLength(Result, aStr.Length);
   for i := 1 to aStr.Length do

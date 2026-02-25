@@ -1,7 +1,7 @@
 object FAbout: TFAbout
-  Left = 1520
+  Left = 1384
   Height = 296
-  Top = 250
+  Top = 310
   Width = 487
   BorderStyle = bsDialog
   Caption = 'Про програму'

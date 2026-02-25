@@ -10,14 +10,14 @@ interface
 uses
   Classes, SysUtils, SQLDB, DB, RegExpr;
 
-function GetQueryField(aDataSource: TDataSource; aQuery: TSQLQuery; aField: String): TStringList;
+function GetQueryField(aDataSource: TDataSource; aQuery: TSQLQuery; aField: string): TStringList;
 function ExpandSQL(aQuery: TSQLQuery): string;
 
 implementation
 
-function GetQueryField(aDataSource: TDataSource; aQuery: TSQLQuery; aField: String): TStringList;
+function GetQueryField(aDataSource: TDataSource; aQuery: TSQLQuery; aField: string): TStringList;
 var
-  Str: String;
+  Str: string;
 begin
   aDataSource.DataSet := aQuery;
   aQuery.Open();
@@ -36,7 +36,7 @@ end;
 
 function ExpandSQL(aQuery: TSQLQuery): string;
 var
-  i: Integer;
+  i: integer;
   SQL, sFind, sRepl: string;
   Re: TRegExpr;
 begin
