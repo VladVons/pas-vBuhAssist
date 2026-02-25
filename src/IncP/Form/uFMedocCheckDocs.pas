@@ -198,7 +198,7 @@ begin
   //DbGrid.OnDrawColumnCell := nil;
 
   //Str := ExpandSQL(SQLQueryGrid);
-  //Log.Print(Str);
+  //Log.Print('i', Str);
 
   //DmCommon.SQLTransaction.CommitRetaining();
   //DmCommon.SQLTransaction.Commit();
@@ -274,7 +274,7 @@ end;
 
 procedure TFMedocCheckDocs.ComboBoxPathChange(Sender: TObject);
 begin
-  SetEmbededPath(ComboBoxPath.ItemIndex)
+  ComboBoxFirm.Clear();
 end;
 
 procedure TFMedocCheckDocs.ComboBoxYearDropDown(Sender: TObject);
@@ -414,7 +414,7 @@ begin
 
   if (ComboBoxPath.Items.Count = 0) then
   begin
-     Log.Print('w', 'Неможливо знайти програму звітності. Зверніться до свого дилера');
+     Log.Print('w', 'Неможливо знайти програму звітності');
      ComboBoxPath.Text := '';
      Enabled := False;
   end else begin

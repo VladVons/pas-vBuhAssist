@@ -1,7 +1,7 @@
 inherited FMedocCheckDocs: TFMedocCheckDocs
-  Left = 336
+  Left = 337
   Height = 384
-  Top = 210
+  Top = 211
   Width = 589
   BorderStyle = bsNone
   Caption = 'Звітне стикування'
@@ -61,6 +61,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       ItemHeight = 14
       ReadOnly = True
       TabOrder = 0
+      OnChange = ComboBoxPathChange
     end
     object ComboBoxYear: TComboBox
       Left = 352
@@ -299,9 +300,9 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       '        AND (CARD.IDPARENT IS NULL)'
       '        AND (CARD.FORM > 0)'
       '        AND (CARD.INTRASH = 0)'
-      '        AND (FORM.CHARCODE NOT LIKE ''F1200%'') AND (FORM.CHARCODE NOT LIKE ''J1200%'')'
-      '        AND (FORM.CHARCODE NOT LIKE ''F1300%'') AND (FORM.CHARCODE NOT LIKE ''J1300%'')'
-      '        AND (FORM.CHARCODE NOT LIKE ''F1400%'') AND (FORM.CHARCODE NOT LIKE ''J1400%'')'
+      '        AND (FORM.CHARCODE NOT LIKE ''F12%'') AND (FORM.CHARCODE NOT LIKE ''J12%'')'
+      '        AND (FORM.CHARCODE NOT LIKE ''F13%'') AND (FORM.CHARCODE NOT LIKE ''J13%'')'
+      '        AND (FORM.CHARCODE NOT LIKE ''F14%'') AND (FORM.CHARCODE NOT LIKE ''J14%'')'
       '        %_COND_CHARCODE'
       ') T2'
       '    ON T2.IDORG = ORG.CODE'
@@ -562,13 +563,13 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
   object PopupMenuActivation: TPopupMenu[8]
     Left = 512
     Top = 192
+    object MenuItemOrder: TMenuItem
+      Caption = 'Активувати'
+      OnClick = MenuItemOrderClick
+    end
     object MenuItemRefresh: TMenuItem
       Caption = 'Оновити'
       OnClick = MenuItemRefreshClick
-    end
-    object MenuItemOrder: TMenuItem
-      Caption = 'Замовити'
-      OnClick = MenuItemOrderClick
     end
   end
 end

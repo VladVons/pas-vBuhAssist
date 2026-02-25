@@ -99,9 +99,9 @@ begin
   try
     FLogin := TFLogin.Create(nil);
     FLogin.Caption := 'Активація програми';
-    FLogin.EditUser.EditLabel.Caption := 'Дилер';
+    FLogin.EditUser.EditLabel.Caption := 'Користувач';
     FLogin.EditPassword.EditLabel.Caption := 'Ключ';
-    if (FLogin.ShowModal = mrOk) then
+    if (FLogin.ShowModal() = mrOk) then
     begin
       //QueryOpen();
       FirmCodes := GetQueryField(DataSource, SQLQueryCodes, 'EDRPOU');

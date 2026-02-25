@@ -52,6 +52,9 @@ type
     procedure MenuItemCloseTabClick(Sender: TObject);
   private
     function UserAgreement(aConfirm: boolean): boolean;
+    procedure CheckForUpdate();
+    procedure CheckPassw();
+    procedure CheckUserAgreement();
     procedure WMShowMe(var aMsg: TMessage); message TOneInstance.WM_SHOWME;
   public
   end;
@@ -122,20 +125,52 @@ begin
   FreeAndNil(FMessage);
 end;
 
+procedure TFMain.CheckForUpdate();
+  function GetBuild(const aVer: string): integer;
+  var
+    Parts: TStringArray;
+  begin
+    Parts := aVer.Split('.');
+    if (Length(Parts) >= 4) then
+      Result := StrToIntDef(Parts[3], 0)
+    else
+      Result := 0;
+  end;
 
-procedure TFMain.FormCreate(Sender: TObject);
 var
-  i: integer;
-  Passw: string;
-  Forms: array of TFormClass;
-  //SL: TStringList;
+  LastVer, CurVer: string;
+  JObj: TJSONObject;
 begin
-  ProtectTimer := TProtectTimer.Create(ParamStr(0));
-  ProtectTimer.TimerRunRnd(True, 10000);
+  JObj := Licence.GetVerFromHttp();
+  if (Assigned(JObj))then
+  begin
+    LastVer := JObj.Get('ver', '');
+    CurVer := GetAppVer();
+    if (GetBuild(CurVer) < GetBuild(LastVer)) then
+      Log.Print('i', 'Знайдено нову версію програми ' + LastVer);
+  end;
+end;
 
-  Log := TLog.Create('app.log', MemoInfo1);
-  Log.Print('i', 'Початок');
+procedure TFMain.CheckPassw();
+var
+  Passw: string;
+begin
+  Passw := StateStore.GetItem('FSettings', 'LabeledEditPassword_Text', '');
+  if (not Passw.IsEmpty()) then
+  begin
+    FLogin := TFLogin.Create(nil);
+    FLogin.Caption := 'Авторизація';
+    FLogin.OnlyPassw();
+    if (FLogin.ShowModal() = mrOk) and (FLogin.EditPassword.Text = Passw) then
+      Log.Print('i', 'Вхід по паролю')
+    else
+      Halt();
+    FreeAndNil(FLogin);
+  end;
+end;
 
+procedure TFMain.CheckUserAgreement();
+begin
   Settings := TSettings.Create('app.ini');
   if (Settings.GetItem('UserAgreement', 'Accepted', '').IsEmpty()) then
     if (UserAgreement(True)) then
@@ -146,6 +181,19 @@ begin
       ShowMessage('Для роботи з програмою потрібно підтвердити згоду');
       Halt();
     end;
+end;
+
+procedure TFMain.FormCreate(Sender: TObject);
+var
+  i: integer;
+  Forms: array of TFormClass;
+  //SL: TStringList;
+begin
+  ProtectTimer := TProtectTimer.Create(ParamStr(0));
+  ProtectTimer.TimerRunRnd(True, 10000);
+
+  Log := TLog.Create('app.log', MemoInfo1);
+  Log.Print('i', 'Початок');
 
   StateStore := TStateStore.Create('app_state.ini');
 
@@ -169,18 +217,9 @@ begin
 
   WinManager.SetActivePage(0);
 
-  Passw := StateStore.GetItem('FSettings', 'LabeledEditPassword_Text', '');
-  if (not Passw.IsEmpty()) then
-  begin
-    FLogin := TFLogin.Create(nil);
-    FLogin.Caption := 'Авторизація';
-    FLogin.OnlyPassw();
-    if (FLogin.ShowModal() = mrOk) and (FLogin.EditPassword.Text = Passw) then
-      Log.Print('i', 'Вхід по паролю')
-    else
-      Halt();
-    FreeAndNil(FLogin);
-  end;
+  CheckUserAgreement();
+  CheckPassw();
+  CheckForUpdate();
 
   WindowState := wsMaximized;
 end;

@@ -25,7 +25,7 @@ type
     procedure LoadFromFile();
     function GetFirmCodes(const aModule: string): TStringList;
     function OrderFromHttp(aFirmCodes: TStrings; const aModule, aDealerName, aDealerPassw: string): boolean;
-    function IsFile(): boolean;
+    function GetVerFromHttp(): TJSONObject;
   end;
 
 var
@@ -111,6 +111,26 @@ begin
   end;
 end;
 
+function TLicence.GetVerFromHttp(): TJSONObject;
+var
+  JReq: TJSONObject;
+begin
+  JReq := TJSONObject.Create();
+  try
+    JReq.Add('type', 'get_ver');
+    JReq.Add('app', GetAppName());
+    JReq.Add('ver', GetAppVer());
+    Result := PostJSON(cHttpApi, JReq);
+    if (Assigned(Result)) then
+      LastErr := Result.Get('error', '')
+    else
+      LastErr := 'request error';
+  finally
+    JReq.Free();
+  end;
+end;
+
+
 procedure TLicence.HttpToFileEncrypt(aFirmCodes: TStrings);
 var
   Str, Encrypted: string;
@@ -140,11 +160,6 @@ begin
       Log.Print('x', 'Wrong file type');
     end;
   end;
-end;
-
-function TLicence.IsFile(): boolean;
-begin
-  Result := FileExists(fFile);
 end;
 
 function TLicence.GetFirmCodes(const aModule: string): TStringList;

@@ -1,7 +1,7 @@
 object FMain: TFMain
-  Left = 342
+  Left = 343
   Height = 393
-  Top = 250
+  Top = 251
   Width = 800
   ClientHeight = 393
   ClientWidth = 800
