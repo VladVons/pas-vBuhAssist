@@ -13,8 +13,9 @@ Api()
 }
 
 
-Api '{"type":"get_ver", "app": "vBuhAssist"}'
-#Api '{"type":"get_licences","app":"vBuhAssist","firms":["88888801","40050963"]}'
-#Api '{"type":"order_licences","app":"vBuhAssist","user":"yuta","passw":"1234","firms":["88888801"]}'
-#Api '{"type":"get_orders", "user":"yuta"}'
-#Api '{"type":"get_orders", "user":"yuta", "date":"2026/02/13"}'
+#Api '{"type":"get_ver"}'
+#Api '{"type":"get_annonce", "app": "vBuhAssist", "ver": "1.11.2.22"}'
+#Api '{"type":"get_licence","app":"vBuhAssist","firms":["24620181","40050963"]}'
+#Api '{"type":"order_licence","app":"vBuhAssist","user":"vladvons","passw":"19710819","firms":["24620181"]}'
+Api '{"type":"get_orders", "app":"vBuhAssist", "user":"yuta"}'
+#Api '{"type":"get_orders", "app":"vBuhAssist", "user":"yuta", "date":"2026/02/13"}'

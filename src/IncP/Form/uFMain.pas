@@ -10,8 +10,8 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList, Windows, ExtCtrls,
   ComCtrls, StdCtrls, fpjson,
-  uFAbout, uFMedocCheckDocs, uFOptimizePDF, uFSettings, uFLogin, uFMessage, uDmCommon,
-  uWinManager, uLicence, uLog, uSettings, uStateStore, uSys, uConst, uProtectTimer;
+  uFAbout, uFMedocCheckDocs, uFOptimizePDF, uFSettings, uFLogin, uFMessage, uFHtmlView, uDmCommon,
+  uWinManager, uLicence, uLog, uSettings, uStateStore, uSys, uConst, uProtectTimer, uAnnonce;
 
 type
   { TFMain }
@@ -51,10 +51,9 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure MenuItemCloseTabClick(Sender: TObject);
   private
-    function UserAgreement(aConfirm: boolean): boolean;
-    procedure CheckForUpdate();
     procedure CheckPassw();
     procedure CheckUserAgreement();
+    function UserAgreement(aConfirm: boolean): boolean;
     procedure WMShowMe(var aMsg: TMessage); message TOneInstance.WM_SHOWME;
   public
   end;
@@ -115,40 +114,12 @@ begin
 end;
 
 function TFMain.UserAgreement(aConfirm: boolean): boolean;
-begin
-  FMessage := TFMessage.Create(nil);
-  FMessage.Caption := 'Ліцензійна угода користувача';
-  FMessage.Confirm := aConfirm;
-  FMessage.Memo1.Lines.Assign(DmCommon.TextStoreLicence.Lines);
-  Log.Print('i', FMessage.Caption);
-  Result:= FMessage.ShowModal() = mrOK;
-  FreeAndNil(FMessage);
-end;
-
-procedure TFMain.CheckForUpdate();
-  function GetBuild(const aVer: string): integer;
-  var
-    Parts: TStringArray;
-  begin
-    Parts := aVer.Split('.');
-    if (Length(Parts) >= 4) then
-      Result := StrToIntDef(Parts[3], 0)
-    else
-      Result := 0;
-  end;
-
 var
-  LastVer, CurVer: string;
-  JObj: TJSONObject;
+  Str: string;
 begin
-  JObj := Licence.GetVerFromHttp();
-  if (Assigned(JObj))then
-  begin
-    LastVer := JObj.Get('ver', '');
-    CurVer := GetAppVer();
-    if (GetBuild(CurVer) < GetBuild(LastVer)) then
-      Log.Print('i', 'Знайдено нову версію програми ' + LastVer);
-  end;
+  Str := 'Ліцензійна угода користувача';
+  Result := FMessageShow(Str, DmCommon.TextStoreLicence.Lines, aConfirm) = mrOK;
+  Log.Print('i', Str);
 end;
 
 procedure TFMain.CheckPassw();
@@ -171,7 +142,6 @@ end;
 
 procedure TFMain.CheckUserAgreement();
 begin
-  Settings := TSettings.Create('app.ini');
   if (Settings.GetItem('UserAgreement', 'Accepted', '').IsEmpty()) then
     if (UserAgreement(True)) then
     begin
@@ -184,11 +154,10 @@ begin
 end;
 
 procedure TFMain.FormCreate(Sender: TObject);
-var
-  i: integer;
-  Forms: array of TFormClass;
-  //SL: TStringList;
 begin
+  Caption := cAppName + ' ' + GetAppVer();
+  WindowState := wsMaximized;
+
   ProtectTimer := TProtectTimer.Create(ParamStr(0));
   ProtectTimer.TimerRunRnd(True, 10000);
 
@@ -200,28 +169,25 @@ begin
   Licence := TLicence.Create('app.lic');
   Licence.LoadFromFile();
 
+  Settings := TSettings.Create('app.ini');
+
+  Annonce := TAnnonce.Create('app_annonce.ini', Licence);
+  Annonce.Check();
+
   OneInstance.Register(Handle);
   OneInstance.Free();
 
-  Caption := cAppName + ' ' + GetAppVer();
-
   WinManager := TWinManager.Create(PageControl1, PopupMenu1);
-  Forms := [
+  WinManager.Adds([
     TFMedocCheckDocs,
     //TFOptimizePDF,
+    //TFHtmlView,
     TFSettings
-  ];
-
-  for i := 0 to High(Forms) do
-    WinManager.Add(Forms[i]);
-
+  ]);
   WinManager.SetActivePage(0);
 
   CheckUserAgreement();
   CheckPassw();
-  CheckForUpdate();
-
-  WindowState := wsMaximized;
 end;
 
 procedure TFMain.FormDestroy(Sender: TObject);

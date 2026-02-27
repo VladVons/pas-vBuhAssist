@@ -1,7 +1,7 @@
 inherited FMedocCheckDocs: TFMedocCheckDocs
-  Left = 337
+  Left = 407
   Height = 384
-  Top = 211
+  Top = 171
   Width = 589
   BorderStyle = bsNone
   Caption = 'Звітне стикування'
@@ -64,10 +64,10 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       OnChange = ComboBoxPathChange
     end
     object ComboBoxYear: TComboBox
-      Left = 352
+      Left = 360
       Height = 22
       Top = 32
-      Width = 223
+      Width = 215
       DropDownCount = 20
       ItemHeight = 14
       ReadOnly = True
@@ -98,7 +98,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Left = 128
       Height = 22
       Top = 56
-      Width = 208
+      Width = 224
       DropDownCount = 20
       ItemHeight = 14
       ReadOnly = True

@@ -18,11 +18,11 @@ type
   protected
     fPageControl: TPageControl;
     fPopupMenu: TPopupMenu;
-    procedure PageControlMouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: integer);
+    procedure PageControlMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: integer);
   public
     constructor Create(aPageControl: TPageControl; aPopupMenu: TPopupMenu);
     procedure Add(aFormClass: TFormClass);
+    procedure Adds(aForms: array of TFormClass);
     function FindTabIndex(aFormClass: TFormClass): integer;
     procedure CloseActive();
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -147,7 +147,16 @@ begin
   end;
 end;
 
-procedure TWinManager.CloseActive;
+procedure TWinManager.Adds(aForms: array of TFormClass);
+var
+  i: integer;
+begin
+  for i := 0 to High(aForms) do
+    Add(aForms[i]);
+end;
+
+
+procedure TWinManager.CloseActive();
 var
   Tab: TTabSheet;
   Form: TForm;

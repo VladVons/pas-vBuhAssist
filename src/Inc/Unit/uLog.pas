@@ -19,6 +19,7 @@ type
   public
     constructor Create(const aFile: string; aMemo: TMemo);
     procedure Print(aType: char; const aMsg: string);
+    procedure Print(aType: char; aSL: TStringList);
   end;
 
 var
@@ -44,6 +45,14 @@ begin
   Msg := FormatDateTime('yy-mm-dd hh:nn:ss', Now()) + ', ' + aType + ', ' + aMsg;
   fMemo.Lines.Add(Msg);
   ToFile(Msg);
+end;
+
+procedure TLog.Print(aType: char; aSL: TStringList);
+var
+  i: integer;
+begin
+  for i := 0 to aSL.Count - 1 do
+    Log.Print(aType, aSL[i]);
 end;
 
 end.

@@ -14,11 +14,8 @@ uses
   {$ENDIF}
   opensslsockets,
   Interfaces, // this includes the LCL widgetset
-  Forms, uFMain, uFAbout, uFMedocCheckDocs, uWinManager, uDmCommon, uWinReg,
-  uLicence, uFLicense, uSys, uGhostScript, uFOptimizePDF, uSettings, uVarUtil,
-  uLog, uConst, uFLogin, uFMessage, uExceptionHandler, uType, uCrypt,
-  uMedoc, uFSettings, uQuery, uFBase, uHttp, uProtectTimer, 
-  uComputerInfo, uUserData, uStateStore;
+  Forms,
+  uFMain, uWinManager, uDmCommon, uExceptionHandler, uAnnonce;
 
 {$R *.res}
 begin
@@ -30,7 +27,6 @@ begin
   {$PUSH}{$WARN 5044 OFF}
   Application.MainFormOnTaskbar:=True;
   {$POP}
-  //OneInstanceOnly(cAppName);
   OneInstance := TOneInstance.Create();
   OneInstance.Check();
 

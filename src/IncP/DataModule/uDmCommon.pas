@@ -92,7 +92,6 @@ end;
 
 procedure TDmCommon.Licence_OrderToHttp(const aModule: string);
 var
-  AuthOk: boolean;
   FirmCodes: TStringList;
 begin
   FirmCodes := nil;
@@ -105,8 +104,8 @@ begin
     begin
       //QueryOpen();
       FirmCodes := GetQueryField(DataSource, SQLQueryCodes, 'EDRPOU');
-      AuthOk := Licence.OrderFromHttp(FirmCodes, aModule, FLogin.EditUser.Text, FLogin.EditPassword.Text);
-      if (AuthOk) then
+      Licence.OrderFromHttp(FirmCodes, aModule, FLogin.EditUser.Text, FLogin.EditPassword.Text);
+      if (Licence.LastErr.IsEmpty()) then
         Log.Print('i', 'Запит на отримання ліцензій відправлено')
       else
         Log.Print('w', 'Помилка авторизації');

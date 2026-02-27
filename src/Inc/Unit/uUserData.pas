@@ -14,11 +14,13 @@ type
   TUserData = class
   private
     function GetAppFile(const aFile: string): String;
+    function GetFileName(): string;
   protected
     fFile: string;
   public
     function IsFile(): boolean;
     constructor Create(const aFile: string);
+    property FileName: String read GetFileName;
   end;
 
 implementation
@@ -26,6 +28,11 @@ implementation
 constructor TUserData.Create(const aFile: string);
 begin
   fFile := GetAppFile(aFile);
+end;
+
+function TUserData.GetFileName(): string;
+begin
+  Result := fFile;
 end;
 
 function TUserData.IsFile(): boolean;

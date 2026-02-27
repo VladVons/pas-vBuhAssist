@@ -26,6 +26,7 @@ procedure FileAppendText(const aFile, aMsg: string);
 procedure StrToFile(const aStr: AnsiString; aFile: string);
 function StrFromFile(const aFile: string): AnsiString;
 function GetAppVer(): string;
+function IsRealApp(aCond: boolean = True): boolean;
 
 
 implementation
@@ -207,6 +208,14 @@ begin
     Exit('');
 
   Result := Months[aMonthNum];
+end;
+
+function IsRealApp(aCond: boolean = True): boolean;
+var
+  Str: string;
+begin
+  Str := GetAppName() + '.lpr';
+  Result := (not FileExists(Str)) and aCond;
 end;
 
 initialization

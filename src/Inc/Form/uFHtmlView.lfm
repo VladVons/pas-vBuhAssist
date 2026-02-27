@@ -1,0 +1,9 @@
+object FHtmlView: TFHtmlView
+  Left = 353
+  Height = 412
+  Top = 191
+  Width = 527
+  Caption = 'FHtmlView'
+  LCLVersion = '4.4.0.0'
+  OnCreate = FormCreate
+end

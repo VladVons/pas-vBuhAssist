@@ -19,7 +19,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="11"/>
       <RevisionNr Value="2"/>
-      <BuildNr Value="21"/>
+      <BuildNr Value="24"/>
       <StringTable ProductName="vBuhAssist"/>
     </VersionInfo>
     <BuildModes>
@@ -33,6 +33,12 @@
       <FormatVersion Value="2"/>
     </RunParams>
     <RequiredPackages>
+      <Item>
+        <PackageName Value="weblaz"/>
+      </Item>
+      <Item>
+        <PackageName Value="FrameViewer09"/>
+      </Item>
       <Item>
         <PackageName Value="TextStore"/>
       </Item>
@@ -103,10 +109,6 @@
       </Unit>
       <Unit>
         <Filename Value="Inc/Unit/uWinManager.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="IncP/Unit/uWinReg.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
@@ -207,6 +209,17 @@
       </Unit>
       <Unit>
         <Filename Value="Inc/Unit/uStateStore.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Inc/Form/uFHtmlView.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FHtmlView"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Inc/Unit/uAnnonce.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
     </Units>

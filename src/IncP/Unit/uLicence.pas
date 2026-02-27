@@ -16,16 +16,17 @@ type
   private
     fCryptKey: string;
     fJObjLic: TJSONObject;
-    function GetFromHttp(aFirmCodes: TStrings): TJSONObject;
+    function RefreshFromHttp(aFirmCodes: TStrings): TJSONObject;
+    function Request(aParam: TJSONObject): TJSONObject;
   public
     LastErr: string;
     constructor Create(const aFile: string);
     destructor Destroy(); override;
     procedure HttpToFileEncrypt(aFirmCodes: TStrings);
     procedure LoadFromFile();
+    function GetTypeFromHttp(const aType: string): TJSONObject;
     function GetFirmCodes(const aModule: string): TStringList;
-    function OrderFromHttp(aFirmCodes: TStrings; const aModule, aDealerName, aDealerPassw: string): boolean;
-    function GetVerFromHttp(): TJSONObject;
+    procedure OrderFromHttp(aFirmCodes: TStrings; const aModule, aDealerName, aDealerPassw: string);
   end;
 
 var
@@ -47,22 +48,23 @@ begin
   inherited;
 end;
 
-function TLicence.GetFromHttp(aFirmCodes: TStrings): TJSONObject;
+function TLicence.Request(aParam: TJSONObject): TJSONObject;
 var
-  i: integer;
+  i: Integer;
+  Key: string;
   JReq: TJSONObject;
-  JArrLic: TJSONArray;
 begin
+  JReq := TJSONObject.Create();
   try
-    JReq := TJSONObject.Create();
-    JReq.Add('type', 'get_licences');
     JReq.Add('app', GetAppName());
     JReq.Add('ver', GetAppVer());
-
-    JArrLic := TJSONArray.Create();
-    for i := 0 to aFirmCodes.Count - 1 do
-      JArrLic.Add(aFirmCodes[i]);
-    JReq.Add('firms', JArrLic);
+    if (Assigned(aParam)) then
+       for i := 0 to aParam.Count - 1 do
+       begin
+         Key := aParam.Names[i];
+         if (JReq.IndexOfName(Key) = -1) then
+            JReq.Add(Key, aParam.Items[i].Clone);
+       end;
 
     Result := PostJSON(cHttpApi, JReq);
     if (Assigned(Result)) then
@@ -74,7 +76,28 @@ begin
   end;
 end;
 
-function TLicence.OrderFromHttp(aFirmCodes: TStrings; const aModule, aDealerName, aDealerPassw: string): boolean;
+function TLicence.RefreshFromHttp(aFirmCodes: TStrings): TJSONObject;
+var
+  i: integer;
+  JReq: TJSONObject;
+  JArrLic: TJSONArray;
+begin
+  try
+    JReq := TJSONObject.Create();
+    JReq.Add('type', 'get_licences');
+
+    JArrLic := TJSONArray.Create();
+    for i := 0 to aFirmCodes.Count - 1 do
+      JArrLic.Add(aFirmCodes[i]);
+    JReq.Add('firms', JArrLic);
+
+    Result := Request(JReq);
+  finally
+    JReq.Free();
+  end;
+end;
+
+procedure TLicence.OrderFromHttp(aFirmCodes: TStrings; const aModule, aDealerName, aDealerPassw: string);
 var
   i: integer;
   JReq, JRes: TJSONObject;
@@ -85,8 +108,6 @@ begin
   JReq := TJSONObject.Create();
   try
     JReq.Add('type', 'order_licences');
-    JReq.Add('app', GetAppName());
-    JReq.Add('ver', GetAppVer());
     JReq.Add('module', aModule);
     JReq.Add('user', aDealerName);
     JReq.Add('passw', aDealerPassw);
@@ -97,12 +118,7 @@ begin
       JArrLic.Add(aFirmCodes[i]);
     JReq.Add('firms', JArrLic);
 
-    JRes := PostJSON(cHttpApi, JReq);
-    if (Assigned(JRes)) then
-      LastErr := JRes.Get('error', '')
-    else
-      LastErr := 'request error';
-    Result := LastErr.IsEmpty();
+    JRes := Request(JReq);
   finally
     WMI.Free();
     JRes.Free();
@@ -111,31 +127,24 @@ begin
   end;
 end;
 
-function TLicence.GetVerFromHttp(): TJSONObject;
+function TLicence.GetTypeFromHttp(const aType: string): TJSONObject;
 var
   JReq: TJSONObject;
 begin
   JReq := TJSONObject.Create();
   try
-    JReq.Add('type', 'get_ver');
-    JReq.Add('app', GetAppName());
-    JReq.Add('ver', GetAppVer());
-    Result := PostJSON(cHttpApi, JReq);
-    if (Assigned(Result)) then
-      LastErr := Result.Get('error', '')
-    else
-      LastErr := 'request error';
+    JReq.Add('type', aType);
+    Result := Request(JReq);
   finally
     JReq.Free();
   end;
 end;
 
-
 procedure TLicence.HttpToFileEncrypt(aFirmCodes: TStrings);
 var
   Str, Encrypted: string;
 begin
-  fJObjLic := GetFromHttp(aFirmCodes);
+  fJObjLic := RefreshFromHttp(aFirmCodes);
   if (Assigned(fJObjLic)) then
   begin
     Str := fJObjLic.AsJSON;

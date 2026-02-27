@@ -10,8 +10,8 @@ interface
 uses
   Classes, SysUtils, StrUtils, DateUtils, SQLDB, Forms, Graphics, StdCtrls,
   DBGrids, Grids, ExtCtrls, Buttons, Menus, LR_Class, LR_DBSet, LR_PGrid, LR_Desgn,
-  DB, fpjson, Math,
-  uFBase, uSys, uLog, uLicence, uWinReg, uSettings, uVarUtil,
+  DB, fpjson, Math, IniFiles,
+  uFBase, uSys, uLog, uLicence, uSettings, uVarUtil,
   uStateStore, uQuery, uMedoc, uDmCommon, uProtectTimer, uConst;
 
 type
@@ -82,6 +82,8 @@ type
     procedure SetEmbededPath(aIdx: integer);
     procedure ConnectToDb();
     function GetCurPathObj(): TJSONObject;
+    procedure InitEmptyGrid();
+    procedure FindMedoc();
   public
 
   end;
@@ -261,7 +263,8 @@ begin
 
   // we are not so fast comparing to MEDOC
   Delay := Settings.GetItem('Common', 'Delay', 1500);
-  Sleep(Delay + Random(Delay));
+  if (IsRealApp()) then
+    Sleep(Delay + Random(Delay));
 end;
 
 procedure TFMedocCheckDocs.ButtonActivationClick(Sender: TObject);
@@ -387,11 +390,57 @@ begin
   end;
 end;
 
+procedure TFMedocCheckDocs.InitEmptyGrid();
+var
+  i: integer;
+begin
+// Add cloumn visualisation in empty Grid
+for i := 0 to SQLQueryGrid.Fields.Count - 1 do
+  if SQLQueryGrid.Fields[i].Visible then
+    with DbGrid.Columns.Add do
+      FieldName := SQLQueryGrid.Fields[i].DisplayLabel;
+end;
+
+procedure TFMedocCheckDocs.FindMedoc();
+var
+  i: integer;
+  Str: string;
+  SL: TStringList;
+  JObj: TJSONObject;
+  Ini: TIniFile;
+begin
+  fJMedocApp := TJSONArray.Create();
+  try
+    FindMedocFiles(fJMedocApp);
+
+    SL := TStringList.Create();
+    Ini := TIniFile.Create(Settings.FileName);
+    Ini.ReadSections(SL);
+    SL := Settings.GetSections();
+    for i := 0 to SL.Count - 1 do
+      if (SL[i].ToUpper().StartsWith('MAPP')) then
+      begin
+
+
+      end;
+
+    for i := 0 to fJMedocApp.Count - 1 do
+    begin
+      JObj := fJMedocApp.Objects[i];
+      Str := JObj.Get('path', '') + PathDelim + 'ezvit.exe';
+      ComboBoxPath.Items.AddObject(Str, JObj);
+    end;
+    ButtonRunMedoc.Enabled := ComboBoxPath.Items.Count > 0;
+  finally
+    Ini.Free();
+    SL.Free();
+  end;
+end;
+
 procedure TFMedocCheckDocs.FormCreate(Sender: TObject);
 var
   i: integer;
   Str: string;
-  JObj: TJSONObject;
 begin
   fJMedocApp := Nil;
   fFirmCodesLicensed := Nil;
@@ -403,15 +452,7 @@ begin
   fSortField := 'CARDSTATUS_NAME';
   fSortAsc := True;
 
-  fJMedocApp := RegFindMedocInfo();
-  for i := 0 to fJMedocApp.Count - 1 do
-  begin
-    JObj := fJMedocApp.Objects[i];
-    Str := JObj.Get('path', '') + PathDelim + 'ezvit.exe';
-    ComboBoxPath.Items.AddObject(Str, JObj);
-  end;
-  ButtonRunMedoc.Enabled := ComboBoxPath.Items.Count > 0;
-
+  FindMedoc();
   if (ComboBoxPath.Items.Count = 0) then
   begin
      Log.Print('w', 'Неможливо знайти програму звітності');
@@ -440,18 +481,14 @@ begin
   fDemoFields.Add('CARDSENDSTT_NAME');
   fDemoFields.Add('HZ');
 
-  // Add cloumn visualisation in empty Grid
-  for i := 0 to SQLQueryGrid.Fields.Count - 1 do
-    if SQLQueryGrid.Fields[i].Visible then
-      with DbGrid.Columns.Add do
-        FieldName := SQLQueryGrid.Fields[i].DisplayLabel;
-
   Panel1.Font.Size := 10;
   StateStore.Load(self);
 
   fColorYelow := RGBToColor(255, 255, 153);
   StateStore.SetCtrlColor(self, fColorYelow, 'edit');
   //StateStore.SetCtrlColor(self, clWhite, 'button');
+
+  InitEmptyGrid();
 
   if (ProtectTimer.TimingCheck()) then
   begin

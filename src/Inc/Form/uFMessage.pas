@@ -31,6 +31,7 @@ type
     property Confirm: boolean read GetConfirm write SetConfirm;
   end;
 
+  function FMessageShow(const aTitle: string; aBody: TStrings; aConfirm: boolean = False): TModalResult;
 var
   FMessage: TFMessage;
 
@@ -65,6 +66,15 @@ begin
   CheckBoxConfirm.Checked := not aValue;
 end;
 
+function FMessageShow(const aTitle: string; aBody: TStrings; aConfirm: boolean = False): TModalResult;
+begin
+  FMessage := TFMessage.Create(nil);
+  FMessage.Caption := aTitle;
+  FMessage.Memo1.Text := aBody.Text;
+  FMessage.Confirm := aConfirm;
+  Result := FMessage.ShowModal();
+  FreeAndNil(FMessage);
+end;
 
 {$R *.lfm}
 
