@@ -64,8 +64,8 @@ end;
 
 procedure TMedocIni.AddFromRegistry();
 begin
-  AddFromRegistry(HKEY_LOCAL_MACHINE);
-  AddFromRegistry(HKEY_CURRENT_USER);
+  //AddFromRegistry(HKEY_LOCAL_MACHINE);
+  //AddFromRegistry(HKEY_CURRENT_USER);
 end;
 
 function TMedocIni.GetPort(const aDir: string): string;
@@ -140,6 +140,9 @@ begin
 
   StrDb := StrDb.Replace('APPDATA', 'PROGRAMDATA');
   StrDb := ExpandEnvVar(StrDb);
+  if (DirToFileDb(StrDb) = '') then
+     StrDb := aDirApp;
+
   Result := AddPaths(aDirApp, StrDb, GetPort(aDirApp));
 end;
 

@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, StrUtils, DateUtils, SQLDB, Forms, Graphics, StdCtrls,
-  DBGrids, Grids, ExtCtrls, Buttons, Menus, LR_Class, LR_DBSet, LR_PGrid, LR_Desgn,
+  DBGrids, Grids, ExtCtrls, Buttons, Menus, Dialogs, LR_Class, LR_DBSet, LR_PGrid, LR_Desgn,
   DB, fpjson, Math, IniFiles,
   uFBase, uSys, uLog, uLicence, uSettings, uVarUtil,
   uStateStore, uQuery, uMedoc, uDmCommon, uProtectTimer, uConst;
@@ -18,6 +18,7 @@ type
 
   { TFMedocCheckDocs }
   TFMedocCheckDocs = class(TFBase)
+    ButtonPath: TButton;
     ButtonExec: TButton;
     ButtonActivation: TButton;
     ButtonPrint: TButton;
@@ -40,6 +41,7 @@ type
     MenuItemRefresh: TMenuItem;
     Panel1: TPanel;
     PopupMenuActivation: TPopupMenu;
+    SelectDirectoryDialog1: TSelectDirectoryDialog;
     SQLQueryGrid: TSQLQuery;
     SQLQueryGridCARDSENDSTT_NAME: TStringField;
     SQLQueryGridCHARCODE: TStringField;
@@ -57,6 +59,7 @@ type
     SQLQueryGridFJ: TStringField;
     procedure ButtonExecClick(Sender: TObject);
     procedure ButtonActivationClick(Sender: TObject);
+    procedure ButtonPathClick(Sender: TObject);
     procedure ButtonPrintClick(Sender: TObject);
     procedure ButtonRunMedocClick(Sender: TObject);
     procedure ComboBoxPathEditingDone(Sender: TObject);
@@ -281,14 +284,34 @@ begin
   PopupMenuActivation.PopUp(P.X, P.Y);
 end;
 
+procedure TFMedocCheckDocs.ButtonPathClick(Sender: TObject);
+begin
+  if (DirectoryExists(ComboBoxPath.Text)) then
+     SelectDirectoryDialog1.InitialDir := ComboBoxPath.Text;
+
+  if (SelectDirectoryDialog1.Execute()) then
+  begin
+    ComboBoxPath.Text := SelectDirectoryDialog1.FileName;
+    ComboBoxPathEditingDone(Nil);
+  end;
+end;
+
 procedure TFMedocCheckDocs.ComboBoxPathEditingDone(Sender: TObject);
+var
+  Idx: integer;
 begin
   if (not MedocIni.DirToFileApp(ComboBoxPath.Text).IsEmpty()) then
   begin
     ComboBoxFirm.Clear();
     if (MedocIni.AddPath(ComboBoxPath.Text)) then
+    begin
       InitMedocControl();
+      Log.Print('i', 'Додано шлях ' + ComboBoxPath.Text);
+    end;
   end;
+  Idx := ComboBoxPath.Items.IndexOf(ComboBoxPath.Text);
+  ComboBoxPath.ItemIndex := Idx;
+  SetEmbededPath(Idx);
 end;
 
 procedure TFMedocCheckDocs.ComboBoxYearDropDown(Sender: TObject);
@@ -420,8 +443,6 @@ var
   Str: string;
   JObj: TJSONObject;
 begin
-  ComboBoxPath.Items.Clear();
-
   fJMedocApp := MedocIni.ToJson();
   for i := 0 to fJMedocApp.Count - 1 do
   begin
@@ -431,6 +452,7 @@ begin
   end;
 
   ButtonRunMedoc.Enabled := fJMedocApp.Count > 0;
+  ButtonExec.Enabled := ButtonRunMedoc.Enabled;
 end;
 
 procedure TFMedocCheckDocs.FormCreate(Sender: TObject);
@@ -448,7 +470,7 @@ begin
   begin
      Log.Print('w', 'Неможливо знайти програму звітності');
      ComboBoxPath.Text := '';
-     Enabled := False;
+     //Enabled := False;
   end else begin
      ComboBoxPath.ItemIndex := 0;
      SetEmbededPath(0);
@@ -473,7 +495,16 @@ begin
   fDemoFields.Add('HZ');
 
   Panel1.Font.Size := 10;
+
   StateStore.Load(self);
+  if (ComboBoxYear.ItemIndex = -1) then
+    ComboBoxYear.ItemIndex := 0;
+  if (ComboBoxMonth.ItemIndex = -1) then
+    ComboBoxMonth.ItemIndex := 0;
+  if (ComboBoxDoc.ItemIndex = -1) then
+    ComboBoxDoc.ItemIndex := 0;
+  if (ComboBoxFirm.ItemIndex = -1) then
+    ComboBoxFirm.ItemIndex := 0;
 
   fColorYelow := RGBToColor(255, 255, 153);
   StateStore.SetCtrlColor(self, fColorYelow, 'edit');

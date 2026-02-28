@@ -2,11 +2,11 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
   Left = 407
   Height = 384
   Top = 171
-  Width = 589
+  Width = 655
   BorderStyle = bsNone
   Caption = 'Звітне стикування'
   ClientHeight = 384
-  ClientWidth = 589
+  ClientWidth = 655
   Font.CharSet = RUSSIAN_CHARSET
   Font.Name = 'Verdana'
   Font.Pitch = fpVariable
@@ -14,15 +14,15 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   inherited PanelTitle: TPanel
-    Width = 589
-    ClientWidth = 589
+    Width = 655
+    ClientWidth = 655
     TabOrder = 1
   end
   object DbGrid: TDBGrid[1]
     Left = 0
     Height = 200
     Top = 184
-    Width = 589
+    Width = 655
     Align = alClient
     Color = clWindow
     Columns = <>
@@ -48,10 +48,10 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     Left = 0
     Height = 144
     Top = 40
-    Width = 589
+    Width = 655
     Align = alTop
     ClientHeight = 144
-    ClientWidth = 589
+    ClientWidth = 655
     TabOrder = 2
     object ComboBoxPath: TComboBox
       Left = 128
@@ -168,6 +168,15 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Caption = 'Запустити'
       TabOrder = 8
       OnClick = ButtonRunMedocClick
+    end
+    object ButtonPath: TButton
+      Left = 576
+      Height = 25
+      Top = 8
+      Width = 24
+      Caption = '...'
+      TabOrder = 9
+      OnClick = ButtonPathClick
     end
   end
   object SQLQueryGrid: TSQLQuery[3]
@@ -542,7 +551,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     PrinterIndex = -1
     ShowCaption = True
     Left = 200
-    Top = 288
+    Top = 304
   end
   object frReport1: TfrReport[6]
     Dataset = frDBDataSet1
@@ -552,12 +561,12 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     DataType = dtDataSet
     OnGetValue = frReport1GetValue
     Left = 200
-    Top = 176
+    Top = 192
   end
   object frDBDataSet1: TfrDBDataSet[7]
     DataSet = SQLQueryGrid
     Left = 200
-    Top = 232
+    Top = 248
   end
   object PopupMenuActivation: TPopupMenu[8]
     Left = 512
@@ -570,5 +579,9 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Caption = 'Оновити'
       OnClick = MenuItemRefreshClick
     end
+  end
+  object SelectDirectoryDialog1: TSelectDirectoryDialog[9]
+    Left = 312
+    Top = 192
   end
 end

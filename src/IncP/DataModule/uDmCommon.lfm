@@ -1,9 +1,10 @@
 object DmCommon: TDmCommon
   OldCreateOrder = False
-  Height = 364
-  HorizontalOffset = 661
-  VerticalOffset = 160
-  Width = 727
+  Height = 455
+  HorizontalOffset = 826
+  VerticalOffset = 200
+  Width = 909
+  PPI = 120
   object IBConnection: TIBConnection
     Connected = False
     LoginPrompt = False
@@ -16,18 +17,18 @@ object DmCommon: TDmCommon
     HostName = 'localhost'
     CheckTransactionParams = False
     UseConnectionCharSetIfNone = False
-    Left = 40
-    Top = 16
+    Left = 50
+    Top = 20
   end
   object SQLTransaction: TSQLTransaction
     Active = False
     Database = IBConnection
-    Left = 40
-    Top = 72
+    Left = 50
+    Top = 90
   end
   object DataSource: TDataSource
-    Left = 120
-    Top = 16
+    Left = 150
+    Top = 20
   end
   object SQLQueryCodes: TSQLQuery
     FieldDefs = <>
@@ -47,8 +48,8 @@ object DmCommon: TDmCommon
     Params = <>
     Macros = <>
     MacroCheck = True
-    Left = 120
-    Top = 72
+    Left = 150
+    Top = 90
   end
   object SQLQueryTablesMain: TSQLQuery
     FieldDefs = <>
@@ -69,14 +70,14 @@ object DmCommon: TDmCommon
     Params = <>
     Macros = <>
     MacroCheck = True
-    Left = 120
-    Top = 128
+    Left = 150
+    Top = 160
   end
   object ImageList1: TImageList
     Height = 24
     Width = 24
-    Left = 344
-    Top = 16
+    Left = 430
+    Top = 20
     Bitmap = {
       4C7A0100000018000000180000006E0000000000000078DA63601805E480D0FF
       FFFF938207ABF9D452371CCC07AADB426AB8A3E390FFFFB7E1307B17A56623E1
@@ -116,7 +117,7 @@ object DmCommon: TDmCommon
       ''
       'Якщо Користувач не погоджується з цими умовами, він повинен припинити використання Програмного забезпечення.'
     )
-    Left = 344
-    Top = 80
+    Left = 430
+    Top = 100
   end
 end

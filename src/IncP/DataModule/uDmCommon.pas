@@ -48,7 +48,8 @@ begin
     IBConnection.HostName := 'localhost';
     IBConnection.Port := aPort;
   end else begin
-    IBConnection.Params.Add('embedded=true');
+    IBConnection.HostName := '';
+    IBConnection.Port := 0;
   end;
 
   IBConnection.DatabaseName := aName;
