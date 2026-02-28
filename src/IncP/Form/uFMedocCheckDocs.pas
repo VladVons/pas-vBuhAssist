@@ -59,7 +59,7 @@ type
     procedure ButtonActivationClick(Sender: TObject);
     procedure ButtonPrintClick(Sender: TObject);
     procedure ButtonRunMedocClick(Sender: TObject);
-    procedure ComboBoxPathChange(Sender: TObject);
+    procedure ComboBoxPathEditingDone(Sender: TObject);
     procedure ComboBoxYearDropDown(Sender: TObject);
     procedure DbGridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: integer; Column: TColumn; State: TGridDrawState);
     procedure DbGridTitleClick(Column: TColumn);
@@ -83,7 +83,7 @@ type
     procedure ConnectToDb();
     function GetCurPathObj(): TJSONObject;
     procedure InitEmptyGrid();
-    procedure FindMedoc();
+    procedure InitMedocControl();
   public
 
   end;
@@ -147,7 +147,13 @@ begin
   DbGrid.Visible := True;
 
   Year := integer(ComboBoxYear.Items.Objects[ComboBoxYear.ItemIndex]);
+  if (Year = -1) then
+    Year := 2026;
+
   Month := integer(ComboBoxMonth.Items.Objects[ComboBoxMonth.ItemIndex]);
+  if (Month = -1) then
+    Month := 1;
+
   if (Between(Month, 1, 12)) then
     PerType := 0
   else if (Between(Month, 101, 104)) then
@@ -275,9 +281,14 @@ begin
   PopupMenuActivation.PopUp(P.X, P.Y);
 end;
 
-procedure TFMedocCheckDocs.ComboBoxPathChange(Sender: TObject);
+procedure TFMedocCheckDocs.ComboBoxPathEditingDone(Sender: TObject);
 begin
-  ComboBoxFirm.Clear();
+  if (not MedocIni.DirToFileApp(ComboBoxPath.Text).IsEmpty()) then
+  begin
+    ComboBoxFirm.Clear();
+    if (MedocIni.AddPath(ComboBoxPath.Text)) then
+      InitMedocControl();
+  end;
 end;
 
 procedure TFMedocCheckDocs.ComboBoxYearDropDown(Sender: TObject);
@@ -379,14 +390,16 @@ end;
 
 procedure TFMedocCheckDocs.ButtonRunMedocClick(Sender: TObject);
 var
+  Path: string;
   JObj: TJSONObject;
 begin
   JObj := GetCurPathObj();
   if (JObj.Get('port', 0) = 0) then
     Log.Print('i', 'Не мережева версія програми')
   else begin
-    Log.Print('i', 'Запуск програми ' + ComboBoxPath.Text);
-    ExecProcess(ComboBoxPath.Text);
+    Path := ComboBoxPath.Text + PathDelim + 'ezvit.exe';
+    Log.Print('i', 'Запуск програми ' + Path);
+    ExecProcess(Path);
   end;
 end;
 
@@ -401,58 +414,36 @@ for i := 0 to SQLQueryGrid.Fields.Count - 1 do
       FieldName := SQLQueryGrid.Fields[i].DisplayLabel;
 end;
 
-procedure TFMedocCheckDocs.FindMedoc();
+procedure TFMedocCheckDocs.InitMedocControl();
 var
   i: integer;
   Str: string;
-  SL: TStringList;
   JObj: TJSONObject;
-  Ini: TIniFile;
 begin
-  fJMedocApp := TJSONArray.Create();
-  try
-    FindMedocFiles(fJMedocApp);
+  ComboBoxPath.Items.Clear();
 
-    SL := TStringList.Create();
-    Ini := TIniFile.Create(Settings.FileName);
-    Ini.ReadSections(SL);
-    SL := Settings.GetSections();
-    for i := 0 to SL.Count - 1 do
-      if (SL[i].ToUpper().StartsWith('MAPP')) then
-      begin
-
-
-      end;
-
-    for i := 0 to fJMedocApp.Count - 1 do
-    begin
-      JObj := fJMedocApp.Objects[i];
-      Str := JObj.Get('path', '') + PathDelim + 'ezvit.exe';
-      ComboBoxPath.Items.AddObject(Str, JObj);
-    end;
-    ButtonRunMedoc.Enabled := ComboBoxPath.Items.Count > 0;
-  finally
-    Ini.Free();
-    SL.Free();
+  fJMedocApp := MedocIni.ToJson();
+  for i := 0 to fJMedocApp.Count - 1 do
+  begin
+    JObj := fJMedocApp.Objects[i];
+    Str := JObj.Get('path', '');
+    ComboBoxPath.Items.AddObject(Str, JObj);
   end;
+
+  ButtonRunMedoc.Enabled := fJMedocApp.Count > 0;
 end;
 
 procedure TFMedocCheckDocs.FormCreate(Sender: TObject);
-var
-  i: integer;
-  Str: string;
 begin
-  fJMedocApp := Nil;
-  fFirmCodesLicensed := Nil;
-  fTablesMain := Nil;
-  fDemoFields := Nil;
-
   ProtectTimer.TimingStart();
 
   fSortField := 'CARDSTATUS_NAME';
   fSortAsc := True;
 
-  FindMedoc();
+  if (not MedocIni.IsFile()) then
+    MedocIni.AddFromRegistry();
+  InitMedocControl();
+
   if (ComboBoxPath.Items.Count = 0) then
   begin
      Log.Print('w', 'Неможливо знайти програму звітності');

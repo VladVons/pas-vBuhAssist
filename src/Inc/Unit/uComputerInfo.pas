@@ -13,12 +13,17 @@ uses
 type
   TWMI = class
   private
+    function GetValue(const WmiClass, WmiField: string): string;
   public
     constructor Create();
     destructor Destroy(); override;
-    function GetValue(const WmiClass, WmiField: string): string;
-    function GetInfo(): TStringList;
-    function GetInfoAsJson(): TJSONObject;
+    function GetAll(): TStringList;
+    function GetAllAsJson(): TJSONObject;
+    function GetCPU(): string;
+    function GetRAM(): string;
+    function GetDisk(): string;
+    function GetOS(): string;
+    function GetUUID(): string;
   end;
 
 implementation
@@ -51,29 +56,52 @@ begin
   end;
 end;
 
-function TWMI.GetInfo(): TStringList;
+function TWMI.GetUUID(): string;
+begin
+  Result := GetValue('Win32_ComputerSystemProduct', 'UUID');
+end;
+
+function TWMI.GetOS(): string;
+begin
+  Result := GetValue('Win32_OperatingSystem', 'Caption') + ' | ' +
+            GetValue('Win32_OperatingSystem', 'Version') + ' | ' +
+            Copy(GetValue('Win32_OperatingSystem', 'InstallDate'), 1, 8);
+end;
+
+function TWMI.GetCPU(): string;
+begin
+  Result := GetValue('Win32_Processor', 'Name') + ' | ' +
+            GetValue('Win32_Processor', 'NumberOfCores');
+end;
+
+function TWMI.GetRAM(): string;
+begin
+  Result := FormatFloat('#,##0 MB', StrToInt64Def(GetValue('Win32_ComputerSystem', 'TotalPhysicalMemory'),0)/1024/1024);
+end;
+
+function TWMI.GetDisk(): string;
+begin
+  Result := GetValue('Win32_DiskDrive', 'Model') + ' | '+
+            FormatFloat('#,##0 GB', StrToInt64Def(GetValue('Win32_DiskDrive', 'Size'),0)/1024/1024/1024);
+end;
+
+function TWMI.GetAll(): TStringList;
 begin
   Result := TStringList.Create();
   Result.NameValueSeparator := '=';
 
-  Result.Values['Processor'] := GetValue('Win32_Processor', 'Name') + ' | ' +
-                                GetValue('Win32_Processor', 'NumberOfCores');
-  Result.Values['Memory'] := FormatFloat('#,##0 MB', StrToInt64Def(GetValue('Win32_ComputerSystem', 'TotalPhysicalMemory'),0)/1024/1024);
-  Result.Values['DiskDrive'] := GetValue('Win32_DiskDrive', 'Model') + ' | '+
-                                FormatFloat('#,##0 GB', StrToInt64Def(GetValue('Win32_DiskDrive', 'Size'),0)/1024/1024/1024);
-  //Result.Values['Video'] := GetValue('Win32_VideoController', 'Name');
-  Result.Values['OS'] := GetValue('Win32_OperatingSystem', 'Caption') + ' | ' +
-                         GetValue('Win32_OperatingSystem', 'Version') + ' | ' +
-                         Copy(GetValue('Win32_OperatingSystem', 'InstallDate'), 1, 8);
-  Result.Values['UUID'] := GetValue('Win32_ComputerSystemProduct', 'UUID');
+  Result.Values['CPU'] := GetCPU();
+  Result.Values['RAM'] := GetRAM();
+  Result.Values['Disk'] := GetDisk();
+  Result.Values['OS'] := GetOS();
 end;
 
-function TWMI.GetInfoAsJson():TJSONObject;
+function TWMI.GetAllAsJson():TJSONObject;
 var
   i: integer;
   SL: TStringList;
 begin
-  SL := GetInfo();
+  SL := GetAll();
   try
     Result := TJSONObject.Create();
     for i := 0 to SL.Count - 1 do
@@ -82,5 +110,6 @@ begin
     SL.Free();
   end;
 end;
+
 end.
 

@@ -8,7 +8,7 @@ unit uSys;
 interface
 
 uses
-  Classes, Windows, SysUtils, FileInfo, Process;
+  Classes, Windows, SysUtils, StrUtils, FileInfo, Process;
 
 function AddDllDirectory(aDir: PWideChar): THandle; stdcall; external 'kernel32.dll';
 function SetDllDirectoryW(lpPathName: PWideChar): BOOL; stdcall; external 'kernel32.dll';
@@ -25,8 +25,9 @@ function FileGetModDate(const aFile: string): TDateTime;
 procedure FileAppendText(const aFile, aMsg: string);
 procedure StrToFile(const aStr: AnsiString; aFile: string);
 function StrFromFile(const aFile: string): AnsiString;
-function GetAppVer(): string;
+function GetAppVer(aBuildOnly: boolean = False): string;
 function IsRealApp(aCond: boolean = True): boolean;
+function ExpandEnvVar(const aStr: string): string;
 
 
 implementation
@@ -178,7 +179,7 @@ begin
   Result := GetEnvironmentVariable('ProgramData') + PathDelim + GetAppName();
 end;
 
-function GetAppVer(): string;
+function GetAppVer(aBuildOnly: boolean = false): string;
 var
   Info: TVersionInfo;
 begin
@@ -186,15 +187,23 @@ begin
   try
     // Завантажуємо інформацію з поточного виконуваного файлу
     Info.Load(HINSTANCE);
-    Result := Format('%d.%d.%d.%d', [
-      Info.FixedInfo.FileVersion[0], // Major
-      Info.FixedInfo.FileVersion[1], // Minor
-      Info.FixedInfo.FileVersion[2], // Revision
-      Info.FixedInfo.FileVersion[3]  // Build
-    ]);
+    if (aBuildOnly) then
+       Result := IntToStr(Info.FixedInfo.FileVersion[3])
+    else begin
+      Result := Format('%d.%d.%d.%d', [
+        Info.FixedInfo.FileVersion[0], // Major
+        Info.FixedInfo.FileVersion[1], // Minor
+        Info.FixedInfo.FileVersion[2], // Revision
+        Info.FixedInfo.FileVersion[3]  // Build
+      ]);
+    end;
   finally
     Info.Free();
   end;
+end;
+
+function GetAppVerBuild(): string;
+begin
 end;
 
 function GetMonthNameUa(aMonthNum: integer): string;
@@ -216,6 +225,28 @@ var
 begin
   Str := GetAppName() + '.lpr';
   Result := (not FileExists(Str)) and aCond;
+end;
+
+function ExpandEnvVar(const aStr: string): string;
+var
+  p1, p2: integer;
+  Env, Macros: string;
+begin
+  Result := aStr;
+
+  p1 := Pos('%', Result);
+  while p1 > 0 do
+  begin
+    p2 := PosEx('%', Result, p1 + 1);
+    if (p2 = 0) then
+      Break;
+
+    Macros := Copy(Result, p1 + 1, p2 - p1 - 1);
+    Env := GetEnvironmentVariable(Macros);
+    Result := StuffString(Result, p1, p2 - p1 + 1, Env);
+
+    p1 := Pos('%', Result);
+  end;
 end;
 
 initialization

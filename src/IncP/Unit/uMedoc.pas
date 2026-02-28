@@ -8,13 +8,170 @@ unit uMedoc;
 interface
 
 uses
-  Classes, SysUtils, StrUtils, XMLRead, DOM, LConvEncoding, Registry, fpjson;
+  Classes, SysUtils, StrUtils, XMLRead, DOM, LConvEncoding, Registry, IniFiles, fpjson,
+  uSettings, uSys;
 
-procedure FindMedocFiles(aJArr: TJSONArray);
+type
+  TMedocIni = class(TSettings)
+  private
+    function AddPaths(const aDirApp, aDirDb, aPort: string): boolean;
+    procedure AddFromRegistry(aKey: HKEY);
+    function DirToFileDb(const aDir: string): string;
+    function GetPathDbFromXML(const aFile: string): string;
+    function GetPort(const aDir: string): string;
+  public
+    procedure AddFromRegistry();
+    function AddPath(const aDirApp: string): boolean;
+    function DirToFileApp(const aDir: string): string;
+    function ToJson(): TJSONArray;
+  end;
+
 function GetHzXml(const aXML: string): string;
 function GetHzStr(const aStr: string): string;
 
+var
+  MedocIni: TMedocIni;
+
 implementation
+
+procedure TMedocIni.AddFromRegistry(aKey: HKEY);
+var
+  i: integer;
+  Reg: TRegistry;
+  Keys: TStringList;
+begin
+  Reg := TRegistry.Create(KEY_READ);
+  Keys := TStringList.Create();
+  try
+    Reg.RootKey := aKey;
+    if Reg.OpenKeyReadOnly('\SOFTWARE\IntellectService') then
+    begin
+      Reg.GetKeyNames(Keys);
+      Reg.CloseKey();
+      for i := 0 to Keys.Count - 1 do
+      begin
+        if (Reg.OpenKeyReadOnly('\SOFTWARE\IntellectService\' + Keys[i])) then
+          if (Reg.ValueExists('APPDATA')) then
+            AddPaths(Reg.ReadString('PATH'), Reg.ReadString('APPDATA'), Reg.ReadString('fbPort'));
+        Reg.CloseKey();
+      end;
+    end;
+  finally
+    Keys.Free();
+    Reg.Free();
+  end;
+end;
+
+procedure TMedocIni.AddFromRegistry();
+begin
+  AddFromRegistry(HKEY_LOCAL_MACHINE);
+  AddFromRegistry(HKEY_CURRENT_USER);
+end;
+
+function TMedocIni.GetPort(const aDir: string): string;
+begin
+  if (DirectoryExists(ConcatPaths([aDir, 'client']))) then
+     Result := '3050'
+  else
+     Result := ''
+end;
+
+function TMedocIni.DirToFileApp(const aDir: string): string;
+begin
+  Result := ConcatPaths([aDir, 'ezvit.exe']);
+  if (not FileExists(Result)) then
+    Result := '';
+end;
+
+function TMedocIni.DirToFileDb(const aDir: string): string;
+begin
+  Result := ConcatPaths([aDir, 'db', 'zvit.fdb']);
+  if (not FileExists(Result)) then
+    Result := '';
+end;
+
+function TMedocIni.AddPaths(const aDirApp, aDirDb, aPort: string): boolean;
+var
+  StrDb: string;
+begin
+  StrDb := DirToFileDb(aDirDb);
+  if (StrDb.IsEmpty()) then
+    Exit(False);
+
+  if (DirToFileApp(aDirApp).IsEmpty()) or (GetItem(aDirApp, 'db', '') <> '') then
+     Exit(False);
+
+  SetItem(aDirApp, 'db', StrDb);
+  SetItem(aDirApp, 'port', aPort);
+  Result := True;
+end;
+
+function TMedocIni.GetPathDbFromXML(const aFile: string): string;
+var
+  Doc: TXMLDocument;
+  Node: TDOMNode;
+begin
+  Result := '';
+
+  ReadXMLFile(Doc, aFile);
+  try
+    Node := Doc.DocumentElement.FindNode('APPDATA');
+    if Assigned(Node) then
+      Result := Node.TextContent;
+  finally
+    Doc.Free();
+  end;
+end;
+
+function TMedocIni.AddPath(const aDirApp: string): boolean;
+var
+  Str, StrDb: string;
+begin
+  if (not GetItem(aDirApp, 'db', '').IsEmpty()) then
+     Exit(False);
+
+  Str := ConcatPaths([aDirApp, 'config', 'global_client.config']);
+  if (not FileExists(Str)) then
+    Exit(False);
+
+  StrDb := GetPathDbFromXML(Str);
+  if (StrDb.IsEmpty()) then
+    Exit(False);
+
+  StrDb := StrDb.Replace('APPDATA', 'PROGRAMDATA');
+  StrDb := ExpandEnvVar(StrDb);
+  Result := AddPaths(aDirApp, StrDb, GetPort(aDirApp));
+end;
+
+function TMedocIni.ToJson(): TJSONArray;
+var
+  i: integer;
+  App, Section: string;
+  SL: TStringList;
+  Obj: TJSONObject;
+begin
+  Result := TJSONArray.Create();
+
+  SL := GetSections();
+  try
+    for i := 0 to SL.Count - 1 do
+    begin
+      Section := SL[i];
+      App := ConcatPaths([Section, 'ezvit.exe']);
+      if (FileExists(App)) then
+      begin
+        Obj := TJSONObject.Create();
+        Obj.Add('path', Section);
+        Obj.Add('db', GetItem(Section, 'db', ''));
+        Obj.Add('port', GetItem(Section, 'port', ''));
+        Result.Add(Obj);
+      end;
+    end;
+  finally
+    SL.Free();
+  end;
+end;
+
 
 function GetHzValToHuman(const aHZ, aHZN, aHZU: string): string;
 begin
@@ -91,57 +248,4 @@ begin
   Result := GetHzValToHuman(HZ, HZN, HZU);
 end;
 
-function RegGetMedocInfo(aKey: HKEY; aJArray: TJSONArray): integer;
-var
-  i: integer;
-  StrDB: string;
-  Obj: TJSONObject;
-  Reg: TRegistry;
-  Keys: TStringList;
-begin
-  Result := 0;
-  Reg := TRegistry.Create(KEY_READ);
-  Keys := TStringList.Create();
-  try
-    Reg.RootKey := aKey;
-    if Reg.OpenKeyReadOnly('\SOFTWARE\IntellectService') then
-    begin
-      Reg.GetKeyNames(Keys);
-      Reg.CloseKey();
-
-      for i := 0 to Keys.Count - 1 do
-      begin
-        if (Reg.OpenKeyReadOnly('\SOFTWARE\IntellectService\' + Keys[i])) then
-        begin
-          if (Reg.ValueExists('APPDATA')) then
-          begin
-            StrDB := ConcatPaths([Reg.ReadString('APPDATA'), 'db', 'zvit.fdb']);
-            if (FileExists(StrDB)) then
-            begin
-               Obj := TJSONObject.Create();
-               Obj.Add('db', StrDB);
-               Obj.Add('path', Reg.ReadString('PATH'));
-               Obj.Add('port', StrToIntDef(Reg.ReadString('fbPort'), 0));
-               aJArray.Add(Obj);
-               inc(Result);
-            end;
-          end;
-          Reg.CloseKey();
-        end;
-      end;
-    end;
-  finally
-    Keys.Free();
-    Reg.Free();
-  end;
-end;
-
-procedure FindMedocFiles(aJArr: TJSONArray);
-begin
-  RegGetMedocInfo(HKEY_LOCAL_MACHINE, aJArr);
-  RegGetMedocInfo(HKEY_CURRENT_USER, aJArr);
-end;
-
-
 end.
-

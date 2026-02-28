@@ -14,7 +14,7 @@ uses
 type
   TLicence = class(TUserData)
   private
-    fCryptKey: string;
+    fCryptKey, fUUID, fVerBuild: string;
     fJObjLic: TJSONObject;
     function RefreshFromHttp(aFirmCodes: TStrings): TJSONObject;
     function Request(aParam: TJSONObject): TJSONObject;
@@ -35,11 +35,18 @@ var
 implementation
 
 constructor TLicence.Create(const aFile: string);
+var
+  WMI: TWMI;
 begin
   inherited Create(aFile);
 
   fCryptKey := 'Vlad1971';
   fJObjLic := Nil;
+  fVerBuild := GetAppVer(True);
+
+  WMI := TWMI.Create();
+  fUUID := WMI.GetUUID();
+  WMI.Free();
 end;
 
 destructor TLicence.Destroy();
@@ -58,6 +65,7 @@ begin
   try
     JReq.Add('app', GetAppName());
     JReq.Add('ver', GetAppVer());
+    JReq.Add('uuid', fUUID);
     if (Assigned(aParam)) then
        for i := 0 to aParam.Count - 1 do
        begin
@@ -84,7 +92,7 @@ var
 begin
   try
     JReq := TJSONObject.Create();
-    JReq.Add('type', 'get_licences');
+    JReq.Add('type', 'get_licence');
 
     JArrLic := TJSONArray.Create();
     for i := 0 to aFirmCodes.Count - 1 do
@@ -107,11 +115,11 @@ begin
   WMI := TWMI.Create();
   JReq := TJSONObject.Create();
   try
-    JReq.Add('type', 'order_licences');
+    JReq.Add('type', 'order_licence');
     JReq.Add('module', aModule);
     JReq.Add('user', aDealerName);
     JReq.Add('passw', aDealerPassw);
-    JReq.Add('computer', WMI.GetInfoAsJson());
+    JReq.Add('computer', WMI.GetAllAsJson());
 
     JArrLic := TJSONArray.Create();
     for i := 0 to aFirmCodes.Count - 1 do

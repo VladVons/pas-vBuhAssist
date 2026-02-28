@@ -20,8 +20,8 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
   end
   object DbGrid: TDBGrid[1]
     Left = 0
-    Height = 208
-    Top = 176
+    Height = 200
+    Top = 184
     Width = 589
     Align = alClient
     Color = clWindow
@@ -47,7 +47,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
   object Panel1: TPanel[2]
     Left = 0
     Height = 144
-    Top = 32
+    Top = 40
     Width = 589
     Align = alTop
     ClientHeight = 144
@@ -55,83 +55,82 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     TabOrder = 2
     object ComboBoxPath: TComboBox
       Left = 128
-      Height = 22
+      Height = 26
       Top = 8
       Width = 448
-      ItemHeight = 14
-      ReadOnly = True
+      ItemHeight = 18
       TabOrder = 0
-      OnChange = ComboBoxPathChange
+      OnEditingDone = ComboBoxPathEditingDone
     end
     object ComboBoxYear: TComboBox
       Left = 360
-      Height = 22
+      Height = 26
       Top = 32
       Width = 215
       DropDownCount = 20
-      ItemHeight = 14
+      ItemHeight = 18
       ReadOnly = True
       TabOrder = 5
       OnDropDown = ComboBoxYearDropDown
     end
     object ComboBoxMonth: TComboBox
       Left = 128
-      Height = 22
+      Height = 26
       Top = 32
       Width = 224
       DropDownCount = 20
-      ItemHeight = 14
+      ItemHeight = 18
       ReadOnly = True
       TabOrder = 6
     end
     object ComboBoxDoc: TComboBox
       Left = 128
-      Height = 22
+      Height = 26
       Top = 80
       Width = 447
       DropDownCount = 20
-      ItemHeight = 14
+      ItemHeight = 18
       ReadOnly = True
       TabOrder = 7
     end
     object ComboBoxFirm: TComboBox
       Left = 128
-      Height = 22
+      Height = 26
       Top = 56
       Width = 224
       DropDownCount = 20
-      ItemHeight = 14
+      ItemHeight = 18
       ReadOnly = True
       TabOrder = 4
     end
     object Label1: TLabel
       Left = 15
-      Height = 14
+      Height = 18
       Top = 8
-      Width = 100
+      Width = 119
       Caption = 'Шлях програми'
       Color = clMenuHighlight
       ParentColor = False
     end
     object Label2: TLabel
       Left = 15
-      Height = 14
+      Height = 18
       Top = 32
-      Width = 44
+      Width = 51
       Caption = 'Період'
     end
     object Label3: TLabel
       Left = 15
-      Height = 14
+      Height = 18
       Top = 80
-      Width = 95
+      Width = 113
       Caption = 'Тип документу'
     end
     object Label5: TLabel
       Left = 15
-      Height = 14
+      Height = 18
       Top = 56
-      Width = 53
+      Width = 64
       Caption = 'ЄДРПОУ'
     end
     object ButtonExec: TButton

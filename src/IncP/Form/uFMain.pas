@@ -11,7 +11,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList, Windows, ExtCtrls,
   ComCtrls, StdCtrls, fpjson,
   uFAbout, uFMedocCheckDocs, uFOptimizePDF, uFSettings, uFLogin, uFMessage, uFHtmlView, uDmCommon,
-  uWinManager, uLicence, uLog, uSettings, uStateStore, uSys, uConst, uProtectTimer, uAnnonce;
+  uWinManager, uLicence, uLog, uSettings, uStateStore, uSys, uConst, uProtectTimer, uAnnonce, uMedoc;
 
 type
   { TFMain }
@@ -155,9 +155,6 @@ end;
 
 procedure TFMain.FormCreate(Sender: TObject);
 begin
-  Caption := cAppName + ' ' + GetAppVer();
-  WindowState := wsMaximized;
-
   ProtectTimer := TProtectTimer.Create(ParamStr(0));
   ProtectTimer.TimerRunRnd(True, 10000);
 
@@ -174,6 +171,8 @@ begin
   Annonce := TAnnonce.Create('app_annonce.ini', Licence);
   Annonce.Check();
 
+  MedocIni := TMedocIni.Create('app_ezvit.ini');
+
   OneInstance.Register(Handle);
   OneInstance.Free();
 
@@ -188,6 +187,9 @@ begin
 
   CheckUserAgreement();
   CheckPassw();
+
+  Caption := cAppName + ' ' + GetAppVer();
+  WindowState := wsMaximized;
 end;
 
 procedure TFMain.FormDestroy(Sender: TObject);

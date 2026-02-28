@@ -1,23 +1,24 @@
 object FMain: TFMain
   Left = 250
-  Height = 393
+  Height = 491
   Top = 99
-  Width = 800
-  ClientHeight = 393
-  ClientWidth = 800
+  Width = 1000
+  ClientHeight = 491
+  ClientWidth = 1000
+  DesignTimePPI = 120
   Menu = MainMenu1
-  LCLVersion = '4.4.0.0'
+  LCLVersion = '4.6.0.0'
   Visible = True
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   object Panel1: TPanel
     Left = 0
-    Height = 74
-    Top = 319
+    Height = 92
+    Top = 301
     Width = 800
     Align = alBottom
     Caption = 'Panel1'
-    ClientHeight = 74
+    ClientHeight = 92
     ClientWidth = 800
     TabOrder = 0
     object MemoInfo1: TMemo
@@ -34,8 +35,8 @@ object FMain: TFMain
   object Splitter1: TSplitter
     Cursor = crVSplit
     Left = 0
-    Height = 5
-    Top = 314
+    Height = 6
+    Top = 313
     Width = 800
     Align = alBottom
     ResizeAnchor = akBottom
@@ -55,8 +56,8 @@ object FMain: TFMain
     TabOrder = 2
   end
   object MainMenu1: TMainMenu
-    Left = 32
-    Top = 16
+    Left = 40
+    Top = 20
     object MenuItemFile: TMenuItem
       Caption = 'Файл'
       object MenuItemMedoc: TMenuItem
@@ -95,8 +96,8 @@ object FMain: TFMain
     end
   end
   object ActionList1: TActionList
-    Left = 32
-    Top = 72
+    Left = 40
+    Top = 90
     object ActionFAbout: TAction
       Caption = 'Про програму'
       OnExecute = ActionFAboutExecute
@@ -123,8 +124,8 @@ object FMain: TFMain
     end
   end
   object PopupMenu1: TPopupMenu
-    Left = 32
-    Top = 128
+    Left = 40
+    Top = 160
     object MenuItemCloseTab: TMenuItem
       Caption = 'Закрити'
       OnClick = MenuItemCloseTabClick

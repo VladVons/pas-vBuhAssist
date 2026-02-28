@@ -1,0 +1,10 @@
+
+Form FMain
+2026-02-28 11:14:39
+EClass: EDatabaseError
+Message: IBConnection : Database connect string (DatabaseName) not filled in!
+  $0065AA47
+  $0042F4FD  GetTablesMain,  line 121 of IncP/DataModule/uDmCommon.pas
+  $005F9C24  ConnectToDb,  line 133 of IncP/Form/uFMedocCheckDocs.pas
+  $005FA67B  ButtonExecClick,  line 267 of IncP/Form/uFMedocCheckDocs.pas
+
