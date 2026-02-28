@@ -106,6 +106,9 @@ var
   JObj: TJSONObject;
   Path: string;
 begin
+  if (aIdx = -1) then
+     Exit();
+
   JObj := TJSONObject(ComboBoxPath.Items.Objects[aIdx]);
   Path := ConcatPaths([JObj.Strings['path'], 'fb3', '32']);
 
@@ -309,9 +312,13 @@ begin
       Log.Print('i', 'Додано шлях ' + ComboBoxPath.Text);
     end;
   end;
+
   Idx := ComboBoxPath.Items.IndexOf(ComboBoxPath.Text);
-  ComboBoxPath.ItemIndex := Idx;
-  SetEmbededPath(Idx);
+  if (Idx <> -1) then
+  begin
+    ComboBoxPath.ItemIndex := Idx;
+    SetEmbededPath(Idx);
+  end;
 end;
 
 procedure TFMedocCheckDocs.ComboBoxYearDropDown(Sender: TObject);
@@ -441,6 +448,7 @@ procedure TFMedocCheckDocs.InitMedocControl();
 var
   i: integer;
   Str: string;
+  BtnEnable: boolean;
   JObj: TJSONObject;
 begin
   fJMedocApp := MedocIni.ToJson();
@@ -451,8 +459,11 @@ begin
     ComboBoxPath.Items.AddObject(Str, JObj);
   end;
 
-  ButtonRunMedoc.Enabled := fJMedocApp.Count > 0;
-  ButtonExec.Enabled := ButtonRunMedoc.Enabled;
+  BtnEnable := (fJMedocApp.Count > 0);
+  ButtonRunMedoc.Enabled := BtnEnable;
+  ButtonExec.Enabled := BtnEnable;
+  ButtonActivation.Enabled := BtnEnable;
+  ButtonPrint.Enabled := BtnEnable;
 end;
 
 procedure TFMedocCheckDocs.FormCreate(Sender: TObject);

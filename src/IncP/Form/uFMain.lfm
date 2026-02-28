@@ -14,18 +14,18 @@ object FMain: TFMain
   object Panel1: TPanel
     Left = 0
     Height = 92
-    Top = 301
-    Width = 800
+    Top = 399
+    Width = 1000
     Align = alBottom
     Caption = 'Panel1'
     ClientHeight = 92
-    ClientWidth = 800
+    ClientWidth = 1000
     TabOrder = 0
     object MemoInfo1: TMemo
       Left = 1
-      Height = 72
+      Height = 90
       Top = 1
-      Width = 798
+      Width = 998
       Align = alClient
       ReadOnly = True
       ScrollBars = ssAutoVertical
@@ -36,16 +36,16 @@ object FMain: TFMain
     Cursor = crVSplit
     Left = 0
     Height = 6
-    Top = 313
-    Width = 800
+    Top = 393
+    Width = 1000
     Align = alBottom
     ResizeAnchor = akBottom
   end
   object PageControl1: TPageControl
     Left = 0
-    Height = 314
+    Height = 393
     Top = 0
-    Width = 800
+    Width = 1000
     Align = alClient
     Font.CharSet = RUSSIAN_CHARSET
     Font.Name = 'Segoe UI Semibold'
@@ -130,5 +130,12 @@ object FMain: TFMain
       Caption = 'Закрити'
       OnClick = MenuItemCloseTabClick
     end
+  end
+  object TimerAnnonce: TTimer
+    Enabled = False
+    Interval = 30000
+    OnTimer = TimerAnnonceTimer
+    Left = 136
+    Top = 24
   end
 end

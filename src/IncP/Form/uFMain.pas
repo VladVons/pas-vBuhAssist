@@ -41,6 +41,7 @@ type
     Panel1: TPanel;
     PopupMenu1: TPopupMenu;
     Splitter1: TSplitter;
+    TimerAnnonce: TTimer;
     procedure ActionExitExecute(Sender: TObject);
     procedure ActionFAboutExecute(Sender: TObject);
     procedure ActionFMedocCheckDocsExecute(Sender: TObject);
@@ -50,6 +51,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure MenuItemCloseTabClick(Sender: TObject);
+    procedure TimerAnnonceTimer(Sender: TObject);
   private
     procedure CheckPassw();
     procedure CheckUserAgreement();
@@ -100,6 +102,11 @@ end;
 procedure TFMain.MenuItemCloseTabClick(Sender: TObject);
 begin
   WinManager.CloseActive();
+end;
+
+procedure TFMain.TimerAnnonceTimer(Sender: TObject);
+begin
+  Annonce.Check();
 end;
 
 procedure TFMain.WMShowMe(var aMsg: TMessage);
@@ -168,9 +175,6 @@ begin
 
   Settings := TSettings.Create('app.ini');
 
-  Annonce := TAnnonce.Create('app_annonce.ini', Licence);
-  Annonce.Check();
-
   MedocIni := TMedocIni.Create('app_ezvit.ini');
 
   OneInstance.Register(Handle);
@@ -187,6 +191,10 @@ begin
 
   CheckUserAgreement();
   CheckPassw();
+
+  Annonce := TAnnonce.Create('app_annonce.ini', Licence);
+  //Annonce.Check(); Timer delay
+  TimerAnnonce.Enabled := True;
 
   Caption := cAppName + ' ' + GetAppVer();
   WindowState := wsMaximized;

@@ -54,7 +54,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     ClientWidth = 655
     TabOrder = 2
     object ComboBoxPath: TComboBox
-      Left = 128
+      Left = 144
       Height = 26
       Top = 8
       Width = 448
@@ -63,7 +63,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       OnEditingDone = ComboBoxPathEditingDone
     end
     object ComboBoxYear: TComboBox
-      Left = 360
+      Left = 376
       Height = 26
       Top = 32
       Width = 215
@@ -74,7 +74,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       OnDropDown = ComboBoxYearDropDown
     end
     object ComboBoxMonth: TComboBox
-      Left = 128
+      Left = 144
       Height = 26
       Top = 32
       Width = 224
@@ -84,7 +84,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       TabOrder = 6
     end
     object ComboBoxDoc: TComboBox
-      Left = 128
+      Left = 144
       Height = 26
       Top = 80
       Width = 447
@@ -94,7 +94,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       TabOrder = 7
     end
     object ComboBoxFirm: TComboBox
-      Left = 128
+      Left = 144
       Height = 26
       Top = 56
       Width = 224
@@ -134,16 +134,16 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Caption = 'ЄДРПОУ'
     end
     object ButtonExec: TButton
-      Left = 128
+      Left = 144
       Height = 25
       Top = 112
-      Width = 184
+      Width = 192
       Caption = 'Знайти за параметрами'
       TabOrder = 1
       OnClick = ButtonExecClick
     end
     object ButtonPrint: TButton
-      Left = 320
+      Left = 344
       Height = 25
       Top = 112
       Width = 51
@@ -152,7 +152,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       OnClick = ButtonPrintClick
     end
     object ButtonActivation: TButton
-      Left = 496
+      Left = 512
       Height = 25
       Top = 112
       Width = 79
@@ -161,7 +161,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       OnClick = ButtonActivationClick
     end
     object ButtonRunMedoc: TButton
-      Left = 376
+      Left = 400
       Height = 25
       Top = 112
       Width = 80
@@ -170,12 +170,13 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       OnClick = ButtonRunMedocClick
     end
     object ButtonPath: TButton
-      Left = 576
+      Left = 592
       Height = 25
       Top = 8
       Width = 24
       Caption = '...'
       TabOrder = 9
+      Visible = False
       OnClick = ButtonPathClick
     end
   end
@@ -569,8 +570,8 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     Top = 248
   end
   object PopupMenuActivation: TPopupMenu[8]
-    Left = 512
-    Top = 192
+    Left = 312
+    Top = 256
     object MenuItemOrder: TMenuItem
       Caption = 'Активувати'
       OnClick = MenuItemOrderClick

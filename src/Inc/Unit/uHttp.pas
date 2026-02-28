@@ -24,21 +24,26 @@ var
   Client: TFPHTTPClient;
   Body: TStringStream;
 begin
-    Result := Nil;
-    Body := TStringStream.Create(aJson.AsJSON);
+  Result := Nil;
+  Body := TStringStream.Create(aJson.AsJSON);
 
-    Client := TFPHTTPClient.Create(nil);
-    Client.AddHeader('Content-Type', 'application/json; charset=UTF-8');
-    Client.AddHeader('Accept', 'application/json');
+  Client := TFPHTTPClient.Create(nil);
+  Client.AddHeader('Content-Type', 'application/json; charset=UTF-8');
+  Client.AddHeader('Accept', 'application/json');
+  try
+    Client.RequestBody := Body;
     try
-      Client.RequestBody := Body;
       Data := client.Post(aURL);
-      if (Client.ResponseStatusCode = 200) and (Data <> '') then
-        Result := TJSONObject(GetJSON(Data));
-    finally
-      Body.Free();
-      Client.Free();
+    except on E: Exception do
+      Data := '';
     end;
+
+    if (Client.ResponseStatusCode = 200) and (Data <> '') then
+      Result := TJSONObject(GetJSON(Data));
+  finally
+    Body.Free();
+    Client.Free();
+  end;
 end;
 
 function GetUrlToString(const aURL: string; out aData: string): integer;
