@@ -84,7 +84,7 @@ begin
           FileName := RemoveChars(FileName, '!@#$%^&_-+{}"|<>,');
         end;
 
-        FileOut := LabeledEditDirOut.Text + PathDelim + FileName + '.pdf';
+        FileOut := ConcatPaths([LabeledEditDirOut.Text, FileName + '.pdf']);
         Ext := LowerCase(ExtractFileExt(FileIn));
         if (Ext = '.pdf') then
           GS_OptimizePdf(FileIn, FileOut)

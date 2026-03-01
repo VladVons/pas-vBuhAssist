@@ -150,14 +150,23 @@ end;
 
 procedure TLicence.HttpToFileEncrypt(aFirmCodes: TStrings);
 var
-  Str, Encrypted: string;
+  Encrypted, Decrypted: string;
+  JObj: TJSONObject;
 begin
-  fJObjLic := RefreshFromHttp(aFirmCodes);
-  if (Assigned(fJObjLic)) then
+  JObj := RefreshFromHttp(aFirmCodes);
+  if (Assigned(JObj)) then
   begin
-    Str := fJObjLic.AsJSON;
-    Encrypted := StrEncrypt_AES(Str, fCryptKey);
+    //// crypt string myself (not secure)
+    //Str := JObj.AsJSON;
+    //Encrypted := StrEncrypt_AES(Str, fCryptKey);
+    //StrToFile(Encrypted, fFile);
+    //fJObjLic := JObj;
+
+    // get already encrypted data (more secure)
+    Encrypted := JObj.get('licences', '');
     StrToFile(Encrypted, fFile);
+    Decrypted := StrDecrypt_AES(Encrypted, fCryptKey);
+    fJObjLic := TJSONObject(GetJSON(Decrypted));
   end;
 end;
 
@@ -198,7 +207,8 @@ begin
       if (JObjItem.Get('module', '') = aModule) and (Today <= Till) then
       begin
         Code := JObjItem.Get('firm', '');
-        Result.Add(Code);
+        //Result.Add(Code);
+        Result.Values[Code] := Till;
       end;
     end;
   end;

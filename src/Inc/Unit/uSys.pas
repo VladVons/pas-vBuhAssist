@@ -26,7 +26,6 @@ procedure FileAppendText(const aFile, aMsg: string);
 procedure StrToFile(const aStr: AnsiString; aFile: string);
 function StrFromFile(const aFile: string): AnsiString;
 function GetAppVer(aBuildOnly: boolean = False): string;
-function IsRealApp(aCond: boolean = True): boolean;
 function ExpandEnvVar(const aStr: string): string;
 
 
@@ -104,12 +103,12 @@ begin
   try
     for I := 0 to Masks.Count - 1 do
     begin
-      if FindFirst(aDir + PathDelim + Masks[I], faAnyFile, SR) = 0 then
+      if FindFirst(ConcatPaths([aDir, Masks[I]]), faAnyFile, SR) = 0 then
       begin
         repeat
           if (SR.Attr and faDirectory) = 0 then
           begin
-            FilePath := aDir + PathDelim + SR.Name;
+            FilePath := ConcatPaths([aDir, SR.Name]);
             Result.Add(FilePath);
           end;
         until FindNext(SR) <> 0;
@@ -176,7 +175,7 @@ end;
 
 function GetAppProgramData(): string;
 begin
-  Result := GetEnvironmentVariable('ProgramData') + PathDelim + GetAppName();
+  Result := ConcatPaths([GetEnvironmentVariable('ProgramData'), GetAppName()]);
 end;
 
 function GetAppVer(aBuildOnly: boolean = false): string;
@@ -217,14 +216,6 @@ begin
     Exit('');
 
   Result := Months[aMonthNum];
-end;
-
-function IsRealApp(aCond: boolean = True): boolean;
-var
-  Str: string;
-begin
-  Str := GetAppName() + '.lpr';
-  Result := (not FileExists(Str)) and aCond;
 end;
 
 function ExpandEnvVar(const aStr: string): string;

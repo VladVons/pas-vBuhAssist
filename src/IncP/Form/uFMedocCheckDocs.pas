@@ -10,7 +10,7 @@ interface
 uses
   Classes, SysUtils, StrUtils, DateUtils, SQLDB, Forms, Graphics, StdCtrls,
   DBGrids, Grids, ExtCtrls, Buttons, Menus, Dialogs, LR_Class, LR_DBSet, LR_PGrid, LR_Desgn,
-  DB, fpjson, Math, IniFiles,
+  DB, fpjson, Math,
   uFBase, uSys, uLog, uLicence, uSettings, uVarUtil,
   uStateStore, uQuery, uMedoc, uDmCommon, uProtectTimer, uConst;
 
@@ -87,6 +87,7 @@ type
     function GetCurPathObj(): TJSONObject;
     procedure InitEmptyGrid();
     procedure InitMedocControl();
+    function IsDemo(aCode: string; aField: TField): boolean;
   public
 
   end;
@@ -221,12 +222,35 @@ begin
   //SQLQueryGrid.Refresh();
 end;
 
+function TFMedocCheckDocs.IsDemo(aCode: string; aField: TField): boolean;
+var
+  Idx: integer;
+  Str: string;
+  LicDate: TDateTime;
+begin
+  if (not ProtectTimer.CompareRnd()) then
+     Exit(True);
+
+  Idx := fFirmCodesLicensed.IndexOfName(aCode);
+  if (Idx = -1) then
+     Exit(True);
+
+  if (not aField.IsNull) then
+  begin
+     Str := fFirmCodesLicensed.ValueFromIndex[Idx];
+     LicDate := ScanDateTime('yyyy-mm-dd', Str);
+     if (aField.AsDateTime > LicDate) then
+       Exit(True);
+  end;
+
+  Result := False;
+end;
+
 procedure TFMedocCheckDocs.SQLQueryGridCalcFields(DataSet: TDataSet);
 var
   i, Month: integer;
-  Field, FieldXML, FieldFJ, FieldHZ: TField;
+  FieldPerDate, FieldXML, FieldFJ, FieldHZ: TField;
   Code: string;
-  Protected: boolean;
 begin
   ProtectTimer.TimingStart();
 
@@ -238,19 +262,18 @@ begin
   else if (not FieldFJ.AsString.IsEmpty()) then
     FieldHZ.AsString := GetHzStr(FieldFJ.AsString);
 
-  Protected := ProtectTimer.CompareRnd();
-  Code := DataSet.FieldByName('EDRPOU').AsString;
-  if (fFirmCodesLicensed.IndexOf(Code) = -1) or (not Protected) then
-    for i := 0 to fDemoFields.Count - 1 do
-      DataSet.FieldByName(fDemoFields[i]).AsString := IfThen(Protected, 'ДЕМО', 'Д Е М О');
-
-  Field := DataSet.FindField('PERDATE');
-  if (Assigned(Field)) and (not Field.IsNull) then
+  FieldPerDate := DataSet.FindField('PERDATE');
+  if (Assigned(FieldPerDate)) and (not FieldPerDate.IsNull) then
   begin
     //DataSet.FindField('PERDATE_STR').AsString := FormatDateTime('mmmm', Field.AsDateTime);
-    Month := MonthOf(Field.AsDateTime);
+    Month := MonthOf(FieldPerDate.AsDateTime);
     DataSet.FindField('PERDATE_STR').AsString := GetMonthNameUa(Month);
   end;
+
+  Code := DataSet.FieldByName('EDRPOU').AsString;
+  if (IsDemo(Code, FieldPerDate)) then
+    for i := 0 to fDemoFields.Count - 1 do
+        DataSet.FieldByName(fDemoFields[i]).AsString := 'ДЕМО';
 
   if (ProtectTimer.TimingCheck()) then
     fFirmCodesLicensed.Clear();
@@ -275,7 +298,7 @@ begin
 
   // we are not so fast comparing to MEDOC
   Delay := Settings.GetItem('Common', 'Delay', 1500);
-  if (IsRealApp()) then
+  if (not ProtectTimer.IsDeveloper()) then
     Sleep(Delay + Random(Delay));
 end;
 
@@ -427,7 +450,7 @@ begin
   if (JObj.Get('port', 0) = 0) then
     Log.Print('i', 'Не мережева версія програми')
   else begin
-    Path := ComboBoxPath.Text + PathDelim + 'ezvit.exe';
+    Path := ConcatPaths([ComboBoxPath.Text, 'ezvit.exe']);
     Log.Print('i', 'Запуск програми ' + Path);
     ExecProcess(Path);
   end;
@@ -487,9 +510,12 @@ begin
      SetEmbededPath(0);
   end;
 
-  SetComboBoxToCurrentMonth(ComboBoxMonth);
-  SetComboBoxDoc();
-  ComboBoxYearDropDown(Nil);
+  if (not ProtectTimer.IsDebugger()) or (ProtectTimer.IsDeveloper()) then
+  begin
+    SetComboBoxToCurrentMonth(ComboBoxMonth);
+    SetComboBoxDoc();
+    ComboBoxYearDropDown(Nil);
+  end;
 
   if (not Licence.IsFile()) then
      Log.Print('w', 'Файл ліцензій не знайдено');

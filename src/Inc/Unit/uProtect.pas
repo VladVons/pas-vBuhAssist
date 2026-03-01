@@ -40,6 +40,8 @@ type
     procedure ReadCRC();
     procedure TimingStart();
     function TimingCheck(aDif: integer = 100): boolean;
+    function IsDebugger(): boolean;
+    function IsDeveloper(): boolean;
   end;
 
 var
@@ -55,6 +57,19 @@ begin
   FillChar(fTail, SizeOf(TTail), 0);
 
   Randomize();
+end;
+
+function TProtect.IsDebugger(): boolean;
+begin
+ Result := IsDebuggerPresent();
+end;
+
+function TProtect.IsDeveloper(): boolean;
+var
+  Str: string;
+begin
+  Str := GetAppName() + '.lpr';
+  Result := FileExists(Str);
 end;
 
 function TProtect.CalculateFileTail(aLen: integer): TTail;

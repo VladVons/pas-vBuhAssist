@@ -28,7 +28,7 @@ begin
   Output := TStringList.Create();
 
   Dir := ExtractFilePath(ParamStr(0));
-  FilePath := Dir + cGS_Dir + PathDelim + 'gswin32c.exe';
+  FilePath := ConcatPaths([Dir, cGS_Dir, 'gswin32c.exe']);
   try
     Process := ExecProcess(FilePath, aParam);
     Result := Process.ExitStatus;
@@ -67,7 +67,7 @@ var
   Params: TStringList;
   FilePath, FilePathUnix: string;
 begin
-  FilePath := cGS_Dir + PathDelim + 'viewjpeg.ps';
+  FilePath := ConcatPaths([cGS_Dir, 'viewjpeg.ps']);
   if (not FileExists(FilePath)) then
     raise Exception.Create('Не знайдено ' + FilePath);
 
