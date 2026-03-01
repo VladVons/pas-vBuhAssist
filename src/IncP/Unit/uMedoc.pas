@@ -26,8 +26,8 @@ type
     function ToJson(): TJSONArray;
   end;
 
-function GetHzXml(const aXML: string): string;
-function GetHzStr(const aStr: string): string;
+  function GetHzXml(const aXML: string): string;
+  function GetHzStr(const aStr: string): string;
 
 var
   MedocIni: TMedocIni;
@@ -64,8 +64,8 @@ end;
 
 procedure TMedocIni.AddFromRegistry();
 begin
-  //AddFromRegistry(HKEY_LOCAL_MACHINE);
-  //AddFromRegistry(HKEY_CURRENT_USER);
+  AddFromRegistry(HKEY_LOCAL_MACHINE);
+  AddFromRegistry(HKEY_CURRENT_USER);
 end;
 
 function TMedocIni.GetPort(const aDir: string): string;
@@ -174,6 +174,7 @@ begin
     SL.Free();
   end;
 end;
+
 
 
 function GetHzValToHuman(const aHZ, aHZN, aHZU: string): string;

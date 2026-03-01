@@ -42,7 +42,7 @@ begin
   end else if (aCtrl is TEdit) or (aCtrl is TLabeledEdit) then
      TEdit(aCtrl).Text := aIni.ReadString(aForm.Name, aCtrl.Name + '_Text', '')
   else if (aCtrl is TCheckBox) then
-     TCheckBox(aCtrl).State := TCheckBoxState(aIni.ReadInteger(aForm.Name, aCtrl.Name + '_State', 0))
+     TCheckBox(aCtrl).Checked := boolean(aIni.ReadInteger(aForm.Name, aCtrl.Name + '_Checked', 0))
   else if (aCtrl is TSpinEdit) then
      TSpinEdit(aCtrl).Value := aIni.ReadInteger(aForm.Name, aCtrl.Name + '_Value', 0);
 end;
@@ -54,7 +54,7 @@ begin
   else if (aCtrl is TEdit) or (aCtrl is TLabeledEdit) then
     aIni.WriteString(aForm.Name, aCtrl.Name + '_Text', TEdit(aCtrl).Text)
   else if (aCtrl is TCheckBox) then
-    aIni.WriteInteger(aForm.Name, aCtrl.Name + '_State', Ord(TCheckBox(aCtrl).State))
+    aIni.WriteInteger(aForm.Name, aCtrl.Name + '_Checked', Ord(TCheckBox(aCtrl).Checked))
   else if (aCtrl is TSpinEdit) then
     aIni.WriteInteger(aForm.Name, aCtrl.Name + '_Value', TSpinEdit(aCtrl).Value);
 end;

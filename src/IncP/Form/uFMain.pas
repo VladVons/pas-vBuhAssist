@@ -55,6 +55,7 @@ type
   private
     procedure CheckPassw();
     procedure CheckUserAgreement();
+    procedure CheckAnnonce();
     function UserAgreement(aConfirm: boolean): boolean;
     procedure WMShowMe(var aMsg: TMessage); message TOneInstance.WM_SHOWME;
   public
@@ -160,6 +161,26 @@ begin
     end;
 end;
 
+procedure TFMain.CheckAnnonce();
+var
+ CheckUpdates, Delay: integer;
+begin
+  CheckUpdates := StateStore.GetItem('FSettings', 'CheckBoxUpdates_Checked', 0);
+  if (CheckUpdates <> 0) then
+  begin
+    Annonce := TAnnonce.Create('app_annonce.ini', Licence);
+    Delay := 20*1000;
+    if (Delay = 0) then
+      Annonce.Check()
+    else begin
+      Delay := 20*1000;
+      TimerAnnonce.Interval := Delay + random(Delay);
+      TimerAnnonce.Enabled := True;
+    end;
+  end;
+
+end;
+
 procedure TFMain.FormCreate(Sender: TObject);
 begin
   ProtectTimer := TProtectTimer.Create(ParamStr(0));
@@ -191,10 +212,7 @@ begin
 
   CheckUserAgreement();
   CheckPassw();
-
-  Annonce := TAnnonce.Create('app_annonce.ini', Licence);
-  //Annonce.Check(); Timer delay
-  TimerAnnonce.Enabled := True;
+  CheckAnnonce();
 
   Caption := cAppName + ' ' + GetAppVer();
   WindowState := wsMaximized;

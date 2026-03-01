@@ -133,7 +133,7 @@ object FMain: TFMain
   end
   object TimerAnnonce: TTimer
     Enabled = False
-    Interval = 30000
+    Interval = 0
     OnTimer = TimerAnnonceTimer
     Left = 136
     Top = 24

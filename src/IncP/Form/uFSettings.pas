@@ -18,6 +18,7 @@ type
 
   TFSettings = class(TFBase)
     ButtonOk: TButton;
+    CheckBoxUpdates: TCheckBox;
     GroupBox1: TGroupBox;
     GroupBox2: TGroupBox;
     Label1: TLabel;
@@ -29,6 +30,7 @@ type
     SpinEditBeginYear: TSpinEdit;
     procedure ButtonOkClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
   public
   end;
@@ -56,6 +58,11 @@ begin
     SpinEditBeginYear.Value := YearOf(IncYear(Date(), -cYearsBack));
 
   LabelVer.Caption := cAppName + ' ' + GetAppVer();
+end;
+
+procedure TFSettings.FormDestroy(Sender: TObject);
+begin
+  StateStore.Save(self);
 end;
 
 end.
