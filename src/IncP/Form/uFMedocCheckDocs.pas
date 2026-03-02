@@ -8,11 +8,10 @@ unit uFMedocCheckDocs;
 interface
 
 uses
-  Classes, SysUtils, StrUtils, DateUtils, SQLDB, Forms, Graphics, StdCtrls,
-  DBGrids, Grids, ExtCtrls, Buttons, Menus, Dialogs, LR_Class, LR_DBSet, LR_PGrid, LR_Desgn,
-  DB, fpjson, Math,
-  uFBase, uSys, uLog, uLicence, uSettings, uVarUtil,
-  uStateStore, uQuery, uMedoc, uDmCommon, uProtectTimer, uConst;
+  Classes, SysUtils, StrUtils, DateUtils, SQLDB, Forms, Graphics, StdCtrls, DBGrids, Grids,
+  ExtCtrls, Buttons, Menus, Dialogs, ComCtrls, LR_Class, LR_DBSet, LR_PGrid, LR_Desgn, DB, fpjson,
+  Math, uFBase, uSys, uLog, uLicence, uSettings, uVarUtil, uStateStore, uQuery, uMedoc, uDmCommon,
+  uProtectTimer, uConst;
 
 type
 
@@ -28,8 +27,10 @@ type
     ComboBoxMonth: TComboBox;
     ComboBoxPath: TComboBox;
     ComboBoxYear: TComboBox;
-    DataSourceGrid: TDataSource;
-    DbGrid: TDBGrid;
+    DataSourceGridCur: TDataSource;
+    DataSourceGridPrev: TDataSource;
+    DBGridPrev: TDBGrid;
+    DbGridCur: TDBGrid;
     frDBDataSet1: TfrDBDataSet;
     FrPrintGrid1: TFrPrintGrid;
     frReport1: TfrReport;
@@ -39,39 +40,54 @@ type
     Label5: TLabel;
     MenuItemOrder: TMenuItem;
     MenuItemRefresh: TMenuItem;
+    PageControl: TPageControl;
     Panel1: TPanel;
     PopupMenuActivation: TPopupMenu;
     SelectDirectoryDialog1: TSelectDirectoryDialog;
-    SQLQueryGrid: TSQLQuery;
-    SQLQueryGridCARDSENDSTT_NAME: TStringField;
-    SQLQueryGridCHARCODE: TStringField;
-    SQLQueryGridDEPT: TStringField;
-    SQLQueryGridEDRPOU: TStringField;
-    SQLQueryGridHZ: TStringField;
-    SQLQueryGridINDTAXNUM: TStringField;
-    SQLQueryGridMODDATE: TDateTimeField;
-    SQLQueryGridPERDATE: TDateField;
-    SQLQueryGridPERDATE_STR: TStringField;	
-    SQLQueryGridSHORTNAME: TStringField;
-    SQLQueryGridCARDSTATUS_NAME: TStringField;
-    SQLQueryGridVAT: TStringField;
-    SQLQueryGridXMLVALS: TBlobField;
-    SQLQueryGridFJ: TStringField;
+    SQLQueryGridCur: TSQLQuery;
+    SQLQueryGridCurCARDSENDSTT_NAME: TStringField;
+    SQLQueryGridCurCHARCODE: TStringField;
+    SQLQueryGridCurFORM_NAME: TStringField;
+    SQLQueryGridCurDEPT: TStringField;
+    SQLQueryGridCurEDRPOU: TStringField;
+    SQLQueryGridCurHZ: TStringField;
+    SQLQueryGridCurINDTAXNUM: TStringField;
+    SQLQueryGridCurMODDATE: TDateTimeField;
+    SQLQueryGridCurPERDATE: TDateField;
+    SQLQueryGridCurPERDATE_STR: TStringField;
+    SQLQueryGridCurSHORTNAME: TStringField;
+    SQLQueryGridCurCARDSTATUS_NAME: TStringField;
+    SQLQueryGridCurVAT: TStringField;
+    SQLQueryGridCurXMLVALS: TBlobField;
+    SQLQueryGridCurFJ: TStringField;
+
+    SQLQueryGridPrev: TSQLQuery;
+    SQLQueryGridPrevEDRPOU: TStringField;
+    SQLQueryGridPrevCARDSENDSTT_NAME: TStringField;
+    SQLQueryGridPrevCARDSTATUS_NAME: TStringField;
+    SQLQueryGridPrevCHARCODE: TStringField;
+    SQLQueryGridPrevPERDATE: TDateField;
+    SQLQueryGridPrevSHORTNAME: TStringField;
+
+    TabSheetPrev: TTabSheet;
+    TabSheetCur: TTabSheet;
     procedure ButtonExecClick(Sender: TObject);
     procedure ButtonActivationClick(Sender: TObject);
     procedure ButtonPathClick(Sender: TObject);
     procedure ButtonPrintClick(Sender: TObject);
     procedure ButtonRunMedocClick(Sender: TObject);
+    procedure ComboBoxMonthChange(Sender: TObject);
     procedure ComboBoxPathEditingDone(Sender: TObject);
     procedure ComboBoxYearDropDown(Sender: TObject);
-    procedure DbGridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: integer; Column: TColumn; State: TGridDrawState);
-    procedure DbGridTitleClick(Column: TColumn);
+    procedure DbGridCurDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: integer; Column: TColumn; State: TGridDrawState);
+    procedure DbGridCurTitleClick(Column: TColumn);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure frReport1GetValue(const aParName: string; var aParValue: Variant);
     procedure MenuItemOrderClick(Sender: TObject);
     procedure MenuItemRefreshClick(Sender: TObject);
-    procedure SQLQueryGridCalcFields(DataSet: TDataSet);
+    procedure PageControlChange(Sender: TObject);
+    procedure SQLQueryGridCurCalcFields(DataSet: TDataSet);
   private
     fSortField: string;
     fSortAsc: boolean;
@@ -81,7 +97,8 @@ type
     procedure SetComboBoxToCurrentMonth(aComboBox: TComboBox);
     procedure SetComboBoxToYear(aComboBox: TComboBox; aYear: integer = 0);
     procedure SetComboBoxDoc();
-    procedure QueryOpen();
+    procedure QueryCurOpen();
+    procedure QueryPrevOpen(const aCode: string; aPerType, aYear, aMonth: integer);
     procedure SetEmbededPath(aIdx: integer);
     procedure ConnectToDb();
     function GetCurPathObj(): TJSONObject;
@@ -141,17 +158,53 @@ begin
   end;
 end;
 
-procedure TFMedocCheckDocs.QueryOpen();
+procedure TFMedocCheckDocs.QueryPrevOpen(const aCode: string; aPerType, aYear, aMonth: integer);
+  function PeriodToMedoc(aPerType: integer): char;
+  begin
+    case aPerType of
+      0:  result := 'm';
+      10: result := 'q';
+      20: result := 'h';
+      30: result := 'y';
+    end;
+  end;
+
+var
+  Year, Month, Day: word;
+  Str: string;
+  DatePrev: TDate;
+begin
+  SQLQueryGridPrev.Close();
+  SQLQueryGridPrev.DataBase := DmCommon.IBConnection;
+  SQLQueryGridPrev.Transaction := DmCommon.SQLTransaction;
+
+  DbGridPrev.Columns.Clear();
+
+  SQLQueryGridPrev.ParamByName('_EDRPOU').Value := aCode;
+
+  SQLQueryGridPrev.ParamByName('_PERTYPE').Value := aPerType;
+
+  DatePrev := PrevPeriodDate(PeriodToMedoc(aPerType), aYear, aMonth);
+  DecodeDate(DatePrev, Year, Month, Day);
+  Str := FormatDateTime('yyyy-mm-dd', EncodeDate(Year, Month, 1));
+  SQLQueryGridPrev.MacroByName('_PERDATE').Value := QuotedStr(Str);
+
+  SQLQueryGridPrev.Open();
+end;
+
+procedure TFMedocCheckDocs.QueryCurOpen();
 var
   Month, Year, PerType: integer;
-  Str, StrDb, StrMacro: string;
+  Str, StrDb, StrMacro, Code: string;
 begin
-  SQLQueryGrid.Close();
-  SQLQueryGrid.DataBase := DmCommon.IBConnection;
-  SQLQueryGrid.Transaction := DmCommon.SQLTransaction;
+  DmCommon.SQLTransaction.Rollback();  //refresh
 
-  DbGrid.Columns.Clear();
-  DbGrid.Visible := True;
+  SQLQueryGridCur.Close();
+  SQLQueryGridCur.DataBase := DmCommon.IBConnection;
+  SQLQueryGridCur.Transaction := DmCommon.SQLTransaction;
+
+  DbGridCur.Columns.Clear();
+  DbGridCur.Visible := True;
 
   Year := integer(ComboBoxYear.Items.Objects[ComboBoxYear.ItemIndex]);
   if (Year = -1) then
@@ -176,21 +229,26 @@ begin
     PerType := 30;
     Month := 12;
   end;
-  SQLQueryGrid.ParamByName('_PERTYPE').Value := PerType;
+
+  SQLQueryGridCur.ParamByName('_PERTYPE').Value := PerType;
+
   Str := FormatDateTime('yyyy-mm-dd', EncodeDate(Year, Month, 1));
-  SQLQueryGrid.MacroByName('_PERDATE').Value := QuotedStr(Str);
+  SQLQueryGridCur.MacroByName('_PERDATE').Value := QuotedStr(Str);
 
   StrMacro := '';
   Str := UpperCase(ComboBoxDoc.Items.Names[ComboBoxDoc.ItemIndex]);
   if (not Str.IsEmpty()) then
     StrMacro := ' AND (UPPER(FORM.CHARCODE) = ' + QuotedStr(Str) + ')';
-  SQLQueryGrid.MacroByName('_COND_CHARCODE').Value :=  StrMacro;
+  SQLQueryGridCur.MacroByName('_COND_CHARCODE').Value :=  StrMacro;
 
   StrMacro := '';
-  Str := TRim(ComboBoxFirm.Text);
-  if (not Str.IsEmpty()) then
-    StrMacro := ' AND ORG.EDRPOU = ' + Str;
-  SQLQueryGrid.MacroByName('_COND_ORG').Value := StrMacro;
+  Code := TRim(ComboBoxFirm.Text);
+  if (not Code.IsEmpty()) then
+  begin
+    QueryPrevOpen(Code, PerType, Year, Month);
+    StrMacro := ' AND ORG.EDRPOU = ' + Code;
+  end;
+  SQLQueryGridCur.MacroByName('_COND_ORG').Value := StrMacro;
 
   StrMacro := ', '''' AS FJ';
   if (Pos('J0500110', ComboBoxDoc.Text) = 1) then
@@ -199,27 +257,26 @@ begin
     if (fTablesMain.IndexOf(StrDb) <> 0) then
     begin
       StrMacro := ', TFJ.HZ || ''-'' || TFJ.HZN || ''-'' || TFJ.HZU AS FJ';
-      SQLQueryGrid.MacroByName('_FROM_T2').Value := ' LEFT JOIN ' + StrDb + ' TFJ ON TFJ.CARDCODE = CARD.CODE';
+      SQLQueryGridCur.MacroByName('_FROM_T2').Value := ' LEFT JOIN ' + StrDb + ' TFJ ON TFJ.CARDCODE = CARD.CODE';
     end;
   end;
-  SQLQueryGrid.MacroByName('_SELECT_T2').Value := StrMacro;
+  SQLQueryGridCur.MacroByName('_SELECT_T2').Value := StrMacro;
 
-  SQLQueryGrid.MacroByName('_ORDER').Value := fSortField;
-  SQLQueryGrid.MacroByName('_ASC').Value := IfThen(fSortAsc, 'ASC', 'DESC');
+  SQLQueryGridCur.MacroByName('_ORDER').Value := fSortField;
+  SQLQueryGridCur.MacroByName('_ASC').Value := IfThen(fSortAsc, 'ASC', 'DESC');
 
-  //SQLQueryGrid.AfterOpen := nil;
-  //SQLQueryGrid.OnCalcFields := nil;
-  //SQLQueryGrid.AfterScroll := nil;
-  //DbGrid.OnDrawColumnCell := nil;
+  //SQLQueryGridCur.AfterOpen := nil;
+  //SQLQueryGridCur.OnCalcFields := nil;
+  //SQLQueryGridCur.AfterScroll := nil;
+  //DbGridCur.OnDrawColumnCell := nil;
 
-  //Str := ExpandSQL(SQLQueryGrid);
+  //Str := ExpandSQL(SQLQueryGridCur);
   //Log.Print('i', Str);
 
   //DmCommon.SQLTransaction.CommitRetaining();
   //DmCommon.SQLTransaction.Commit();
-  DmCommon.SQLTransaction.Rollback();  //refresh
-  SQLQueryGrid.Open();
-  //SQLQueryGrid.Refresh();
+  SQLQueryGridCur.Open();
+  //SQLQueryGridCur.Refresh();
 end;
 
 function TFMedocCheckDocs.IsDemo(aCode: string; aField: TField): boolean;
@@ -246,7 +303,7 @@ begin
   Result := False;
 end;
 
-procedure TFMedocCheckDocs.SQLQueryGridCalcFields(DataSet: TDataSet);
+procedure TFMedocCheckDocs.SQLQueryGridCurCalcFields(DataSet: TDataSet);
 var
   i, Month: integer;
   FieldPerDate, FieldXML, FieldFJ, FieldHZ: TField;
@@ -284,6 +341,8 @@ var
   Msg, LastUpdate: string;
   Delay: integer;
 begin
+  TabSheetPrev.TabVisible := Trim(ComboBoxFirm.Text) <> '';
+
   LastUpdate := Settings.GetItem('Licence', 'LastUpdate', '');
   if (LastUpdate.IsEmpty()) then
     MenuItemRefreshClick(Nil)
@@ -294,7 +353,7 @@ begin
   Log.Print('i', Msg);
 
   ConnectToDb();
-  QueryOpen();
+  QueryCurOpen();
 
   // we are not so fast comparing to MEDOC
   Delay := Settings.GetItem('Common', 'Delay', 1500);
@@ -352,23 +411,23 @@ begin
   SetComboBoxToYear(ComboBoxYear, Val);
 end;
 
-procedure TFMedocCheckDocs.DbGridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: integer; Column: TColumn; State: TGridDrawState);
+procedure TFMedocCheckDocs.DbGridCurDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: integer; Column: TColumn; State: TGridDrawState);
 var
   //Code: string;
   DisplayText: string;
 begin
-  //Code := DbGrid.DataSource.DataSet.FieldByName('EDRPOU').AsString;
+  //Code := DbGridCur.DataSource.DataSet.FieldByName('EDRPOU').AsString;
 
   // Встановлюємо колір фону та шрифт
-  with DbGrid.Canvas do
+  with DbGridCur.Canvas do
   begin
     if gdSelected in State then
     begin
       Brush.Color := RGBToColor(254, 240, 220);
       Font.Color := clBlack;
     end else begin
-      Brush.Color := DbGrid.Color;
-      Font.Color := DbGrid.Font.Color;
+      Brush.Color := DbGridCur.Color;
+      Font.Color := DbGridCur.Font.Color;
     end;
     FillRect(Rect); // малюємо фон
 
@@ -377,7 +436,7 @@ begin
   end;
 end;
 
-procedure TFMedocCheckDocs.DbGridTitleClick(Column: TColumn);
+procedure TFMedocCheckDocs.DbGridCurTitleClick(Column: TColumn);
 var
    fld: string;
 begin
@@ -391,8 +450,8 @@ begin
       fSortAsc := True;
     end;
 
-    QueryOpen();
-    DbGrid.Invalidate();
+    QueryCurOpen();
+    DbGridCur.Invalidate();
 end;
 
 procedure TFMedocCheckDocs.frReport1GetValue(const aParName: string; var aParValue: Variant);
@@ -417,24 +476,29 @@ begin
   Settings.SetItem('Licence', 'LastUpdate', DateTimeToStr(Now()));
 end;
 
+procedure TFMedocCheckDocs.PageControlChange(Sender: TObject);
+begin
+
+end;
+
 procedure TFMedocCheckDocs.ButtonPrintClick(Sender: TObject);
 var
   PrevVisible: boolean;
 begin
-  if (SQLQueryGrid.RecordCount = 0) then
+  if (SQLQueryGridCur.RecordCount = 0) then
   begin
     Log.Print('i', 'Немає даних для друку');
     Exit;
   end;
 
-  PrevVisible := SQLQueryGridINDTAXNUM.Visible;
-  SQLQueryGridINDTAXNUM.Visible := False;
+  PrevVisible := SQLQueryGridCurINDTAXNUM.Visible;
+  SQLQueryGridCurINDTAXNUM.Visible := False;
   FrPrintGrid1.Caption := Format(
    '%s -- Період: %s %s року--Звіт: %s)',
    [cAppName, ComboBoxMonth.Text, ComboBoxYear.Text, ComboBoxDoc.Text]
   );
   FrPrintGrid1.PreviewReport();
-  SQLQueryGridINDTAXNUM.Visible := PrevVisible;
+  SQLQueryGridCurINDTAXNUM.Visible := PrevVisible;
 
   //frReport1.LoadFromFile('Report\FMedocCheckDocs1.lrf');
   //if (frReport1.PrepareReport()) then
@@ -456,15 +520,20 @@ begin
   end;
 end;
 
+procedure TFMedocCheckDocs.ComboBoxMonthChange(Sender: TObject);
+begin
+
+end;
+
 procedure TFMedocCheckDocs.InitEmptyGrid();
 var
   i: integer;
 begin
 // Add cloumn visualisation in empty Grid
-for i := 0 to SQLQueryGrid.Fields.Count - 1 do
-  if SQLQueryGrid.Fields[i].Visible then
-    with DbGrid.Columns.Add do
-      FieldName := SQLQueryGrid.Fields[i].DisplayLabel;
+for i := 0 to SQLQueryGridCur.Fields.Count - 1 do
+  if SQLQueryGridCur.Fields[i].Visible then
+    with DbGridCur.Columns.Add do
+      FieldName := SQLQueryGridCur.Fields[i].DisplayLabel;
 end;
 
 procedure TFMedocCheckDocs.InitMedocControl();
@@ -490,6 +559,8 @@ begin
 end;
 
 procedure TFMedocCheckDocs.FormCreate(Sender: TObject);
+var
+  i: integer;
 begin
   ProtectTimer.TimingStart();
 
@@ -521,8 +592,9 @@ begin
      Log.Print('w', 'Файл ліцензій не знайдено');
 
   fFirmCodesLicensed := Licence.GetFirmCodes(Name);
-  ComboBoxFirm.Items.Assign(fFirmCodesLicensed);
-  ComboBoxFirm.Items.Insert(0, '');
+  ComboBoxFirm.Items.Add('');
+  for i := 0 to fFirmCodesLicensed.Count - 1 do
+      ComboBoxFirm.Items.Add(fFirmCodesLicensed.Names[i]);
 
   fDemoFields := TStringList.Create();
   fDemoFields.Add('CARDSTATUS_NAME');

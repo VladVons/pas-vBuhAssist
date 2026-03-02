@@ -82,20 +82,33 @@ begin
       Uri.Password := 'xxx';
       EncodeURI(Uri);
       Str := EncodeURI(Uri);
-    end else
+    end else begin
       Str := aUrl;
-    Quit(1, format('Error %d downloading %s', [Err, Str]));
+      Quit(1, format('Error %d downloading %s', [Err, Str]));
+    end;
   end
 end;
 
 procedure TAppUpd.Update(const aUrl: String);
 var
-  StrJson, Ver: String;
-  JObj: TJSONObject;
+  FileZip, Str: string;
 begin
-  StrJson := GetVerRemote(aUrl);
-  JObj := TJSONObject(GetJSON(StrJson));
-  Ver := GetJsonNested(JObj, 'ver/release', '');
+  FileZip := GetUrlToFile(aUrl, GetTempDir());
+
+  Str := GetOptionValue(#0, 'pid');
+  if (not Str.IsEmpty()) then
+    WaitProcess(Str.ToInteger());
+
+  Str := GetOptionValue(#0, 'delay');
+  if (Str.IsEmpty()) then
+    Str := '0';
+  Sleep(StrToInt(Str));
+
+  Str := GetOptionValue(#0, 'dir');
+  UnZipToDir(FileZip, Str);
+
+  Str := GetOptionValue(#0, 'app');
+  ExecProcess(Str, Nil);
 end;
 
 procedure TAppUpd.DoRun();
@@ -108,10 +121,17 @@ begin
     Quit();
   end;
 
-  Str := GetOptionValue('a', 'app');
+  Str := GetOptionValue(#0, 'crc');
   if (not Str.IsEmpty()) then
   begin
     AppProtect(Str);
+    Quit();
+  end;
+
+  Str := GetOptionValue(#0, 'url');
+  if (not Str.IsEmpty()) then
+  begin
+    Update(Str);
     Quit();
   end;
 
@@ -139,10 +159,12 @@ procedure TAppUpd.ShowHelp();
 begin
   WriteLn(GetAppName(), ' ', GetAppVer(), ' ', {$I %DATE%});
   WriteLn('options:');
-  WriteLn('  -u, --url');
-  WriteLn('  -s, --sleep');
-  WriteLn('  -p, --pause');
-  WriteLn('  -d, --dir');
+  WriteLn('--app');
+  WriteLn('--dir');
+  WriteLn('--pause');
+  WriteLn('--pid');
+  WriteLn('--delay');
+  WriteLn('--url');
 end;
 
 begin

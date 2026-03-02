@@ -16,6 +16,7 @@ uses
 type
   { TFMain }
   TFMain = class(TForm)
+    ActionCheckForUpdate: TAction;
     ActionSettings: TAction;
     ActionExit: TAction;
     ActionOptimizePDF: TAction;
@@ -26,6 +27,7 @@ type
     MainMenu1: TMainMenu;
     ManuItemHelp: TMenuItem;
     MemoInfo1: TMemo;
+    MenuItemCheckForUpdates: TMenuItem;
     Separator2: TMenuItem;
     MenuItemSettings: TMenuItem;
     MenuItemPrint: TMenuItem;
@@ -42,6 +44,7 @@ type
     PopupMenu1: TPopupMenu;
     Splitter1: TSplitter;
     TimerAnnonce: TTimer;
+    procedure ActionCheckForUpdateExecute(Sender: TObject);
     procedure ActionExitExecute(Sender: TObject);
     procedure ActionFAboutExecute(Sender: TObject);
     procedure ActionFMedocCheckDocsExecute(Sender: TObject);
@@ -80,6 +83,11 @@ begin
   Halt();
 end;
 
+procedure TFMain.ActionCheckForUpdateExecute(Sender: TObject);
+begin
+  Annonce.CheckForUpdate();
+end;
+
 procedure TFMain.ActionFMedocCheckDocsExecute(Sender: TObject);
 begin
   WinManager.Add(TFMedocCheckDocs);
@@ -107,7 +115,7 @@ end;
 
 procedure TFMain.TimerAnnonceTimer(Sender: TObject);
 begin
-  Annonce.Check();
+  Annonce.CheckWithDelay();
 end;
 
 procedure TFMain.WMShowMe(var aMsg: TMessage);
@@ -171,7 +179,7 @@ begin
     Annonce := TAnnonce.Create('app_annonce.ini', Licence);
     Delay := 20*1000;
     if (Delay = 0) then
-      Annonce.Check()
+      Annonce.CheckWithDelay()
     else begin
       Delay := 20*1000;
       TimerAnnonce.Interval := Delay + random(Delay);

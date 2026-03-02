@@ -14,7 +14,7 @@ uses
 
 function PostJSON(const aURL: string; aJSON: TJSONObject): TJSONObject;
 function GetUrlToString(const aURL: string; out aData: string): integer;
-procedure GetUrlToFile(const aURL: string; aSaveAs: string = '');
+function GetUrlToFile(const aURL, aDir: string; aFileName: string = ''): string;
 
 implementation
 
@@ -67,18 +67,28 @@ begin
   end;
 end;
 
-procedure GetUrlToFile(const aURL: string; aSaveAs: string = '');
+function GetUrlToFile(const aURL, aDir: string; aFileName: string = ''): string;
 var
   Client: TFPHTTPClient;
+  FS: TFileStream;
 begin
+  if (aFileName.IsEmpty()) then
+    aFileName := ExtractFileName(aURL);
+
+  Result := aFileName;
+  if (not aDir.IsEmpty()) then
+    Result := ConcatPaths([aDir, aFileName]);
+
   Client := TFPHTTPClient.Create(nil);
   try
-    Client.Get(aURL, aSaveAs);
+    Client.AllowRedirect := True;
+    FS := TFileStream.Create(Result, fmCreate);
+    Client.Get(aURL, FS);
   finally
     Client.Free();
+    FreeAndNil(FS);
   end;
 end;
-
 
 initialization
   //AddDirDll(cDirAddons + PathDelim + 'ssl');

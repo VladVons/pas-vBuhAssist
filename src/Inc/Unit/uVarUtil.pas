@@ -16,6 +16,7 @@ function RemoveChars(const aStr, aRemove: string): string;
 function GetJsonNested(const aJObj: TJSONObject; const Path: string; aDef: Variant): Variant;
 function ReplMacros(const aText: string; aDict: TStringList): string;
 function Between(aVal, aMin, aMax: integer): boolean;
+function PrevPeriodDate(aPerType: char; aYear, aMonth: Integer): TDate;
 
 generic function IIF<T>(aCond: boolean; const aValTrue, aValFalse: T): T; inline;
 
@@ -23,6 +24,22 @@ generic function IIF<T>(aCond: boolean; const aValTrue, aValFalse: T): T; inline
 implementation
 
 uses RegExpr;
+
+function PrevPeriodDate(aPerType: char; aYear, aMonth: Integer): TDate;
+var
+  ShiftMonths: Integer;
+begin
+  case aPerType of
+    'm': ShiftMonths := 1;
+    'q': ShiftMonths := 3;
+    'h': ShiftMonths := 6;
+    'y': ShiftMonths := 12;
+  else
+    ShiftMonths := 1;
+  end;
+
+  Result := IncMonth(EncodeDate(aYear, aMonth, 1), -ShiftMonths);
+end;
 
 function ExtractLatin(const aString: string): string;
 var

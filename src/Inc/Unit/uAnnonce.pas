@@ -8,17 +8,20 @@ unit uAnnonce;
 interface
 
 uses
-  Classes, SysUtils, ExtCtrls, fpjson, DateUtils, LConvEncoding,
-  uLog, uSettings, uLicence, uFMessage;
+  Classes, SysUtils, ExtCtrls, fpjson, DateUtils, LConvEncoding, Dialogs, System.UITypes, Process, Windows,
+  uLog, uSettings, uLicence, uFMessage, uSys;
 
 type
   TAnnonce = class(TSettings)
   private
     fLicence: TLicence;
     procedure OnTimer(aSender: TObject);
+    function FindUpdate(aJObj: TJSONObject): TJSONObject;
   public
     constructor Create(const aFile: string; aLicence: TLicence);
-    procedure Check();
+    function Check(): TJSONObject;
+    procedure CheckForUpdate();
+    procedure CheckWithDelay();
   end;
 
 
@@ -72,7 +75,84 @@ begin
   end;
 end;
 
-procedure TAnnonce.Check();
+function TAnnonce.Check(): TJSONObject;
+begin
+  Result := fLicence.GetTypeFromHttp('get_annonce');
+end;
+
+function TAnnonce.FindUpdate(aJObj: TJSONObject): TJSONObject;
+var
+  i: integer;
+  JItem: TJSONObject;
+  Arr: TJSONArray;
+begin
+  Arr := aJObj.Arrays['list'];
+  for i := 0 to Arr.Count - 1 do
+  begin
+    JItem := Arr.Objects[i];
+    if (JItem.Get('type', '') = 'update') then
+      Exit(JItem);
+  end;
+  Result := Nil;
+end;
+
+procedure TAnnonce.CheckForUpdate();
+const
+  cUpdater = 'vAppUpd.exe';
+var
+  Body: string;
+  JObj, JItem: TJSONObject;
+  Params: TStringList;
+  Process: TProcess;
+begin
+  Log.Print('i', 'Перевірка оновлень');
+
+  JObj := Check();
+  if not (Assigned(JObj))then
+  begin
+    Log.Print('e', 'Помилка перевірки оновлень');
+    Exit();
+  end;
+
+  Process := Nil;
+  Params := Nil;
+  try
+    JItem := FindUpdate(JObj);
+    if (not Assigned(JItem)) then
+    begin
+      Log.Print('i', 'Не знайдено оновлень');
+      Exit();
+    end;
+
+    Body := JItem.Get('body', '');
+    Log.Print('i', Body);
+    if (MessageDlg(Body + '. Оновити ?', mtConfirmation, [mbYes, mbNo], 0) <> mrYes) then
+      Exit();
+
+    if (not FileExists(cUpdater)) then
+    begin
+      Log.Print('e', 'Не знайдено програму оновлювач ' + cUpdater);
+      Exit();
+    end;
+
+    Params := TStringList.Create();
+    Params.Add('--url=' + JItem.Get('url', ''));
+    Params.Add('--dir=' + GetAppDir());
+    Params.Add('--app=' + ParamStr(0));
+    Params.Add('--pid=' + IntToStr(GetCurrentProcessId()));
+    Process := ExecProcess(cUpdater, Params, False);
+
+    Log.Print('i', 'Перезавантаження програми');
+    Sleep(1000);
+    Halt();
+  finally
+    JObj.Free();
+    FreeAndNil(Params);
+    FreeAndNil(Process);
+  end;
+end;
+
+procedure TAnnonce.CheckWithDelay();
 var
   i, Delay: integer;
   Next, Id: string;
@@ -80,28 +160,28 @@ var
   Arr: TJSONArray;
   Timer: TTimer;
 begin
-  JObj := fLicence.GetTypeFromHttp('get_annonce');
+  JObj := Check();
+  if not (Assigned(JObj))then
+    Exit();
+
   try
-    if (Assigned(JObj))then
+    Arr := JObj.Arrays['list'];
+    for i := 0 to Arr.Count - 1 do
     begin
-      Arr := JObj.Arrays['list'];
-      for i := 0 to Arr.Count - 1 do
-      begin
-        JItem := Arr.Objects[i];
+      JItem := Arr.Objects[i];
 
-        Id := IntToStr(JItem.Get('id', 0));
-        Next := GetItem(Id, 'next', '');
-        if (not Next.IsEmpty()) and (StrToDateTime(Next) > Now()) then
-           continue;
+      Id := IntToStr(JItem.Get('id', 0));
+      Next := GetItem(Id, 'next', '');
+      if (not Next.IsEmpty()) and (StrToDateTime(Next) > Now()) then
+         continue;
 
-        Delay := JItem.Get('delay', 10000);
+      Delay := JItem.Get('delay', 10000);
 
-        Timer := TTimer.Create(Nil);
-        Timer.OnTimer := @OnTimer;
-        Timer.Enabled := True;
-        Timer.Interval := Delay + random(Delay);
-        Timer.Tag := PtrInt(JItem.Clone());
-      end;
+      Timer := TTimer.Create(Nil);
+      Timer.OnTimer := @OnTimer;
+      Timer.Enabled := True;
+      Timer.Interval := Delay + random(Delay);
+      Timer.Tag := PtrInt(JItem.Clone());
     end;
   finally
     FreeAndNil(JObj);

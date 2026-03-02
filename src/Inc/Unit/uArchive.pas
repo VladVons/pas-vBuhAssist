@@ -18,10 +18,10 @@ procedure UnZipToDir(const aFileIn, aDirOut: string);
 var
   UnZipper: TUnZipper;
 begin
-  if (not DirectoryExists(aDirOut)) then
+  if (not aDirOut.IsEmpty) and (not DirectoryExists(aDirOut)) then
     ForceDirectories(aDirOut);
 
-  UnZipper := TUnZipper.Create;
+  UnZipper := TUnZipper.Create();
   try
     UnZipper.FileName := aFileIn;
     UnZipper.OutputPath := aDirOut;

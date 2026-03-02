@@ -1,1 +1,1 @@
-vAppUpd.exe --app=vBuhAssist.exe
+vAppUpd.exe --crc=vBuhAssist.exe

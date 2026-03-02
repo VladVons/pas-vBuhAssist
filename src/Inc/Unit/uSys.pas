@@ -14,10 +14,11 @@ function AddDllDirectory(aDir: PWideChar): THandle; stdcall; external 'kernel32.
 function SetDllDirectoryW(lpPathName: PWideChar): BOOL; stdcall; external 'kernel32.dll';
 function SetDefaultDllDirectories(aDirFlags: DWORD): BOOL; stdcall; external 'kernel32.dll';
 
-function ExecProcess(const aFile: string; aParam: TStrings = Nil): TProcess;
+function ExecProcess(const aFile: string; aParam: TStrings = Nil; aWaitOnExit: boolean = True): TProcess;
 function GetMonthNameUa(aMonthNum: integer): string;
 function GetAppProgramData(): string;
 function GetAppName(): string;
+function GetAppDir(): string;
 function GetDirFiles(const aDir, aMask: string): TStringList;
 procedure AddDirDll(const aPath: string);
 function FileGetSize(const aFileName: string): Int64;
@@ -27,11 +28,12 @@ procedure StrToFile(const aStr: AnsiString; aFile: string);
 function StrFromFile(const aFile: string): AnsiString;
 function GetAppVer(aBuildOnly: boolean = False): string;
 function ExpandEnvVar(const aStr: string): string;
+procedure WaitProcess(aPID: DWORD);
 
 
 implementation
 
-function ExecProcess(const aFile: string; aParam: TStrings = Nil): TProcess;
+function ExecProcess(const aFile: string; aParam: TStrings = Nil; aWaitOnExit: boolean = True): TProcess;
 var
   Dir: string;
 begin
@@ -43,11 +45,28 @@ begin
   Result := TProcess.Create(nil);
   Result.Executable := aFile;
   Result.CurrentDirectory := Dir;
-  Result.Options := [poUsePipes, poWaitOnExit];
   Result.ShowWindow := swoHide;
+
+  Result.Options := [poUsePipes];
+  if (aWaitOnExit) then
+    Result.Options := Result.Options + [poWaitOnExit];
+
   if (Assigned(aParam)) then
     Result.Parameters := aParam;
+
   Result.Execute();
+end;
+
+procedure WaitProcess(aPID: DWORD);
+var
+  hProc: THandle;
+begin
+  hProc := OpenProcess(SYNCHRONIZE, False, aPID);
+  if (hProc <> 0) then
+  begin
+    WaitForSingleObject(hProc, INFINITE); // чекаємо завершення
+    CloseHandle(hProc);
+  end;
 end;
 
 procedure AddDirDll(const aPath: string);
@@ -171,6 +190,11 @@ end;
 function GetAppName(): string;
 begin
   Result := ChangeFileExt(ExtractFileName(ParamStr(0)), '');
+end;
+
+function GetAppDir(): string;
+begin
+  Result := ExtractFilePath(ParamStr(0));
 end;
 
 function GetAppProgramData(): string;

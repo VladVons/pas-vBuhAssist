@@ -87,6 +87,9 @@ object FMain: TFMain
     end
     object ManuItemHelp: TMenuItem
       Caption = 'Довідка'
+      object MenuItemCheckForUpdates: TMenuItem
+        Action = ActionCheckForUpdate
+      end
       object MenuItemLicense: TMenuItem
         Action = ActionUserAgreement
       end
@@ -121,6 +124,10 @@ object FMain: TFMain
     object ActionSettings: TAction
       Caption = 'Налаштування'
       OnExecute = ActionSettingsExecute
+    end
+    object ActionCheckForUpdate: TAction
+      Caption = 'Перевірка оновлень'
+      OnExecute = ActionCheckForUpdateExecute
     end
   end
   object PopupMenu1: TPopupMenu
