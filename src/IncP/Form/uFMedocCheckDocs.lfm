@@ -415,7 +415,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     end
     object SQLQueryGridCurDEPT: TStringField
       DisplayLabel = 'Філія'
-      DisplayWidth = 10
+      DisplayWidth = 8
       FieldKind = fkData
       FieldName = 'DEPT'
       Index = 1
@@ -464,6 +464,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     end
     object SQLQueryGridCurPERDATE: TDateField
       DisplayLabel = 'Період'
+      DisplayWidth = 8
       FieldKind = fkData
       FieldName = 'PERDATE'
       Index = 5
@@ -475,7 +476,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     end
     object SQLQueryGridCurPERDATE_STR: TStringField
       DisplayLabel = 'Період'
-      DisplayWidth = 10
+      DisplayWidth = 8
       FieldKind = fkData
       FieldName = 'PERDATE_STR'
       Index = 6
@@ -487,7 +488,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     end
     object SQLQueryGridCurCHARCODE: TStringField
       DisplayLabel = 'Код'
-      DisplayWidth = 10
+      DisplayWidth = 8
       FieldKind = fkData
       FieldName = 'CHARCODE'
       Index = 7
@@ -511,6 +512,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     end
     object SQLQueryGridCurMODDATE: TDateTimeField
       DisplayLabel = 'Модифік'
+      DisplayWidth = 8
       FieldKind = fkData
       FieldName = 'MODDATE'
       Index = 9
@@ -571,6 +573,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     Top = 216
   end
   object FrPrintGrid1: TFrPrintGrid[5]
+    DBGrid = DbGridCur
     Orientation = poLandscape
     Font.CharSet = RUSSIAN_CHARSET
     Font.Height = -13
@@ -578,11 +581,10 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     Font.Pitch = fpVariable
     Font.Quality = fqDraft
     TitleFont.CharSet = RUSSIAN_CHARSET
-    TitleFont.Height = -12
+    TitleFont.Height = -15
     TitleFont.Name = 'Verdana'
     TitleFont.Pitch = fpVariable
     TitleFont.Quality = fqDraft
-    TitleFont.Style = [fsBold]
     Caption = 'Grid'
     PrinterIndex = -1
     ShowCaption = True

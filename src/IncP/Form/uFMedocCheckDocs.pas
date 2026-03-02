@@ -488,21 +488,24 @@ begin
   if (SQLQueryGridCur.RecordCount = 0) then
   begin
     Log.Print('i', 'Немає даних для друку');
-    Exit;
+    Exit();
   end;
 
-  PrevVisible := SQLQueryGridCurINDTAXNUM.Visible;
   SQLQueryGridCurINDTAXNUM.Visible := False;
+  SQLQueryGridCurCARDSTATUS_NAME.Visible := False;
+
   FrPrintGrid1.Caption := Format(
    '%s -- Період: %s %s року--Звіт: %s)',
    [cAppName, ComboBoxMonth.Text, ComboBoxYear.Text, ComboBoxDoc.Text]
   );
   FrPrintGrid1.PreviewReport();
-  SQLQueryGridCurINDTAXNUM.Visible := PrevVisible;
+
+  SQLQueryGridCurINDTAXNUM.Visible := True;
+  SQLQueryGridCurCARDSTATUS_NAME.Visible := True;
 
   //frReport1.LoadFromFile('Report\FMedocCheckDocs1.lrf');
-  //if (frReport1.PrepareReport()) then
-  //  frReport1.ShowReport();
+  if (frReport1.PrepareReport()) then
+    frReport1.ShowReport();
 end;
 
 procedure TFMedocCheckDocs.ButtonRunMedocClick(Sender: TObject);
