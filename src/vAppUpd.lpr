@@ -93,6 +93,7 @@ procedure TAppUpd.Update(const aUrl: String);
 var
   FileZip, Str: string;
 begin
+  //GetUrlToFile('https://collector:col2024@download.1x1.com.ua/public/update/vBuhAssist/vBuhAssist_35.exe.zip');
   FileZip := GetUrlToFile(aUrl, GetTempDir());
 
   Str := GetOptionValue(#0, 'pid');
@@ -106,6 +107,7 @@ begin
 
   Str := GetOptionValue(#0, 'dir');
   UnZipToDir(FileZip, Str);
+  DeleteFile(FileZip);
 
   Str := GetOptionValue(#0, 'app');
   ExecProcess(Str, Nil);
@@ -159,12 +161,12 @@ procedure TAppUpd.ShowHelp();
 begin
   WriteLn(GetAppName(), ' ', GetAppVer(), ' ', {$I %DATE%});
   WriteLn('options:');
-  WriteLn('--app');
-  WriteLn('--dir');
-  WriteLn('--pause');
-  WriteLn('--pid');
-  WriteLn('--delay');
-  WriteLn('--url');
+  WriteLn('--app     application to start after update');
+  WriteLn('--dir     directory to extract ZIP archive');
+  WriteLn('--pause   wait for key press before quit');
+  WriteLn('--pid     process ID to wait for free');
+  WriteLn('--delay   delay in ms before unzip');
+  WriteLn('--url     remote ZIP file address ');
 end;
 
 begin
