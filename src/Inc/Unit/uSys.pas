@@ -19,6 +19,7 @@ function GetMonthNameUa(aMonthNum: integer): string;
 function GetAppProgramData(): string;
 function GetAppName(): string;
 function GetAppDir(): string;
+function GetAppVer(aBuildOnly: boolean = False): string;
 function GetDirFiles(const aDir, aMask: string): TStringList;
 procedure AddDirDll(const aPath: string);
 function FileGetSize(const aFileName: string): Int64;
@@ -26,7 +27,6 @@ function FileGetModDate(const aFile: string): TDateTime;
 procedure FileAppendText(const aFile, aMsg: string);
 procedure StrToFile(const aStr: AnsiString; aFile: string);
 function StrFromFile(const aFile: string): AnsiString;
-function GetAppVer(aBuildOnly: boolean = False): string;
 function ExpandEnvVar(const aStr: string): string;
 procedure WaitProcess(aPID: DWORD);
 
@@ -213,8 +213,8 @@ begin
     if (aBuildOnly) then
        Result := IntToStr(Info.FixedInfo.FileVersion[3])
     else begin
-      Result := Format('%d.%d.%d.%d', [
-        Info.FixedInfo.FileVersion[0], // Major
+      Result := Format('%d.%d.%d', [
+        //Info.FixedInfo.FileVersion[0], // Major
         Info.FixedInfo.FileVersion[1], // Minor
         Info.FixedInfo.FileVersion[2], // Revision
         Info.FixedInfo.FileVersion[3]  // Build

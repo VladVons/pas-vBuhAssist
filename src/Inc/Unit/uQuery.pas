@@ -12,6 +12,8 @@ uses
 
 function GetQueryField(aDataSource: TDataSource; aQuery: TSQLQuery; aField: string): TStringList;
 function ExpandSQL(aQuery: TSQLQuery): string;
+function FieldToStrings(aQuery: TSQLQuery; aField: string; aAsStr: boolean = False): TStringList;
+
 
 implementation
 
@@ -67,5 +69,21 @@ begin
   Result := SQL;
 end;
 
+function FieldToStrings(aQuery: TSQLQuery; aField: string; aAsStr: boolean = False): TStringList;
+var
+  Str: string;
+begin
+  Result := TStringList.Create();
+
+  aQuery.First();
+  while not aQuery.EOF do
+  begin
+    Str := aQuery.FieldByName(aField).AsString;
+    if (aAsStr) then
+       Str := QuotedStr(Str);
+    Result.Add(Str);
+    aQuery.Next();
+  end;
+end;
 end.
 

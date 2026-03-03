@@ -97,8 +97,8 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Left = 15
       Height = 18
       Top = 80
-      Width = 113
-      Caption = 'Тип документу'
+      Width = 74
+      Caption = 'Документ'
     end
     object Label5: TLabel
       Left = 15
@@ -163,7 +163,6 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     Align = alClient
     TabIndex = 0
     TabOrder = 2
-    OnChange = PageControlChange
     object TabSheetCur: TTabSheet
       Caption = 'Поточний'
       ClientHeight = 169
@@ -196,7 +195,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       end
     end
     object TabSheetPrev: TTabSheet
-      Caption = 'Попередній'
+      Caption = 'Пропоновані'
       ClientHeight = 169
       ClientWidth = 647
       TabVisible = False
@@ -581,7 +580,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     Font.Pitch = fpVariable
     Font.Quality = fqDraft
     TitleFont.CharSet = RUSSIAN_CHARSET
-    TitleFont.Height = -15
+    TitleFont.Height = -12
     TitleFont.Name = 'Verdana'
     TitleFont.Pitch = fpVariable
     TitleFont.Quality = fqDraft
@@ -701,6 +700,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       '    AND (CARD.IDPARENT IS NULL)'
       '    AND (CARD.FORM > 0)'
       '    AND (CARD.INTRASH = 0)'
+      '    %_COND_CHARCODES'
       'ORDER BY'
       '  CHARCODE ASC'
       ''
@@ -720,6 +720,11 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       item
         DataType = ftUnknown
         Name = '_PERDATE'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = '_COND_CHARCODES'
         ParamType = ptInput
       end>
     MacroCheck = True

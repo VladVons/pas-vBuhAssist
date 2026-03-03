@@ -10,7 +10,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="21"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="IncP\Form\uFMain.pas"/>
@@ -21,7 +21,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="75"/>
         <CursorPos Y="88"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="IncP\Form\uFAbout.pas"/>
@@ -32,7 +32,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="32"/>
         <CursorPos Y="50"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
@@ -40,9 +40,9 @@
         <ComponentName Value="FMedocCheckDocs"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <TopLine Value="587"/>
-        <CursorPos X="6" Y="597"/>
-        <UsageCount Value="161"/>
+        <TopLine Value="254"/>
+        <CursorPos X="28" Y="259"/>
+        <UsageCount Value="166"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
@@ -55,7 +55,7 @@
         <UnitName Value="uFLicense"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="30"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="IncP\Form\ufoptimizePDF.pas"/>
@@ -67,7 +67,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="104"/>
         <CursorPos X="58" Y="114"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="IncP\DataModule\uDmCommon.pas"/>
@@ -75,10 +75,13 @@
         <ComponentName Value="DmCommon"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
-        <EditorIndex Value="-1"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="4"/>
         <TopLine Value="39"/>
-        <CursorPos X="45" Y="52"/>
-        <UsageCount Value="161"/>
+        <CursorPos X="33" Y="44"/>
+        <UsageCount Value="166"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uWinManager.pas"/>
@@ -86,25 +89,24 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="10"/>
         <CursorPos X="25" Y="17"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="IncP\Unit\uLicence.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="189"/>
-        <CursorPos Y="199"/>
-        <UsageCount Value="161"/>
-        <Loaded Value="True"/>
+        <CursorPos Y="192"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uSys.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="11"/>
-        <CursorPos X="39" Y="19"/>
-        <UsageCount Value="161"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="211"/>
+        <CursorPos Y="233"/>
+        <UsageCount Value="166"/>
+        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uGhostScript.pas"/>
@@ -112,7 +114,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="42"/>
         <CursorPos X="31" Y="56"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uSettings.pas"/>
@@ -120,7 +122,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="9"/>
         <CursorPos X="14" Y="19"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uVarUtil.pas"/>
@@ -128,7 +130,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="107"/>
         <CursorPos Y="131"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uLog.pas"/>
@@ -136,14 +138,14 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="4"/>
         <CursorPos X="27" Y="32"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="IncP\Unit\uConst.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="64" Y="13"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="IncP\Form\uFLogin.pas"/>
@@ -154,7 +156,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="35"/>
         <CursorPos X="37" Y="50"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Form\uFMessage.pas"/>
@@ -164,24 +166,24 @@
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="54"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uExceptionHandler.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos Y="22"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Type\uType.pas"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uCrypt.pas"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="IncP\Unit\uMedoc.pas"/>
@@ -189,7 +191,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="175"/>
         <CursorPos X="34" Y="195"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="IncP\Form\uFSettings.pas"/>
@@ -200,12 +202,16 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="47"/>
         <CursorPos X="36" Y="59"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uQuery.pas"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="161"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="68"/>
+        <CursorPos X="16" Y="69"/>
+        <UsageCount Value="166"/>
+        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uCryptAES.pas"/>
@@ -213,7 +219,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="92"/>
         <CursorPos X="19" Y="114"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Form\uFBase.pas"/>
@@ -221,7 +227,7 @@
         <ComponentName Value="FBase"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uHttp.pas"/>
@@ -229,7 +235,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="18"/>
         <CursorPos X="22" Y="28"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uProtectTimer.pas"/>
@@ -237,7 +243,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="11"/>
         <CursorPos Y="11"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uComputerInfo.pas"/>
@@ -245,7 +251,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="22"/>
         <CursorPos Y="29"/>
-        <UsageCount Value="161"/>
+        <UsageCount Value="166"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uUserData.pas"/>
@@ -253,15 +259,15 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="12"/>
         <CursorPos X="18" Y="23"/>
-        <UsageCount Value="159"/>
+        <UsageCount Value="164"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uStateStore.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="47"/>
-        <CursorPos X="60" Y="57"/>
-        <UsageCount Value="159"/>
+        <TopLine Value="7"/>
+        <CursorPos X="46" Y="26"/>
+        <UsageCount Value="164"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Form\uFHtmlView.pas"/>
@@ -272,14 +278,14 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="2"/>
         <CursorPos Y="8"/>
-        <UsageCount Value="141"/>
+        <UsageCount Value="146"/>
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uAnnonce.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="27" Y="10"/>
-        <UsageCount Value="129"/>
+        <UsageCount Value="134"/>
       </Unit>
       <Unit>
         <Filename Value="IncP\Unit\uWinReg.pas"/>
@@ -354,9 +360,9 @@
       <Unit>
         <Filename Value="Inc\Unit\uProtect.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="159"/>
-        <CursorPos Y="165"/>
-        <UsageCount Value="15"/>
+        <TopLine Value="170"/>
+        <CursorPos X="5" Y="181"/>
+        <UsageCount Value="16"/>
       </Unit>
       <Unit>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\rtl\objpas\sysutils\sysutilh.inc"/>
@@ -437,10 +443,11 @@
       </Unit>
       <Unit>
         <Filename Value="C:\lazarus\fpc\3.2.2\source\rtl\objpas\classes\classesh.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="781"/>
-        <CursorPos X="14" Y="790"/>
-        <UsageCount Value="8"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="758"/>
+        <CursorPos X="11" Y="768"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="C:\lazarus\lcl\dialogs.pp"/>
@@ -469,123 +476,123 @@
     <JumpHistory HistoryIndex="29">
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="494" TopLine="478"/>
+        <Caret Line="618" TopLine="605"/>
       </Position>
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="495" TopLine="479"/>
+        <Caret Line="620" TopLine="605"/>
       </Position>
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="496" TopLine="480"/>
+        <Caret Line="622" TopLine="605"/>
       </Position>
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="498" TopLine="482"/>
+        <Caret Line="623" TopLine="606"/>
       </Position>
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="499" TopLine="483"/>
+        <Caret Line="577" TopLine="569"/>
       </Position>
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="498" TopLine="483"/>
+        <Caret Line="478" Column="74" TopLine="467"/>
       </Position>
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="499" TopLine="483"/>
+        <Caret Line="483" TopLine="473"/>
       </Position>
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="498" TopLine="483"/>
+        <Caret Line="191" Column="2" TopLine="184"/>
       </Position>
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="499" TopLine="483"/>
+        <Caret Line="279" Column="50" TopLine="264"/>
       </Position>
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="498" TopLine="483"/>
+        <Caret Line="100" Column="28" TopLine="90"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uQuery.pas"/>
+        <Caret Line="15" TopLine="2"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uQuery.pas"/>
+        <Caret Line="85" Column="31" TopLine="69"/>
       </Position>
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="499" TopLine="483"/>
+        <Caret Line="191" TopLine="176"/>
       </Position>
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="496" TopLine="483"/>
+        <Caret Line="188" Column="22" TopLine="178"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uQuery.pas"/>
+        <Caret Line="84" Column="19" TopLine="63"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uQuery.pas"/>
+        <Caret Line="15"/>
       </Position>
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="497" TopLine="483"/>
+        <Caret Line="191" Column="2" TopLine="177"/>
+      </Position>
+      <Position>
+        <Filename Value="Inc\Unit\uQuery.pas"/>
+        <Caret Line="72" Column="83" TopLine="67"/>
       </Position>
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="496" TopLine="483"/>
+        <Caret Line="191" Column="69" TopLine="181"/>
       </Position>
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="500" TopLine="484"/>
+        <Caret Line="192" TopLine="188"/>
       </Position>
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="501" TopLine="486"/>
+        <Caret Line="193" TopLine="188"/>
       </Position>
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="502" TopLine="487"/>
+        <Caret Line="194" TopLine="188"/>
       </Position>
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="487" TopLine="477"/>
+        <Caret Line="196" TopLine="188"/>
       </Position>
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="506" Column="3" TopLine="495"/>
+        <Caret Line="197" TopLine="188"/>
       </Position>
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="510" TopLine="492"/>
+        <Caret Line="199" TopLine="188"/>
       </Position>
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="501" TopLine="493"/>
+        <Caret Line="200" TopLine="188"/>
       </Position>
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="502" TopLine="493"/>
+        <Caret Line="204" TopLine="188"/>
       </Position>
       <Position>
         <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="505" TopLine="493"/>
+        <Caret Line="178" Column="20" TopLine="166"/>
       </Position>
       <Position>
-        <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="506" TopLine="493"/>
+        <Filename Value="Inc\Unit\uSys.pas"/>
+        <Caret Line="22" Column="15" TopLine="11"/>
       </Position>
       <Position>
-        <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="487" TopLine="477"/>
-      </Position>
-      <Position>
-        <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="607" Column="21" TopLine="585"/>
-      </Position>
-      <Position>
-        <Filename Value="IncP\Unit\uLicence.pas"/>
-        <Caret Line="28" Column="18" TopLine="18"/>
-      </Position>
-      <Position>
-        <Filename Value="IncP\Unit\uLicence.pas"/>
-        <Caret Line="2"/>
-      </Position>
-      <Position>
-        <Filename Value="IncP\Form\uFMedocCheckDocs.pas"/>
-        <Caret Line="597" Column="6" TopLine="587"/>
-      </Position>
-      <Position>
-        <Filename Value="IncP\Unit\uLicence.pas"/>
-        <Caret Line="28" Column="17" TopLine="17"/>
+        <Filename Value="Inc\Unit\uSys.pas"/>
+        <Caret Line="219" Column="11" TopLine="202"/>
       </Position>
     </JumpHistory>
     <RunParams>

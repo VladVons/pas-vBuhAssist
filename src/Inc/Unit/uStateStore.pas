@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, IniFiles, StdCtrls, ExtCtrls, Controls, Spin, Graphics,
-  uSettings, uSys;
+  uSettings;
 
 type
   TCtrlProc = procedure(aForm: TWinControl; aCtrl: TComponent; aIni: TIniFile) of object;
@@ -20,6 +20,7 @@ type
     procedure SaveProc(aForm: TWinControl; aCtrl: TComponent; aIni: TIniFile);
     procedure LoadProc(aForm: TWinControl; aCtrl: TComponent; aIni: TIniFile);
   public
+    procedure ComboBoxSetIndex(const aItems: array of TComboBox; aIndex: integer = 0);
     procedure SetCtrlColor(aForm: TWinControl; aColor: TColor; const aType: string);
     procedure Load(aForm: TWinControl);
     procedure Save(aForm: TWinControl);
@@ -29,6 +30,15 @@ var
   StateStore: TStateStore = Nil;
 
 implementation
+
+procedure TStateStore.ComboBoxSetIndex(const aItems: array of TComboBox; aIndex: integer = 0);
+var
+  xItem: TComboBox;
+begin
+  for xItem in aItems do
+      if (Assigned(xItem)) and (xItem.Items.Count > aIndex) and (xItem.ItemIndex = -1) then
+         xItem.ItemIndex := aIndex;
+end;
 
 procedure TStateStore.LoadProc(aForm: TWinControl; aCtrl: TComponent; aIni: TIniFile);
 var

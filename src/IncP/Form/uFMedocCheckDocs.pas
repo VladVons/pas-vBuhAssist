@@ -86,7 +86,6 @@ type
     procedure frReport1GetValue(const aParName: string; var aParValue: Variant);
     procedure MenuItemOrderClick(Sender: TObject);
     procedure MenuItemRefreshClick(Sender: TObject);
-    procedure PageControlChange(Sender: TObject);
     procedure SQLQueryGridCurCalcFields(DataSet: TDataSet);
   private
     fSortField: string;
@@ -171,8 +170,9 @@ procedure TFMedocCheckDocs.QueryPrevOpen(const aCode: string; aPerType, aYear, a
 
 var
   Year, Month, Day: word;
-  Str: string;
+  Str, StrMacro: string;
   DatePrev: TDate;
+  SL: TStringList;
 begin
   SQLQueryGridPrev.Close();
   SQLQueryGridPrev.DataBase := DmCommon.IBConnection;
@@ -188,6 +188,18 @@ begin
   DecodeDate(DatePrev, Year, Month, Day);
   Str := FormatDateTime('yyyy-mm-dd', EncodeDate(Year, Month, 1));
   SQLQueryGridPrev.MacroByName('_PERDATE').Value := QuotedStr(Str);
+
+  StrMacro := '';
+  SL := FieldToStrings(SQLQueryGridCur, 'CHARCODE', True);
+  if (SL.Count > 0) then
+  begin
+    Str := FieldToStrings(SQLQueryGridCur, 'CHARCODE', True).CommaText;
+    StrMacro := ' AND (FORM.CHARCODE NOT IN (' + Str + '))';
+  end;
+  SQLQueryGridPrev.MacroByName('_COND_CHARCODES').Value := StrMacro;
+  SL.Free();
+
+  //Log.Print('i', ExpandSQL(SQLQueryGridPrev));
 
   SQLQueryGridPrev.Open();
 end;
@@ -244,10 +256,7 @@ begin
   StrMacro := '';
   Code := TRim(ComboBoxFirm.Text);
   if (not Code.IsEmpty()) then
-  begin
-    QueryPrevOpen(Code, PerType, Year, Month);
     StrMacro := ' AND ORG.EDRPOU = ' + Code;
-  end;
   SQLQueryGridCur.MacroByName('_COND_ORG').Value := StrMacro;
 
   StrMacro := ', '''' AS FJ';
@@ -270,13 +279,16 @@ begin
   //SQLQueryGridCur.AfterScroll := nil;
   //DbGridCur.OnDrawColumnCell := nil;
 
-  //Str := ExpandSQL(SQLQueryGridCur);
-  //Log.Print('i', Str);
+  //Log.Print('i', ExpandSQL(SQLQueryGridCur));
 
   //DmCommon.SQLTransaction.CommitRetaining();
   //DmCommon.SQLTransaction.Commit();
   SQLQueryGridCur.Open();
   //SQLQueryGridCur.Refresh();
+
+  if (not Code.IsEmpty()) then
+    QueryPrevOpen(Code, PerType, Year, Month);
+
 end;
 
 function TFMedocCheckDocs.IsDemo(aCode: string; aField: TField): boolean;
@@ -472,13 +484,12 @@ begin
 
   Log.Print('i', 'Завантаження ліцензій ...');
   fFirmCodesLicensed := DmCommon.Licence_GetFromHttp();
-  Log.Print('i', 'Знайдено ліцензії для кодів ' + fFirmCodesLicensed.DelimitedText);
+  if (fFirmCodesLicensed.Count = 0) then
+     Log.Print('i', 'Не знайдено ліцензій')
+  else
+    Log.Print('i', 'Знайдено ліцензії для кодів ' + fFirmCodesLicensed.DelimitedText);
+
   Settings.SetItem('Licence', 'LastUpdate', DateTimeToStr(Now()));
-end;
-
-procedure TFMedocCheckDocs.PageControlChange(Sender: TObject);
-begin
-
 end;
 
 procedure TFMedocCheckDocs.ButtonPrintClick(Sender: TObject);
@@ -597,7 +608,7 @@ begin
   fFirmCodesLicensed := Licence.GetFirmCodes(Name);
   ComboBoxFirm.Items.Add('');
   for i := 0 to fFirmCodesLicensed.Count - 1 do
-      ComboBoxFirm.Items.Add(fFirmCodesLicensed.Names[i]);
+    ComboBoxFirm.Items.Add(fFirmCodesLicensed.Names[i]);
 
   fDemoFields := TStringList.Create();
   fDemoFields.Add('CARDSTATUS_NAME');
@@ -609,14 +620,7 @@ begin
   Panel1.Font.Size := 10;
 
   StateStore.Load(self);
-  if (ComboBoxYear.ItemIndex = -1) then
-    ComboBoxYear.ItemIndex := 0;
-  if (ComboBoxMonth.ItemIndex = -1) then
-    ComboBoxMonth.ItemIndex := 0;
-  if (ComboBoxDoc.ItemIndex = -1) then
-    ComboBoxDoc.ItemIndex := 0;
-  if (ComboBoxFirm.ItemIndex = -1) then
-    ComboBoxFirm.ItemIndex := 0;
+  StateStore.ComboBoxSetIndex([ComboBoxYear, ComboBoxMonth, ComboBoxDoc, ComboBoxFirm]);
 
   fColorYelow := RGBToColor(255, 255, 153);
   StateStore.SetCtrlColor(self, fColorYelow, 'edit');
