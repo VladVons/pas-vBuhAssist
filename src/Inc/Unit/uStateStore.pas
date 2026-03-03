@@ -127,7 +127,8 @@ end;
 
 procedure TStateStore.Load(aForm: TWinControl);
 begin
-  Walk(aForm, @LoadProc);
+  if (IsFile()) then
+    Walk(aForm, @LoadProc);
 end;
 
 end.

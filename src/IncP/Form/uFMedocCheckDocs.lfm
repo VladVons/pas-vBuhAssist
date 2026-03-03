@@ -1,12 +1,12 @@
 inherited FMedocCheckDocs: TFMedocCheckDocs
   Left = 407
-  Height = 384
+  Height = 418
   Top = 171
-  Width = 655
+  Width = 665
   BorderStyle = bsNone
   Caption = 'Звітне стикування'
-  ClientHeight = 384
-  ClientWidth = 655
+  ClientHeight = 418
+  ClientWidth = 665
   Font.CharSet = RUSSIAN_CHARSET
   Font.Name = 'Verdana'
   Font.Pitch = fpVariable
@@ -14,20 +14,22 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   inherited PanelTitle: TPanel
-    Width = 655
-    ClientWidth = 655
+    Height = 40
+    Width = 665
+    ClientHeight = 40
+    ClientWidth = 665
   end
   object Panel1: TPanel[1]
     Left = 0
-    Height = 144
+    Height = 184
     Top = 40
-    Width = 655
+    Width = 665
     Align = alTop
-    ClientHeight = 144
-    ClientWidth = 655
+    ClientHeight = 184
+    ClientWidth = 665
     TabOrder = 1
     object ComboBoxPath: TComboBox
-      Left = 144
+      Left = 104
       Height = 26
       Top = 8
       Width = 448
@@ -35,21 +37,10 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       TabOrder = 0
       OnEditingDone = ComboBoxPathEditingDone
     end
-    object ComboBoxYear: TComboBox
-      Left = 376
-      Height = 26
-      Top = 32
-      Width = 215
-      DropDownCount = 20
-      ItemHeight = 18
-      ReadOnly = True
-      TabOrder = 5
-      OnDropDown = ComboBoxYearDropDown
-    end
     object ComboBoxMonth: TComboBox
-      Left = 144
+      Left = 104
       Height = 26
-      Top = 32
+      Top = 40
       Width = 224
       DropDownCount = 20
       ItemHeight = 18
@@ -57,94 +48,105 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       TabOrder = 6
       OnChange = ComboBoxMonthChange
     end
-    object ComboBoxDoc: TComboBox
-      Left = 144
+    object ComboBoxYear: TComboBox
+      Left = 336
       Height = 26
-      Top = 80
-      Width = 447
+      Top = 40
+      Width = 215
       DropDownCount = 20
       ItemHeight = 18
       ReadOnly = True
-      TabOrder = 7
+      TabOrder = 5
+      OnDropDown = ComboBoxYearDropDown
     end
     object ComboBoxFirm: TComboBox
-      Left = 144
+      Left = 104
       Height = 26
-      Top = 56
+      Top = 72
       Width = 224
       DropDownCount = 20
       ItemHeight = 18
       ReadOnly = True
       TabOrder = 4
     end
+    object ComboBoxDoc: TComboBox
+      Left = 105
+      Height = 26
+      Top = 104
+      Width = 447
+      DropDownCount = 20
+      ItemHeight = 18
+      ReadOnly = True
+      TabOrder = 7
+    end
     object Label1: TLabel
-      Left = 15
+      Left = 16
       Height = 18
-      Top = 8
-      Width = 119
-      Caption = 'Шлях програми'
+      Top = 16
+      Width = 58
+      Caption = 'Оберіть'
       Color = clMenuHighlight
       ParentColor = False
     end
     object Label2: TLabel
       Left = 15
       Height = 18
-      Top = 32
+      Top = 48
       Width = 51
       Caption = 'Період'
     end
     object Label3: TLabel
       Left = 15
       Height = 18
-      Top = 80
+      Top = 112
       Width = 74
       Caption = 'Документ'
     end
     object Label5: TLabel
-      Left = 15
+      Left = 16
       Height = 18
-      Top = 56
+      Top = 80
       Width = 64
       Caption = 'ЄДРПОУ'
     end
     object ButtonExec: TButton
-      Left = 144
-      Height = 25
-      Top = 112
-      Width = 192
+      Left = 106
+      Height = 28
+      Top = 152
+      Width = 212
       Caption = 'Знайти за параметрами'
       TabOrder = 1
       OnClick = ButtonExecClick
     end
     object ButtonPrint: TButton
-      Left = 344
-      Height = 25
-      Top = 112
-      Width = 51
+      Left = 336
+      Height = 28
+      Top = 152
+      Width = 64
       Caption = 'Друк'
       TabOrder = 2
       OnClick = ButtonPrintClick
     end
     object ButtonActivation: TButton
-      Left = 496
-      Height = 25
-      Top = 112
-      Width = 95
+      Left = 554
+      Height = 28
+      Top = 152
+      Width = 101
       Caption = 'Активація'
       TabOrder = 3
       OnClick = ButtonActivationClick
     end
     object ButtonRunMedoc: TButton
-      Left = 400
-      Height = 25
-      Top = 112
-      Width = 88
+      Left = 408
+      Height = 28
+      Top = 152
+      Width = 102
       Caption = 'Запустити'
       TabOrder = 8
       OnClick = ButtonRunMedocClick
     end
     object ButtonPath: TButton
-      Left = 592
+      Left = 552
       Height = 25
       Top = 8
       Width = 24
@@ -156,22 +158,22 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
   end
   object PageControl: TPageControl[2]
     Left = 0
-    Height = 200
-    Top = 184
-    Width = 655
+    Height = 194
+    Top = 224
+    Width = 665
     ActivePage = TabSheetCur
     Align = alClient
     TabIndex = 0
     TabOrder = 2
     object TabSheetCur: TTabSheet
       Caption = 'Поточний'
-      ClientHeight = 169
-      ClientWidth = 647
+      ClientHeight = 163
+      ClientWidth = 657
       object DbGridCur: TDBGrid
         Left = 0
-        Height = 169
+        Height = 163
         Top = 0
-        Width = 647
+        Width = 657
         Align = alClient
         Color = clWindow
         Columns = <>
@@ -196,14 +198,14 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     end
     object TabSheetPrev: TTabSheet
       Caption = 'Пропоновані'
-      ClientHeight = 169
-      ClientWidth = 647
+      ClientHeight = 163
+      ClientWidth = 657
       TabVisible = False
       object DBGridPrev: TDBGrid
         Left = 0
-        Height = 169
+        Height = 163
         Top = 0
-        Width = 647
+        Width = 657
         Align = alClient
         Color = clWindow
         Columns = <>
@@ -346,6 +348,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       '        AND (FORM.CHARCODE NOT LIKE ''F12%'') AND (FORM.CHARCODE NOT LIKE ''J12%'')'
       '        AND (FORM.CHARCODE NOT LIKE ''F13%'') AND (FORM.CHARCODE NOT LIKE ''J13%'')'
       '        AND (FORM.CHARCODE NOT LIKE ''F14%'') AND (FORM.CHARCODE NOT LIKE ''J14%'')'
+      '        AND (FORM.CHARCODE NOT LIKE ''PD%'')'
       '        %_COND_CHARCODE'
       ') T2'
       '    ON T2.IDORG = ORG.CODE'
@@ -400,7 +403,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       end>
     MacroCheck = True
     Left = 40
-    Top = 288
+    Top = 312
     object SQLQueryGridCurEDRPOU: TStringField
       DisplayLabel = 'ЄДРПОУ'
       FieldKind = fkData
@@ -569,7 +572,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
   object DataSourceGridCur: TDataSource[4]
     DataSet = SQLQueryGridCur
     Left = 40
-    Top = 216
+    Top = 240
   end
   object FrPrintGrid1: TFrPrintGrid[5]
     DBGrid = DbGridCur
@@ -588,7 +591,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     PrinterIndex = -1
     ShowCaption = True
     Left = 272
-    Top = 312
+    Top = 336
   end
   object frReport1: TfrReport[6]
     Dataset = frDBDataSet1
@@ -598,12 +601,12 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     DataType = dtDataSet
     OnGetValue = frReport1GetValue
     Left = 272
-    Top = 200
+    Top = 224
   end
   object frDBDataSet1: TfrDBDataSet[7]
     DataSet = SQLQueryGridCur
     Left = 272
-    Top = 256
+    Top = 280
   end
   object PopupMenuActivation: TPopupMenu[8]
     Left = 552
@@ -624,7 +627,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
   object DataSourceGridPrev: TDataSource[10]
     DataSet = SQLQueryGridPrev
     Left = 128
-    Top = 216
+    Top = 240
   end
   object SQLQueryGridPrev: TSQLQuery[11]
     FieldDefs = <    
@@ -700,6 +703,10 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       '    AND (CARD.IDPARENT IS NULL)'
       '    AND (CARD.FORM > 0)'
       '    AND (CARD.INTRASH = 0)'
+      '    AND (FORM.CHARCODE NOT LIKE ''F12%'') AND (FORM.CHARCODE NOT LIKE ''J12%'')'
+      '    AND (FORM.CHARCODE NOT LIKE ''F13%'') AND (FORM.CHARCODE NOT LIKE ''J13%'')'
+      '    AND (FORM.CHARCODE NOT LIKE ''F14%'') AND (FORM.CHARCODE NOT LIKE ''J14%'')'
+      '    AND (FORM.CHARCODE NOT LIKE ''PD%'')'
       '    %_COND_CHARCODES'
       'ORDER BY'
       '  CHARCODE ASC'
@@ -729,7 +736,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       end>
     MacroCheck = True
     Left = 128
-    Top = 288
+    Top = 312
     object SQLQueryGridPrevEDRPOU: TStringField
       DisplayLabel = 'ЄДРПОУ'
       FieldKind = fkData

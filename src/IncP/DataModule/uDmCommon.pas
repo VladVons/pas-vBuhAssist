@@ -76,6 +76,7 @@ begin
   try
     //QueryOpen();
     FirmCodes := GetQueryField(DataSource, SQLQueryCodes, 'EDRPOU');
+    //Log.Print('i', 'Запит на коди ' + FirmCodes.CommaText)
     Licence.HttpToFileEncrypt(FirmCodes);
     if (Licence.LastErr <> '') then
        Log.Print('e', 'Помилка ' + Licence.LastErr)
@@ -105,6 +106,7 @@ begin
     begin
       //QueryOpen();
       FirmCodes := GetQueryField(DataSource, SQLQueryCodes, 'EDRPOU');
+      //Log.Print('i', 'Запит ліцензій на коди ' + FirmCodes.CommaText);
       Licence.OrderFromHttp(FirmCodes, aModule, FLogin.EditUser.Text, FLogin.EditPassword.Text);
       if (Licence.LastErr.IsEmpty()) then
         Log.Print('i', 'Запит на отримання ліцензій відправлено')

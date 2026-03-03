@@ -100,6 +100,7 @@ type
     procedure QueryPrevOpen(const aCode: string; aPerType, aYear, aMonth: integer);
     procedure SetEmbededPath(aIdx: integer);
     procedure ConnectToDb();
+    procedure Disconnect();
     function GetCurPathObj(): TJSONObject;
     procedure InitEmptyGrid();
     procedure InitMedocControl();
@@ -141,6 +142,11 @@ begin
     Idx := ComboBoxPath.ItemIndex;
     Result := TJSONObject(ComboBoxPath.Items.Objects[Idx]);
   end;
+end;
+
+procedure TFMedocCheckDocs.Disconnect();
+begin
+  DmCommon.IBConnection.Connected := False;
 end;
 
 procedure TFMedocCheckDocs.ConnectToDB();
@@ -291,30 +297,6 @@ begin
 
 end;
 
-function TFMedocCheckDocs.IsDemo(aCode: string; aField: TField): boolean;
-var
-  Idx: integer;
-  Str: string;
-  LicDate: TDateTime;
-begin
-  if (not ProtectTimer.CompareRnd()) then
-     Exit(True);
-
-  Idx := fFirmCodesLicensed.IndexOfName(aCode);
-  if (Idx = -1) then
-     Exit(True);
-
-  if (not aField.IsNull) then
-  begin
-     Str := fFirmCodesLicensed.ValueFromIndex[Idx];
-     LicDate := ScanDateTime('yyyy-mm-dd', Str);
-     if (aField.AsDateTime > LicDate) then
-       Exit(True);
-  end;
-
-  Result := False;
-end;
-
 procedure TFMedocCheckDocs.SQLQueryGridCurCalcFields(DataSet: TDataSet);
 var
   i, Month: integer;
@@ -326,7 +308,11 @@ begin
   FieldXML := DataSet.FieldByName('XMLVALS');
   FieldFJ := DataSet.FieldByName('FJ');
   FieldHZ := DataSet.FieldByName('HZ');
-  if (not FieldXML.IsNull) and (not FieldXML.AsString.IsEmpty()) then
+  if (DataSet.FieldByName('CHARCODE').IsNull) then
+    FieldHZ.AsString := 'Відсутній'
+  else if (DataSet.FieldByName('CHARCODE').AsString.StartsWith('S')) then
+    FieldHZ.AsString := 'Звітний'
+  else if (not FieldXML.IsNull) and (not FieldXML.AsString.IsEmpty()) then
     FieldHZ.AsString := GetHzXml(FieldXML.AsString)
   else if (not FieldFJ.AsString.IsEmpty()) then
     FieldHZ.AsString := GetHzStr(FieldFJ.AsString);
@@ -421,6 +407,8 @@ var
 begin
   Val := StateStore.GetItem('FSettings', 'SpinEditBeginYear_Value', 0);
   SetComboBoxToYear(ComboBoxYear, Val);
+  if (Val = 0) then
+    ComboBoxYear.ItemIndex := ComboBoxYear.Items.Count - 2;
 end;
 
 procedure TFMedocCheckDocs.DbGridCurDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: integer; Column: TColumn; State: TGridDrawState);
@@ -464,6 +452,30 @@ begin
 
     QueryCurOpen();
     DbGridCur.Invalidate();
+end;
+
+function TFMedocCheckDocs.IsDemo(aCode: string; aField: TField): boolean;
+var
+  Idx: integer;
+  Str: string;
+  LicDate: TDateTime;
+begin
+  if (not ProtectTimer.CompareRnd()) then
+     Exit(True);
+
+  Idx := fFirmCodesLicensed.IndexOfName(aCode);
+  if (Idx = -1) then
+     Exit(True);
+
+  if (not aField.IsNull) then
+  begin
+     Str := fFirmCodesLicensed.ValueFromIndex[Idx];
+     LicDate := ScanDateTime('yyyy-mm-dd', Str);
+     if (aField.AsDateTime > LicDate) then
+       Exit(True);
+  end;
+
+  Result := False;
 end;
 
 procedure TFMedocCheckDocs.frReport1GetValue(const aParName: string; var aParValue: Variant);
@@ -526,12 +538,15 @@ var
 begin
   JObj := GetCurPathObj();
   if (JObj.Get('port', 0) = 0) then
-    Log.Print('i', 'Не мережева версія програми')
-  else begin
-    Path := ConcatPaths([ComboBoxPath.Text, 'ezvit.exe']);
-    Log.Print('i', 'Запуск програми ' + Path);
-    ExecProcess(Path);
+  begin
+    Log.Print('i', 'Не мережева версія програми');
+    Disconnect();
+    InitEmptyGrid();
   end;
+
+  Path := ConcatPaths([ComboBoxPath.Text, 'ezvit.exe']);
+  Log.Print('i', 'Запуск програми ' + Path);
+  ExecProcess(Path);
 end;
 
 procedure TFMedocCheckDocs.ComboBoxMonthChange(Sender: TObject);

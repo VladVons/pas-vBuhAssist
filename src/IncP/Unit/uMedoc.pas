@@ -19,6 +19,7 @@ type
     function DirToFileDb(const aDir: string): string;
     function GetPathDbFromXML(const aFile: string): string;
     function GetPort(const aDir: string): string;
+    function FindDbInDir(aSL: TStringList): string;
   public
     procedure AddFromRegistry();
     function AddPath(const aDirApp: string): boolean;
@@ -123,27 +124,57 @@ begin
   end;
 end;
 
-function TMedocIni.AddPath(const aDirApp: string): boolean;
+function TMedocIni.FindDbInDir(aSL: TStringList): string;
 var
+  i: integer;
+begin
+  for i := 0 to aSL.Count - 1 do
+      if (DirToFileDb(aSL[i]) <> '') then
+         Exit(aSL[i]);
+  Result := '';
+end;
+
+function TMedocIni.AddPath(const aDirApp: string): boolean;
+const
+  cPF = '\Program Files\';
+var
+  P1: integer;
   Str, StrDb: string;
+  SL: TStringList;
 begin
   if (not GetItem(aDirApp, 'db', '').IsEmpty()) then
      Exit(False);
 
-  Str := ConcatPaths([aDirApp, 'config', 'global_client.config']);
-  if (not FileExists(Str)) then
-    Exit(False);
+  //Str := ConcatPaths([aDirApp, 'config', 'global_client.config']);
+  //if (FileExists(Str)) then
+  //begin
+  //  StrDb := GetPathDbFromXML(Str);
+  //  if (StrDb.IsEmpty()) then
+  //    Exit(False);
+  //end;
 
-  StrDb := GetPathDbFromXML(Str);
-  if (StrDb.IsEmpty()) then
-    Exit(False);
+  //StrDb := StrDb.Replace('APPDATA', 'PROGRAMDATA');
+  //StrDb := ExpandEnvVar(StrDb);
+  //if (DirToFileDb(StrDb) = '') then
+  //   StrDb := aDirApp;
 
-  StrDb := StrDb.Replace('APPDATA', 'PROGRAMDATA');
-  StrDb := ExpandEnvVar(StrDb);
-  if (DirToFileDb(StrDb) = '') then
-     StrDb := aDirApp;
+  try
+    SL := TStringList.Create();
+    SL.Add(aDirApp);
 
-  Result := AddPaths(aDirApp, StrDb, GetPort(aDirApp));
+    P1 := Pos(cPF, aDirApp);
+    if (P1 > 0) then
+    begin
+      Str := Copy(aDirApp, P1 + Length(cPF), Length(aDirApp));
+      SL.Add(ConcatPaths([GetEnvironmentVariable('PROGRAMDATA'), Str]));
+      SL.Add(ConcatPaths([GetEnvironmentVariable('LOCALAPPDATA'), Str]));
+    end;
+
+    StrDb := FindDbInDir(SL);
+    Result := AddPaths(aDirApp, StrDb, GetPort(aDirApp));
+  finally
+    SL.Free();
+  end;
 end;
 
 function TMedocIni.ToJson(): TJSONArray;
