@@ -116,6 +116,7 @@ end;
 procedure TAppUpd.DoRun();
 var
   Str: String;
+  Parts: TStringArray;
 begin
   if (ParamCount = 0) then
   begin
@@ -127,6 +128,23 @@ begin
   if (not Str.IsEmpty()) then
   begin
     AppProtect(Str);
+    Quit();
+  end;
+
+  Str := GetOptionValue(#0, 'app_ver');
+  if (not Str.IsEmpty()) then
+  begin
+    Str := GetExeVer(Str);
+    WriteLn(Str);
+    Quit();
+  end;
+
+  Str := GetOptionValue(#0, 'app_build');
+  if (not Str.IsEmpty()) then
+  begin
+    Str := GetExeVer(Str);
+    Parts := Str.Split('.');
+    WriteLn(Parts[High(Parts)]);
     Quit();
   end;
 

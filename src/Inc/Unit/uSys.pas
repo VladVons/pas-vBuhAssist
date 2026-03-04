@@ -20,6 +20,7 @@ function GetAppProgramData(): string;
 function GetAppName(): string;
 function GetAppDir(): string;
 function GetAppVer(aBuildOnly: boolean = False): string;
+function GetExeVer(const aFile: string): string;
 function GetDirFiles(const aDir, aMask: string): TStringList;
 procedure AddDirDll(const aPath: string);
 function FileGetSize(const aFileName: string): Int64;
@@ -225,8 +226,30 @@ begin
   end;
 end;
 
-function GetAppVerBuild(): string;
+function GetExeVer(const aFile: string): string;
+var
+  InfoSize, Wnd: DWORD;
+  VerBuf: Pointer;
+  VerSize: DWORD;
+  VerValue: PVSFixedFileInfo;
 begin
+  Result := '';
+  InfoSize := GetFileVersionInfoSize(PChar(aFile), Wnd);
+  if InfoSize = 0 then
+     Exit;
+
+  GetMem(VerBuf, InfoSize);
+  try
+    if GetFileVersionInfo(PChar(aFile), Wnd, InfoSize, VerBuf) then
+      if VerQueryValue(VerBuf, '\', Pointer(VerValue), VerSize) then
+        Result := Format('%d.%d.%d.%d',
+          [HiWord(VerValue^.dwFileVersionMS),
+           LoWord(VerValue^.dwFileVersionMS),
+           HiWord(VerValue^.dwFileVersionLS),
+           LoWord(VerValue^.dwFileVersionLS)]);
+  finally
+    FreeMem(VerBuf);
+  end;
 end;
 
 function GetMonthNameUa(aMonthNum: integer): string;
