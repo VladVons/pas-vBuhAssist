@@ -270,6 +270,7 @@ begin
   if (Month <> 401) then
   begin
     MacroPerType := Format(' AND (CARD.PERTYPE = %d)', [PerType]);
+
     Str := FormatDateTime('yyyy-mm-dd', EncodeDate(Year, Month, 1));
     MacroPerDate := Format(' AND (CARD.PERDATE = DATE %s)', [QuotedStr(Str)]);
   end else
@@ -298,7 +299,7 @@ begin
     begin
       Macro := ', TFJ.HZ || ''-'' || TFJ.HZN || ''-'' || TFJ.HZU AS FJ';
       SQLQueryGridCur.MacroByName('_FROM_T2').Value :=
-        ' LEFT JOIN ' + StrDb + ' TFJ ON TFJ.CARDCODE = CARD.CODE';
+        Format(' LEFT JOIN %s TFJ ON TFJ.CARDCODE = CARD.CODE', [StrDb]);
     end;
   end;
   SQLQueryGridCur.MacroByName('_SELECT_T2').Value := Macro;
@@ -318,9 +319,8 @@ begin
   SQLQueryGridCur.Open();
   //SQLQueryGridCur.Refresh();
 
-  if (not Code.IsEmpty()) then
+  if (not Code.IsEmpty())and (Month <> 401) then
     QueryPrevOpen(Code, PerType, Year, Month);
-
 end;
 
 procedure TFMedocCheckDocs.SQLQueryGridCurCalcFields(DataSet: TDataSet);
@@ -380,8 +380,12 @@ begin
   else if (DaysBetween(Now(), StrToDateTime(LastUpdate)) > cLicenceRefrehDays) then
     MenuItemRefreshClick(nil);
 
-  Msg := Format('%s: %s %s, %s', [TButton(Sender).Caption, ComboBoxMonth.Text,
-    ComboBoxYear.Text, ComboBoxDoc.Text]);
+  Msg := Format('%s: %s %s, %s', [
+      TButton(Sender).Caption,
+      ComboBoxMonth.Text,
+      ComboBoxYear.Text,
+      ComboBoxDoc.Text
+  ]);
   Log.Print('i', Msg);
 
   ConnectToDb();

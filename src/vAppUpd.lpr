@@ -197,12 +197,10 @@ begin
   WriteLn(AppName + ' --app=app.exe --dir=path\app --pid=<app PID> --delay=2000 --url=http://site.com/update.zip');
   WriteLn('options:');
   WriteLn('--app       application to start after update');
-  WriteLn('--app_ver   get application version');
-  WriteLn('--app_build get application version');
+  WriteLn('--app_ver   get application version or --app_build');
   WriteLn('--dir       directory to extract ZIP archive');
-  WriteLn('--pause     wait for key press before quit');
   WriteLn('--pid       process ID to wait for free');
-  WriteLn('--delay     delay in ms before unzip');
+  WriteLn('--delay     delay in ms before start application');
   WriteLn('--url       remote ZIP file address ');
 end;
 
