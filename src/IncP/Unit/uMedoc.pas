@@ -8,8 +8,8 @@ unit uMedoc;
 interface
 
 uses
-  Classes, SysUtils, StrUtils, XMLRead, DOM, LConvEncoding, Registry, IniFiles, fpjson,
-  uSettings, uSys;
+  Classes, SysUtils, StrUtils, XMLRead, DOM, LConvEncoding, Registry, fpjson,
+  uSettings;
 
 type
   TMedocIni = class(TSettings)
@@ -120,7 +120,7 @@ begin
   try
     Node := Doc.DocumentElement.FindNode('APPDATA');
     if Assigned(Node) then
-      Result := Node.TextContent;
+      Result := UTF8Encode(Node.TextContent);
   finally
     Doc.Free();
   end;
@@ -275,18 +275,18 @@ begin
       if RowNode.Attributes.GetNamedItem('NAME') = nil then
         Continue;
 
-      NameAttr := RowNode.Attributes.GetNamedItem('NAME').NodeValue;
+      NameAttr := UTF8Encode(RowNode.Attributes.GetNamedItem('NAME').NodeValue);
 
       ValueNode := RowNode.FindNode('VALUE');
       if ValueNode = nil then
         Continue;
 
       if (NameAttr = 'HZ') then
-        aHZ := ValueNode.TextContent
+        aHZ := UTF8Encode(ValueNode.TextContent)
       else if (NameAttr = 'HZN') then
-        aHZN := ValueNode.TextContent
+        aHZN := UTF8Encode(ValueNode.TextContent)
       else if (NameAttr = 'HZU') then
-        aHZU := ValueNode.TextContent;
+        aHZU := UTF8Encode(ValueNode.TextContent);
     end;
   finally
     Doc.Free();

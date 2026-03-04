@@ -54,7 +54,7 @@ begin
   fFile := aFile;
   fProtected := True;
   fTimingCnt := 0;
-  FillChar(fTail, SizeOf(TTail), 0);
+  fTail := Default(TTail);
 
   Randomize();
 end;
@@ -81,7 +81,7 @@ var
   ToRead, Readed: integer;
   Remaining: Int64;
 begin
-  FillChar(Result, SizeOf(TTail), 0);
+  Result := Default(TTail);
   if not FileExists(fFile) then
      Exit;
 
@@ -100,7 +100,7 @@ begin
     while Remaining > 0 do
     begin
       ToRead := BUF_SIZE;
-      if Remaining < ToRead then
+      if (Remaining < ToRead) then
         ToRead := integer(Remaining);
 
       Readed := FS.Read(Buffer, ToRead);
@@ -119,7 +119,7 @@ function TProtect.ReadFileTail(): TTail;
 var
   FS: TFileStream;
 begin
-  FillChar(Result, SizeOf(TTail), 0);
+  Result := Default(TTail);
   if not FileExists(fFile) then
     Exit;
 

@@ -4,6 +4,7 @@
 unit uFMedocCheckDocs;
 
 {$mode ObjFPC}{$H+}
+{$NOTES OFF}
 
 interface
 
@@ -325,9 +326,9 @@ end;
 
 procedure TFMedocCheckDocs.SQLQueryGridCurCalcFields(DataSet: TDataSet);
 var
-  i, Month, PerType: integer;
+  i, PerType: integer;
   FieldPerDate, FieldXML, FieldFJ, FieldHZ: TField;
-  Str, StrMonth, StrPerType, Code: string;
+  Str, Code: string;
 begin
   ProtectTimer.TimingStart();
 
@@ -632,7 +633,6 @@ end;
 procedure TFMedocCheckDocs.FormCreate(Sender: TObject);
 var
   i: integer;
-  Str: string;
 begin
   ProtectTimer.TimingStart();
 

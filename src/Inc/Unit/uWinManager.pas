@@ -189,6 +189,7 @@ procedure TWinManager.PageControlMouseDown(Sender: TObject;
 var
   TabIndex: integer;
 begin
+  Shift := Shift;
   if Button <> mbRight then
     Exit; // тільки правий клік
 

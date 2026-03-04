@@ -10,7 +10,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList, Windows, ExtCtrls,
   ComCtrls, StdCtrls, fpjson,
-  uFAbout, uFMedocCheckDocs, uFOptimizePDF, uFSettings, uFLogin, uFMessage, uFHtmlView, uDmCommon,
+  uFAbout, uFMedocCheckDocs, uFOptimizePDF, uFSettings, uFLogin, uFMessage, uDmCommon,
   uWinManager, uLicence, uLog, uSettings, uStateStore, uSys, uConst, uProtectTimer, uAnnonce, uMedoc;
 
 type

@@ -122,6 +122,7 @@ end;
 function GetJsonNested(const aJObj: TJSONObject; const Path: string; aDef: Variant): Variant;
   function JsonToVariant(const aJData: TJSONData): Variant;
   begin
+    {$NOTES OFF}
     Result := Nil;
     if Assigned(aJData) then
       case aJData.JSONType of
@@ -132,6 +133,7 @@ function GetJsonNested(const aJObj: TJSONObject; const Path: string; aDef: Varia
         jtBoolean:
           Result := aJData.AsBoolean;
       end;
+    {$NOTES ON}
   end;
 
 var

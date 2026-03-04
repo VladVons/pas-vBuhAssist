@@ -23,6 +23,7 @@ var
   InStream, OutStream: TMemoryStream;
   IV: array[0..15] of byte;
 begin
+  Result := '';
   try
     Cipher := TDCP_rijndael.Create(nil);
     InStream := TMemoryStream.Create();
