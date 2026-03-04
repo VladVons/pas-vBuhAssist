@@ -29,6 +29,8 @@ type
 
   function GetHzXml(const aXML: string): string;
   function GetHzStr(const aStr: string): string;
+  function PerTypeToHuman(aType: Integer): string;
+  function GetYearPart(aDate: TDate; aDiv: integer): Integer;
 
 var
   MedocIni: TMedocIni;
@@ -206,6 +208,25 @@ begin
   end;
 end;
 
+function GetYearPart(aDate: TDate; aDiv: integer): Integer;
+var
+  Y, M, D: Word;
+begin
+  DecodeDate(aDate, Y, M, D);
+  Result := ((M - 1) div aDiv) + 1;
+end;
+
+function PerTypeToHuman(aType: Integer): string;
+begin
+  case aType of
+    0:  Result := 'Місяць';
+    10: Result := 'Квартал';
+    20: Result := 'Квартал';
+    30: Result := 'Квартал';
+  else
+    Result := 'Не відомий';
+  end;
+end;
 
 
 function GetHzValToHuman(const aHZ, aHZN, aHZU: string): string;

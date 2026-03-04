@@ -1,9 +1,8 @@
 @echo off
 set FileExe=vBuhAssist.exe
-vAppUpd.exe --app_build=%FileExe% > build.txt
-set /p BUILD=<build.txt
+vAppUpd.exe --app_build=%FileExe% > ver_build.txt
+set /p BUILD=<ver_build.txt
 set FileArch=vBuhAssist_%BUILD%.exe.zip
-echo %FileArch%
 
 "C:\Program Files\Utils\upx.exe" -5 %FileExe%
 vAppUpd.exe --crc=%FileExe%

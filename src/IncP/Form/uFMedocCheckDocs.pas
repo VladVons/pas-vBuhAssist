@@ -20,11 +20,11 @@ type
 
   { TFMedocCheckDocs }
   TFMedocCheckDocs = class(TFBase)
+    BitBtnRunMedoc: TBitBtn;
+    BitBtnActivation: TBitBtn;
+    BitBtnPrint: TBitBtn;
+    BitBtnFind: TBitBtn;
     ButtonPath: TButton;
-    ButtonExec: TButton;
-    ButtonActivation: TButton;
-    ButtonPrint: TButton;
-    ButtonRunMedoc: TButton;
     ComboBoxDoc: TComboBox;
     ComboBoxFirm: TComboBox;
     ComboBoxMonth: TComboBox;
@@ -56,6 +56,7 @@ type
     SQLQueryGridCurHZ: TStringField;
     SQLQueryGridCurINDTAXNUM: TStringField;
     SQLQueryGridCurMODDATE: TDateTimeField;
+    SQLQueryGridCurPERTYPE: TIntegerField;
     SQLQueryGridCurPERDATE: TDateField;
     SQLQueryGridCurPERDATE_STR: TStringField;
     SQLQueryGridCurSHORTNAME: TStringField;
@@ -69,21 +70,21 @@ type
     SQLQueryGridPrevCARDSENDSTT_NAME: TStringField;
     SQLQueryGridPrevCARDSTATUS_NAME: TStringField;
     SQLQueryGridPrevCHARCODE: TStringField;
+    SQLQueryGridPrevFORM_NAME: TStringField;
     SQLQueryGridPrevPERDATE: TDateField;
     SQLQueryGridPrevSHORTNAME: TStringField;
 
     TabSheetPrev: TTabSheet;
     TabSheetCur: TTabSheet;
-    procedure ButtonExecClick(Sender: TObject);
-    procedure ButtonActivationClick(Sender: TObject);
+    procedure BitBtnActivationClick(Sender: TObject);
+    procedure BitBtnFindClick(Sender: TObject);
+    procedure BitBtnPrintClick(Sender: TObject);
+    procedure BitBtnRunMedocClick(Sender: TObject);
     procedure ButtonPathClick(Sender: TObject);
-    procedure ButtonPrintClick(Sender: TObject);
-    procedure ButtonRunMedocClick(Sender: TObject);
     procedure ComboBoxMonthChange(Sender: TObject);
     procedure ComboBoxPathEditingDone(Sender: TObject);
     procedure ComboBoxYearDropDown(Sender: TObject);
-    procedure DbGridCurDrawColumnCell(Sender: TObject; const Rect: TRect;
-      DataCol: integer; Column: TColumn; State: TGridDrawState);
+    procedure DbGridCurDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: integer; Column: TColumn; State: TGridDrawState);
     procedure DbGridCurTitleClick(Column: TColumn);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -109,6 +110,7 @@ type
     procedure InitEmptyGrid();
     procedure InitMedocControl();
     function IsDemo(aCode: string; aField: TField): boolean;
+    procedure MonthToType(var aPerType, aMonth: integer);
   public
 
   end;
@@ -169,8 +171,7 @@ begin
   end;
 end;
 
-procedure TFMedocCheckDocs.QueryPrevOpen(const aCode: string;
-  aPerType, aYear, aMonth: integer);
+procedure TFMedocCheckDocs.QueryPrevOpen(const aCode: string; aPerType, aYear, aMonth: integer);
 
   function PeriodToMedoc(aPerType: integer): char;
   begin
@@ -218,10 +219,31 @@ begin
   SQLQueryGridPrev.Open();
 end;
 
+procedure TFMedocCheckDocs.MonthToType(var aPerType, aMonth: integer);
+begin
+  if (Between(aMonth, 1, 12)) then
+    aPerType := 0
+  else if (Between(aMonth, 101, 104)) then
+  begin
+    aPerType := 10;
+    aMonth := (aMonth - 100) * 3;
+  end
+  else if (Between(aMonth, 201, 202)) then
+  begin
+    aPerType := 20;
+    aMonth := (aMonth - 200) * 6;
+  end
+  else if (aMonth = 301) then
+  begin
+    aPerType := 30;
+    aMonth := 12;
+  end;
+end;
+
 procedure TFMedocCheckDocs.QueryCurOpen();
 var
   Month, Year, PerType: integer;
-  Str, StrDb, StrMacro, Code: string;
+  Str, StrDb, Macro, MacroPerType, MacroPerDate, Code: string;
 begin
   DmCommon.SQLTransaction.Rollback();  //refresh
 
@@ -234,59 +256,52 @@ begin
 
   Year := integer(ComboBoxYear.Items.Objects[ComboBoxYear.ItemIndex]);
   if (Year = -1) then
-    Year := 2026;
+    Year := YearOf(Date());
 
   Month := integer(ComboBoxMonth.Items.Objects[ComboBoxMonth.ItemIndex]);
   if (Month = -1) then
     Month := 1;
 
-  if (Between(Month, 1, 12)) then
-    PerType := 0
-  else if (Between(Month, 101, 104)) then
-  begin
-    PerType := 10;
-    Month := (Month - 100) * 3;
-  end
-  else if (Between(Month, 201, 202)) then
-  begin
-    PerType := 20;
-    Month := (Month - 200) * 6;
-  end
-  else if (Month = 301) then
-  begin
-    PerType := 30;
-    Month := 12;
-  end;
+  PerType := -1;
+  MonthToType(PerType, Month);
 
-  SQLQueryGridCur.ParamByName('_PERTYPE').Value := PerType;
+  MacroPerType := '';
+  MacroPerDate := '';
+  if (Month <> 401) then
+  begin
+    MacroPerType := Format(' AND (CARD.PERTYPE = %d)', [PerType]);
+    Str := FormatDateTime('yyyy-mm-dd', EncodeDate(Year, Month, 1));
+    MacroPerDate := Format(' AND (CARD.PERDATE = DATE %s)', [QuotedStr(Str)]);
+  end else
+    MacroPerDate := Format(' AND (EXTRACT(YEAR FROM CARD.PERDATE) = %d)', [Year]);
 
-  Str := FormatDateTime('yyyy-mm-dd', EncodeDate(Year, Month, 1));
-  SQLQueryGridCur.MacroByName('_PERDATE').Value := QuotedStr(Str);
+  SQLQueryGridCur.MacroByName('_COND_PERTYPE').Value := MacroPerType;
+  SQLQueryGridCur.MacroByName('_COND_PERDATE').Value := MacroPerDate;
 
-  StrMacro := '';
+  Macro := '';
   Str := UpperCase(ComboBoxDoc.Items.Names[ComboBoxDoc.ItemIndex]);
   if (not Str.IsEmpty()) then
-    StrMacro := ' AND (UPPER(FORM.CHARCODE) = ' + QuotedStr(Str) + ')';
-  SQLQueryGridCur.MacroByName('_COND_CHARCODE').Value := StrMacro;
+    Macro := Format(' AND (UPPER(FORM.CHARCODE) = %s)', [QuotedStr(Str)]);
+  SQLQueryGridCur.MacroByName('_COND_CHARCODE').Value := Macro;
 
-  StrMacro := '';
+  Macro := '';
   Code := TRim(ComboBoxFirm.Text);
   if (not Code.IsEmpty()) then
-    StrMacro := ' AND ORG.EDRPOU = ' + Code;
-  SQLQueryGridCur.MacroByName('_COND_ORG').Value := StrMacro;
+    Macro := Format(' AND (ORG.EDRPOU = %s)', [Code]);
+  SQLQueryGridCur.MacroByName('_COND_ORG').Value := Macro;
 
-  StrMacro := ', '''' AS FJ';
+  Macro := ', '''' AS FJ';
   if (Pos('J0500110', ComboBoxDoc.Text) = 1) then
   begin
     StrDb := 'FJ0500106_MAIN';
     if (fTablesMain.IndexOf(StrDb) <> 0) then
     begin
-      StrMacro := ', TFJ.HZ || ''-'' || TFJ.HZN || ''-'' || TFJ.HZU AS FJ';
+      Macro := ', TFJ.HZ || ''-'' || TFJ.HZN || ''-'' || TFJ.HZU AS FJ';
       SQLQueryGridCur.MacroByName('_FROM_T2').Value :=
         ' LEFT JOIN ' + StrDb + ' TFJ ON TFJ.CARDCODE = CARD.CODE';
     end;
   end;
-  SQLQueryGridCur.MacroByName('_SELECT_T2').Value := StrMacro;
+  SQLQueryGridCur.MacroByName('_SELECT_T2').Value := Macro;
 
   SQLQueryGridCur.MacroByName('_ORDER').Value := fSortField;
   SQLQueryGridCur.MacroByName('_ASC').Value := IfThen(fSortAsc, 'ASC', 'DESC');
@@ -310,9 +325,9 @@ end;
 
 procedure TFMedocCheckDocs.SQLQueryGridCurCalcFields(DataSet: TDataSet);
 var
-  i, Month: integer;
+  i, Month, PerType: integer;
   FieldPerDate, FieldXML, FieldFJ, FieldHZ: TField;
-  Code: string;
+  Str, StrMonth, StrPerType, Code: string;
 begin
   ProtectTimer.TimingStart();
 
@@ -331,9 +346,16 @@ begin
   FieldPerDate := DataSet.FindField('PERDATE');
   if (Assigned(FieldPerDate)) and (not FieldPerDate.IsNull) then
   begin
-    //DataSet.FindField('PERDATE_STR').AsString := FormatDateTime('mmmm', Field.AsDateTime);
-    Month := MonthOf(FieldPerDate.AsDateTime);
-    DataSet.FindField('PERDATE_STR').AsString := GetMonthNameUa(Month);
+    PerType := DataSet.FieldByName('PERTYPE').AsInteger;
+    if (PerType = 0) then // month
+      Str := GetMonthNameUa(MonthOf(FieldPerDate.AsDateTime))
+    else if (PerType = 10) then  // quarter
+      Str := IntToStr(GetYearPart(FieldPerDate.AsDateTime, 3))
+    else if (PerType = 20) then  // half year
+      Str := IntToStr(GetYearPart(FieldPerDate.AsDateTime, 2))
+    else
+      Str := '';
+    DataSet.FieldByName('PERDATE_STR').AsString := PerTypeToHuman(PerType) + ' ' + Str;
   end;
 
   Code := DataSet.FieldByName('EDRPOU').AsString;
@@ -345,7 +367,7 @@ begin
     fFirmCodesLicensed.Clear();
 end;
 
-procedure TFMedocCheckDocs.ButtonExecClick(Sender: TObject);
+procedure TFMedocCheckDocs.BitBtnFindClick(Sender: TObject);
 var
   Msg, LastUpdate: string;
   Delay: integer;
@@ -371,11 +393,11 @@ begin
     Sleep(Delay + Random(Delay));
 end;
 
-procedure TFMedocCheckDocs.ButtonActivationClick(Sender: TObject);
+procedure TFMedocCheckDocs.BitBtnActivationClick(Sender: TObject);
 var
   P: TPoint;
 begin
-  P := ButtonActivation.ClientToScreen(Point(0, ButtonActivation.Height));
+  P := BitBtnActivation.ClientToScreen(Point(0, BitBtnActivation.Height));
   PopupMenuActivation.PopUp(P.X, P.Y);
 end;
 
@@ -522,9 +544,7 @@ begin
   Settings.SetItem('Licence', 'LastUpdate', DateTimeToStr(Now()));
 end;
 
-procedure TFMedocCheckDocs.ButtonPrintClick(Sender: TObject);
-var
-  PrevVisible: boolean;
+procedure TFMedocCheckDocs.BitBtnPrintClick(Sender: TObject);
 begin
   if (SQLQueryGridCur.RecordCount = 0) then
   begin
@@ -534,11 +554,13 @@ begin
 
   SQLQueryGridCurINDTAXNUM.Visible := False;
   SQLQueryGridCurCARDSTATUS_NAME.Visible := False;
+  SQLQueryGridCurPERDATE.Visible := False;
 
   FrPrintGrid1.Caption := Format('%s -- Період: %s %s року--Звіт: %s)',
     [cAppName, ComboBoxMonth.Text, ComboBoxYear.Text, ComboBoxDoc.Text]);
   FrPrintGrid1.PreviewReport();
 
+  SQLQueryGridCurPERDATE.Visible := True;
   SQLQueryGridCurINDTAXNUM.Visible := True;
   SQLQueryGridCurCARDSTATUS_NAME.Visible := True;
 
@@ -547,7 +569,7 @@ begin
     frReport1.ShowReport();
 end;
 
-procedure TFMedocCheckDocs.ButtonRunMedocClick(Sender: TObject);
+procedure TFMedocCheckDocs.BitBtnRunMedocClick(Sender: TObject);
 var
   Path: string;
   JObj: TJSONObject;
@@ -597,10 +619,10 @@ begin
   end;
 
   BtnEnable := (fJMedocApp.Count > 0);
-  ButtonRunMedoc.Enabled := BtnEnable;
-  ButtonExec.Enabled := BtnEnable;
-  ButtonActivation.Enabled := BtnEnable;
-  ButtonPrint.Enabled := BtnEnable;
+  BitBtnRunMedoc.Enabled := BtnEnable;
+  BitBtnFind.Enabled := BtnEnable;
+  BitBtnActivation.Enabled := BtnEnable;
+  BitBtnPrint.Enabled := BtnEnable;
 end;
 
 procedure TFMedocCheckDocs.FormCreate(Sender: TObject);

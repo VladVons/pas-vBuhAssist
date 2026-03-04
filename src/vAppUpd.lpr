@@ -93,7 +93,12 @@ procedure TAppUpd.Update(const aUrl: String);
 var
   FileZip, Str: string;
 begin
+  Str := GetOptionValue(#0, 'dir');
+  if (Str.IsEmpty()) then
+     Quit(1, '--dir is empty');
+
   //GetUrlToFile('https://collector:col2024@download.1x1.com.ua/public/update/vBuhAssist/vBuhAssist_35.exe.zip');
+  // first download file. It takes some time to leave master application
   FileZip := GetUrlToFile(aUrl, GetTempDir());
 
   Str := GetOptionValue(#0, 'pid');
@@ -105,12 +110,18 @@ begin
     Str := '0';
   Sleep(StrToInt(Str));
 
-  Str := GetOptionValue(#0, 'dir');
   UnZipToDir(FileZip, Str);
   DeleteFile(FileZip);
 
   Str := GetOptionValue(#0, 'app');
-  ExecProcess(Str, Nil);
+  if (not Str.IsEmpty()) then
+  begin
+    if (not FileExists(Str)) then
+      Quit(1, 'File not exists ' + Str);
+
+    WriteLn('Run applacation ' + Str);
+    ExecProcess(Str, Nil);
+  end;
 end;
 
 procedure TAppUpd.DoRun();
@@ -127,6 +138,8 @@ begin
   Str := GetOptionValue(#0, 'crc');
   if (not Str.IsEmpty()) then
   begin
+    if (not FileExists(Str)) then
+      Quit(1, 'File not exists ' + Str);
     AppProtect(Str);
     Quit();
   end;
@@ -134,6 +147,9 @@ begin
   Str := GetOptionValue(#0, 'app_ver');
   if (not Str.IsEmpty()) then
   begin
+    if (not FileExists(Str)) then
+      Quit(1, 'File not exists ' + Str);
+
     Str := GetExeVer(Str);
     WriteLn(Str);
     Quit();
@@ -142,6 +158,9 @@ begin
   Str := GetOptionValue(#0, 'app_build');
   if (not Str.IsEmpty()) then
   begin
+    if (not FileExists(Str)) then
+      Quit(1, 'File not exists ' + Str);
+
     Str := GetExeVer(Str);
     Parts := Str.Split('.');
     WriteLn(Parts[High(Parts)]);
@@ -155,12 +174,6 @@ begin
     Quit();
   end;
 
-
-  //Update('https://collector:col2024@download.1x1.com.ua/private/update/Test/ver.json');
-
-  //WriteLn(Str);
-  //Str := GetOptionValue('s', 'sleep');
-  //UnZipToDir('c:\temp\pdf_small.zip', 'c:\temp\12\34');
   Quit();
 end;
 
@@ -176,15 +189,21 @@ begin
 end;
 
 procedure TAppUpd.ShowHelp();
+var
+  AppName: string;
 begin
-  WriteLn(GetAppName(), ' ', GetAppVer(), ' ', {$I %DATE%});
+  AppName := GetAppName();
+  WriteLn(AppName, ' ver ', GetAppVer(), ' (', {$I %DATE%} + ')');
+  WriteLn(AppName + ' --app=app.exe --dir=path\app --pid=<app PID> --delay=2000 --url=http://site.com/update.zip');
   WriteLn('options:');
-  WriteLn('--app     application to start after update');
-  WriteLn('--dir     directory to extract ZIP archive');
-  WriteLn('--pause   wait for key press before quit');
-  WriteLn('--pid     process ID to wait for free');
-  WriteLn('--delay   delay in ms before unzip');
-  WriteLn('--url     remote ZIP file address ');
+  WriteLn('--app       application to start after update');
+  WriteLn('--app_ver   get application version');
+  WriteLn('--app_build get application version');
+  WriteLn('--dir       directory to extract ZIP archive');
+  WriteLn('--pause     wait for key press before quit');
+  WriteLn('--pid       process ID to wait for free');
+  WriteLn('--delay     delay in ms before unzip');
+  WriteLn('--url       remote ZIP file address ');
 end;
 
 begin

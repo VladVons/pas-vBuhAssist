@@ -19,7 +19,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="4"/>
+      <BuildNr Value="5"/>
     </VersionInfo>
     <BuildModes>
       <Item Name="Default" Default="True"/>
@@ -33,7 +33,7 @@
       <Modes>
         <Mode Name="default">
           <local>
-            <CommandLineParams Value="--pause --sleep=5 --app=vBuhAssist.exe --url=https://download.1x1.com.ua/public/update/vBuhAssist/vBuhAssist_30.exe.zip"/>
+            <CommandLineParams Value="--pause --app=vBuhAssist.exe --url=https://download.1x1.com.ua/public/update/vBuhAssist/vBuhAssist_43.exe.zip"/>
           </local>
         </Mode>
       </Modes>

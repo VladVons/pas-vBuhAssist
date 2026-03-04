@@ -2,11 +2,11 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
   Left = 407
   Height = 418
   Top = 171
-  Width = 665
+  Width = 680
   BorderStyle = bsNone
   Caption = 'Звітне стикування'
   ClientHeight = 418
-  ClientWidth = 665
+  ClientWidth = 680
   Font.CharSet = RUSSIAN_CHARSET
   Font.Name = 'Verdana'
   Font.Pitch = fpVariable
@@ -15,18 +15,18 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
   OnDestroy = FormDestroy
   inherited PanelTitle: TPanel
     Height = 40
-    Width = 665
+    Width = 680
     ClientHeight = 40
-    ClientWidth = 665
+    ClientWidth = 680
   end
   object Panel1: TPanel[1]
     Left = 0
     Height = 184
     Top = 40
-    Width = 665
+    Width = 680
     Align = alTop
     ClientHeight = 184
-    ClientWidth = 665
+    ClientWidth = 680
     TabOrder = 1
     object ComboBoxPath: TComboBox
       Left = 104
@@ -45,7 +45,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       DropDownCount = 20
       ItemHeight = 18
       ReadOnly = True
-      TabOrder = 6
+      TabOrder = 2
       OnChange = ComboBoxMonthChange
     end
     object ComboBoxYear: TComboBox
@@ -56,7 +56,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       DropDownCount = 20
       ItemHeight = 18
       ReadOnly = True
-      TabOrder = 5
+      TabOrder = 3
       OnDropDown = ComboBoxYearDropDown
     end
     object ComboBoxFirm: TComboBox
@@ -77,7 +77,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       DropDownCount = 20
       ItemHeight = 18
       ReadOnly = True
-      TabOrder = 7
+      TabOrder = 5
     end
     object Label1: TLabel
       Left = 16
@@ -109,58 +109,68 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Width = 64
       Caption = 'ЄДРПОУ'
     end
-    object ButtonExec: TButton
-      Left = 106
-      Height = 28
-      Top = 152
-      Width = 212
-      Caption = 'Знайти за параметрами'
-      TabOrder = 1
-      OnClick = ButtonExecClick
-    end
-    object ButtonPrint: TButton
-      Left = 336
-      Height = 28
-      Top = 152
-      Width = 64
-      Caption = 'Друк'
-      TabOrder = 2
-      OnClick = ButtonPrintClick
-    end
-    object ButtonActivation: TButton
-      Left = 554
-      Height = 28
-      Top = 152
-      Width = 101
-      Caption = 'Активація'
-      TabOrder = 3
-      OnClick = ButtonActivationClick
-    end
-    object ButtonRunMedoc: TButton
-      Left = 408
-      Height = 28
-      Top = 152
-      Width = 102
-      Caption = 'Запустити'
-      TabOrder = 8
-      OnClick = ButtonRunMedocClick
-    end
     object ButtonPath: TButton
       Left = 552
       Height = 25
       Top = 8
       Width = 24
       Caption = '...'
-      TabOrder = 9
+      TabOrder = 1
       Visible = False
       OnClick = ButtonPathClick
+    end
+    object BitBtnFind: TBitBtn
+      Left = 104
+      Height = 38
+      Top = 142
+      Width = 120
+      Caption = 'Знайти'
+      Images = DmCommon.ImageList1
+      ImageIndex = 3
+      TabOrder = 6
+      OnClick = BitBtnFindClick
+    end
+    object BitBtnPrint: TBitBtn
+      Left = 232
+      Height = 38
+      Top = 142
+      Width = 118
+      Caption = 'Друк'
+      Images = DmCommon.ImageList1
+      ImageIndex = 2
+      TabOrder = 7
+      OnClick = BitBtnPrintClick
+    end
+    object BitBtnRunMedoc: TBitBtn
+      Left = 360
+      Height = 38
+      Top = 142
+      Width = 134
+      Caption = 'Запустити'
+      Images = DmCommon.ImageList1
+      ImageIndex = 0
+      TabOrder = 8
+      OnClick = BitBtnRunMedocClick
+    end
+    object BitBtnActivation: TBitBtn
+      Left = 511
+      Height = 38
+      Hint = 'Активація'
+      Top = 142
+      Width = 40
+      Images = DmCommon.ImageList1
+      ImageIndex = 1
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 9
+      OnClick = BitBtnActivationClick
     end
   end
   object PageControl: TPageControl[2]
     Left = 0
     Height = 194
     Top = 224
-    Width = 665
+    Width = 680
     ActivePage = TabSheetCur
     Align = alClient
     TabIndex = 0
@@ -168,18 +178,18 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     object TabSheetCur: TTabSheet
       Caption = 'Поточний'
       ClientHeight = 163
-      ClientWidth = 657
+      ClientWidth = 672
       object DbGridCur: TDBGrid
         Left = 0
         Height = 163
         Top = 0
-        Width = 657
+        Width = 672
         Align = alClient
         Color = clWindow
         Columns = <>
         DataSource = DataSourceGridCur
         Font.CharSet = RUSSIAN_CHARSET
-        Font.Height = -13
+        Font.Height = -15
         Font.Name = 'Verdana'
         Font.Pitch = fpVariable
         Font.Quality = fqDraft
@@ -188,10 +198,11 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
         ReadOnly = True
         TabOrder = 0
         TitleFont.CharSet = RUSSIAN_CHARSET
-        TitleFont.Height = -12
+        TitleFont.Height = -13
         TitleFont.Name = 'Verdana'
         TitleFont.Pitch = fpVariable
         TitleFont.Quality = fqDraft
+        TitleFont.Style = [fsBold]
         OnDrawColumnCell = DbGridCurDrawColumnCell
         OnTitleClick = DbGridCurTitleClick
       end
@@ -199,13 +210,13 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     object TabSheetPrev: TTabSheet
       Caption = 'Пропоновані'
       ClientHeight = 163
-      ClientWidth = 657
+      ClientWidth = 672
       TabVisible = False
       object DBGridPrev: TDBGrid
         Left = 0
         Height = 163
         Top = 0
-        Width = 657
+        Width = 672
         Align = alClient
         Color = clWindow
         Columns = <>
@@ -249,6 +260,11 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
         Size = 10
       end    
       item
+        Name = 'PERTYPE'
+        DataType = ftInteger
+        Size = 8
+      end    
+      item
         Name = 'PERDATE'
         DataType = ftString
         Precision = -1
@@ -258,7 +274,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
         Name = 'PERDATE_STR'
         DataType = ftString
         Precision = -1
-        Size = 10
+        Size = 12
       end    
       item
         Name = 'CHARCODE'
@@ -308,6 +324,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       '      THEN CAST(''ПДВ'' AS VARCHAR(10))'
       '      ELSE '''''
       '    END AS vat,'
+      '    T2.PERTYPE,'
       '    T2.PERDATE,'
       '    CAST(T2.PERDATE AS VARCHAR(10)) AS PERDATE_STR,'
       '    T2.CHARCODE,'
@@ -323,6 +340,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       '        CARD.IDORG,'
       '        CARD.PERDATE,'
       '        CARDSENDSTT.NAME AS CARDSENDSTT_NAME,'
+      '        CARD.PERTYPE,'
       '        FORM.CHARCODE,'
       '        CAST(CARD.MODDATE AS DATE) AS MODDATE,'
       '        CARDSTATUS.NAME AS CARDSTATUS_NAME,'
@@ -340,16 +358,16 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       '        ON CARDBLOB.CODE = CARD.CODE'
       '    %_FROM_T2'
       '    WHERE'
-      '        (CARD.PERDATE = DATE %_PERDATE)'
-      '        AND (CARD.PERTYPE = :_PERTYPE)'
-      '        AND (CARD.IDPARENT IS NULL)'
+      '            (CARD.IDPARENT IS NULL)'
       '        AND (CARD.FORM > 0)'
       '        AND (CARD.INTRASH = 0)'
+      '        %_COND_PERTYPE'
+      '        %_COND_PERDATE'
+      '        %_COND_CHARCODE'
       '        AND (FORM.CHARCODE NOT LIKE ''F12%'') AND (FORM.CHARCODE NOT LIKE ''J12%'')'
       '        AND (FORM.CHARCODE NOT LIKE ''F13%'') AND (FORM.CHARCODE NOT LIKE ''J13%'')'
       '        AND (FORM.CHARCODE NOT LIKE ''F14%'') AND (FORM.CHARCODE NOT LIKE ''J14%'')'
       '        AND (FORM.CHARCODE NOT LIKE ''PD%'')'
-      '        %_COND_CHARCODE'
       ') T2'
       '    ON T2.IDORG = ORG.CODE'
       'WHERE'
@@ -359,12 +377,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       '  %_ORDER %_ASC'
       ''
     )
-    Params = <    
-      item
-        DataType = ftUnknown
-        Name = '_PERTYPE'
-        ParamType = ptInput
-      end>
+    Params = <>
     Macros = <    
       item
         DataType = ftUnknown
@@ -378,7 +391,12 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       end    
       item
         DataType = ftUnknown
-        Name = '_PERDATE'
+        Name = '_COND_PERTYPE'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = '_COND_PERDATE'
         ParamType = ptInput
       end    
       item
@@ -464,11 +482,11 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Visible = False
       Size = 10
     end
-    object SQLQueryGridCurPERDATE: TDateField
-      DisplayLabel = 'Період'
+    object SQLQueryGridCurPERTYPE: TIntegerField
+      DisplayLabel = 'Тип період'
       DisplayWidth = 8
       FieldKind = fkData
-      FieldName = 'PERDATE'
+      FieldName = 'PERTYPE'
       Index = 5
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
@@ -476,24 +494,35 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Required = False
       Visible = False
     end
-    object SQLQueryGridCurPERDATE_STR: TStringField
+    object SQLQueryGridCurPERDATE: TDateField
       DisplayLabel = 'Період'
-      DisplayWidth = 8
+      DisplayWidth = 10
       FieldKind = fkData
-      FieldName = 'PERDATE_STR'
+      FieldName = 'PERDATE'
       Index = 6
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
       Required = False
-      Size = 8
+    end
+    object SQLQueryGridCurPERDATE_STR: TStringField
+      DisplayLabel = 'Період'
+      DisplayWidth = 12
+      FieldKind = fkCalculated
+      FieldName = 'PERDATE_STR'
+      Index = 7
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 35
     end
     object SQLQueryGridCurCHARCODE: TStringField
       DisplayLabel = 'Код'
       DisplayWidth = 8
       FieldKind = fkData
       FieldName = 'CHARCODE'
-      Index = 7
+      Index = 8
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -505,7 +534,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       DisplayWidth = 8
       FieldKind = fkCalculated
       FieldName = 'HZ'
-      Index = 8
+      Index = 9
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -517,7 +546,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       DisplayWidth = 8
       FieldKind = fkData
       FieldName = 'MODDATE'
-      Index = 9
+      Index = 10
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -527,7 +556,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       DisplayLabel = 'Примітка'
       FieldKind = fkData
       FieldName = 'CARDSTATUS_NAME'
-      Index = 10
+      Index = 11
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -539,7 +568,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       DisplayWidth = 10
       FieldKind = fkData
       FieldName = 'CARDSENDSTT_NAME'
-      Index = 11
+      Index = 12
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -549,7 +578,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     object SQLQueryGridCurXMLVALS: TBlobField
       FieldKind = fkData
       FieldName = 'XMLVALS'
-      Index = 12
+      Index = 13
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -560,7 +589,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     object SQLQueryGridCurFJ: TStringField
       FieldKind = fkData
       FieldName = 'FJ'
-      Index = 13
+      Index = 14
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -578,15 +607,16 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     DBGrid = DbGridCur
     Orientation = poLandscape
     Font.CharSet = RUSSIAN_CHARSET
-    Font.Height = -13
+    Font.Height = -15
     Font.Name = 'Verdana'
     Font.Pitch = fpVariable
     Font.Quality = fqDraft
     TitleFont.CharSet = RUSSIAN_CHARSET
-    TitleFont.Height = -12
+    TitleFont.Height = -13
     TitleFont.Name = 'Verdana'
     TitleFont.Pitch = fpVariable
     TitleFont.Quality = fqDraft
+    TitleFont.Style = [fsBold]
     Caption = 'Grid'
     PrinterIndex = -1
     ShowCaption = True
