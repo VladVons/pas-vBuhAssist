@@ -3,6 +3,7 @@ var
   i, Month: Integer;
 begin
   aComboBox.Items.Clear();
+  aComboBox.Items.AddObject('- Всі', TObject(401));
   aComboBox.Items.AddObject('Січень', TObject(1));
   aComboBox.Items.AddObject('Лютий', TObject(2));
   aComboBox.Items.AddObject('Березень', TObject(3));
@@ -22,7 +23,6 @@ begin
   aComboBox.Items.AddObject('- IV Квартал', TObject(104));
   aComboBox.Items.AddObject('- II Півріччя', TObject(202));
   aComboBox.Items.AddObject('- Рік', TObject(301));
-  aComboBox.Items.AddObject('- Всі', TObject(401));
 
   Month := MonthOf(IncMonth(Date(), -1));
 
