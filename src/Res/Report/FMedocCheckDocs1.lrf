@@ -7,7 +7,7 @@
     <KeyWords Value=""/>
     <Comments Value=""/>
     <ReportCreateDate Value="1899-12-30 00:00:00"/>
-    <ReportLastChange Value="2026-03-05 08:27:00"/>
+    <ReportLastChange Value="2026-03-05 16:21:40"/>
     <ReportVersionBuild Value=""/>
     <ReportVersionMajor Value=""/>
     <ReportVersionMinor Value=""/>
@@ -130,8 +130,8 @@
           <Typ Value="gtMemo"/>
           <StreamMode Value="0"/>
           <Size>
-            <Left Value="0"/>
-            <Top Value="220"/>
+            <Left Value="16"/>
+            <Top Value="228"/>
             <Width Value="108"/>
             <Height Value="18"/>
           </Size>
@@ -147,7 +147,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="[SQLQueryGrid.&quot;EDRPOU&quot;]&#xD;&#xA;"/>
+            <Memo Value="[FrPrintGrid1]&#xD;&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>

@@ -539,12 +539,12 @@ begin
     FrPrintGrid1.Caption := Format('%s -- Період: %s %s року--Звіт: %s)',
       [cAppName, ComboBoxMonth.Text, ComboBoxYear.Text, ComboBoxDoc.Text]);
     FrPrintGrid1.PreviewReport();
-    Exit();
+    //Exit();
 
-    ResourceLoadReport('Report_FMedocCheckDocs1', frReport1);
-    //frReport1.LoadFromFile('Report\FMedocCheckDocs1.lrf');
-    if (frReport1.PrepareReport()) then
-      frReport1.ShowReport();
+    //ResourceLoadReport('Report_FMedocCheckDocs1', frReport1);
+    //frReport1.LoadFromFile('Res\Report\FMedocCheckDocs1.lrf');
+    //if (frReport1.PrepareReport()) then
+    //  frReport1.ShowReport();
   finally
     PropGuard.Free();
   end;

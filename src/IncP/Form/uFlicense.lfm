@@ -1,8 +1,9 @@
 object FLicence: TFLicence
   Left = 276
-  Height = 240
+  Height = 300
   Top = 250
-  Width = 320
+  Width = 400
   Caption = 'Ліцензія'
-  LCLVersion = '4.4.0.0'
+  DesignTimePPI = 120
+  LCLVersion = '4.6.0.0'
 end

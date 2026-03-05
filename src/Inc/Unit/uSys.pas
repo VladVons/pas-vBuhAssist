@@ -4,6 +4,8 @@
 unit uSys;
 
 {$mode ObjFPC}{$H+}
+//{$mode DELPHI}
+{$H+}
 
 interface
 
@@ -322,6 +324,14 @@ begin
     RS.Free();
     SS.Free();
   end;
+end;
+
+function TestPas(): string;
+var
+  i: integer;
+begin
+  for i := 1 to 10 do
+      WriteLn(i);
 end;
 
 initialization
