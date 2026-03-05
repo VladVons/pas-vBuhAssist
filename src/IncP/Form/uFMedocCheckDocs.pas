@@ -230,14 +230,14 @@ begin
 
   MacroPerType := '';
   MacroPerDate := '';
-  if (Month <> 401) then
-  begin
+  if (Month = 500) then // all
+    MacroPerDate := Format(' AND (EXTRACT(YEAR FROM CARD.PERDATE) = %d)', [Year])
+  else begin
     MacroPerType := Format(' AND (CARD.PERTYPE = %d)', [PerType]);
 
     Str := FormatDateTime('yyyy-mm-dd', EncodeDate(Year, Month, 1));
     MacroPerDate := Format(' AND (CARD.PERDATE = DATE %s)', [QuotedStr(Str)]);
-  end else
-    MacroPerDate := Format(' AND (EXTRACT(YEAR FROM CARD.PERDATE) = %d)', [Year]);
+  end;
 
   SQLQueryGridCur.MacroByName('_COND_PERTYPE').Value := MacroPerType;
   SQLQueryGridCur.MacroByName('_COND_PERDATE').Value := MacroPerDate;
@@ -320,12 +320,12 @@ begin
     if (PerType = 0) then // month
       Str := GetMonthNameUa(MonthOf(FieldPerDate.AsDateTime))
     else if (PerType = 10) then  // quarter
-      Str := IntToRoman10(GetYearPart(FieldPerDate.AsDateTime, 3))
+      Str := IntToRoman10(GetYearPart(FieldPerDate.AsDateTime, 3)) + ' ' + PerTypeToHuman(PerType)
     else if (PerType = 20) then  // half year
-      Str := IntToRoman10(GetYearPart(FieldPerDate.AsDateTime, 2))
+      Str := IntToRoman10(GetYearPart(FieldPerDate.AsDateTime, 6)) + ' ' + PerTypeToHuman(PerType)
     else
-      Str := '';
-    DataSet.FieldByName('PERDATE_STR').AsString := PerTypeToHuman(PerType) + ' ' + Str;
+      Str := PerTypeToHuman(PerType);
+    DataSet.FieldByName('PERDATE_STR').AsString :=  Str;
   end;
 
   Code := DataSet.FieldByName('EDRPOU').AsString;
@@ -450,15 +450,17 @@ end;
 
 procedure TFMedocCheckDocs.DbGridCurTitleClick(Column: TColumn);
 var
-  fld: string;
+  Field: string;
 begin
-  fld := Column.FieldName;
+  Field := Column.FieldName;
+  if (Field = 'HZ') then  // ToDo
+     Exit();
 
   // якщо натиснули ту ж колонку — міняємо напрям
-  if (fSortField = fld) then
+  if (fSortField = Field) then
     fSortAsc := (not fSortAsc)
   else begin
-    fSortField := fld;
+    fSortField := Field;
     fSortAsc := True;
   end;
 

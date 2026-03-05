@@ -197,7 +197,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
         ReadOnly = True
         TabOrder = 0
         TitleFont.CharSet = RUSSIAN_CHARSET
-        TitleFont.Height = -13
+        TitleFont.Height = -15
         TitleFont.Name = 'Verdana'
         TitleFont.Pitch = fpVariable
         TitleFont.Quality = fqDraft
@@ -299,6 +299,12 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
         Size = 30
       end    
       item
+        Name = 'HZ'
+        DataType = ftString
+        Precision = -1
+        Size = 12
+      end    
+      item
         Name = 'XMLVALS'
         DataType = ftBlob
         Precision = -1
@@ -342,7 +348,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       '        CARDSENDSTT.NAME AS CARDSENDSTT_NAME,'
       '        CARD.PERTYPE,'
       '        FORM.CHARCODE,'
-      '        LEFT(FORM.NAME, 30) AS FORM_NAME,'
+      '        LEFT(FORM.NAME, 60) AS FORM_NAME,'
       '        CAST(CARD.MODDATE AS DATE) AS MODDATE,'
       '        CARDSTATUS.NAME AS CARDSTATUS_NAME,'
       '        CARDBLOB.XMLVALS'
@@ -532,7 +538,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     end
     object SQLQueryGridCurFORM_NAME: TStringField
       DisplayLabel = 'Звіт'
-      DisplayWidth = 8
+      DisplayWidth = 20
       FieldKind = fkData
       FieldName = 'FORM_NAME'
       Index = 9
@@ -540,17 +546,17 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
       Required = False
-      Size = 12
+      Size = 25
     end
     object SQLQueryGridCurHZ: TStringField
-      DisplayLabel = ' Ознака'
+      DisplayLabel = 'Ознака'
       DisplayWidth = 8
       FieldKind = fkCalculated
       FieldName = 'HZ'
       Index = 10
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
-      ReadOnly = False
+      ReadOnly = True
       Required = False
       Size = 30
     end
@@ -625,7 +631,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     Font.Pitch = fpVariable
     Font.Quality = fqDraft
     TitleFont.CharSet = RUSSIAN_CHARSET
-    TitleFont.Height = -13
+    TitleFont.Height = -15
     TitleFont.Name = 'Verdana'
     TitleFont.Pitch = fpVariable
     TitleFont.Quality = fqDraft

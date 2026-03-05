@@ -213,10 +213,10 @@ end;
 
 function GetYearPart(aDate: TDate; aDiv: integer): Integer;
 var
-  Y, M, D: Word;
+  Year, Month, Day: Word;
 begin
-  DecodeDate(aDate, Y, M, D);
-  Result := ((M - 1) div aDiv) + 1;
+  DecodeDate(aDate, Year, Month, Day);
+  Result := ((Month - 1) div aDiv) + 1;
 end;
 
 function PerTypeToHuman(aType: Integer): string;
@@ -224,8 +224,9 @@ begin
   case aType of
     0:  Result := 'Місяць';
     10: Result := 'Квартал';
-    20: Result := 'Квартал';
-    30: Result := 'Квартал';
+    20: Result := 'Півріччя';
+    25: Result := '9 Місяців';
+    30: Result := 'Рік';
   else
     Result := 'Не відомий';
   end;
@@ -319,19 +320,24 @@ end;
 
 procedure MonthToType(var aPerType, aMonth: integer);
 begin
-  if (Between(aMonth, 1, 12)) then
+  if (Between(aMonth, 1, 12)) then // month
     aPerType := 0
-  else if (Between(aMonth, 101, 104)) then
+  else if (Between(aMonth, 101, 104)) then // quarter
   begin
     aPerType := 10;
     aMonth := (aMonth - 100) * 3;
   end
-  else if (Between(aMonth, 201, 202)) then
+  else if (Between(aMonth, 201, 202)) then // half year
   begin
     aPerType := 20;
     aMonth := (aMonth - 200) * 6;
   end
-  else if (aMonth = 301) then
+  else if (aMonth = 301) then // 9 month
+  begin
+    aPerType := 25;
+    aMonth := 9;
+  end
+  else if (aMonth = 401) then // year
   begin
     aPerType := 30;
     aMonth := 12;
