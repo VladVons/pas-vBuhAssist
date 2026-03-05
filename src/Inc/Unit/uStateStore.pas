@@ -8,7 +8,7 @@ unit uStateStore;
 interface
 
 uses
-  Classes, SysUtils, IniFiles, StdCtrls, ExtCtrls, Controls, Spin, Graphics,
+  Classes, SysUtils, TypInfo, IniFiles, StdCtrls, ExtCtrls, Controls, Spin, Graphics,
   uSettings;
 
 type
@@ -24,6 +24,16 @@ type
     procedure SetCtrlColor(aForm: TWinControl; aColor: TColor; const aType: string);
     procedure Load(aForm: TWinControl);
     procedure Save(aForm: TWinControl);
+  end;
+
+  TPropGuard = class
+  private
+    fObjs: array of TObject;
+    fProps: array of String;
+    fValues: array of Variant;
+  public
+    constructor Create(const aObjs: array of TObject; const aProp: String; const aValue: Variant);
+    destructor Destroy(); override;
   end;
 
 var
@@ -129,6 +139,37 @@ procedure TStateStore.Load(aForm: TWinControl);
 begin
   if (IsFile()) then
     Walk(aForm, @LoadProc);
+end;
+
+
+//----
+
+constructor TPropGuard.Create(const aObjs: array of TObject; const aProp: String; const aValue: Variant);
+var
+  i: Integer;
+begin
+  SetLength(fObjs, Length(aObjs));
+  SetLength(fProps, Length(aObjs));
+  SetLength(fValues, Length(aObjs));
+
+  for i := 0 to High(aObjs) do
+  begin
+    fObjs[i] := aObjs[i];
+    fProps[i] := aProp;
+
+    fValues[i] := GetPropValue(aObjs[i], aProp);
+    SetPropValue(aObjs[i], aProp, aValue);
+  end;
+end;
+
+destructor TPropGuard.Destroy();
+var
+  i: Integer;
+begin
+  for i := 0 to High(fObjs) do
+    SetPropValue(fObjs[i], fProps[i], fValues[i]);
+
+  inherited;
 end;
 
 end.

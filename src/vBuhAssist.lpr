@@ -15,9 +15,10 @@ uses
   opensslsockets,
   Interfaces, // this includes the LCL widgetset
   Forms,
-  uFMain, uWinManager, uDmCommon, uExceptionHandler, uAnnonce;
+  uFMain, uWinManager, uDmCommon, uExceptionHandler;
 
 {$R *.res}
+{$R vBuhAssist_Rc.res}
 begin
   AppException := TAppException.Create('app.err');
   Application.OnException := @AppException.Handler;

@@ -8,7 +8,7 @@ unit uDmCommon;
 interface
 
 uses
-  Classes, SysUtils, IBConnection, SQLDB, DB, Controls, uTextStore,
+  Classes, SysUtils, IBConnection, SQLDB, DB, Controls,
   uLicence, uLog, uQuery,
   uFLogin;
 
@@ -21,7 +21,6 @@ type
     SQLQueryCodes: TSQLQuery;
     SQLQueryTablesMain: TSQLQuery;
     SQLTransaction: TSQLTransaction;
-    TextStoreLicence: TTextStore;
   private
   public
     procedure Connect(const aName: string; aPort: integer);
@@ -111,7 +110,7 @@ begin
       if (Licence.LastErr.IsEmpty()) then
         Log.Print('i', 'Запит на отримання ліцензій відправлено')
       else
-        Log.Print('w', 'Помилка авторизації');
+        Log.Print('w', 'Помилка активації');
     end;
   finally
     FreeAndNil(FirmCodes);

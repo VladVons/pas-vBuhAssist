@@ -56,6 +56,6 @@ begin
   ComboBoxDoc.Items.AddPair('J0200126', 'Податкова декларація з податку на додану вартість');
   ComboBoxDoc.Items.AddPair('J0500110', 'Податковий розрахунок сум доходу ... ЄСВ');
   ComboBoxDoc.Items.AddPair('J0209513', 'Податкова декларація акцизного податку');
-  ComboBoxDoc.ItemIndex := 1;
+  ComboBoxDoc.ItemIndex := 0;
 end;
 

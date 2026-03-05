@@ -39,27 +39,25 @@ end;
 procedure TAnnonce.OnTimer(aSender: TObject);
 var
   SkipDays: integer;
-  Stdout, Title, Id: string;
+  Stdout, Title, Body, Id: string;
   Timer: TTimer;
   JItem: TJSONObject;
-  SL: TStringList;
 begin
   Timer := aSender as TTimer;
 
   Timer.Enabled := False;
   JItem := TJSONObject(PtrInt(Timer.Tag));
-  SL := TStringList.Create();
   try
     Title := JItem.Get('title', '');
-    SL.Text := StringReplace(JItem.Get('body', ''), '\n', LineEnding, [rfReplaceAll]);
+    Body := JItem.Get('body', '');
     Stdout := JItem.Get('stdout', '');
     if (Stdout = 'console') then
     begin
       Log.Print('i', '= ' + Title + ' =');
-      Log.Print('i', SL);
+      Log.Print('i', Body);
     end else if (Stdout = 'message') then
     begin
-      FMessageShow(Title, SL);
+      FMessageShow(Title, Body);
     end;
 
     SkipDays := JItem.Get('skip_days', 0);
@@ -69,7 +67,6 @@ begin
     SetItem(Id, 'done', DateTimeToStr(Now()));
     SetItem(Id, 'next', DateTimeToStr(IncDay(Now(), SkipDays)));
   finally
-    SL.Free();
     JItem.Free();
     Timer.Free();
   end;

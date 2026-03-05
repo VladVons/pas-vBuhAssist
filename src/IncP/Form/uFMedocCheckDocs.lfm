@@ -46,7 +46,6 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       ItemHeight = 18
       ReadOnly = True
       TabOrder = 2
-      OnChange = ComboBoxMonthChange
     end
     object ComboBoxYear: TComboBox
       Left = 336
@@ -328,6 +327,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       '    T2.PERDATE,'
       '    CAST(T2.PERDATE AS VARCHAR(10)) AS PERDATE_STR,'
       '    T2.CHARCODE,'
+      '    T2.FORM_NAME,'
       '    T2.CARDSENDSTT_NAME,'
       '    T2.MODDATE,'
       '    T2.CARDSTATUS_NAME,'
@@ -342,6 +342,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       '        CARDSENDSTT.NAME AS CARDSENDSTT_NAME,'
       '        CARD.PERTYPE,'
       '        FORM.CHARCODE,'
+      '        LEFT(FORM.NAME, 30) AS FORM_NAME,'
       '        CAST(CARD.MODDATE AS DATE) AS MODDATE,'
       '        CARDSTATUS.NAME AS CARDSTATUS_NAME,'
       '        CARDBLOB.XMLVALS'
@@ -529,12 +530,24 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Required = False
       Size = 8
     end
+    object SQLQueryGridCurFORM_NAME: TStringField
+      DisplayLabel = 'Звіт'
+      DisplayWidth = 8
+      FieldKind = fkData
+      FieldName = 'FORM_NAME'
+      Index = 9
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 12
+    end
     object SQLQueryGridCurHZ: TStringField
       DisplayLabel = ' Ознака'
       DisplayWidth = 8
       FieldKind = fkCalculated
       FieldName = 'HZ'
-      Index = 9
+      Index = 10
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -546,7 +559,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       DisplayWidth = 8
       FieldKind = fkData
       FieldName = 'MODDATE'
-      Index = 10
+      Index = 11
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -556,7 +569,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       DisplayLabel = 'Примітка'
       FieldKind = fkData
       FieldName = 'CARDSTATUS_NAME'
-      Index = 11
+      Index = 12
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -568,7 +581,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       DisplayWidth = 10
       FieldKind = fkData
       FieldName = 'CARDSENDSTT_NAME'
-      Index = 12
+      Index = 13
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -578,7 +591,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     object SQLQueryGridCurXMLVALS: TBlobField
       FieldKind = fkData
       FieldName = 'XMLVALS'
-      Index = 13
+      Index = 14
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -589,7 +602,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     object SQLQueryGridCurFJ: TStringField
       FieldKind = fkData
       FieldName = 'FJ'
-      Index = 14
+      Index = 15
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False

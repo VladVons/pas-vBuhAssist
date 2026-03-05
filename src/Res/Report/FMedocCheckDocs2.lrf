@@ -7,7 +7,7 @@
     <KeyWords Value=""/>
     <Comments Value=""/>
     <ReportCreateDate Value="2026-02-22 16:50:50"/>
-    <ReportLastChange Value="2026-02-22 18:07:43"/>
+    <ReportLastChange Value="2026-03-05 08:21:53"/>
     <ReportVersionBuild Value=""/>
     <ReportVersionMajor Value=""/>
     <ReportVersionMinor Value=""/>
@@ -123,63 +123,7 @@
           <Justify Value="False"/>
           <Cursor Value="0"/>
         </Object2>
-        <Object3>
-          <Name Value="Memo2"/>
-          <ClassName Value="TfrMemoView"/>
-          <Visible Value="True"/>
-          <Typ Value="gtMemo"/>
-          <StreamMode Value="0"/>
-          <Size>
-            <Left Value="374"/>
-            <Top Value="11"/>
-            <Width Value="296"/>
-            <Height Value="22"/>
-          </Size>
-          <Flags Value="3"/>
-          <FillColor Value="clNone"/>
-          <Frames>
-            <FrameColor Value="clBlack"/>
-            <FrameStyle Value="frsSolid"/>
-            <FrameWidth Value="1"/>
-            <FrameBorders Value=""/>
-            <Restrictions Value=""/>
-          </Frames>
-          <Data>
-            <Format Value="44"/>
-            <FormatStr Value=""/>
-            <Memo Value="Період [Period] &#xD;&#xA;"/>
-            <Script Value=""/>
-            <GapX Value="0"/>
-            <GapY Value="0"/>
-            <OnClick Value=""/>
-            <OnMouseEnter Value=""/>
-            <OnMouseLeave Value=""/>
-            <DetailReport Value=""/>
-            <ParagraphGap Value="0"/>
-            <LineSpacing Value="2"/>
-          </Data>
-          <Tag Value=""/>
-          <FURLInfo Value=""/>
-          <Font>
-            <Name Value="Arial"/>
-            <Size Value="10"/>
-            <Color Value="clBlack"/>
-            <Charset Value="0"/>
-            <Style Value=""/>
-          </Font>
-          <Highlight>
-            <FontStyle Value="2"/>
-            <FontColor Value="clBlack"/>
-            <FillColor Value="clWhite"/>
-            <HighlightStr Value=""/>
-          </Highlight>
-          <Alignment Value="taLeftJustify"/>
-          <Layout Value="tlTop"/>
-          <Angle Value="0"/>
-          <Justify Value="False"/>
-          <Cursor Value="0"/>
-        </Object3>
-        <ObjectCount Value="3"/>
+        <ObjectCount Value="2"/>
       </Page1>
       <FVal>
         <Count Value="0"/>

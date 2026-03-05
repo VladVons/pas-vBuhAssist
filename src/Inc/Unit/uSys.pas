@@ -8,7 +8,7 @@ unit uSys;
 interface
 
 uses
-  Classes, Windows, SysUtils, StrUtils, FileInfo, Process;
+  Classes, Windows, SysUtils, StrUtils, FileInfo, Process, LR_Class;
 
 function AddDllDirectory(aDir: PWideChar): THandle; stdcall; external 'kernel32.dll';
 function SetDllDirectoryW(lpPathName: PWideChar): BOOL; stdcall; external 'kernel32.dll';
@@ -30,7 +30,8 @@ procedure StrToFile(const aStr: AnsiString; aFile: string);
 function StrFromFile(const aFile: string): AnsiString;
 function ExpandEnvVar(const aStr: string): string;
 procedure WaitProcess(aPID: DWORD);
-
+procedure ResourceLoadReport(const aName: string; aReport: TfrReport);
+function ResourceLoadString(const aName: string; aEncoding: TEncoding = Nil): string;
 
 implementation
 
@@ -234,6 +235,10 @@ var
   VerValue: PVSFixedFileInfo;
 begin
   Result := '';
+  VerValue := Nil;
+  VerSize := 0;
+  Wnd := 0;
+
   InfoSize := GetFileVersionInfoSize(PChar(aFile), Wnd);
   if InfoSize = 0 then
      Exit;
@@ -284,6 +289,38 @@ begin
     Result := StuffString(Result, p1, p2 - p1 + 1, Env);
 
     p1 := Pos('%', Result);
+  end;
+end;
+
+procedure ResourceLoadReport(const aName: string; aReport: TfrReport);
+var
+  RS: TResourceStream;
+begin
+  RS := TResourceStream.Create(HInstance, aName, RT_RCDATA);
+  try
+    aReport.LoadFromXMLStream(RS);
+  finally
+    RS.Free();
+  end;
+end;
+
+function ResourceLoadString(const aName: string; aEncoding: TEncoding = Nil): string;
+var
+  RS: TResourceStream;
+  SS: TStringStream;
+begin
+  if (aEncoding = Nil) then
+    aEncoding := TEncoding.GetEncoding(1251);
+  SS := TStringStream.Create('', aEncoding);
+
+  RS := TResourceStream.Create(HInstance, aName, RT_RCDATA);
+  try
+    SS.CopyFrom(RS, RS.Size);
+    SS.Position := 0;
+    Result := SS.DataString;
+  finally
+    RS.Free();
+    SS.Free();
   end;
 end;
 

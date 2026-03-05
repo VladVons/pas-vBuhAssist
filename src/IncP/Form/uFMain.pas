@@ -70,7 +70,6 @@ var
 implementation
 
 {$R *.lfm}
-
 { TFMain }
 
 procedure TFMain.ActionFAboutExecute(Sender: TObject);
@@ -131,11 +130,12 @@ end;
 
 function TFMain.UserAgreement(aConfirm: boolean): boolean;
 var
-  Str: string;
+  Title, Body: string;
 begin
-  Str := 'Ліцензійна угода користувача';
-  Result := FMessageShow(Str, DmCommon.TextStoreLicence.Lines, aConfirm) = mrOK;
-  Log.Print('i', Str);
+  Title := 'Ліцензійна угода користувача';
+  Body := ResourceLoadString('Text_UserAgreement');
+  Log.Print('i', Title);
+  Result := (FMessageShow(Title, Body, aConfirm) = mrOK);
 end;
 
 procedure TFMain.CheckPassw();
@@ -195,7 +195,7 @@ begin
   ProtectTimer.TimerRunRnd(True, 10000);
 
   Log := TLog.Create('app.log', MemoInfo1);
-  Log.Print('i', 'Початок');
+  Log.Print('i', 'Початок роботи');
 
   StateStore := TStateStore.Create('app_state.ini');
 
@@ -228,7 +228,7 @@ end;
 
 procedure TFMain.FormDestroy(Sender: TObject);
 begin
-  Log.Print('i', 'Завершення');
+  Log.Print('i', 'Завершення роботи');
 end;
 
 

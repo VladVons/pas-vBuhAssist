@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, StrUtils, XMLRead, DOM, LConvEncoding, Registry, fpjson,
-  uSettings;
+  uSettings, uVarUtil;
 
 type
   TMedocIni = class(TSettings)
@@ -31,6 +31,8 @@ type
   function GetHzStr(const aStr: string): string;
   function PerTypeToHuman(aType: Integer): string;
   function GetYearPart(aDate: TDate; aDiv: integer): Integer;
+  function PerTypeToChar(aPerType: integer): char;
+  procedure MonthToType(var aPerType, aMonth: integer);
 
 var
   MedocIni: TMedocIni;
@@ -303,5 +305,37 @@ begin
   GetHz(StrXML, HZ, HZN, HZU);
   Result := GetHzValToHuman(HZ, HZN, HZU);
 end;
+
+function PerTypeToChar(aPerType: integer): char;
+begin
+  case aPerType of
+    0:  Result := 'm';
+    10: Result := 'q';
+    20: Result := 'h';
+    30: Result := 'y';
+  end;
+end;
+
+procedure MonthToType(var aPerType, aMonth: integer);
+begin
+  if (Between(aMonth, 1, 12)) then
+    aPerType := 0
+  else if (Between(aMonth, 101, 104)) then
+  begin
+    aPerType := 10;
+    aMonth := (aMonth - 100) * 3;
+  end
+  else if (Between(aMonth, 201, 202)) then
+  begin
+    aPerType := 20;
+    aMonth := (aMonth - 200) * 6;
+  end
+  else if (aMonth = 301) then
+  begin
+    aPerType := 30;
+    aMonth := 12;
+  end;
+end;
+
 
 end.

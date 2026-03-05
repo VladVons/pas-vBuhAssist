@@ -14,8 +14,7 @@ uses
   ExtCtrls, Buttons, Menus, Dialogs, ComCtrls, LR_Class, LR_DBSet,
   LR_PGrid, LR_Desgn, DB, fpjson,
   Math, uFBase, uSys, uLog, uLicence, uSettings, uVarUtil, uStateStore,
-  uQuery, uMedoc, uDmCommon,
-  uProtectTimer, uConst;
+  uQuery, uMedoc, uDmCommon, uProtectTimer, uConst;
 
 type
 
@@ -65,7 +64,6 @@ type
     SQLQueryGridCurVAT: TStringField;
     SQLQueryGridCurXMLVALS: TBlobField;
     SQLQueryGridCurFJ: TStringField;
-
     SQLQueryGridPrev: TSQLQuery;
     SQLQueryGridPrevEDRPOU: TStringField;
     SQLQueryGridPrevCARDSENDSTT_NAME: TStringField;
@@ -74,7 +72,6 @@ type
     SQLQueryGridPrevFORM_NAME: TStringField;
     SQLQueryGridPrevPERDATE: TDateField;
     SQLQueryGridPrevSHORTNAME: TStringField;
-
     TabSheetPrev: TTabSheet;
     TabSheetCur: TTabSheet;
     procedure BitBtnActivationClick(Sender: TObject);
@@ -82,7 +79,6 @@ type
     procedure BitBtnPrintClick(Sender: TObject);
     procedure BitBtnRunMedocClick(Sender: TObject);
     procedure ButtonPathClick(Sender: TObject);
-    procedure ComboBoxMonthChange(Sender: TObject);
     procedure ComboBoxPathEditingDone(Sender: TObject);
     procedure ComboBoxYearDropDown(Sender: TObject);
     procedure DbGridCurDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: integer; Column: TColumn; State: TGridDrawState);
@@ -102,7 +98,7 @@ type
     procedure SetComboBoxToCurrentMonth(aComboBox: TComboBox);
     procedure SetComboBoxToYear(aComboBox: TComboBox; aYear: integer = 0);
     procedure SetComboBoxDoc();
-    procedure QueryCurOpen();
+    function QueryCurOpen(): integer;
     procedure QueryPrevOpen(const aCode: string; aPerType, aYear, aMonth: integer);
     procedure SetEmbededPath(aIdx: integer);
     procedure ConnectToDb();
@@ -111,9 +107,7 @@ type
     procedure InitEmptyGrid();
     procedure InitMedocControl();
     function IsDemo(aCode: string; aField: TField): boolean;
-    procedure MonthToType(var aPerType, aMonth: integer);
   public
-
   end;
 
 var
@@ -122,7 +116,6 @@ var
 implementation
 
 {$R *.lfm}
-
 {$I uFMedocCheckDocs_Comp.inc}
 
 { TFMedocCheckDocs }
@@ -173,17 +166,6 @@ begin
 end;
 
 procedure TFMedocCheckDocs.QueryPrevOpen(const aCode: string; aPerType, aYear, aMonth: integer);
-
-  function PeriodToMedoc(aPerType: integer): char;
-  begin
-    case aPerType of
-      0: Result := 'm';
-      10: Result := 'q';
-      20: Result := 'h';
-      30: Result := 'y';
-    end;
-  end;
-
 var
   Year, Month, Day: word;
   Str, StrMacro: string;
@@ -200,7 +182,7 @@ begin
 
   SQLQueryGridPrev.ParamByName('_PERTYPE').Value := aPerType;
 
-  DatePrev := PrevPeriodDate(PeriodToMedoc(aPerType), aYear, aMonth);
+  DatePrev := PrevPeriodDate(PerTypeToChar(aPerType), aYear, aMonth);
   DecodeDate(DatePrev, Year, Month, Day);
   Str := FormatDateTime('yyyy-mm-dd', EncodeDate(Year, Month, 1));
   SQLQueryGridPrev.MacroByName('_PERDATE').Value := QuotedStr(Str);
@@ -220,28 +202,7 @@ begin
   SQLQueryGridPrev.Open();
 end;
 
-procedure TFMedocCheckDocs.MonthToType(var aPerType, aMonth: integer);
-begin
-  if (Between(aMonth, 1, 12)) then
-    aPerType := 0
-  else if (Between(aMonth, 101, 104)) then
-  begin
-    aPerType := 10;
-    aMonth := (aMonth - 100) * 3;
-  end
-  else if (Between(aMonth, 201, 202)) then
-  begin
-    aPerType := 20;
-    aMonth := (aMonth - 200) * 6;
-  end
-  else if (aMonth = 301) then
-  begin
-    aPerType := 30;
-    aMonth := 12;
-  end;
-end;
-
-procedure TFMedocCheckDocs.QueryCurOpen();
+function TFMedocCheckDocs.QueryCurOpen(): integer;
 var
   Month, Year, PerType: integer;
   Str, StrDb, Macro, MacroPerType, MacroPerDate, Code: string;
@@ -322,6 +283,8 @@ begin
 
   if (not Code.IsEmpty())and (Month <> 401) then
     QueryPrevOpen(Code, PerType, Year, Month);
+
+  Result := SQLQueryGridCur.RecordCount;
 end;
 
 procedure TFMedocCheckDocs.SQLQueryGridCurCalcFields(DataSet: TDataSet);
@@ -351,9 +314,9 @@ begin
     if (PerType = 0) then // month
       Str := GetMonthNameUa(MonthOf(FieldPerDate.AsDateTime))
     else if (PerType = 10) then  // quarter
-      Str := IntToStr(GetYearPart(FieldPerDate.AsDateTime, 3))
+      Str := IntToRoman10(GetYearPart(FieldPerDate.AsDateTime, 3))
     else if (PerType = 20) then  // half year
-      Str := IntToStr(GetYearPart(FieldPerDate.AsDateTime, 2))
+      Str := IntToRoman10(GetYearPart(FieldPerDate.AsDateTime, 2))
     else
       Str := '';
     DataSet.FieldByName('PERDATE_STR').AsString := PerTypeToHuman(PerType) + ' ' + Str;
@@ -371,7 +334,7 @@ end;
 procedure TFMedocCheckDocs.BitBtnFindClick(Sender: TObject);
 var
   Msg, LastUpdate: string;
-  Delay: integer;
+  Delay, Records: integer;
 begin
   TabSheetPrev.TabVisible := Trim(ComboBoxFirm.Text) <> '';
 
@@ -390,12 +353,14 @@ begin
   Log.Print('i', Msg);
 
   ConnectToDb();
-  QueryCurOpen();
+  Records := QueryCurOpen();
 
   // we are not so fast comparing to MEDOC
   Delay := Settings.GetItem('Common', 'Delay', 1500);
   if (not ProtectTimer.IsDeveloper()) then
     Sleep(Delay + Random(Delay));
+
+  Log.Print('i', Format('Відібрано записів %d', [Records]));
 end;
 
 procedure TFMedocCheckDocs.BitBtnActivationClick(Sender: TObject);
@@ -456,6 +421,7 @@ var
   //Code: string;
   DisplayText: string;
 begin
+  DataCol := DataCol;
   //Code := DbGridCur.DataSource.DataSet.FieldByName('EDRPOU').AsString;
 
   // Встановлюємо колір фону та шрифт
@@ -465,9 +431,7 @@ begin
     begin
       Brush.Color := RGBToColor(254, 240, 220);
       Font.Color := clBlack;
-    end
-    else
-    begin
+    end else begin
       Brush.Color := DbGridCur.Color;
       Font.Color := DbGridCur.Font.Color;
     end;
@@ -487,8 +451,7 @@ begin
   // якщо натиснули ту ж колонку — міняємо напрям
   if (fSortField = fld) then
     fSortAsc := (not fSortAsc)
-  else
-  begin
+  else begin
     fSortField := fld;
     fSortAsc := True;
   end;
@@ -550,6 +513,8 @@ begin
 end;
 
 procedure TFMedocCheckDocs.BitBtnPrintClick(Sender: TObject);
+var
+  PropGuard: TPropGuard;
 begin
   if (SQLQueryGridCur.RecordCount = 0) then
   begin
@@ -557,21 +522,26 @@ begin
     Exit();
   end;
 
-  SQLQueryGridCurINDTAXNUM.Visible := False;
-  SQLQueryGridCurCARDSTATUS_NAME.Visible := False;
-  SQLQueryGridCurPERDATE.Visible := False;
+  PropGuard := TPropGuard.Create([
+    SQLQueryGridCurINDTAXNUM,
+    SQLQueryGridCurCARDSTATUS_NAME,
+    SQLQueryGridCurPERDATE,
+    SQLQueryGridCurFORM_NAME
+  ], 'Visible', False);
 
-  FrPrintGrid1.Caption := Format('%s -- Період: %s %s року--Звіт: %s)',
-    [cAppName, ComboBoxMonth.Text, ComboBoxYear.Text, ComboBoxDoc.Text]);
-  FrPrintGrid1.PreviewReport();
+  try
+    FrPrintGrid1.Caption := Format('%s -- Період: %s %s року--Звіт: %s)',
+      [cAppName, ComboBoxMonth.Text, ComboBoxYear.Text, ComboBoxDoc.Text]);
+    FrPrintGrid1.PreviewReport();
+    Exit();
 
-  SQLQueryGridCurPERDATE.Visible := True;
-  SQLQueryGridCurINDTAXNUM.Visible := True;
-  SQLQueryGridCurCARDSTATUS_NAME.Visible := True;
-
-  //frReport1.LoadFromFile('Report\FMedocCheckDocs1.lrf');
-  if (frReport1.PrepareReport()) then
-    frReport1.ShowReport();
+    ResourceLoadReport('Report_FMedocCheckDocs1', frReport1);
+    //frReport1.LoadFromFile('Report\FMedocCheckDocs1.lrf');
+    if (frReport1.PrepareReport()) then
+      frReport1.ShowReport();
+  finally
+    PropGuard.Free();
+  end;
 end;
 
 procedure TFMedocCheckDocs.BitBtnRunMedocClick(Sender: TObject);
@@ -590,11 +560,6 @@ begin
   Path := ConcatPaths([ComboBoxPath.Text, 'ezvit.exe']);
   Log.Print('i', 'Запуск програми ' + Path);
   ExecProcess(Path);
-end;
-
-procedure TFMedocCheckDocs.ComboBoxMonthChange(Sender: TObject);
-begin
-
 end;
 
 procedure TFMedocCheckDocs.InitEmptyGrid();
@@ -648,9 +613,7 @@ begin
     Log.Print('w', 'Неможливо знайти програму звітності');
     ComboBoxPath.Text :=  '';
     //Enabled := False;
-  end
-  else
-  begin
+  end else begin
     ComboBoxPath.ItemIndex := 0;
     SetEmbededPath(0);
   end;

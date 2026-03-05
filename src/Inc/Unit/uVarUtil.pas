@@ -17,6 +17,7 @@ function GetJsonNested(const aJObj: TJSONObject; const Path: string; aDef: Varia
 function ReplMacros(const aText: string; aDict: TStringList): string;
 function Between(aVal, aMin, aMax: integer): boolean;
 function PrevPeriodDate(aPerType: char; aYear, aMonth: Integer): TDate;
+function IntToRoman10(aVal: Integer): String;
 
 generic function IIF<T>(aCond: boolean; const aValTrue, aValFalse: T): T; inline;
 
@@ -164,6 +165,24 @@ begin
   Result := (aVal >= aMin) and (aVal <= aMax)
 end;
 
+
+function IntToRoman10(aVal: Integer): String;
+begin
+  case aVal of
+    1:  Result := 'I';
+    2:  Result := 'II';
+    3:  Result := 'III';
+    4:  Result := 'IV';
+    5:  Result := 'V';
+    6:  Result := 'VI';
+    7:  Result := 'VII';
+    8:  Result := 'VIII';
+    9:  Result := 'IX';
+    10: Result := 'X';
+  else
+    Result := '';
+  end;
+end;
 
 end.
 

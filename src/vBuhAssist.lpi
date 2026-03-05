@@ -19,7 +19,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="11"/>
       <RevisionNr Value="2"/>
-      <BuildNr Value="44"/>
+      <BuildNr Value="45"/>
       <StringTable ProductName="vBuhAssist"/>
     </VersionInfo>
     <BuildModes>
@@ -35,9 +35,6 @@
     <RequiredPackages>
       <Item>
         <PackageName Value="weblaz"/>
-      </Item>
-      <Item>
-        <PackageName Value="TextStore"/>
       </Item>
       <Item>
         <PackageName Value="dcpcrypt"/>
@@ -228,7 +225,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="Inc/Unit;Inc/Type;IncP/Form;IncP/Unit;IncP/DataModule;Inc/Form"/>
+      <OtherUnitFiles Value="Inc/Unit;Inc/Type;IncP/Form;IncP/Unit;IncP/DataModule;Report;Inc/Form"/>
       <UnitOutputDirectory Value="_lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
