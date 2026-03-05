@@ -33,6 +33,7 @@ type
   function GetYearPart(aDate: TDate; aDiv: integer): Integer;
   function PerTypeToChar(aPerType: integer): char;
   procedure MonthToType(var aPerType, aMonth: integer);
+  function SplitCode(const aStr: string): TStringList;
 
 var
   MedocIni: TMedocIni;
@@ -337,5 +338,18 @@ begin
   end;
 end;
 
+function SplitCode(const aStr: string): TStringList;
+var
+  Prefix, Num: string;
+  i: Integer;
+begin
+  Result := TStringList.Create();
+
+  Prefix := Copy(aStr, 1, Pos('-', aStr) - 1);
+  Num := Copy(aStr, Pos('-', aStr) + 1, Length(aStr));
+
+  for i := 1 to Length(Prefix) do
+    Result.Add(Prefix[i] + Num);
+end;
 
 end.

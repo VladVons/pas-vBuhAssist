@@ -188,11 +188,11 @@ begin
   SQLQueryGridPrev.MacroByName('_PERDATE').Value := QuotedStr(Str);
 
   StrMacro := '';
-  SL := FieldToStrings(SQLQueryGridCur, 'CHARCODE', True);
+  SL := FieldToStrings(SQLQueryGridCur, 'CHARCODE');
   if (SL.Count > 0) then
   begin
-    Str := FieldToStrings(SQLQueryGridCur, 'CHARCODE', True).CommaText;
-    StrMacro := ' AND (FORM.CHARCODE NOT IN (' + Str + '))';
+    StringListQuoted(SL);
+    StrMacro := Format(' AND (FORM.CHARCODE NOT IN (%s))', [SL.CommaText]);
   end;
   SQLQueryGridPrev.MacroByName('_COND_CHARCODES').Value := StrMacro;
   SL.Free();
@@ -206,6 +206,7 @@ function TFMedocCheckDocs.QueryCurOpen(): integer;
 var
   Month, Year, PerType: integer;
   Str, StrDb, Macro, MacroPerType, MacroPerDate, Code: string;
+  SL: TStringList;
 begin
   DmCommon.SQLTransaction.Rollback();  //refresh
 
@@ -244,7 +245,12 @@ begin
   Macro := '';
   Str := UpperCase(ComboBoxDoc.Items.Names[ComboBoxDoc.ItemIndex]);
   if (not Str.IsEmpty()) then
-    Macro := Format(' AND (UPPER(FORM.CHARCODE) = %s)', [QuotedStr(Str)]);
+  begin
+    SL := SplitCode(Str);
+    StringListQuoted(SL);
+    Macro := Format(' AND (FORM.CHARCODE IN (%s))', [SL.CommaText]);
+    FreeAndNil(SL);
+  end;
   SQLQueryGridCur.MacroByName('_COND_CHARCODE').Value := Macro;
 
   Macro := '';
@@ -254,7 +260,7 @@ begin
   SQLQueryGridCur.MacroByName('_COND_ORG').Value := Macro;
 
   Macro := ', '''' AS FJ';
-  if (Pos('J0500110', ComboBoxDoc.Text) = 1) then
+  if (Pos('FJ-0500110', ComboBoxDoc.Text) = 1) then
   begin
     StrDb := 'FJ0500106_MAIN';
     if (fTablesMain.IndexOf(StrDb) <> 0) then

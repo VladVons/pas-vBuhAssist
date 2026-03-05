@@ -18,6 +18,7 @@ function ReplMacros(const aText: string; aDict: TStringList): string;
 function Between(aVal, aMin, aMax: integer): boolean;
 function PrevPeriodDate(aPerType: char; aYear, aMonth: Integer): TDate;
 function IntToRoman10(aVal: Integer): String;
+procedure StringListQuoted(aSL: TStringList);
 
 generic function IIF<T>(aCond: boolean; const aValTrue, aValFalse: T): T; inline;
 
@@ -182,6 +183,14 @@ begin
   else
     Result := '';
   end;
+end;
+
+procedure StringListQuoted(aSL: TStringList);
+var
+  i: integer;
+begin
+  for i := 0 to aSL.Count - 1 do
+    aSL[i] := QuotedStr(aSL[i])
 end;
 
 end.
