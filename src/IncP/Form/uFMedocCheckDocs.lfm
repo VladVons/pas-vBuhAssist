@@ -371,10 +371,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       '        %_COND_PERTYPE'
       '        %_COND_PERDATE'
       '        %_COND_CHARCODE'
-      '        AND (FORM.CHARCODE NOT LIKE ''F12%'') AND (FORM.CHARCODE NOT LIKE ''J12%'')'
-      '        AND (FORM.CHARCODE NOT LIKE ''F13%'') AND (FORM.CHARCODE NOT LIKE ''J13%'')'
-      '        AND (FORM.CHARCODE NOT LIKE ''F14%'') AND (FORM.CHARCODE NOT LIKE ''J14%'')'
-      '        AND (FORM.CHARCODE NOT LIKE ''PD%'')'
+      '        %_COND_CHARCODE_NOT'
       ') T2'
       '    ON T2.IDORG = ORG.CODE'
       'WHERE'
@@ -409,6 +406,11 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       item
         DataType = ftUnknown
         Name = '_COND_CHARCODE'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = '_COND_CHARCODE_NOT'
         ParamType = ptInput
       end    
       item
@@ -752,11 +754,8 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       '    AND (CARD.IDPARENT IS NULL)'
       '    AND (CARD.FORM > 0)'
       '    AND (CARD.INTRASH = 0)'
-      '    AND (FORM.CHARCODE NOT LIKE ''F12%'') AND (FORM.CHARCODE NOT LIKE ''J12%'')'
-      '    AND (FORM.CHARCODE NOT LIKE ''F13%'') AND (FORM.CHARCODE NOT LIKE ''J13%'')'
-      '    AND (FORM.CHARCODE NOT LIKE ''F14%'') AND (FORM.CHARCODE NOT LIKE ''J14%'')'
-      '    AND (FORM.CHARCODE NOT LIKE ''PD%'')'
       '    %_COND_CHARCODES'
+      '    %_COND_CHARCODE_NOT'
       'ORDER BY'
       '  CHARCODE ASC'
       ''
@@ -781,6 +780,11 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       item
         DataType = ftUnknown
         Name = '_COND_CHARCODES'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = '_COND_CHARCODE_NOT'
         ParamType = ptInput
       end>
     MacroCheck = True

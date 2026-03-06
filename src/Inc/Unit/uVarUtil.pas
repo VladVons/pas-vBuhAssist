@@ -10,6 +10,16 @@ interface
 uses
   Classes, SysUtils, LazUTF8, fpjson, Variants;
 
+type
+  TStringListHelper = class helper for TStringList
+  public
+    function AddArray(const aArr : TStringArray): TStringList;
+    function Formated(const aFormat: string): TStringList;
+    function Quoted(): TStringList;
+    function GetJoin(const aJoin: string): string;
+  end;
+
+
 function ExtractLatin(const aString: string): string;
 function LatinToUkr(const aStr: string): string;
 function RemoveChars(const aStr, aRemove: string): string;
@@ -18,7 +28,6 @@ function ReplMacros(const aText: string; aDict: TStringList): string;
 function Between(aVal, aMin, aMax: integer): boolean;
 function PrevPeriodDate(aPerType: char; aYear, aMonth: Integer): TDate;
 function IntToRoman10(aVal: Integer): String;
-procedure StringListQuoted(aSL: TStringList);
 
 generic function IIF<T>(aCond: boolean; const aValTrue, aValFalse: T): T; inline;
 
@@ -26,6 +35,47 @@ generic function IIF<T>(aCond: boolean; const aValTrue, aValFalse: T): T; inline
 implementation
 
 uses RegExpr;
+
+function TStringListHelper.AddArray(const aArr : TStringArray): TStringList;
+var
+  i:  integer;
+begin
+  for i := Low(aArr) to High(aArr) do
+      Add(aArr[i]);
+  Result := self;
+end;
+
+function TStringListHelper.Quoted(): TStringList;
+var
+  i: integer;
+begin
+  for i := 0 to Count - 1 do
+    self[i] := QuotedStr(self[i]);
+  Result := self;
+end;
+
+function TStringListHelper.Formated(const aFormat: string): TStringList;
+var
+  i: integer;
+begin
+  for i := 0 to Count - 1 do
+    self[i] := Format(aFormat, [self[i]]);
+  Result := self;
+end;
+
+function TStringListHelper.GetJoin(const aJoin: string): string;
+var
+  i: integer;
+begin
+  if (Count = 0) then
+    Exit('');
+
+  Result := Self[0];
+  for i := 1 to Count - 1 do
+    Result := Result + aJoin + Self[i];
+end;
+
+//---
 
 function PrevPeriodDate(aPerType: char; aYear, aMonth: Integer): TDate;
 var
@@ -183,14 +233,6 @@ begin
   else
     Result := '';
   end;
-end;
-
-procedure StringListQuoted(aSL: TStringList);
-var
-  i: integer;
-begin
-  for i := 0 to aSL.Count - 1 do
-    aSL[i] := QuotedStr(aSL[i])
 end;
 
 end.

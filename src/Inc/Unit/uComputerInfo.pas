@@ -97,10 +97,10 @@ begin
   Result.NameValueSeparator := '=';
 
   Result.Values['Name'] := GetName();
+  Result.Values['OS'] := GetOS();
   Result.Values['CPU'] := GetCPU();
   Result.Values['RAM'] := GetRAM();
   Result.Values['Disk'] := GetDisk();
-  Result.Values['OS'] := GetOS();
 end;
 
 function TWMI.GetAllAsJson():TJSONObject;

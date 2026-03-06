@@ -107,6 +107,7 @@ type
     procedure InitEmptyGrid();
     procedure InitMedocControl();
     function IsDemo(aCode: string; aField: TField): boolean;
+    procedure QueryCharcodeNot(aQuery: TSQLQuery);
   public
   end;
 
@@ -165,6 +166,17 @@ begin
   end;
 end;
 
+procedure TFMedocCheckDocs.QueryCharcodeNot(aQuery: TSQLQuery);
+var
+  Macro: string;
+  SL: TStringList;
+begin
+  SL := GetDocFilter().Quoted().Formated('(FORM.CHARCODE NOT LIKE %s)');
+  Macro := SL.GetJoin(' AND ');
+  aQuery.MacroByName('_COND_CHARCODE_NOT').Value := Format(' AND (%s)', [Macro]);
+  SL.Free();
+end;
+
 procedure TFMedocCheckDocs.QueryPrevOpen(const aCode: string; aPerType, aYear, aMonth: integer);
 var
   Year, Month, Day: word;
@@ -191,11 +203,13 @@ begin
   SL := FieldToStrings(SQLQueryGridCur, 'CHARCODE');
   if (SL.Count > 0) then
   begin
-    StringListQuoted(SL);
+    SL.Quoted();
     StrMacro := Format(' AND (FORM.CHARCODE NOT IN (%s))', [SL.CommaText]);
   end;
   SQLQueryGridPrev.MacroByName('_COND_CHARCODES').Value := StrMacro;
   SL.Free();
+
+  QueryCharcodeNot(SQLQueryGridPrev);
 
   //Log.Print('i', ExpandSQL(SQLQueryGridPrev));
 
@@ -230,7 +244,7 @@ begin
 
   MacroPerType := '';
   MacroPerDate := '';
-  if (Month = 500) then // all
+  if (Month = cPerTypeAll) then
     MacroPerDate := Format(' AND (EXTRACT(YEAR FROM CARD.PERDATE) = %d)', [Year])
   else begin
     MacroPerType := Format(' AND (CARD.PERTYPE = %d)', [PerType]);
@@ -247,7 +261,7 @@ begin
   if (not Str.IsEmpty()) then
   begin
     SL := SplitCode(Str);
-    StringListQuoted(SL);
+    SL.Quoted();
     Macro := Format(' AND (FORM.CHARCODE IN (%s))', [SL.CommaText]);
     FreeAndNil(SL);
   end;
@@ -258,6 +272,8 @@ begin
   if (not Code.IsEmpty()) then
     Macro := Format(' AND (ORG.EDRPOU = %s)', [Code]);
   SQLQueryGridCur.MacroByName('_COND_ORG').Value := Macro;
+
+  QueryCharcodeNot(SQLQueryGridCur);
 
   Macro := ', '''' AS FJ';
   if (Pos('FJ-0500110', ComboBoxDoc.Text) = 1) then
@@ -287,8 +303,11 @@ begin
   SQLQueryGridCur.Open();
   //SQLQueryGridCur.Refresh();
 
-  if (not Code.IsEmpty())and (Month <> 401) then
-    QueryPrevOpen(Code, PerType, Year, Month);
+  if (not Code.IsEmpty()) then
+    if (Month <> cPerTypeAll) then
+      QueryPrevOpen(Code, PerType, Year, Month)
+    else
+      Log.Print('i', 'Пропоновані не доступно у -Всі');
 
   Result := SQLQueryGridCur.RecordCount;
 end;

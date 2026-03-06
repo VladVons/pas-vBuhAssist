@@ -11,6 +11,9 @@ uses
   Classes, SysUtils, StrUtils, XMLRead, DOM, LConvEncoding, Registry, fpjson,
   uSettings, uVarUtil;
 
+const
+  cPerTypeAll = 500;
+
 type
   TMedocIni = class(TSettings)
   private
@@ -34,6 +37,7 @@ type
   function PerTypeToChar(aPerType: integer): char;
   procedure MonthToType(var aPerType, aMonth: integer);
   function SplitCode(const aStr: string): TStringList;
+  function GetDocFilter(): TStringList;
 
 var
   MedocIni: TMedocIni;
@@ -356,6 +360,18 @@ begin
 
   for i := 1 to Length(Prefix) do
     Result.Add(Prefix[i] + Num);
+end;
+
+function GetDocFilter(): TStringList;
+begin
+  Result := TStringList.Create();
+  Result.AddArray([
+    'F12%', 'J12%',
+    'F13%', 'J13%',
+    'F14%', 'J14%',
+    'PD%',
+    'Z0%'
+  ])
 end;
 
 end.

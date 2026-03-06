@@ -3,7 +3,7 @@ var
   i, Month: Integer;
 begin
   aComboBox.Items.Clear();
-  aComboBox.Items.AddObject('- Всі', TObject(500));
+  aComboBox.Items.AddObject('- Всі', TObject(cPerTypeAll));
   aComboBox.Items.AddObject('Січень', TObject(1));
   aComboBox.Items.AddObject('Лютий', TObject(2));
   aComboBox.Items.AddObject('Березень', TObject(3));
