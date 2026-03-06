@@ -13,6 +13,7 @@ uses
 
 const
   cPerTypeAll = 500;
+  cChooseAll  = '- Всі';
 
 type
   TMedocIni = class(TSettings)

@@ -88,6 +88,8 @@ type
     procedure frReport1GetValue(const aParName: string; var aParValue: variant);
     procedure MenuItemOrderClick(Sender: TObject);
     procedure MenuItemRefreshClick(Sender: TObject);
+    procedure PageControlChange(Sender: TObject);
+    procedure PageControlCloseTabClied(Sender: TObject);
     procedure SQLQueryGridCurCalcFields(DataSet: TDataSet);
   private
     fSortField: string;
@@ -98,6 +100,7 @@ type
     procedure SetComboBoxToCurrentMonth(aComboBox: TComboBox);
     procedure SetComboBoxToYear(aComboBox: TComboBox; aYear: integer = 0);
     procedure SetComboBoxDoc();
+    procedure SetComboBoxFirm(aFirms: TStringList);
     function QueryCurOpen(): integer;
     procedure QueryPrevOpen(const aCode: string; aPerType, aYear, aMonth: integer);
     procedure SetEmbededPath(aIdx: integer);
@@ -118,6 +121,7 @@ implementation
 
 {$R *.lfm}
 {$I uFMedocCheckDocs_Comp.inc}
+
 
 { TFMedocCheckDocs }
 
@@ -258,7 +262,7 @@ begin
 
   Macro := '';
   Str := UpperCase(ComboBoxDoc.Items.Names[ComboBoxDoc.ItemIndex]);
-  if (not Str.IsEmpty()) then
+  if (Str <> cChooseAll) then
   begin
     SL := SplitCode(Str);
     SL.Quoted();
@@ -268,8 +272,8 @@ begin
   SQLQueryGridCur.MacroByName('_COND_CHARCODE').Value := Macro;
 
   Macro := '';
-  Code := TRim(ComboBoxFirm.Text);
-  if (not Code.IsEmpty()) then
+  Code := ComboBoxFirm.Text;
+  if (Code <> cChooseAll) then
     Macro := Format(' AND (ORG.EDRPOU = %s)', [Code]);
   SQLQueryGridCur.MacroByName('_COND_ORG').Value := Macro;
 
@@ -303,11 +307,11 @@ begin
   SQLQueryGridCur.Open();
   //SQLQueryGridCur.Refresh();
 
-  if (not Code.IsEmpty()) then
+  if (Code <> cChooseAll) then
     if (Month <> cPerTypeAll) then
       QueryPrevOpen(Code, PerType, Year, Month)
     else
-      Log.Print('i', 'Пропоновані не доступно у -Всі');
+      Log.Print('i', 'Пропоновані звіти не доступні у ' + cChooseAll);
 
   Result := SQLQueryGridCur.RecordCount;
 end;
@@ -361,7 +365,8 @@ var
   Msg, LastUpdate: string;
   Delay, Records: integer;
 begin
-  TabSheetPrev.TabVisible := Trim(ComboBoxFirm.Text) <> '';
+  //TabSheetPrev.TabVisible := (ComboBoxFirm.Text <> cChooseAll);
+  TabSheetPrev.TabVisible := True;
 
   LastUpdate := Settings.GetItem('Licence', 'LastUpdate', '');
   if (LastUpdate.IsEmpty()) then
@@ -414,7 +419,7 @@ var
 begin
   if (not MedocIni.DirToFileApp(ComboBoxPath.Text).IsEmpty()) then
   begin
-    ComboBoxFirm.Clear();
+    SetComboBoxFirm(fFirmCodesLicensed);
     if (MedocIni.AddPath(ComboBoxPath.Text)) then
     begin
       InitMedocControl();
@@ -539,6 +544,21 @@ begin
   Settings.SetItem('Licence', 'LastUpdate', DateTimeToStr(Now()));
 end;
 
+procedure TFMedocCheckDocs.PageControlChange(Sender: TObject);
+begin
+  if (PageControl.ActivePage.Name = 'TabSheetPrev') and (ComboBoxFirm.Text = cChooseAll) then
+  begin
+    Log.Print('i', 'Пропоновані звіти формуються тільки по ЄДРПОУ та періоду');
+    if (ComboBoxFirm.CanFocus) then
+        ComboBoxFirm.SetFocus();
+  end;
+end;
+
+procedure TFMedocCheckDocs.PageControlCloseTabClied(Sender: TObject);
+begin
+
+end;
+
 procedure TFMedocCheckDocs.BitBtnPrintClick(Sender: TObject);
 var
   PropGuard: TPropGuard;
@@ -656,9 +676,7 @@ begin
     Log.Print('w', 'Файл ліцензій не знайдено');
 
   fFirmCodesLicensed := Licence.GetFirmCodes(Name);
-  ComboBoxFirm.Items.Add('');
-  for i := 0 to fFirmCodesLicensed.Count - 1 do
-    ComboBoxFirm.Items.Add(fFirmCodesLicensed.Names[i]);
+  SetComboBoxFirm(fFirmCodesLicensed);
 
   fDemoFields := TStringList.Create();
   fDemoFields.Add('CARDSTATUS_NAME');

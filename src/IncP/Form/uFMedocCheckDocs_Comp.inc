@@ -3,7 +3,7 @@ var
   i, Month: Integer;
 begin
   aComboBox.Items.Clear();
-  aComboBox.Items.AddObject('- Всі', TObject(cPerTypeAll));
+  aComboBox.Items.AddObject(cChooseAll, TObject(cPerTypeAll));
   aComboBox.Items.AddObject('Січень', TObject(1));
   aComboBox.Items.AddObject('Лютий', TObject(2));
   aComboBox.Items.AddObject('Березень', TObject(3));
@@ -53,10 +53,21 @@ end;
 
 procedure TFMedocCheckDocs.SetComboBoxDoc();
 begin
-  ComboBoxDoc.Items.AddPair('', '');
+  ComboBoxDoc.Clear();
+  ComboBoxDoc.Items.AddPair(cChooseAll, '');
   ComboBoxDoc.Items.AddPair('FJ-0200126', 'Податкова декларація з податку на додану вартість');
   ComboBoxDoc.Items.AddPair('FJ-0500110', 'Податковий розрахунок сум доходу ... ЄСВ');
   ComboBoxDoc.Items.AddPair('FJ-0209513', 'Податкова декларація акцизного податку');
   ComboBoxDoc.ItemIndex := 0;
+end;
+
+procedure TFMedocCheckDocs.SetComboBoxFirm(aFirms: TStringList);
+var
+  i: integer;
+begin
+  ComboBoxFirm.Clear();
+  ComboBoxFirm.Items.Add(cChooseAll);
+  for i := 0 to aFirms.Count - 1 do
+    ComboBoxFirm.Items.Add(aFirms.Names[i]);
 end;
 
