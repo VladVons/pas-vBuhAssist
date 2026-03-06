@@ -14,9 +14,10 @@ type
   TStringListHelper = class helper for TStringList
   public
     function AddArray(const aArr : TStringArray): TStringList;
+    function GetJoin(const aJoin: string): string;
     function Formated(const aFormat: string): TStringList;
     function Quoted(): TStringList;
-    function GetJoin(const aJoin: string): string;
+    function Replace(const aFind, aRep: string): TStringList;
   end;
 
 
@@ -73,6 +74,15 @@ begin
   Result := Self[0];
   for i := 1 to Count - 1 do
     Result := Result + aJoin + Self[i];
+end;
+
+function TStringListHelper.Replace(const aFind, aRep: string): TStringList;
+var
+  i: integer;
+begin
+  for i := 0 to Count - 1 do
+    self[i] := StringReplace(self[i], aFind, aRep, [rfReplaceAll]);
+  Result := self;
 end;
 
 //---
