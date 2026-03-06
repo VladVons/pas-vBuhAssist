@@ -17,6 +17,6 @@ set FileArch=%App%_%BUILD%.exe.zip
 upx.exe -5 %FileExe%
 vAppUpd.exe --crc=%FileExe%
 7z.exe a %FileArch% %FileExe%
-rem wput.exe %FileArch% ftp://vladvons:19710819@oster.com.ua/www/download/public/update/vBuhAssist/
+wput.exe %FileArch% ftp://vladvons:19710819@oster.com.ua/www/download/public/update/vBuhAssist/
 rem del %FileArch%
 del %FileExe%

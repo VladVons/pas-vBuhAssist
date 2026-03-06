@@ -22,6 +22,7 @@ type
     function GetCPU(): string;
     function GetRAM(): string;
     function GetDisk(): string;
+    function GetName(): string;
     function GetOS(): string;
     function GetUUID(): string;
   end;
@@ -54,6 +55,11 @@ begin
     Obj := ObjSet.ItemIndex(0);
     Result := VarToStr(Obj.Properties_.Item(WmiField).Value);
   end;
+end;
+
+function TWMI.GetName(): string;
+begin
+  Result := GetValue('Win32_ComputerSystem', 'Name');
 end;
 
 function TWMI.GetUUID(): string;
@@ -90,6 +96,7 @@ begin
   Result := TStringList.Create();
   Result.NameValueSeparator := '=';
 
+  Result.Values['Name'] := GetName();
   Result.Values['CPU'] := GetCPU();
   Result.Values['RAM'] := GetRAM();
   Result.Values['Disk'] := GetDisk();
