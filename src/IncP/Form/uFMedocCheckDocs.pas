@@ -181,6 +181,8 @@ begin
 end;
 
 procedure TFMedocCheckDocs.QueryPrevOpen(const aCode: string; aPerType, aYear, aMonth: integer);
+const
+  cBaseLen = 6;
 var
   Year, Month, Day: word;
   Str, StrMacro: string;
@@ -206,8 +208,11 @@ begin
   SL := FieldToStrings(SQLQueryGridCur, 'CHARCODE');
   if (SL.Count > 0) then
   begin
-    SL.Quoted();
-    StrMacro := Format(' AND (FORM.CHARCODE NOT IN (%s))', [SL.CommaText]);
+    //SL.Quoted();
+    //StrMacro := Format(' AND (FORM.CHARCODE NOT IN (%s))', [SL.CommaText]);
+
+    SL.Left(cBaseLen).Quoted();
+    StrMacro := Format(' AND (LEFT(FORM.CHARCODE, %d) NOT IN (%s))', [cBaseLen ,SL.CommaText]);
   end;
   SQLQueryGridPrev.MacroByName('_COND_CHARCODES').Value := StrMacro;
   SL.Free();
@@ -358,6 +363,9 @@ begin
   if (IsDemo(Code, FieldPerDate)) then
     for i := 0 to fDemoFields.Count - 1 do
       DataSet.FieldByName(fDemoFields[i]).AsString := 'ДЕМО';
+
+  //if (ProtectTimer.IsBreakpoint2(@ProtectTimer.CompareRnd) then
+  //  FreeAndNil(DataSet);
 
   if (ProtectTimer.IsBreakpoint(TMethod(@ProtectTimer.CompareRnd).Code)) then
     FreeAndNil(DataSet);

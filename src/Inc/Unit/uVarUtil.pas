@@ -18,6 +18,7 @@ type
     function GetJoin(const aJoin: string): string;
     function GetJson(): TJSONArray;
     function Formated(const aFormat: string): TStringList;
+    function Left(aLen: integer): TStringList;
     function Quoted(): TStringList;
     function Replace(const aFind, aRep: string): TStringList;
   end;
@@ -74,6 +75,17 @@ begin
     self[i] := Format(aFormat, [self[i]]);
   Result := self;
 end;
+
+function TStringListHelper.Left(aLen: integer): TStringList;
+var
+  i: integer;
+begin
+  for i := 0 to Count - 1 do
+    if (Self[i].Length > aLen) then
+      self[i] := Copy(self[i], 1, aLen);
+  Result := self;
+end;
+
 
 function TStringListHelper.GetJoin(const aJoin: string): string;
 var

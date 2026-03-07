@@ -15,6 +15,8 @@ const
   cTailSign = 1971;
 
 type
+  TAnyMethod = procedure of object;
+
   TTail = packed record
     Sign: integer;
     BlockLen: Cardinal;
@@ -41,6 +43,7 @@ type
     procedure TimingStart();
     function TimingCheck(aDif: integer = 100): boolean;
     function IsBreakpoint(aMethod: Pointer): Boolean;
+    function IsBreakpoint2(aMethod: TAnyMethod): Boolean;
     function IsDebugger1(): boolean;
     function IsDebugger2(): boolean;
     function IsDeveloper(): boolean;
@@ -85,6 +88,11 @@ end;
 function TProtect.IsBreakpoint(aMethod: Pointer): Boolean;
 begin
   Result := PByte(aMethod)^ = $CC;
+end;
+
+function TProtect.IsBreakpoint2(aMethod: TAnyMethod): Boolean;
+begin
+  Result := PByte(TMethod(aMethod).Code)^ = $CC;
 end;
 
 function TProtect.IsDeveloper(): boolean;
