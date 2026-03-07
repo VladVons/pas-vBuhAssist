@@ -14,6 +14,7 @@ uses
 const
   cPerTypeAll = 500;
   cChooseAll  = '- Всі';
+  cArrExcl: TStringArray = ('FJ-12%', 'FJ-13%', 'FJ-14%', 'PD%', 'Z0%');
 
 type
   TMedocIni = class(TSettings)
@@ -37,8 +38,8 @@ type
   function GetYearPart(aDate: TDate; aDiv: integer): Integer;
   function PerTypeToChar(aPerType: integer): char;
   procedure MonthToType(var aPerType, aMonth: integer);
-  function SplitCode(const aStr: string): TStringList;
-  function GetDocFilter(): TStringList;
+  procedure SplitCode(var aResSL: TStringList; const aStr: string; const aDelim: string = '-');
+  function SplitCodes(aSL: TStringList; const aDelim: string = '-'): TStringList;
 
 var
   MedocIni: TMedocIni;
@@ -349,30 +350,25 @@ begin
   end;
 end;
 
-function SplitCode(const aStr: string): TStringList;
+procedure SplitCode(var aResSL: TStringList; const aStr: string; const aDelim: string = '-');
 var
   Prefix, Num: string;
   i: Integer;
 begin
-  Result := TStringList.Create();
-
-  Prefix := Copy(aStr, 1, Pos('-', aStr) - 1);
-  Num := Copy(aStr, Pos('-', aStr) + 1, Length(aStr));
+  Prefix := Copy(aStr, 1, Pos(aDelim, aStr) - 1);
+  Num := Copy(aStr, Pos(aDelim, aStr) + 1, Length(aStr));
 
   for i := 1 to Length(Prefix) do
-    Result.Add(Prefix[i] + Num);
+    aResSL.Add(Prefix[i] + Num);
 end;
 
-function GetDocFilter(): TStringList;
+function SplitCodes(aSL: TStringList; const aDelim: string = '-'): TStringList;
+var
+  i: Integer;
 begin
   Result := TStringList.Create();
-  Result.AddArray([
-    'F12%', 'J12%',
-    'F13%', 'J13%',
-    'F14%', 'J14%',
-    'PD%',
-    'Z0%'
-  ])
+  for i := 1 to aSL.Count - 1 do
+    SplitCode(Result, aSL[i], aDelim);
 end;
 
 end.

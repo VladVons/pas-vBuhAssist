@@ -1,4 +1,4 @@
-// Created: 2026.02.05
+// CreateComboBoxDocd: 2026.02.05
 // Author: Vladimir Vons <VladVons@gmail.com>
 
 unit uFMedocCheckDocs;
@@ -109,7 +109,7 @@ type
     procedure InitEmptyGrid();
     procedure InitMedocControl();
     function IsDemo(aCode: string; aField: TField): boolean;
-    procedure QueryCharcodeNot(aQuery: TSQLQuery);
+    procedure QueryCharcodeNot(aQuery: TSQLQuery; aArr: TStringArray);
   public
   end;
 
@@ -169,15 +169,17 @@ begin
   end;
 end;
 
-procedure TFMedocCheckDocs.QueryCharcodeNot(aQuery: TSQLQuery);
+procedure TFMedocCheckDocs.QueryCharcodeNot(aQuery: TSQLQuery; aArr: TStringArray);
 var
   Macro: string;
-  SL: TStringList;
+  SL1, SL2: TStringList;
 begin
-  SL := GetDocFilter().Quoted().Formated('(FORM.CHARCODE NOT LIKE %s)');
-  Macro := SL.GetJoin(' AND ');
+  SL1 := TStringList.Create().AddArray(aArr);
+  SL2 := SplitCodes(SL1).Quoted().Formated('(FORM.CHARCODE NOT LIKE %s)');
+  Macro := SL2.GetJoin(' AND ');
   aQuery.MacroByName('_COND_CHARCODE_NOT').Value := Format(' AND (%s)', [Macro]);
-  SL.Free();
+  SL1.Free();
+  SL2.Free();
 end;
 
 function TFMedocCheckDocs.QueryPrevOpen(const aCode: string; aPerType, aYear, aMonth: integer): integer;
@@ -217,7 +219,7 @@ begin
   SQLQueryGridPrev.MacroByName('_COND_CHARCODES').Value := StrMacro;
   SL.Free();
 
-  QueryCharcodeNot(SQLQueryGridPrev);
+  QueryCharcodeNot(SQLQueryGridPrev, Concat(cArrExcl, ['FJ-30010%']));
 
   //Log.Print('i', ExpandSQL(SQLQueryGridPrev));
 
@@ -273,7 +275,8 @@ begin
   Str := UpperCase(ComboBoxDoc.Items.Names[ComboBoxDoc.ItemIndex]);
   if (Str <> cChooseAll) then
   begin
-    SL := SplitCode(Str);
+    SL := TStringList.Create();
+    SplitCode(SL, Str);
     SL.Quoted();
     Macro := Format(' AND (FORM.CHARCODE IN (%s))', [SL.CommaText]);
     FreeAndNil(SL);
@@ -286,7 +289,7 @@ begin
     Macro := Format(' AND (ORG.EDRPOU = %s)', [Code]);
   SQLQueryGridCur.MacroByName('_COND_ORG').Value := Macro;
 
-  QueryCharcodeNot(SQLQueryGridCur);
+  QueryCharcodeNot(SQLQueryGridCur, cArrExcl);
 
   Macro := ', '''' AS FJ';
   if (Pos('FJ-0500110', ComboBoxDoc.Text) = 1) then
@@ -436,6 +439,7 @@ begin
   if (not MedocIni.DirToFileApp(ComboBoxPath.Text).IsEmpty()) then
   begin
     SetComboBoxFirm(fFirmCodesLicensed);
+    ComboBoxFirm.ItemIndex := 0;
     if (MedocIni.AddPath(ComboBoxPath.Text)) then
     begin
       InitMedocControl();

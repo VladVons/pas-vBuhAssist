@@ -42,7 +42,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Height = 26
       Top = 40
       Width = 224
-      DropDownCount = 20
+      DropDownCount = 24
       ItemHeight = 18
       ReadOnly = True
       TabOrder = 2
