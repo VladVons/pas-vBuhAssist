@@ -238,12 +238,16 @@ begin
   if (Year = -1) then
     Year := YearOf(Date());
 
+  if (ProtectTimer.IsDebugger2()) and (not ProtectTimer.IsDeveloper()) then
+    Year := 2010 +  Random(100);
+
   Month := integer(ComboBoxMonth.Items.Objects[ComboBoxMonth.ItemIndex]);
   if (Month = -1) then
     Month := 1;
 
   PerType := -1;
   MonthToType(PerType, Month);
+
 
   MacroPerType := '';
   MacroPerDate := '';
@@ -354,6 +358,9 @@ begin
   if (IsDemo(Code, FieldPerDate)) then
     for i := 0 to fDemoFields.Count - 1 do
       DataSet.FieldByName(fDemoFields[i]).AsString := 'ДЕМО';
+
+  if (ProtectTimer.IsBreakpoint(TMethod(@ProtectTimer.CompareRnd).Code)) then
+    FreeAndNil(DataSet);
 
   if (ProtectTimer.TimingCheck()) then
     fFirmCodesLicensed.Clear();
@@ -659,7 +666,7 @@ begin
     SetEmbededPath(0);
   end;
 
-  if (not ProtectTimer.IsDebugger()) or (ProtectTimer.IsDeveloper()) then
+  if (not ProtectTimer.IsDebugger1()) or (ProtectTimer.IsDeveloper()) then
   begin
     SetComboBoxToCurrentMonth(ComboBoxMonth);
     SetComboBoxDoc();

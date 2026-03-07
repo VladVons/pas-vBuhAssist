@@ -224,6 +224,12 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
         Options = [dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
         ReadOnly = True
         TabOrder = 0
+        TitleFont.CharSet = RUSSIAN_CHARSET
+        TitleFont.Height = -15
+        TitleFont.Name = 'Verdana'
+        TitleFont.Pitch = fpVariable
+        TitleFont.Quality = fqDraft
+        TitleFont.Style = [fsBold]
       end
     end
   end

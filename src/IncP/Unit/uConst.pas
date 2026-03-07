@@ -14,6 +14,7 @@ const
   cMail                  = 'vBuhAssist@gmail.com';
   cYearsBack             = 3;
   cLicenceRefrehDays     = 30;
+  cAnnonceDelay          = 20*1000;
 
 implementation
 

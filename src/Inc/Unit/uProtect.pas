@@ -40,7 +40,9 @@ type
     procedure ReadCRC();
     procedure TimingStart();
     function TimingCheck(aDif: integer = 100): boolean;
-    function IsDebugger(): boolean;
+    function IsBreakpoint(aMethod: Pointer): Boolean;
+    function IsDebugger1(): boolean;
+    function IsDebugger2(): boolean;
     function IsDeveloper(): boolean;
   end;
 
@@ -59,9 +61,30 @@ begin
   Randomize();
 end;
 
-function TProtect.IsDebugger(): boolean;
+function TProtect.IsDebugger1(): boolean;
 begin
  Result := IsDebuggerPresent();
+end;
+
+function TProtect.IsDebugger2(): Boolean;
+begin
+  Result := False;
+  try
+    asm
+      int3;
+    end;
+  except
+    Result := False;
+    Exit();
+  end;
+
+  Result := True;
+end;
+
+//usage: ProtectTimer.IsBreakpoint(TMethod(@ProtectTimer.CompareRnd).Code)
+function TProtect.IsBreakpoint(aMethod: Pointer): Boolean;
+begin
+  Result := PByte(aMethod)^ = $CC;
 end;
 
 function TProtect.IsDeveloper(): boolean;
@@ -97,7 +120,7 @@ begin
     Result.CheckSum := crc32(0, nil, 0);
 
     Remaining := aLen;
-    while Remaining > 0 do
+    while (Remaining > 0) do
     begin
       ToRead := BUF_SIZE;
       if (Remaining < ToRead) then

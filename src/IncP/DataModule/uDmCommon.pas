@@ -94,27 +94,19 @@ end;
 procedure TDmCommon.Licence_OrderToHttp(const aModule: string);
 var
   FirmCodes: TStringList;
+  User, Passw: string;
 begin
-  FirmCodes := nil;
-  try
-    FLogin := TFLogin.Create(nil);
-    FLogin.Caption := 'Активація програми';
-    FLogin.EditUser.EditLabel.Caption := 'Користувач';
-    FLogin.EditPassword.EditLabel.Caption := 'Ключ';
-    if (FLogin.ShowModal() = mrOk) then
-    begin
-      //QueryOpen();
-      FirmCodes := GetQueryField(DataSource, SQLQueryCodes, 'EDRPOU');
-      //Log.Print('i', 'Запит ліцензій на коди ' + FirmCodes.CommaText);
-      Licence.OrderFromHttp(FirmCodes, aModule, FLogin.EditUser.Text, FLogin.EditPassword.Text);
-      if (Licence.LastErr.IsEmpty()) then
-        Log.Print('i', 'Запит на отримання ліцензій відправлено')
-      else
-        Log.Print('w', 'Помилка активації');
-    end;
-  finally
+  if (TFLogin.Execute(User, Passw, 'Активація програми', 'Користувач', 'Ключ')) then
+  begin
+    FirmCodes := GetQueryField(DataSource, SQLQueryCodes, 'EDRPOU');
+
+    //Log.Print('i', 'Запит ліцензій ' + FirmCodes.CommaText);
+    Licence.OrderFromHttp(FirmCodes, aModule, User, Passw);
+    if (Licence.LastErr.IsEmpty()) then
+      Log.Print('i', 'Запит на отримання ліцензій відправлено')
+    else
+      Log.Print('w', 'Помилка активації: ' + Licence.LastErr);
     FreeAndNil(FirmCodes);
-    FreeAndNil(FLogin);
   end;
 end;
 

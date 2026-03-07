@@ -25,6 +25,9 @@ type
   public
     procedure Clear();
     procedure OnlyPassw();
+
+    class function Execute(out aLogin, aPassw: string;
+        const aCaption, aUserLabel, aPasswLabel: string ): Boolean;
   end;
 
 var
@@ -60,6 +63,34 @@ end;
 procedure TFLogin.FormCreate(Sender: TObject);
 begin
   ButtonOk.Default := True;
+end;
+
+class function TFLogin.Execute(out aLogin, aPassw: string;
+  const aCaption, aUserLabel, aPasswLabel: string ): Boolean;
+var
+  F: TFLogin;
+begin
+  F := TFLogin.Create(nil);
+
+  if (not aCaption.IsEmpty()) then
+     F.Caption := aCaption;
+
+  if (not aUserLabel.IsEmpty()) then
+     F.EditUser.EditLabel.Caption := aUserLabel;
+
+  if (not aPasswLabel.IsEmpty()) then
+    F.EditPassword.EditLabel.Caption := aPasswLabel;
+
+  try
+    Result := (F.ShowModal = mrOk);
+    if (Result) then
+    begin
+      aLogin := F.EditUser.Text;
+      aPassw := F.EditPassword.Text;
+    end;
+  finally
+    F.Free();
+  end;
 end;
 
 end.
