@@ -367,7 +367,7 @@ var
   i: Integer;
 begin
   Result := TStringList.Create();
-  for i := 1 to aSL.Count - 1 do
+  for i := 0 to aSL.Count - 1 do
     SplitCode(Result, aSL[i], aDelim);
 end;
 

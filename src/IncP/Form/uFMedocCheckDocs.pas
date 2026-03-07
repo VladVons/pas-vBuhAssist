@@ -312,7 +312,7 @@ begin
   //SQLQueryGridCur.AfterScroll := nil;
   //DbGridCur.OnDrawColumnCell := nil;
 
-  //Log.Print('i', ExpandSQL(SQLQueryGridCur));
+  Log.Print('i', ExpandSQL(SQLQueryGridCur));
 
   //DmCommon.SQLTransaction.CommitRetaining();
   //DmCommon.SQLTransaction.Commit();
