@@ -356,10 +356,13 @@ var
   i: Integer;
 begin
   Prefix := Copy(aStr, 1, Pos(aDelim, aStr) - 1);
-  Num := Copy(aStr, Pos(aDelim, aStr) + 1, Length(aStr));
-
-  for i := 1 to Length(Prefix) do
-    aResSL.Add(Prefix[i] + Num);
+  if (Prefix.IsEmpty()) then
+    aResSL.Add(aStr)
+  else begin
+    Num := Copy(aStr, Pos(aDelim, aStr) + 1, Length(aStr));
+    for i := 1 to Length(Prefix) do
+      aResSL.Add(Prefix[i] + Num);
+  end;
 end;
 
 function SplitCodes(aSL: TStringList; const aDelim: string = '-'): TStringList;

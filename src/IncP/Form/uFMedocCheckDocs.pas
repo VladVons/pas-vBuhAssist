@@ -177,6 +177,7 @@ begin
   SL1 := TStringList.Create().AddArray(aArr);
   SL2 := SplitCodes(SL1).Quoted().Formated('(FORM.CHARCODE NOT LIKE %s)');
   Macro := SL2.GetJoin(' AND ');
+  //Log.Print('i', Macro);
   aQuery.MacroByName('_COND_CHARCODE_NOT').Value := Format(' AND (%s)', [Macro]);
   SL1.Free();
   SL2.Free();
@@ -312,7 +313,7 @@ begin
   //SQLQueryGridCur.AfterScroll := nil;
   //DbGridCur.OnDrawColumnCell := nil;
 
-  Log.Print('i', ExpandSQL(SQLQueryGridCur));
+  //Log.Print('i', ExpandSQL(SQLQueryGridCur));
 
   //DmCommon.SQLTransaction.CommitRetaining();
   //DmCommon.SQLTransaction.Commit();
