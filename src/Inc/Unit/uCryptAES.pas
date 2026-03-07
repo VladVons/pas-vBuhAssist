@@ -79,8 +79,8 @@ begin
     Exit; // або raise
 
   Cipher := TDCP_rijndael.Create(nil);
-  InStream := TMemoryStream.Create;
-  OutStream := TMemoryStream.Create;
+  InStream := TMemoryStream.Create();
+  OutStream := TMemoryStream.Create();
   try
     InStream.WriteBuffer(EncBytes[1], Length(EncBytes));
     InStream.Position := 0;

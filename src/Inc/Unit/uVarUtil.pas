@@ -14,7 +14,9 @@ type
   TStringListHelper = class helper for TStringList
   public
     function AddArray(const aArr : TStringArray): TStringList;
+    function AddJson(const aArr : TJSONArray): TStringList;
     function GetJoin(const aJoin: string): string;
+    function GetJson(): TJSONArray;
     function Formated(const aFormat: string): TStringList;
     function Quoted(): TStringList;
     function Replace(const aFind, aRep: string): TStringList;
@@ -37,12 +39,21 @@ implementation
 
 uses RegExpr;
 
-function TStringListHelper.AddArray(const aArr : TStringArray): TStringList;
+function TStringListHelper.AddArray(const aArr: TStringArray): TStringList;
 var
   i:  integer;
 begin
-  for i := Low(aArr) to High(aArr) do
+  for i := 0 to Length(aArr) - 1 do
       Add(aArr[i]);
+  Result := self;
+end;
+
+function TStringListHelper.AddJson(const aArr: TJSONArray): TStringList;
+var
+  i:  integer;
+begin
+  for i := 0 to aArr.Count - 1 do
+     Add(aArr[i].AsString);
   Result := self;
 end;
 
@@ -84,6 +95,16 @@ begin
     self[i] := StringReplace(self[i], aFind, aRep, [rfReplaceAll]);
   Result := self;
 end;
+
+function TStringListHelper.GetJson(): TJSONArray;
+var
+  i: integer;
+begin
+  Result := TJSONArray.Create();
+  for i := 0 to Count - 1 do
+    Result.Add(self[i]);
+end;
+
 
 //---
 

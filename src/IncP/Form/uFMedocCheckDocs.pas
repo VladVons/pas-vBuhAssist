@@ -89,7 +89,6 @@ type
     procedure MenuItemOrderClick(Sender: TObject);
     procedure MenuItemRefreshClick(Sender: TObject);
     procedure PageControlChange(Sender: TObject);
-    procedure PageControlCloseTabClied(Sender: TObject);
     procedure SQLQueryGridCurCalcFields(DataSet: TDataSet);
   private
     fSortField: string;
@@ -552,11 +551,6 @@ begin
     if (ComboBoxFirm.CanFocus) then
         ComboBoxFirm.SetFocus();
   end;
-end;
-
-procedure TFMedocCheckDocs.PageControlCloseTabClied(Sender: TObject);
-begin
-
 end;
 
 procedure TFMedocCheckDocs.BitBtnPrintClick(Sender: TObject);

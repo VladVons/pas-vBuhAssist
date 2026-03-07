@@ -118,7 +118,7 @@ var
 begin
   Result := TStringList.Create();
 
-  Masks := TStringList.Create;
+  Masks := TStringList.Create();
   Masks.StrictDelimiter := True;
   Masks.Delimiter := ';';
   Masks.DelimitedText := aMask;

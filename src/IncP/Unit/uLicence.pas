@@ -9,24 +9,24 @@ interface
 
 uses
   Classes, SysUtils, fpjson,
-  uUserData, uHttp, uCryptAES, uSys, uConst, uLog, uComputerInfo;
+  uUserData, uHttp, uCryptAES, uSys, uConst, uLog, uComputerInfo, uVarUtil;
 
 type
   TLicence = class(TUserData)
   private
     fCryptKey, fUUID, fVerBuild: string;
     fJObjLic: TJSONObject;
-    function RefreshFromHttp(aFirmCodes: TStrings): TJSONObject;
+    function RefreshFromHttp(aFirmCodes: TStringList): TJSONObject;
     function Request(aParam: TJSONObject): TJSONObject;
   public
     LastErr: string;
     constructor Create(const aFile: string);
     destructor Destroy(); override;
-    procedure HttpToFileEncrypt(aFirmCodes: TStrings);
+    procedure HttpToFileEncrypt(aFirmCodes: TStringList);
     procedure LoadFromFile();
     function GetTypeFromHttp(const aType: string): TJSONObject;
     function GetFirmCodes(const aModule: string): TStringList;
-    procedure OrderFromHttp(aFirmCodes: TStrings; const aModule, aDealerName, aDealerPassw: string);
+    procedure OrderFromHttp(aFirmCodes: TStringList; const aModule, aDealerName, aDealerPassw: string);
   end;
 
 var
@@ -84,32 +84,23 @@ begin
   end;
 end;
 
-function TLicence.RefreshFromHttp(aFirmCodes: TStrings): TJSONObject;
+function TLicence.RefreshFromHttp(aFirmCodes: TStringList): TJSONObject;
 var
-  i: integer;
   JReq: TJSONObject;
-  JArrLic: TJSONArray;
 begin
   try
     JReq := TJSONObject.Create();
     JReq.Add('type', 'get_licence');
-
-    JArrLic := TJSONArray.Create();
-    for i := 0 to aFirmCodes.Count - 1 do
-      JArrLic.Add(aFirmCodes[i]);
-    JReq.Add('firms', JArrLic);
-
+    JReq.Add('firms', aFirmCodes.GetJson());
     Result := Request(JReq);
   finally
     JReq.Free();
   end;
 end;
 
-procedure TLicence.OrderFromHttp(aFirmCodes: TStrings; const aModule, aDealerName, aDealerPassw: string);
+procedure TLicence.OrderFromHttp(aFirmCodes: TStringList; const aModule, aDealerName, aDealerPassw: string);
 var
-  i: integer;
   JReq, JRes: TJSONObject;
-  JArrLic: TJSONArray;
   WMI: TWMI;
 begin
   WMI := TWMI.Create();
@@ -120,18 +111,12 @@ begin
     JReq.Add('user', aDealerName);
     JReq.Add('passw', aDealerPassw);
     JReq.Add('computer', WMI.GetAllAsJson());
-
-    JArrLic := TJSONArray.Create();
-    for i := 0 to aFirmCodes.Count - 1 do
-      JArrLic.Add(aFirmCodes[i]);
-    JReq.Add('firms', JArrLic);
-
+    JReq.Add('firms', aFirmCodes.GetJson());
     JRes := Request(JReq);
   finally
     WMI.Free();
     JRes.Free();
     JReq.Free();
-    //ArrLic.Free(); already by JsonReq
   end;
 end;
 
@@ -148,7 +133,7 @@ begin
   end;
 end;
 
-procedure TLicence.HttpToFileEncrypt(aFirmCodes: TStrings);
+procedure TLicence.HttpToFileEncrypt(aFirmCodes: TStringList);
 var
   Encrypted, Decrypted: string;
   JObj: TJSONObject;
