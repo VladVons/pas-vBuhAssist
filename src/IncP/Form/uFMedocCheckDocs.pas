@@ -101,7 +101,7 @@ type
     procedure SetComboBoxDoc();
     procedure SetComboBoxFirm(aFirms: TStringList);
     function QueryCurOpen(): integer;
-    procedure QueryPrevOpen(const aCode: string; aPerType, aYear, aMonth: integer);
+    function QueryPrevOpen(const aCode: string; aPerType, aYear, aMonth: integer): integer;
     procedure SetEmbededPath(aIdx: integer);
     procedure ConnectToDb();
     procedure Disconnect();
@@ -180,7 +180,7 @@ begin
   SL.Free();
 end;
 
-procedure TFMedocCheckDocs.QueryPrevOpen(const aCode: string; aPerType, aYear, aMonth: integer);
+function TFMedocCheckDocs.QueryPrevOpen(const aCode: string; aPerType, aYear, aMonth: integer): integer;
 const
   cBaseLen = 6;
 var
@@ -222,11 +222,12 @@ begin
   //Log.Print('i', ExpandSQL(SQLQueryGridPrev));
 
   SQLQueryGridPrev.Open();
+  Result := SQLQueryGridPrev.RecordCount;
 end;
 
 function TFMedocCheckDocs.QueryCurOpen(): integer;
 var
-  Month, Year, PerType: integer;
+  Month, Year, PerType, Records: integer;
   Str, StrDb, Macro, MacroPerType, MacroPerDate, Code: string;
   SL: TStringList;
 begin
@@ -315,11 +316,12 @@ begin
   SQLQueryGridCur.Open();
   //SQLQueryGridCur.Refresh();
 
-  if (Code <> cChooseAll) then
-    if (Month <> cPerTypeAll) then
-      QueryPrevOpen(Code, PerType, Year, Month)
-    else
-      Log.Print('i', 'Пропоновані звіти не доступні у ' + cChooseAll);
+  if (Code <> cChooseAll) and (Month <> cPerTypeAll) then
+  begin
+    Records := QueryPrevOpen(Code, PerType, Year, Month);
+    if (Records > 0) then
+       Log.Print('i', Format('Знайдено пропоновані звіти %d', [Records]));
+  end;
 
   Result := SQLQueryGridCur.RecordCount;
 end;
