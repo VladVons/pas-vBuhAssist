@@ -19,7 +19,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="11"/>
       <RevisionNr Value="2"/>
-      <BuildNr Value="58"/>
+      <BuildNr Value="59"/>
       <StringTable ProductName="vBuhAssist"/>
     </VersionInfo>
     <BuildModes>
@@ -295,6 +295,10 @@
       </Unit>
       <Unit>
         <Filename Value="Inc/Unit/uAnnonce.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Inc/Unit/uProtectDbg.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
     </Units>

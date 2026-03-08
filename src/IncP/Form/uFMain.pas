@@ -11,7 +11,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList, Windows, ExtCtrls,
   ComCtrls, StdCtrls, fpjson,
   uFAbout, uFMedocCheckDocs, uFOptimizePDF, uFSettings, uFLogin, uFMessage, uDmCommon,
-  uWinManager, uLicence, uLog, uSettings, uStateStore, uSys, uConst, uProtectTimer, uAnnonce, uMedoc;
+  uWinManager, uLicence, uLog, uSettings, uStateStore, uSys, uSysVcl, uConst, uProtectTimer, uAnnonce, uMedoc;
 
 type
   { TFMain }
@@ -127,6 +127,7 @@ end;
 procedure TFMain.TimerAnnonceTimer(Sender: TObject);
 begin
   Annonce.CheckWithDelay();
+  TimerAnnonce.Enabled := False;
 end;
 
 procedure TFMain.WMShowMe(var aMsg: TMessage);
@@ -233,7 +234,7 @@ begin
   CheckAnnonce();
 
   Caption := cAppName + ' ' + GetAppVer();
-  WindowState := wsMaximized;
+  //WindowState := wsMaximized;
 end;
 
 procedure TFMain.FormDestroy(Sender: TObject);

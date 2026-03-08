@@ -1,0 +1,1 @@
+vAppUpd.exe --app=vBuhAssist.exe --url=https://download.1x1.com.ua/public/update/vBuhAssist/vBuhAssist_59.exe.zip --delay=1000 --dir="C:\Documents and Settings\snoVdalV\Desktop\pas\pas-vBuhAssist\src"

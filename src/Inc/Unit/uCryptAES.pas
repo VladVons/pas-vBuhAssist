@@ -9,7 +9,8 @@ interface
 
 uses
   Classes, SysUtils,
-  DCPcrypt2, DCPblockciphers, DCPsha256, DCPrijndael, Base64;
+  DCPcrypt2, DCPblockciphers, DCPsha256, DCPrijndael, Base64,
+  uProtectDbg;
 
 
 function StrEncrypt_AES(const aText, aKey: string): AnsiString;
@@ -94,15 +95,20 @@ begin
     if (DataSize <= 0) then
       Exit;
 
-    Cipher.DecryptStream(InStream, OutStream, DataSize);
-    Cipher.Burn;
+    if (not IsDebugger2()) or (IsDeveloper()) then
+    begin
+      Cipher.DecryptStream(InStream, OutStream, DataSize);
+      Cipher.Burn();
+    end;
 
     // результат
     if (OutStream.Size > 0) then
     begin
       SetLength(Result, OutStream.Size);
       OutStream.Position := 0;
-      OutStream.ReadBuffer(Result[1], OutStream.Size);
+
+      if (not IsDebugger1()) or (IsDeveloper()) then
+        OutStream.ReadBuffer(Result[1], OutStream.Size);
     end;
   finally
     InStream.Free();

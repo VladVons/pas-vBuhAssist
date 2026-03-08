@@ -14,7 +14,7 @@ uses
   ExtCtrls, Buttons, Menus, Dialogs, ComCtrls, LR_Class, LR_DBSet,
   LR_PGrid, LR_Desgn, DB, fpjson,
   Math, uFBase, uSys, uLog, uLicence, uSettings, uVarUtil, uStateStore,
-  uQuery, uMedoc, uDmCommon, uProtectTimer, uConst;
+  uQuery, uMedoc, uDmCommon, uProtectTimer, uProtectDbg, uConst;
 
 type
 
@@ -81,7 +81,7 @@ type
     procedure ButtonPathClick(Sender: TObject);
     procedure ComboBoxPathEditingDone(Sender: TObject);
     procedure ComboBoxYearDropDown(Sender: TObject);
-    procedure DbGridCurDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: integer; Column: TColumn; State: TGridDrawState);
+    procedure DbGridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: integer; Column: TColumn; State: TGridDrawState);
     procedure DbGridCurTitleClick(Column: TColumn);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -248,7 +248,7 @@ begin
   if (Year = -1) then
     Year := YearOf(Date());
 
-  if (ProtectTimer.IsDebugger2()) and (not ProtectTimer.IsDeveloper()) then
+  if (IsDebugger2()) and (not IsDeveloper()) then
     Year := 2010 +  Random(100);
 
   Month := integer(ComboBoxMonth.Items.Objects[ComboBoxMonth.ItemIndex]);
@@ -372,7 +372,7 @@ begin
   //if (ProtectTimer.IsBreakpoint2(@ProtectTimer.CompareRnd) then
   //  FreeAndNil(DataSet);
 
-  if (ProtectTimer.IsBreakpoint(TMethod(@ProtectTimer.CompareRnd).Code)) then
+  if (IsBreakpoint(TMethod(@ProtectTimer.CompareRnd).Code)) then
     FreeAndNil(DataSet);
 
   if (ProtectTimer.TimingCheck()) then
@@ -406,7 +406,7 @@ begin
 
   // we are not so fast comparing to MEDOC
   Delay := Settings.GetItem('Common', 'Delay', 1500);
-  if (not ProtectTimer.IsDeveloper()) then
+  if (not IsDeveloper()) then
     Sleep(Delay + Random(Delay));
 
   Log.Print('i', Format('Відібрано записів %d', [Records]));
@@ -465,25 +465,25 @@ begin
     ComboBoxYear.ItemIndex := ComboBoxYear.Items.Count - 2;
 end;
 
-procedure TFMedocCheckDocs.DbGridCurDrawColumnCell(Sender: TObject;
+procedure TFMedocCheckDocs.DbGridDrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: integer; Column: TColumn; State: TGridDrawState);
 var
-  //Code: string;
   DisplayText: string;
-begin
+  DbGrid: TDBGrid;
+ begin
+  DbGrid := Sender as TDBGrid;
   DataCol := DataCol;
-  //Code := DbGridCur.DataSource.DataSet.FieldByName('EDRPOU').AsString;
 
   // Встановлюємо колір фону та шрифт
-  with DbGridCur.Canvas do
+  with DbGrid.Canvas do
   begin
     if gdSelected in State then
     begin
       Brush.Color := RGBToColor(254, 240, 220);
       Font.Color := clBlack;
     end else begin
-      Brush.Color := DbGridCur.Color;
-      Font.Color := DbGridCur.Font.Color;
+      Brush.Color := DbGrid.Color;
+      Font.Color := DbGrid.Font.Color;
     end;
     FillRect(Rect); // малюємо фон
 
@@ -680,7 +680,7 @@ begin
     SetEmbededPath(0);
   end;
 
-  if (not ProtectTimer.IsDebugger1()) or (ProtectTimer.IsDeveloper()) then
+  if (not IsDebugger1()) or (IsDeveloper()) then
   begin
     SetComboBoxToCurrentMonth(ComboBoxMonth);
     SetComboBoxDoc();

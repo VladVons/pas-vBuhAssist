@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, Windows, crc,
-  uSys;
+  uProtectDbg, uSys;
 
 const
   cTailSign = 1971;
@@ -42,11 +42,6 @@ type
     procedure ReadCRC();
     procedure TimingStart();
     function TimingCheck(aDif: integer = 100): boolean;
-    function IsBreakpoint(aMethod: Pointer): Boolean;
-    function IsBreakpoint2(aMethod: TAnyMethod): Boolean;
-    function IsDebugger1(): boolean;
-    function IsDebugger2(): boolean;
-    function IsDeveloper(): boolean;
   end;
 
 var
@@ -62,45 +57,6 @@ begin
   fTail := Default(TTail);
 
   Randomize();
-end;
-
-function TProtect.IsDebugger1(): boolean;
-begin
- Result := IsDebuggerPresent();
-end;
-
-function TProtect.IsDebugger2(): Boolean;
-begin
-  Result := False;
-  try
-    asm
-      int3;
-    end;
-  except
-    Result := False;
-    Exit();
-  end;
-
-  Result := True;
-end;
-
-//usage: ProtectTimer.IsBreakpoint(TMethod(@ProtectTimer.CompareRnd).Code)
-function TProtect.IsBreakpoint(aMethod: Pointer): Boolean;
-begin
-  Result := PByte(aMethod)^ = $CC;
-end;
-
-function TProtect.IsBreakpoint2(aMethod: TAnyMethod): Boolean;
-begin
-  Result := PByte(TMethod(aMethod).Code)^ = $CC;
-end;
-
-function TProtect.IsDeveloper(): boolean;
-var
-  Str: string;
-begin
-  Str := GetAppName() + '.lpr';
-  Result := FileExists(Str);
 end;
 
 function TProtect.CalculateFileTail(aLen: integer): TTail;

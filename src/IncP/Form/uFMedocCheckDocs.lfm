@@ -134,7 +134,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Height = 38
       Top = 142
       Width = 118
-      Caption = 'Друк'
+      Caption = 'Друкувати'
       Images = DmCommon.ImageList1
       ImageIndex = 2
       TabOrder = 7
@@ -176,7 +176,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     TabOrder = 2
     OnChange = PageControlChange
     object TabSheetCur: TTabSheet
-      Caption = 'Поточний'
+      Caption = 'Поточні'
       ClientHeight = 163
       ClientWidth = 672
       object DbGridCur: TDBGrid
@@ -203,7 +203,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
         TitleFont.Pitch = fpVariable
         TitleFont.Quality = fqDraft
         TitleFont.Style = [fsBold]
-        OnDrawColumnCell = DbGridCurDrawColumnCell
+        OnDrawColumnCell = DbGridDrawColumnCell
         OnTitleClick = DbGridCurTitleClick
       end
     end
@@ -230,6 +230,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
         TitleFont.Pitch = fpVariable
         TitleFont.Quality = fqDraft
         TitleFont.Style = [fsBold]
+        OnDrawColumnCell = DbGridDrawColumnCell
       end
     end
   end
@@ -355,7 +356,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       '        CARDSENDSTT.NAME AS CARDSENDSTT_NAME,'
       '        CARD.PERTYPE,'
       '        FORM.CHARCODE,'
-      '        LEFT(FORM.NAME, 60) AS FORM_NAME,'
+      '        LEFT(FORM.NAME, 100) AS FORM_NAME,'
       '        CAST(CARD.MODDATE AS DATE) AS MODDATE,'
       '        CARDSTATUS.NAME AS CARDSTATUS_NAME,'
       '        CARDBLOB.XMLVALS'
@@ -520,6 +521,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
       Required = False
+      Visible = False
     end
     object SQLQueryGridCurPERDATE_STR: TStringField
       DisplayLabel = 'Період'
@@ -570,7 +572,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Size = 30
     end
     object SQLQueryGridCurMODDATE: TDateTimeField
-      DisplayLabel = 'Модифік'
+      DisplayLabel = 'Модифікація'
       DisplayWidth = 8
       FieldKind = fkData
       FieldName = 'MODDATE'

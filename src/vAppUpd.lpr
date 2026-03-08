@@ -91,10 +91,10 @@ end;
 
 procedure TAppUpd.Update(const aUrl: String);
 var
-  FileZip, Str: string;
+  FileZip, Str, Dir: string;
 begin
-  Str := GetOptionValue(#0, 'dir');
-  if (Str.IsEmpty()) then
+  Dir := GetOptionValue(#0, 'dir');
+  if (Dir.IsEmpty()) then
      Quit(1, '--dir is empty');
 
   //GetUrlToFile('https://collector:col2024@download.1x1.com.ua/public/update/vBuhAssist/vBuhAssist_35.exe.zip');
@@ -110,7 +110,7 @@ begin
     Str := '0';
   Sleep(StrToInt(Str));
 
-  UnZipToDir(FileZip, Str);
+  UnZipToDir(FileZip, Dir);
   DeleteFile(FileZip);
 
   Str := GetOptionValue(#0, 'app');
@@ -180,7 +180,7 @@ end;
 constructor TAppUpd.Create(aOwner: TComponent);
 begin
   inherited Create(aOwner);
-  StopOnException:=True;
+  //StopOnException:=True;
 end;
 
 destructor TAppUpd.Destroy();
