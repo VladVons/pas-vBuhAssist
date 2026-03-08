@@ -171,14 +171,15 @@ end;
 
 procedure TFMedocCheckDocs.QueryCharcodeNot(aQuery: TSQLQuery; aArr: TStringArray);
 var
-  Macro: string;
+  Macro, Str: string;
   SL1, SL2: TStringList;
 begin
   SL1 := TStringList.Create().AddArray(aArr);
-  SL2 := SplitCodes(SL1).Quoted().Formated('(FORM.CHARCODE NOT LIKE %s)');
-  Macro := SL2.GetJoin(' AND ');
-  //Log.Print('i', Macro);
-  aQuery.MacroByName('_COND_CHARCODE_NOT').Value := Format(' AND (%s)', [Macro]);
+  SL2 := SplitCodes(SL1);
+  Str := QuotedStr(SL2.GetJoin('|'));
+  Macro := Format(' AND FORM.CHARCODE NOT SIMILAR TO (%s)', [Str]);
+  aQuery.MacroByName('_COND_CHARCODE_NOT').Value := Macro;
+
   SL1.Free();
   SL2.Free();
 end;
