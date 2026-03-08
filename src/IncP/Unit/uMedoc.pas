@@ -38,8 +38,6 @@ type
   function GetYearPart(aDate: TDate; aDiv: integer): Integer;
   function PerTypeToChar(aPerType: integer): char;
   procedure MonthToType(var aPerType, aMonth: integer);
-  procedure SplitCode(var aResSL: TStringList; const aStr: string; const aDelim: string = '-');
-  function SplitCodes(aSL: TStringList; const aDelim: string = '-'): TStringList;
 
 var
   MedocIni: TMedocIni;
@@ -348,30 +346,6 @@ begin
     aPerType := 30;
     aMonth := 12;
   end;
-end;
-
-procedure SplitCode(var aResSL: TStringList; const aStr: string; const aDelim: string = '-');
-var
-  Prefix, Num: string;
-  i: Integer;
-begin
-  Prefix := Copy(aStr, 1, Pos(aDelim, aStr) - 1);
-  if (Prefix.IsEmpty()) then
-    aResSL.Add(aStr)
-  else begin
-    Num := Copy(aStr, Pos(aDelim, aStr) + 1, Length(aStr));
-    for i := 1 to Length(Prefix) do
-      aResSL.Add(Prefix[i] + Num);
-  end;
-end;
-
-function SplitCodes(aSL: TStringList; const aDelim: string = '-'): TStringList;
-var
-  i: Integer;
-begin
-  Result := TStringList.Create();
-  for i := 0 to aSL.Count - 1 do
-    SplitCode(Result, aSL[i], aDelim);
 end;
 
 end.

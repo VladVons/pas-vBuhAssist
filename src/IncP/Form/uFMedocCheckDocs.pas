@@ -175,7 +175,7 @@ var
   SL1, SL2: TStringList;
 begin
   SL1 := TStringList.Create().AddArray(aArr);
-  SL2 := SplitCodes(SL1);
+  SL2 := TStringList.Create().AddExtDelim(SL1);
   Str := QuotedStr(SL2.GetJoin('|'));
   Macro := Format(' AND FORM.CHARCODE NOT SIMILAR TO (%s)', [Str]);
   aQuery.MacroByName('_COND_CHARCODE_NOT').Value := Macro;
@@ -277,9 +277,7 @@ begin
   Str := UpperCase(ComboBoxDoc.Items.Names[ComboBoxDoc.ItemIndex]);
   if (Str <> cChooseAll) then
   begin
-    SL := TStringList.Create();
-    SplitCode(SL, Str);
-    SL.Quoted();
+    SL := TStringList.Create().AddExtDelim(Str).Quoted();
     Macro := Format(' AND (FORM.CHARCODE IN (%s))', [SL.CommaText]);
     FreeAndNil(SL);
   end;

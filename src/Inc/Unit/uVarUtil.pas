@@ -15,14 +15,15 @@ type
   public
     function AddArray(const aArr : TStringArray): TStringList;
     function AddJson(const aArr : TJSONArray): TStringList;
-    function GetJoin(const aJoin: string): string;
+    function AddExtDelim(const aStr: string; const aDelim: string = '-'): TStringList;
+    function AddExtDelim(const aSL: TStringList; const aDelim: string = '-'): TStringList;
+    function GetJoin(const aDelim: string): string;
     function GetJson(): TJSONArray;
     function Formated(const aFormat: string): TStringList;
     function Left(aLen: integer): TStringList;
     function Quoted(): TStringList;
     function Replace(const aFind, aRep: string): TStringList;
   end;
-
 
 function ExtractLatin(const aString: string): string;
 function LatinToUkr(const aStr: string): string;
@@ -58,6 +59,32 @@ begin
   Result := self;
 end;
 
+function TStringListHelper.AddExtDelim(const aStr: string; const aDelim: string = '-'): TStringList;
+var
+  Prefix, Num: string;
+  i: Integer;
+begin
+  Prefix := Copy(aStr, 1, Pos(aDelim, aStr) - 1);
+  if (Prefix.IsEmpty()) then
+    self.Add(aStr)
+  else begin
+    Num := Copy(aStr, Pos(aDelim, aStr) + 1, Length(aStr));
+    for i := 1 to Length(Prefix) do
+      self.Add(Prefix[i] + Num);
+  end;
+
+  Result := self;
+end;
+
+function TStringListHelper.AddExtDelim(const aSL: TStringList; const aDelim: string = '-'): TStringList;
+var
+  i: Integer;
+begin
+  for i := 0 to aSL.Count - 1 do
+    AddExtDelim(aSL[i], aDelim);
+  Result := self;
+end;
+
 function TStringListHelper.Quoted(): TStringList;
 var
   i: integer;
@@ -86,8 +113,7 @@ begin
   Result := self;
 end;
 
-
-function TStringListHelper.GetJoin(const aJoin: string): string;
+function TStringListHelper.GetJoin(const aDelim: string): string;
 var
   i: integer;
 begin
@@ -96,7 +122,7 @@ begin
 
   Result := Self[0];
   for i := 1 to Count - 1 do
-    Result := Result + aJoin + Self[i];
+    Result := Result + aDelim + Self[i];
 end;
 
 function TStringListHelper.Replace(const aFind, aRep: string): TStringList;

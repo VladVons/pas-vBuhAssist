@@ -16,6 +16,8 @@ uses
 type
   { TFMain }
   TFMain = class(TForm)
+    ActionHelp: TAction;
+    ActionName: TAction;
     ActionCheckForUpdate: TAction;
     ActionSettings: TAction;
     ActionExit: TAction;
@@ -27,6 +29,7 @@ type
     MainMenu1: TMainMenu;
     ManuItemHelp: TMenuItem;
     MemoInfo1: TMemo;
+    MenuItemHep: TMenuItem;
     MenuItemCheckForUpdates: TMenuItem;
     Separator2: TMenuItem;
     MenuItemSettings: TMenuItem;
@@ -48,6 +51,7 @@ type
     procedure ActionExitExecute(Sender: TObject);
     procedure ActionFAboutExecute(Sender: TObject);
     procedure ActionFMedocCheckDocsExecute(Sender: TObject);
+    procedure ActionHelpExecute(Sender: TObject);
     procedure ActionUserAgreementExecute(Sender: TObject);
     procedure ActionOptimizePDFExecute(Sender: TObject);
     procedure ActionSettingsExecute(Sender: TObject);
@@ -63,6 +67,9 @@ type
     procedure WMShowMe(var aMsg: TMessage); message TOneInstance.WM_SHOWME;
   public
   end;
+
+  function HtmlHelp(hwndCaller: HWND; pszFile: PChar; uCommand: UINT; dwData: PtrUInt): HWND; stdcall;
+    external 'hhctrl.ocx' name 'HtmlHelpA';
 
 var
   FMain: TFMain;
@@ -90,6 +97,11 @@ end;
 procedure TFMain.ActionFMedocCheckDocsExecute(Sender: TObject);
 begin
   WinManager.Add(TFMedocCheckDocs);
+end;
+
+procedure TFMain.ActionHelpExecute(Sender: TObject);
+begin
+  HtmlHelp(0, PChar(GetAppName() + '.chm'), $0000, 0);
 end;
 
 procedure TFMain.ActionUserAgreementExecute(Sender: TObject);
