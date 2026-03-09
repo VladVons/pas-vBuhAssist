@@ -15,7 +15,7 @@ uses
   opensslsockets,
   Interfaces, // this includes the LCL widgetset
   Forms,
-  uFMain, uWinManager, uDmCommon, uExceptionHandler, uProtectDbg;
+  uFMain, uWinManager, uDmCommon, uExceptionHandler, uProtectDbg, uSys;
 
 {$R *.res}
 {$R vBuhAssist_Rc.res}

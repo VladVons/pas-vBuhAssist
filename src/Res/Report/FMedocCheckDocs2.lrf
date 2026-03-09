@@ -7,7 +7,7 @@
     <KeyWords Value=""/>
     <Comments Value=""/>
     <ReportCreateDate Value="2026-02-22 16:50:50"/>
-    <ReportLastChange Value="2026-03-05 08:21:53"/>
+    <ReportLastChange Value="2026-03-09 20:42:28"/>
     <ReportVersionBuild Value=""/>
     <ReportVersionMajor Value=""/>
     <ReportVersionMinor Value=""/>
@@ -23,8 +23,8 @@
         <Name Value="Page1"/>
         <ClassName Value="TfrPageReport"/>
         <Visible Value="True"/>
-        <Width Value="595"/>
-        <Height Value="842"/>
+        <Width Value="842"/>
+        <Height Value="595"/>
         <Script Value=""/>
         <PgSize Value="9"/>
         <Margins>
@@ -33,7 +33,7 @@
           <Right Value="0"/>
           <Bottom Value="0"/>
         </Margins>
-        <Orientation Value="poPortrait"/>
+        <Orientation Value="poLandscape"/>
         <UseMargins Value="True"/>
         <PrintToPrevPage Value="False"/>
         <ColCount Value="0"/>
@@ -47,9 +47,9 @@
           <StreamMode Value="0"/>
           <Size>
             <Left Value="0"/>
-            <Top Value="0"/>
-            <Width Value="752"/>
-            <Height Value="72"/>
+            <Top Value="20"/>
+            <Width Value="1064"/>
+            <Height Value="56"/>
           </Size>
           <Flags Value="48"/>
           <Data>
@@ -74,10 +74,10 @@
           <Typ Value="gtMemo"/>
           <StreamMode Value="0"/>
           <Size>
-            <Left Value="8"/>
-            <Top Value="12"/>
-            <Width Value="296"/>
-            <Height Value="22"/>
+            <Left Value="24"/>
+            <Top Value="28"/>
+            <Width Value="348"/>
+            <Height Value="38"/>
           </Size>
           <Flags Value="3"/>
           <FillColor Value="clNone"/>
@@ -91,7 +91,7 @@
           <Data>
             <Format Value="556"/>
             <FormatStr Value=""/>
-            <Memo Value="[AppName] &#xD;&#xA;"/>
+            <Memo Value="[AppName]&#xD;&#xA;Закриття звітного періоду&#xD;&#xA;"/>
             <Script Value=""/>
             <GapX Value="0"/>
             <GapY Value="0"/>
@@ -106,10 +106,10 @@
           <FURLInfo Value=""/>
           <Font>
             <Name Value="Arial"/>
-            <Size Value="10"/>
+            <Size Value="11"/>
             <Color Value="clBlack"/>
             <Charset Value="0"/>
-            <Style Value=""/>
+            <Style Value="fsBold"/>
           </Font>
           <Highlight>
             <FontStyle Value="2"/>
@@ -123,7 +123,63 @@
           <Justify Value="False"/>
           <Cursor Value="0"/>
         </Object2>
-        <ObjectCount Value="2"/>
+        <Object3>
+          <Name Value="Memo2"/>
+          <ClassName Value="TfrMemoView"/>
+          <Visible Value="True"/>
+          <Typ Value="gtMemo"/>
+          <StreamMode Value="0"/>
+          <Size>
+            <Left Value="648"/>
+            <Top Value="26"/>
+            <Width Value="380"/>
+            <Height Value="38"/>
+          </Size>
+          <Flags Value="3"/>
+          <FillColor Value="clNone"/>
+          <Frames>
+            <FrameColor Value="clBlack"/>
+            <FrameStyle Value="frsSolid"/>
+            <FrameWidth Value="1"/>
+            <FrameBorders Value=""/>
+            <Restrictions Value=""/>
+          </Frames>
+          <Data>
+            <Format Value="556"/>
+            <FormatStr Value=""/>
+            <Memo Value="Період: [Period]&#xD;&#xA;Звіт: [DocType]&#xD;&#xA;"/>
+            <Script Value=""/>
+            <GapX Value="0"/>
+            <GapY Value="0"/>
+            <OnClick Value=""/>
+            <OnMouseEnter Value=""/>
+            <OnMouseLeave Value=""/>
+            <DetailReport Value=""/>
+            <ParagraphGap Value="0"/>
+            <LineSpacing Value="2"/>
+          </Data>
+          <Tag Value=""/>
+          <FURLInfo Value=""/>
+          <Font>
+            <Name Value="Arial"/>
+            <Size Value="11"/>
+            <Color Value="clBlack"/>
+            <Charset Value="0"/>
+            <Style Value="fsBold"/>
+          </Font>
+          <Highlight>
+            <FontStyle Value="2"/>
+            <FontColor Value="clBlack"/>
+            <FillColor Value="clWhite"/>
+            <HighlightStr Value=""/>
+          </Highlight>
+          <Alignment Value="taLeftJustify"/>
+          <Layout Value="tlTop"/>
+          <Angle Value="0"/>
+          <Justify Value="False"/>
+          <Cursor Value="0"/>
+        </Object3>
+        <ObjectCount Value="3"/>
       </Page1>
       <FVal>
         <Count Value="0"/>

@@ -13,7 +13,7 @@ uses
   StdCtrls, DBGrids, Grids,
   ExtCtrls, Buttons, Menus, Dialogs, ComCtrls, LR_Class, LR_DBSet,
   LR_PGrid, LR_Desgn, DB, fpjson,
-  Math, uFBase, uSys, uLog, uLicence, uSettings, uVarUtil, uStateStore,
+  Math, uFBase, uSys, uSysVcl, uLog, uLicence, uSettings, uVarUtil, uStateStore,
   uQuery, uMedoc, uDmCommon, uProtectTimer, uProtectDbg, uConst;
 
 type
@@ -85,7 +85,7 @@ type
     procedure DbGridCurTitleClick(Column: TColumn);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure frReport1GetValue(const aParName: string; var aParValue: variant);
+    procedure FrPrintGrid1GetValue(const ParName: String; var ParValue: Variant);
     procedure MenuItemOrderClick(Sender: TObject);
     procedure MenuItemRefreshClick(Sender: TObject);
     procedure PageControlChange(Sender: TObject);
@@ -535,12 +535,14 @@ begin
 
   Result := False;
 end;
-
-procedure TFMedocCheckDocs.frReport1GetValue(const aParName: string;
-  var aParValue: variant);
+procedure TFMedocCheckDocs.FrPrintGrid1GetValue(const ParName: String; var ParValue: Variant);
 begin
-  if (aParName = 'AppName') then
-    aParValue := cAppName;
+  if (ParName = 'AppName') then
+    ParValue := Format('%s %s', [cAppName, GetAppVer()])
+  else if (ParName = 'Period') then
+    ParValue := Format('%s %s', [ComboBoxMonth.Text, ComboBoxYear.Text])
+  else if (ParName = 'DocType') then
+    ParValue := Format('%s', [ComboBoxDoc.Text]);
 end;
 
 procedure TFMedocCheckDocs.MenuItemOrderClick(Sender: TObject);
@@ -592,10 +594,13 @@ begin
   ], 'Visible', False);
 
   try
-    FrPrintGrid1.Caption := Format('%s -- Період: %s %s року--Звіт: %s)',
-      [cAppName, ComboBoxMonth.Text, ComboBoxYear.Text, ComboBoxDoc.Text]);
+    //FrPrintGrid1.Caption := Format('%s -- Період: %s %s року--Звіт: %s)',
+    //  [cAppName, ComboBoxMonth.Text, ComboBoxYear.Text, ComboBoxDoc.Text]);
+
+    //ResourceLoadReport('Report_FMedocCheckDocs1', frReport1);
+    FrPrintGrid1.Template := 'Res\Report\FMedocCheckDocs2.lrf';
     FrPrintGrid1.PreviewReport();
-    //Exit();
+    Exit();
 
     //ResourceLoadReport('Report_FMedocCheckDocs1', frReport1);
     //frReport1.LoadFromFile('Res\Report\FMedocCheckDocs1.lrf');

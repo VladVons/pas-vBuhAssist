@@ -133,7 +133,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Left = 232
       Height = 38
       Top = 142
-      Width = 118
+      Width = 134
       Caption = 'Друкувати'
       Images = DmCommon.ImageList1
       ImageIndex = 2
@@ -141,7 +141,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       OnClick = BitBtnPrintClick
     end
     object BitBtnRunMedoc: TBitBtn
-      Left = 360
+      Left = 368
       Height = 38
       Top = 142
       Width = 134
@@ -650,6 +650,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     Caption = 'Grid'
     PrinterIndex = -1
     ShowCaption = True
+    OnGetValue = FrPrintGrid1GetValue
     Left = 272
     Top = 336
   end
@@ -659,7 +660,6 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     Options = []
     PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit, pbSettings, pbPageSetup]
     DataType = dtDataSet
-    OnGetValue = frReport1GetValue
     Left = 272
     Top = 224
   end
