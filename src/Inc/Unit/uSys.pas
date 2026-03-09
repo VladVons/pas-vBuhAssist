@@ -30,6 +30,7 @@ procedure StrToFile(const aStr: AnsiString; aFile: string);
 function StrFromFile(const aFile: string): AnsiString;
 function ExpandEnvVar(const aStr: string): string;
 procedure WaitProcess(aPID: DWORD);
+function QuotedFile(const aStr: string): string;
 
 implementation
 
@@ -40,11 +41,13 @@ begin
   if (not FileExists(aFile)) then
     raise Exception.Create('Не знайдено ' + aFile);
 
-  Dir := ExtractFilePath(aFile);
-
   Result := TProcess.Create(nil);
   Result.Executable := aFile;
-  Result.CurrentDirectory := Dir;
+
+  Dir := ExtractFilePath(aFile);
+  if (not Dir.IsEmpty()) then
+     Result.CurrentDirectory := Dir;
+
   Result.ShowWindow := swoHide;
 
   Result.Options := [poUsePipes];
@@ -288,6 +291,14 @@ begin
 
     p1 := Pos('%', Result);
   end;
+end;
+
+function QuotedFile(const aStr: string): string;
+begin
+ if (Pos(' ', aStr) > 0) then
+    Result := '"' + aStr + '"'
+  else
+    Result := aStr;
 end;
 
 function TestPas(): string;

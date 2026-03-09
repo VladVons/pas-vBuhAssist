@@ -67,6 +67,7 @@ begin
   end;
 end;
 
+// 'https://user:passw@download.1x1.com.ua/public/update/vBuhAssist/vBuhAssist_35.exe.zip'
 function GetUrlToFile(const aURL, aDir: string; aFileName: string = ''): string;
 var
   Client: TFPHTTPClient;
@@ -79,13 +80,13 @@ begin
   if (not aDir.IsEmpty()) then
     Result := ConcatPaths([aDir, aFileName]);
 
+  FS := TFileStream.Create(Result, fmCreate);
   Client := TFPHTTPClient.Create(nil);
   try
     Client.AllowRedirect := True;
-    FS := TFileStream.Create(Result, fmCreate);
     Client.Get(aURL, FS);
   finally
-    Client.Free();
+    FreeAndNil(Client);
     FreeAndNil(FS);
   end;
 end;

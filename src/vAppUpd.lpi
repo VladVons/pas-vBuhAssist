@@ -19,7 +19,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="6"/>
+      <BuildNr Value="9"/>
     </VersionInfo>
     <BuildModes>
       <Item Name="Default" Default="True"/>
@@ -33,7 +33,7 @@
       <Modes>
         <Mode Name="default">
           <local>
-            <CommandLineParams Value="--app=vBuhAssist.exe --url=https://download.1x1.com.ua/public/update/vBuhAssist/vBuhAssist_59.exe.zip --delay=1000 --dir=&quot;C:\Documents and Settings\snoVdalV\Desktop\pas\pas-vBuhAssist\src&quot;"/>
+            <CommandLineParams Value="--log --app=vBuhAssist.exe --pid=1234 --url=https://download.1x1.com.ua/public/update/vBuhAssist/vBuhAssist_60.exe.zip --delay=1000 --dir=&quot;C:\Documents and Settings\snoVdalV\Desktop\pas\pas-vBuhAssist\src&quot;"/>
           </local>
         </Mode>
       </Modes>

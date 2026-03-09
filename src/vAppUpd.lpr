@@ -1,35 +1,70 @@
+// Created: 2026.03.01
+// Author: Vladimir Vons <VladVons@gmail.com>
+
 program vAppUpd;
 
 {$mode objfpc}{$H+}
 {$apptype console}
 
 uses
-  Classes, SysUtils, CustApp, opensslsockets, URIParser, fpjson, jsonparser,
-  uSys, uHttp, uArchive, uVarUtil, uProtect;
+  Classes, SysUtils, CustApp, opensslsockets, URIParser, fpjson,  jsonparser, Process, 
+  uSys,  uHttp, uArchive, uVarUtil, uProtect,
+  fphttpclient;
 
 type
   TAppUpd = class(TCustomApplication)
+  private
+    fLog: string;
   protected
     procedure DoRun(); override;
-    procedure Quit(aErr: Integer = 0; const aMsg: String = '');
-    function GetVerRemote(const aUrl: String): String;
-    procedure AppProtect(const aPath: String);
-    procedure Update(const aUrl: String);
+    procedure Quit(aErr: integer = 0; const aMsg: string = '');
+    function GetVerRemote(const aUrl: string): string;
+    function GetCommandLine(): string;
+    procedure AppProtect(const aPath: string);
+    procedure Update(const aUrl: string);
     procedure ShowHelp(); virtual;
-  public
-    constructor Create(aOwner: TComponent); override;
-    destructor Destroy(); override;
+    procedure Log(const aStr: string);
+    function DownloadWithCurl(const aUrl: string): string;
   end;
 
 var
   AppUpd: TAppUpd;
   {$R *.res}
 
-{ TAppUpd }
-procedure TAppUpd.Quit(aErr: Integer = 0; const aMsg: String = '');
+
+function TAppUpd.GetCommandLine(): string;
+var
+  i: Integer;
+begin
+  Result := ParamStr(0);
+  for i := 1 to ParamCount do
+    Result := Result + ' ' + ParamStr(i);
+end;
+
+procedure TAppUpd.Log(const aStr: string);
+var
+  Str: string;
+  F: TextFile;
+begin
+  WriteLn(aStr);
+  if (fLog.IsEmpty()) then
+    Exit();
+
+  AssignFile(F, fLog);
+  if FileExists(fLog) then
+    Append(F)
+  else
+    Rewrite(F);
+
+  Str := Format('%s %s', [FormatDateTime('yy-mm-dd hh:nn:ss', Now()), aStr]);
+  WriteLn(F, Str);
+  CloseFile(F);
+end;
+
+procedure TAppUpd.Quit(aErr: integer = 0; const aMsg: string = '');
 begin
   if (not aMsg.IsEmpty()) then
-    WriteLn(aMsg);
+    Log(aMsg);
 
   if (HasOption('p', 'pause')) then
   begin
@@ -41,7 +76,7 @@ begin
   Halt(aErr);
 end;
 
-procedure TAppUpd.AppProtect(const aPath: String);
+procedure TAppUpd.AppProtect(const aPath: string);
 var
   Tail, Tail2: TTail;
   Protect: TProtect;
@@ -50,8 +85,8 @@ begin
   Tail := Protect.ReadFileTail();
   if (Tail.Sign = cTailSign) then
   begin
-     WriteLn('Already protected ' + aPath);
-     Quit();
+    Log('Already protected ' + aPath);
+    Quit();
   end;
 
   Tail := Protect.CalculateFileTail(0);
@@ -60,17 +95,17 @@ begin
   Tail2 := Protect.ReadFileTail();
   Tail2 := Protect.CalculateFileTail(Tail2.BlockLen);
   if (Tail.CheckSum = Tail2.CheckSum) then
-    WriteLn('Protected. CRC is ', IntToHex(Tail.CheckSum))
+    Log(Format('Protected. CRC is %.8x', [Tail.CheckSum]))
   else
-    WriteLn('Error. CRC mismatch ', IntToHex(Tail.CheckSum), ' ', IntToHex(Tail2.CheckSum));
+    Log(Format('Error. CRC mismatch %.8x %.8x', [Tail.CheckSum, Tail2.CheckSum]));
 
   Protect.Free();
 end;
 
-function TAppUpd.GetVerRemote(const aUrl: String): String;
+function TAppUpd.GetVerRemote(const aUrl: string): string;
 var
-  Str: String;
-  Err: Integer;
+  Str: string;
+  Err: integer;
   Uri: TURI;
 begin
   Err := GetUrlToString(aUrl, Result);
@@ -82,35 +117,83 @@ begin
       Uri.Password := 'xxx';
       EncodeURI(Uri);
       Str := EncodeURI(Uri);
-    end else begin
+    end
+    else
+    begin
       Str := aUrl;
-      Quit(1, format('Error %d downloading %s', [Err, Str]));
+      Quit(1, Format('Error %d downloading %s', [Err, Str]));
     end;
-  end
+  end;
 end;
 
-procedure TAppUpd.Update(const aUrl: String);
+function TAppUpd.DownloadWithCurl(const aUrl: string): string;
+const
+  cCurl = 'addons\curl.exe';
+var
+  Param, Output: TStringList;
+  Process: TProcess;
+begin
+  if (not FileExists(cCurl)) then
+    Quit(1, 'File not exists ' + cCurl);
+
+  Result := ConcatPaths([GetTempDir(), ExtractFileName(aURL)]);
+
+  Param := TStringList.Create();
+  Param.Add('-L');
+  Param.Add('-o');
+  Param.Add(QuotedFile(Result));
+  Param.Add(aUrl);
+  Process := ExecProcess(cCurl, Param, True);
+
+  if (Process.ExitStatus <> 0) then
+  begin
+    Output := TStringList.Create();
+    Output.LoadFromStream(Process.Stderr);
+    Log(Output.Text);
+    Output.LoadFromStream(Process.Output);
+    Log(Output.Text);
+    Output.Free();
+
+    Quit(1, 'Error ' + cCurl);
+  end;
+end;
+
+procedure TAppUpd.Update(const aUrl: string);
 var
   FileZip, Str, Dir: string;
+  Delay: integer;
 begin
   Dir := GetOptionValue(#0, 'dir');
   if (Dir.IsEmpty()) then
-     Quit(1, '--dir is empty');
+    Quit(1, '--dir is empty');
+  Log(Format('Directory to extract %s', [Dir]));
 
-  //GetUrlToFile('https://collector:col2024@download.1x1.com.ua/public/update/vBuhAssist/vBuhAssist_35.exe.zip');
   // first download file. It takes some time to leave master application
+  Log(Format('Download from %s', [aUrl]));
+  // Unknown exception when run from another process. so use curl to download. fuck!
   FileZip := GetUrlToFile(aUrl, GetTempDir());
-
-  Str := GetOptionValue(#0, 'pid');
-  if (not Str.IsEmpty()) then
-    WaitProcess(Str.ToInteger());
+  // Unknown exception when run from another process even with curl fuck!
+  //FileZip := DownloadWithCurl(aUrl);
 
   Str := GetOptionValue(#0, 'delay');
   if (Str.IsEmpty()) then
     Str := '0';
-  Sleep(StrToInt(Str));
+  Log(Format('Delay %s', [Str]));
+  Delay := StrToInt(Str);
+  Sleep(Delay);
 
+  Str := GetOptionValue(#0, 'pid');
+  if (not Str.IsEmpty()) then
+  begin
+    Log(Format('WaitProcess PID %s', [Str]));
+    WaitProcess(Str.ToInteger());
+    //Sleep(Delay);
+  end;
+
+  Log(Format('UnZipToDir %s to %s', [FileZip, Dir]));
   UnZipToDir(FileZip, Dir);
+
+  Log(Format('DeleteFile %s', [FileZip]));
   DeleteFile(FileZip);
 
   Str := GetOptionValue(#0, 'app');
@@ -119,20 +202,30 @@ begin
     if (not FileExists(Str)) then
       Quit(1, 'File not exists ' + Str);
 
-    WriteLn('Run applacation ' + Str);
-    ExecProcess(Str, Nil);
+    Log(Format('Run applacation %s', [Str]));
+    ExecProcess(Str, nil, False);
   end;
+
+  Log('Exit update');
 end;
 
 procedure TAppUpd.DoRun();
 var
-  Str: String;
+  Str: string;
   Parts: TStringArray;
 begin
   if (ParamCount = 0) then
   begin
     ShowHelp();
     Quit();
+  end;
+
+  fLog := '';
+  if (HasOption(#0, 'log')) then
+  begin
+    fLog := GetOptionValue(#0, 'log');
+    if (fLog.IsEmpty()) then
+      fLog := GetAppName() + '.log';
   end;
 
   Str := GetOptionValue(#0, 'crc');
@@ -151,7 +244,7 @@ begin
       Quit(1, 'File not exists ' + Str);
 
     Str := GetExeVer(Str);
-    WriteLn(Str);
+    Log(Str);
     Quit();
   end;
 
@@ -163,7 +256,7 @@ begin
 
     Str := GetExeVer(Str);
     Parts := Str.Split('.');
-    WriteLn(Parts[High(Parts)]);
+    Log(Parts[High(Parts)]);
     Quit();
   end;
 
@@ -177,37 +270,27 @@ begin
   Quit();
 end;
 
-constructor TAppUpd.Create(aOwner: TComponent);
-begin
-  inherited Create(aOwner);
-  //StopOnException:=True;
-end;
-
-destructor TAppUpd.Destroy();
-begin
-  inherited Destroy();
-end;
-
 procedure TAppUpd.ShowHelp();
 var
   AppName: string;
 begin
   AppName := GetAppName();
   WriteLn(AppName, ' ver ', GetAppVer(), ' (', {$I %DATE%} + ')');
-  WriteLn(AppName + ' --app=app.exe --dir=path\app --pid=<app PID> --delay=2000 --url=http://site.com/update.zip');
+  WriteLn(AppName +
+    ' --app=app.exe --dir=path\app --pid=<app PID> --delay=2000 --url=http://site.com/update.zip');
   WriteLn('options:');
   WriteLn('--app       application to start after update');
   WriteLn('--app_ver   get app version (also --app_build)');
-  WriteLn('--dir       directory to extract ZIP archive');
-  WriteLn('--pid       process ID to wait for free');
   WriteLn('--delay     delay in ms before start app');
+  WriteLn('--dir       directory to extract ZIP archive');
+  WriteLn('--log       log to file');
+  WriteLn('--pid       process ID to wait for free');
   WriteLn('--url       remote ZIP file address');
 end;
 
 begin
-  AppUpd:=TAppUpd.Create(nil);
-  AppUpd.Title:='App Updater';
+  AppUpd := TAppUpd.Create(nil);
+  AppUpd.Title := 'App Updater';
   AppUpd.Run();
   AppUpd.Free();
 end.
-

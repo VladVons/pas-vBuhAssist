@@ -97,7 +97,7 @@ procedure TAnnonce.CheckForUpdate();
 const
   cUpdater = 'vAppUpd.exe';
 var
-  Body: string;
+  Body, FileLog: string;
   JObj, JItem: TJSONObject;
   Params: TStringList;
   Process: TProcess;
@@ -132,11 +132,15 @@ begin
       Exit();
     end;
 
+    FileLog := ConcatPaths([GetAppConfigDir(False), cUpdater + '.log']);
+
     Params := TStringList.Create();
     Params.Add('--url=' + JItem.Get('url', ''));
-    Params.Add('--dir=' + GetAppDir());
-    Params.Add('--app=' + ParamStr(0));
-    Params.Add('--pid=' + IntToStr(GetCurrentProcessId()));
+    Params.Add('--dir=' + QuotedFile(GetAppDir()));
+    Params.Add('--app=' + QuotedFile(ParamStr(0)));
+    //Params.Add('--pid=' + IntToStr(GetCurrentProcessId()));
+    Params.Add('--delay=2000');
+    Params.Add('--log=' + QuotedFile(FileLog));
     Process := ExecProcess(cUpdater, Params, False);
 
     Log.Print('i', 'Перезавантаження програми');
@@ -144,7 +148,7 @@ begin
     Halt();
   finally
     JObj.Free();
-    FreeAndNil(Params);
+        FreeAndNil(Params);
     FreeAndNil(Process);
   end;
 end;

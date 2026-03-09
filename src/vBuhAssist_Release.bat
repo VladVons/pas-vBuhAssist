@@ -15,8 +15,8 @@ set /p BUILD=<%App%_ver.txt
 set FileArch=%App%_%BUILD%.exe.zip
 
 upx.exe -5 %FileExe%
-vAppUpd.exe --crc=%FileExe%
+vAppUpd.exe --log --crc=%FileExe%
 7z.exe a %FileArch% %FileExe%
 wput.exe %FileArch% ftp://vladvons:19710819@oster.com.ua/www/download/public/update/vBuhAssist/
-rem del %FileArch%
+del %FileArch%
 del %FileExe%
