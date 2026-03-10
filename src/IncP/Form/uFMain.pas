@@ -190,10 +190,10 @@ begin
   if (CheckUpdates <> 0) then
   begin
     Annonce := TAnnonce.Create('app_annonce.ini', Licence);
-    if (cAnnonceDelay = 0) then
+    if (cDelayAnnonce = 0) then
       Annonce.CheckWithDelay()
     else begin
-      TimerAnnonce.Interval := cAnnonceDelay + random(cAnnonceDelay);
+      TimerAnnonce.Interval := cDelayAnnonce + random(cDelayAnnonce);
       TimerAnnonce.Enabled := True;
     end;
   end;

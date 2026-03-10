@@ -406,7 +406,7 @@ begin
   Records := QueryCurOpen();
 
   // we are not so fast comparing to MEDOC
-  Delay := Settings.GetItem('Common', 'Delay', 1500);
+  Delay := Settings.GetItem('Common', 'Delay', cDelayFind);
   if (not IsDeveloper()) then
     Sleep(Delay + Random(Delay));
 
