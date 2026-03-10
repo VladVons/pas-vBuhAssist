@@ -8,7 +8,8 @@ unit uFBase;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
+  uStateStore;
 
 type
 
@@ -20,6 +21,7 @@ type
     procedure FormShow(Sender: TObject);
   private
   protected
+    procedure SetFont(aForm: TForm);
   public
 
   end;
@@ -27,6 +29,21 @@ type
 
 implementation
 {$R *.lfm}
+
+procedure TFBase.SetFont(aForm: TForm);
+var
+  NewFont: TFont;
+begin
+  NewFont := TFont.Create();
+  try
+    NewFont.Name := 'Verdana';
+    NewFont.Size := 9;
+    //NewFont.Style := [fsBold];
+    StateStore.SetCtrlFont(aForm, NewFont);
+  finally
+    NewFont.Free();
+  end;
+end;
 
 procedure TFBase.FormShow(Sender: TObject);
 begin

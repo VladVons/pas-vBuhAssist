@@ -47,12 +47,6 @@ object FMain: TFMain
     Top = 0
     Width = 1062
     Align = alClient
-    Font.CharSet = RUSSIAN_CHARSET
-    Font.Height = -17
-    Font.Name = 'Verdana'
-    Font.Pitch = fpVariable
-    Font.Quality = fqDraft
-    ParentFont = False
     TabOrder = 2
   end
   object MainMenu1: TMainMenu

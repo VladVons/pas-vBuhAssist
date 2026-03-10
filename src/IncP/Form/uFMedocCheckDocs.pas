@@ -81,6 +81,7 @@ type
     procedure ButtonPathClick(Sender: TObject);
     procedure ComboBoxPathEditingDone(Sender: TObject);
     procedure ComboBoxYearDropDown(Sender: TObject);
+    procedure DbGridCurColumnSized(Sender: TObject);
     procedure DbGridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: integer; Column: TColumn; State: TGridDrawState);
     procedure DbGridCurTitleClick(Column: TColumn);
     procedure FormCreate(Sender: TObject);
@@ -466,6 +467,11 @@ begin
     ComboBoxYear.ItemIndex := ComboBoxYear.Items.Count - 2;
 end;
 
+procedure TFMedocCheckDocs.DbGridCurColumnSized(Sender: TObject);
+begin
+  StateStore.SaveGrid(Name, DbGridCur);
+end;
+
 procedure TFMedocCheckDocs.DbGridDrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: integer; Column: TColumn; State: TGridDrawState);
 var
@@ -667,6 +673,9 @@ procedure TFMedocCheckDocs.FormCreate(Sender: TObject);
 var
   i: integer;
 begin
+  inherited;
+  SetFont(self);
+
   ProtectTimer.TimingStart();
 
   fSortField := 'CARDSTATUS_NAME';

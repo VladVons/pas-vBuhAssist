@@ -52,6 +52,7 @@ end;
 
 procedure TFSettings.FormCreate(Sender: TObject);
 begin
+  SetFont(self);
   StateStore.Load(self);
 
   if (SpinEditBeginYear.Value = 0) then

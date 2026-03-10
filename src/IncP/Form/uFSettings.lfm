@@ -47,13 +47,7 @@ inherited FSettings: TFSettings
     Align = alClient
     ClientHeight = 262
     ClientWidth = 460
-    Font.CharSet = RUSSIAN_CHARSET
-    Font.Height = -13
-    Font.Name = 'Verdana'
-    Font.Pitch = fpVariable
-    Font.Quality = fqDraft
     ParentBackground = False
-    ParentFont = False
     TabOrder = 2
     object GroupBox1: TGroupBox
       Left = 16

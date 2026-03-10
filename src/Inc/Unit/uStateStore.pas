@@ -26,7 +26,9 @@ type
     procedure Load(aForm: TWinControl);
     procedure LoadGrid(const aName: string; aCtrl: TDBGrid);
     procedure Save(aForm: TWinControl);
+    procedure SaveGrid(const aName: string; aCtrl: TDBGrid);
     procedure SetCtrlColor(aForm: TWinControl; aColor: TColor; const aType: string);
+    procedure SetCtrlFont(aCtrl: TControl; aFont: TFont);
   end;
 
   TPropGuard = class
@@ -74,6 +76,15 @@ begin
     if (Width > 0) then
       Col.Width := Width;
   end;
+end;
+
+procedure TStateStore.SaveGrid(const aName: string; aCtrl: TDBGrid);
+var
+  Ini: TIniFile;
+begin
+  Ini := TIniFile.Create(fFile);
+  SaveGrid(aName, aCtrl, Ini);
+  Ini.Free();
 end;
 
 procedure TStateStore.SaveGrid(const aName: string; aCtrl: TDBGrid; aIni: TIniFile);
@@ -171,6 +182,19 @@ begin
     else if (aType = 'button') then
       AsButton(Ctrl);
   end;
+end;
+
+procedure TStateStore.SetCtrlFont(aCtrl: TControl; aFont: TFont);
+var
+  i: Integer;
+begin
+   if (IsPublishedProp(aCtrl, 'ParentFont')) then
+     if (GetOrdProp(aCtrl, 'ParentFont') <> 0) then
+       aCtrl.Font.Assign(aFont);
+
+  if aCtrl is TWinControl then
+    for i := 0 to TWinControl(aCtrl).ControlCount - 1 do
+      SetCtrlFont(TWinControl(aCtrl).Controls[i], aFont);
 end;
 
 procedure TStateStore.Save(aForm: TWinControl);

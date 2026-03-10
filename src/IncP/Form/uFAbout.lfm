@@ -29,10 +29,6 @@ object FAbout: TFAbout
         Top = 0
         Width = 479
         Align = alClient
-        Font.CharSet = RUSSIAN_CHARSET
-        Font.Height = -13
-        Font.Pitch = fpVariable
-        Font.Quality = fqDraft
         Lines.Strings = (
           'Програма «Помічник бухгалтера» призначена для автоматизації роботи бухгалтерам та аудиторам.'
           ''
@@ -51,7 +47,6 @@ object FAbout: TFAbout
           'Побажання та пропозиції приймаємо на електронну пошту:'
           '{Mail}'
         )
-        ParentFont = False
         ReadOnly = True
         ScrollBars = ssAutoBoth
         TabOrder = 0

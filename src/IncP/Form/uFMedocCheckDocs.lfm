@@ -7,10 +7,6 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
   Caption = 'Звітне стикування'
   ClientHeight = 418
   ClientWidth = 680
-  Font.CharSet = RUSSIAN_CHARSET
-  Font.Name = 'Verdana'
-  Font.Pitch = fpVariable
-  Font.Quality = fqDraft
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   inherited PanelTitle: TPanel
@@ -172,12 +168,6 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     Width = 680
     ActivePage = TabSheetCur
     Align = alClient
-    Font.CharSet = RUSSIAN_CHARSET
-    Font.Height = -17
-    Font.Name = 'Verdana'
-    Font.Pitch = fpVariable
-    Font.Quality = fqDraft
-    ParentFont = False
     TabIndex = 0
     TabOrder = 2
     OnChange = PageControlChange
@@ -194,21 +184,10 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
         Color = clWindow
         Columns = <>
         DataSource = DataSourceGridCur
-        Font.CharSet = RUSSIAN_CHARSET
-        Font.Height = -15
-        Font.Name = 'Alef'
-        Font.Pitch = fpVariable
-        Font.Quality = fqDraft
         Options = [dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
-        ParentFont = False
         ReadOnly = True
         TabOrder = 0
-        TitleFont.CharSet = RUSSIAN_CHARSET
-        TitleFont.Height = -15
-        TitleFont.Name = 'Alef'
-        TitleFont.Pitch = fpVariable
-        TitleFont.Quality = fqDraft
-        TitleFont.Style = [fsBold]
+        OnColumnSized = DbGridCurColumnSized
         OnDrawColumnCell = DbGridDrawColumnCell
         OnTitleClick = DbGridCurTitleClick
       end
@@ -230,12 +209,6 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
         Options = [dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
         ReadOnly = True
         TabOrder = 0
-        TitleFont.CharSet = RUSSIAN_CHARSET
-        TitleFont.Height = -15
-        TitleFont.Name = 'Verdana'
-        TitleFont.Pitch = fpVariable
-        TitleFont.Quality = fqDraft
-        TitleFont.Style = [fsBold]
         OnDrawColumnCell = DbGridDrawColumnCell
       end
     end
@@ -642,17 +615,6 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
   object FrPrintGrid1: TFrPrintGrid[5]
     DBGrid = DbGridCur
     Orientation = poLandscape
-    Font.CharSet = RUSSIAN_CHARSET
-    Font.Height = -15
-    Font.Name = 'Alef'
-    Font.Pitch = fpVariable
-    Font.Quality = fqDraft
-    TitleFont.CharSet = RUSSIAN_CHARSET
-    TitleFont.Height = -15
-    TitleFont.Name = 'Alef'
-    TitleFont.Pitch = fpVariable
-    TitleFont.Quality = fqDraft
-    TitleFont.Style = [fsBold]
     Caption = 'Grid'
     PrinterIndex = -1
     ShowCaption = True
@@ -837,6 +799,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
       Required = False
+      Visible = False
     end
     object SQLQueryGridPrevCHARCODE: TStringField
       DisplayLabel = 'Код'
@@ -871,6 +834,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
       Required = False
+      Visible = False
       Size = 10
     end
     object SQLQueryGridPrevCARDSENDSTT_NAME: TStringField
@@ -883,6 +847,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
       Required = False
+      Visible = False
       Size = 50
     end
   end
