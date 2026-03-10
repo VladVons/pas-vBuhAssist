@@ -8,7 +8,7 @@ unit uStateStore;
 interface
 
 uses
-  Classes, SysUtils, TypInfo, IniFiles, StdCtrls, ExtCtrls, Controls, Spin, Graphics,
+  Classes, SysUtils, TypInfo, IniFiles, StdCtrls, ExtCtrls, Controls, Spin, Graphics, DBGrids,
   uSettings;
 
 type
@@ -16,14 +16,17 @@ type
 
   TStateStore = class(TSettings)
   private
-    procedure Walk(aForm: TWinControl; aProc: TCtrlProc);
+    procedure SaveGrid(const aName: string; aCtrl: TDBGrid; aIni: TIniFile);
+    procedure LoadGrid(const aName: string; aCtrl: TDBGrid; aIni: TIniFile);
     procedure SaveProc(aForm: TWinControl; aCtrl: TComponent; aIni: TIniFile);
     procedure LoadProc(aForm: TWinControl; aCtrl: TComponent; aIni: TIniFile);
+    procedure Walk(aForm: TWinControl; aProc: TCtrlProc);
   public
     procedure ComboBoxSetIndex(const aItems: array of TComboBox; aIndex: integer = 0);
-    procedure SetCtrlColor(aForm: TWinControl; aColor: TColor; const aType: string);
     procedure Load(aForm: TWinControl);
+    procedure LoadGrid(const aName: string; aCtrl: TDBGrid);
     procedure Save(aForm: TWinControl);
+    procedure SetCtrlColor(aForm: TWinControl; aColor: TColor; const aType: string);
   end;
 
   TPropGuard = class
@@ -50,6 +53,42 @@ begin
          xItem.ItemIndex := aIndex;
 end;
 
+procedure TStateStore.LoadGrid(const aName: string; aCtrl: TDBGrid);
+var
+  Ini: TIniFile;
+begin
+  Ini := TIniFile.Create(fFile);
+  LoadGrid(aName, aCtrl, Ini);
+  Ini.Free();
+end;
+
+procedure TStateStore.LoadGrid(const aName: string; aCtrl: TDBGrid; aIni: TIniFile);
+var
+  i, Width: integer;
+  Col: TColumn;
+begin
+  for i := 0 to aCtrl.Columns.Count - 1 do
+  begin
+    Col := aCtrl.Columns[i];
+    Width := aIni.ReadInteger(aName, Format('%s_col_%d_width', [aCtrl.Name, i]), 0);
+    if (Width > 0) then
+      Col.Width := Width;
+  end;
+end;
+
+procedure TStateStore.SaveGrid(const aName: string; aCtrl: TDBGrid; aIni: TIniFile);
+var
+  i: integer;
+  Col: TColumn;
+begin
+  for i := 0 to aCtrl.Columns.Count - 1 do
+  begin
+    Col := aCtrl.Columns[i];
+    if (Col.Width > 0) then
+      aIni.WriteInteger(aName, Format('%s_col_%d_width', [aCtrl.Name, i]), Col.Width);
+  end;
+end;
+
 procedure TStateStore.LoadProc(aForm: TWinControl; aCtrl: TComponent; aIni: TIniFile);
 var
   Idx: integer;
@@ -64,7 +103,9 @@ begin
   else if (aCtrl is TCheckBox) then
      TCheckBox(aCtrl).Checked := boolean(aIni.ReadInteger(aForm.Name, aCtrl.Name + '_Checked', 0))
   else if (aCtrl is TSpinEdit) then
-     TSpinEdit(aCtrl).Value := aIni.ReadInteger(aForm.Name, aCtrl.Name + '_Value', 0);
+     TSpinEdit(aCtrl).Value := aIni.ReadInteger(aForm.Name, aCtrl.Name + '_Value', 0)
+  else if (aCtrl is TDBGrid) then
+    LoadGrid(aForm.Name, TDBGrid(aCtrl), aIni);
 end;
 
 procedure TStateStore.SaveProc(aForm: TWinControl; aCtrl: TComponent; aIni: TIniFile);
@@ -76,7 +117,9 @@ begin
   else if (aCtrl is TCheckBox) then
     aIni.WriteInteger(aForm.Name, aCtrl.Name + '_Checked', Ord(TCheckBox(aCtrl).Checked))
   else if (aCtrl is TSpinEdit) then
-    aIni.WriteInteger(aForm.Name, aCtrl.Name + '_Value', TSpinEdit(aCtrl).Value);
+    aIni.WriteInteger(aForm.Name, aCtrl.Name + '_Value', TSpinEdit(aCtrl).Value)
+  else if (aCtrl is TDBGrid) then
+    SaveGrid(aForm.Name, TDBGrid(aCtrl), aIni);
 end;
 
 procedure TStateStore.Walk(aForm: TWinControl; aProc: TCtrlProc);

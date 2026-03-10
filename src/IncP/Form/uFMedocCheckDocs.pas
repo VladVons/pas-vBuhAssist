@@ -409,6 +409,7 @@ begin
   if (not IsDeveloper()) then
     Sleep(Delay + Random(Delay));
 
+  StateStore.LoadGrid(Name, DbGridCur);
   Log.Print('i', Format('Відібрано записів %d', [Records]));
 end;
 
@@ -707,14 +708,14 @@ begin
 
   Panel1.Font.Size := 10;
 
+  InitEmptyGrid();
+
   StateStore.Load(self);
   StateStore.ComboBoxSetIndex([ComboBoxYear, ComboBoxMonth, ComboBoxDoc, ComboBoxFirm]);
 
   fColorYelow := RGBToColor(255, 255, 153);
   StateStore.SetCtrlColor(self, fColorYelow, 'edit');
   //StateStore.SetCtrlColor(self, clWhite, 'button');
-
-  InitEmptyGrid();
 
   if (ProtectTimer.TimingCheck()) then
   begin
