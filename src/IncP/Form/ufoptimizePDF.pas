@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  uFBase, uGhostScript, uLog, uSettings, uSys, uVarUtil, uStateStore;
+  uFBase, uGhostScript, uLog, uSettings, uSys, uSysVcl, uVarUtil, uStateStore;
 
 type
 

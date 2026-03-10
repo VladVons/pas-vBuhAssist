@@ -13,7 +13,7 @@ uses
   StdCtrls, DBGrids, Grids,
   ExtCtrls, Buttons, Menus, Dialogs, ComCtrls, LR_Class, LR_DBSet,
   LR_PGrid, LR_Desgn, DB, fpjson,
-  Math, uFBase, uSys, uSysVcl, uLog, uLicence, uSettings, uVarUtil, uStateStore,
+  Math, uFBase, uSys, uLog, uLicence, uSettings, uVarUtil, uStateStore,
   uQuery, uMedoc, uDmCommon, uProtectTimer, uProtectDbg, uConst;
 
 type
@@ -598,7 +598,7 @@ begin
     //  [cAppName, ComboBoxMonth.Text, ComboBoxYear.Text, ComboBoxDoc.Text]);
 
     //ResourceLoadReport('Report_FMedocCheckDocs1', frReport1);
-    FrPrintGrid1.Template := 'Res\Report\FMedocCheckDocs2.lrf';
+    FrPrintGrid1.Template := 'res\Report\CheckDocs2.lrf';
     FrPrintGrid1.PreviewReport();
     Exit();
 

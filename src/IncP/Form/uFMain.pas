@@ -10,7 +10,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList, Windows, ExtCtrls,
   ComCtrls, StdCtrls, fpjson,
-  uFAbout, uFMedocCheckDocs, uFOptimizePDF, uFSettings, uFLogin, uFMessage, uDmCommon,
+  uFAbout, uFMedocCheckDocs, uFOptimizePDF, uFSettings, uFLogin, uFMessage,
   uWinManager, uLicence, uLog, uSettings, uStateStore, uSys, uSysVcl, uConst, uProtectTimer, uAnnonce, uMedoc;
 
 type
@@ -184,7 +184,7 @@ end;
 
 procedure TFMain.CheckAnnonce();
 var
- CheckUpdates, Delay: integer;
+ CheckUpdates: integer;
 begin
   CheckUpdates := StateStore.GetItem('FSettings', 'CheckBoxUpdates_Checked', 0);
   if (CheckUpdates <> 0) then

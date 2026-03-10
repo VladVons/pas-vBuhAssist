@@ -48,10 +48,10 @@ object FMain: TFMain
     Width = 1062
     Align = alClient
     Font.CharSet = RUSSIAN_CHARSET
-    Font.Name = 'Segoe UI Semibold'
+    Font.Height = -17
+    Font.Name = 'Verdana'
     Font.Pitch = fpVariable
     Font.Quality = fqDraft
-    Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 2
   end

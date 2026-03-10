@@ -172,16 +172,22 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     Width = 680
     ActivePage = TabSheetCur
     Align = alClient
+    Font.CharSet = RUSSIAN_CHARSET
+    Font.Height = -17
+    Font.Name = 'Verdana'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ParentFont = False
     TabIndex = 0
     TabOrder = 2
     OnChange = PageControlChange
     object TabSheetCur: TTabSheet
       Caption = 'Поточні'
-      ClientHeight = 163
+      ClientHeight = 161
       ClientWidth = 672
       object DbGridCur: TDBGrid
         Left = 0
-        Height = 163
+        Height = 161
         Top = 0
         Width = 672
         Align = alClient
@@ -190,7 +196,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
         DataSource = DataSourceGridCur
         Font.CharSet = RUSSIAN_CHARSET
         Font.Height = -15
-        Font.Name = 'Verdana'
+        Font.Name = 'Alef'
         Font.Pitch = fpVariable
         Font.Quality = fqDraft
         Options = [dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
@@ -199,7 +205,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
         TabOrder = 0
         TitleFont.CharSet = RUSSIAN_CHARSET
         TitleFont.Height = -15
-        TitleFont.Name = 'Verdana'
+        TitleFont.Name = 'Alef'
         TitleFont.Pitch = fpVariable
         TitleFont.Quality = fqDraft
         TitleFont.Style = [fsBold]
@@ -209,12 +215,12 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     end
     object TabSheetPrev: TTabSheet
       Caption = 'Пропоновані'
-      ClientHeight = 163
+      ClientHeight = 161
       ClientWidth = 672
       TabVisible = False
       object DBGridPrev: TDBGrid
         Left = 0
-        Height = 163
+        Height = 161
         Top = 0
         Width = 672
         Align = alClient
@@ -452,7 +458,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     end
     object SQLQueryGridCurDEPT: TStringField
       DisplayLabel = 'Філія'
-      DisplayWidth = 8
+      DisplayWidth = 6
       FieldKind = fkData
       FieldName = 'DEPT'
       Index = 1
@@ -525,7 +531,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     end
     object SQLQueryGridCurPERDATE_STR: TStringField
       DisplayLabel = 'Період'
-      DisplayWidth = 12
+      DisplayWidth = 10
       FieldKind = fkCalculated
       FieldName = 'PERDATE_STR'
       Index = 7
@@ -537,7 +543,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     end
     object SQLQueryGridCurCHARCODE: TStringField
       DisplayLabel = 'Код'
-      DisplayWidth = 8
+      DisplayWidth = 10
       FieldKind = fkData
       FieldName = 'CHARCODE'
       Index = 8
@@ -561,7 +567,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     end
     object SQLQueryGridCurHZ: TStringField
       DisplayLabel = 'Ознака'
-      DisplayWidth = 8
+      DisplayWidth = 12
       FieldKind = fkCalculated
       FieldName = 'HZ'
       Index = 10
@@ -573,7 +579,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     end
     object SQLQueryGridCurMODDATE: TDateTimeField
       DisplayLabel = 'Модифікація'
-      DisplayWidth = 8
+      DisplayWidth = 10
       FieldKind = fkData
       FieldName = 'MODDATE'
       Index = 11
@@ -638,12 +644,12 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     Orientation = poLandscape
     Font.CharSet = RUSSIAN_CHARSET
     Font.Height = -15
-    Font.Name = 'Verdana'
+    Font.Name = 'Alef'
     Font.Pitch = fpVariable
     Font.Quality = fqDraft
     TitleFont.CharSet = RUSSIAN_CHARSET
     TitleFont.Height = -15
-    TitleFont.Name = 'Verdana'
+    TitleFont.Name = 'Alef'
     TitleFont.Pitch = fpVariable
     TitleFont.Quality = fqDraft
     TitleFont.Style = [fsBold]

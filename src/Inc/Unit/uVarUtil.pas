@@ -8,7 +8,7 @@ unit uVarUtil;
 interface
 
 uses
-  Classes, SysUtils, LazUTF8, fpjson, Variants;
+  Classes, SysUtils, fpjson, Variants;
 
 type
   TStringListHelper = class helper for TStringList
@@ -26,8 +26,6 @@ type
   end;
 
 function ExtractLatin(const aString: string): string;
-function LatinToUkr(const aStr: string): string;
-function RemoveChars(const aStr, aRemove: string): string;
 function GetJsonNested(const aJObj: TJSONObject; const Path: string; aDef: Variant): Variant;
 function ReplMacros(const aText: string; aDict: TStringList): string;
 function Between(aVal, aMin, aMax: integer): boolean;
@@ -176,50 +174,6 @@ begin
       until not R.ExecNext;
   finally
     R.Free();
-  end;
-end;
-
-function LatinToUkr(const aStr: string): string;
-const
-  StrIn: string  = 'ABCDEFGHIKLMNOPQRSTUVWYZabcdefghiklmnopqrstuvwyz';
-  StrOut: string = 'АБЦДЕФГХІКЛМНОПКРСТУВВЙЗабцдефгхіклмнопкрстуввйз';
-var
-  i, Idx: integer;
-  c: string;
-begin
-  Result := '';
-  if (UTF8Length(StrIn) <> UTF8Length(StrOut)) then
-    Exit();
-
-  for i := 1 to UTF8Length(aStr) do
-  begin
-    c := UTF8Copy(aStr, i, 1);
-    Idx := Pos(c, StrIn);
-    if (Idx) > 0 then
-      Result := Result + UTF8Copy(StrOut, Idx, 1)
-    else
-      case c of
-        'X': Result := Result + 'КС';
-        'x': Result := Result + 'кс';
-        'J': Result := Result + 'ДЖ';
-        'j': Result := Result + 'дж';
-      else
-        Result := Result + c;
-      end;
-  end;
-end;
-
-function RemoveChars(const aStr, aRemove: string): string;
-var
-  i: integer;
-  c: string;
-begin
-  Result := '';
-  for i := 1 to UTF8Length(aStr) do
-  begin
-    c := UTF8Copy(aStr, i, 1);
-    if (Pos(c, aRemove) = 0) then
-      Result := Result + c;
   end;
 end;
 

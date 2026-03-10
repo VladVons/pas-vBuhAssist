@@ -1,17 +1,13 @@
-// Created: 2026.03.01
-// Author: Vladimir Vons <VladVons@gmail.com>
-
 program vAppUpd;
 
 {$mode objfpc}{$H+}
-{$apptype console}
 
 uses
-  Classes, SysUtils, CustApp, opensslsockets, URIParser, fpjson,  jsonparser, Process, 
-  uSys,  uHttp, uArchive, uVarUtil, uProtect,
-  fphttpclient;
+  Classes, SysUtils, CustApp, opensslsockets, URIParser, fpjson,  jsonparser, Process, fphttpclient,
+  uSys,  uHttp, uArchive, uVarUtil, uProtect;
 
-type
+  type
+  { TAppUpd }
   TAppUpd = class(TCustomApplication)
   private
     fLog: string;
@@ -25,12 +21,10 @@ type
     procedure ShowHelp(); virtual;
     procedure Log(const aStr: string);
     function DownloadWithCurl(const aUrl: string): string;
+  public
+    constructor Create(aOwner: TComponent); override;
+    destructor Destroy; override;
   end;
-
-var
-  AppUpd: TAppUpd;
-  {$R *.res}
-
 
 function TAppUpd.GetCommandLine(): string;
 var
@@ -171,7 +165,9 @@ begin
   // first download file. It takes some time to leave master application
   Log(Format('Download from %s', [aUrl]));
   // Unknown exception when run from another process. so use curl to download. fuck!
+  //Log('-x1');
   FileZip := GetUrlToFile(aUrl, GetTempDir());
+  //Log('-x2');
   // Unknown exception when run from another process even with curl fuck!
   //FileZip := DownloadWithCurl(aUrl);
 
@@ -276,8 +272,7 @@ var
 begin
   AppName := GetAppName();
   WriteLn(AppName, ' ver ', GetAppVer(), ' (', {$I %DATE%} + ')');
-  WriteLn(AppName +
-    ' --app=app.exe --dir=path\app --pid=<app PID> --delay=2000 --url=http://site.com/update.zip');
+  WriteLn(AppName + ' --app=app.exe --dir=path\app --pid=<app PID> --delay=2000 --url=http://site.com/update.zip');
   WriteLn('options:');
   WriteLn('--app       application to start after update');
   WriteLn('--app_ver   get app version (also --app_build)');
@@ -288,9 +283,25 @@ begin
   WriteLn('--url       remote ZIP file address');
 end;
 
+constructor TAppUpd.Create(aOwner: TComponent);
+begin
+  inherited Create(aOwner);
+  StopOnException:=True;
+end;
+
+destructor TAppUpd.Destroy;
+begin
+  inherited Destroy();
+end;
+
+var
+  AppUpd: TAppUpd;
+  {$R *.res}
+
 begin
   AppUpd := TAppUpd.Create(nil);
-  AppUpd.Title := 'App Updater';
+  AppUpd.Title:='vAppUpd';
   AppUpd.Run();
   AppUpd.Free();
 end.
+

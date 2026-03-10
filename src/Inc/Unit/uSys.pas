@@ -50,7 +50,8 @@ begin
 
   Result.ShowWindow := swoHide;
 
-  Result.Options := [poUsePipes];
+  Result.Options := [];
+  //Result.Options := [poUsePipes] //uncatched exception in slave;
   if (aWaitOnExit) then
     Result.Options := Result.Options + [poWaitOnExit];
 

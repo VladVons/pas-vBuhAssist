@@ -8,10 +8,12 @@ unit uSysVcl;
 interface
 
 uses
-  Classes, Windows, SysUtils, StrUtils, FileInfo, Process, LR_Class;
+  Classes, Windows, SysUtils, StrUtils, FileInfo, Process, LR_Class, LazUTF8;
 
 procedure ResourceLoadReport(const aName: string; aReport: TfrReport);
 function ResourceLoadString(const aName: string; aEncoding: TEncoding = Nil): string;
+function LatinToUkr(const aStr: string): string;
+function RemoveChars(const aStr, aRemove: string): string;
 
 implementation
 
@@ -47,12 +49,48 @@ begin
   end;
 end;
 
-function TestPas(): string;
+function LatinToUkr(const aStr: string): string;
+const
+  StrIn: string  = 'ABCDEFGHIKLMNOPQRSTUVWYZabcdefghiklmnopqrstuvwyz';
+  StrOut: string = 'АБЦДЕФГХІКЛМНОПКРСТУВВЙЗабцдефгхіклмнопкрстуввйз';
+var
+  i, Idx: integer;
+  c: string;
+begin
+  Result := '';
+  if (UTF8Length(StrIn) <> UTF8Length(StrOut)) then
+    Exit();
+
+  for i := 1 to UTF8Length(aStr) do
+  begin
+    c := UTF8Copy(aStr, i, 1);
+    Idx := Pos(c, StrIn);
+    if (Idx) > 0 then
+      Result := Result + UTF8Copy(StrOut, Idx, 1)
+    else
+      case c of
+        'X': Result := Result + 'КС';
+        'x': Result := Result + 'кс';
+        'J': Result := Result + 'ДЖ';
+        'j': Result := Result + 'дж';
+      else
+        Result := Result + c;
+      end;
+  end;
+end;
+
+function RemoveChars(const aStr, aRemove: string): string;
 var
   i: integer;
+  c: string;
 begin
-  for i := 1 to 10 do
-      WriteLn(i);
+  Result := '';
+  for i := 1 to UTF8Length(aStr) do
+  begin
+    c := UTF8Copy(aStr, i, 1);
+    if (Pos(c, aRemove) = 0) then
+      Result := Result + c;
+  end;
 end;
 
 initialization

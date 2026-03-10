@@ -18,8 +18,8 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
-      <RevisionNr Value="1"/>
-      <BuildNr Value="9"/>
+      <MinorVersionNr Value="1"/>
+      <BuildNr Value="3"/>
     </VersionInfo>
     <BuildModes>
       <Item Name="Default" Default="True"/>
@@ -30,19 +30,7 @@
     </PublishOptions>
     <RunParams>
       <FormatVersion Value="2"/>
-      <Modes>
-        <Mode Name="default">
-          <local>
-            <CommandLineParams Value="--log --app=vBuhAssist.exe --pid=1234 --url=https://download.1x1.com.ua/public/update/vBuhAssist/vBuhAssist_60.exe.zip --delay=1000 --dir=&quot;C:\Documents and Settings\snoVdalV\Desktop\pas\pas-vBuhAssist\src&quot;"/>
-          </local>
-        </Mode>
-      </Modes>
     </RunParams>
-    <RequiredPackages>
-      <Item>
-        <PackageName Value="LCL"/>
-      </Item>
-    </RequiredPackages>
     <Units>
       <Unit>
         <Filename Value="vAppUpd.lpr"/>
@@ -50,22 +38,6 @@
       </Unit>
       <Unit>
         <Filename Value="Inc\Unit\uSys.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="Inc\Unit\uHttp.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="Inc\Unit\uArchive.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="Inc\Unit\uVarUtil.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="Inc\Unit\uProtectTimer.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
     </Units>
@@ -79,18 +51,13 @@
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
       <OtherUnitFiles Value="Inc\Unit"/>
-      <UnitOutputDirectory Value="_lib2\$(TargetCPU)-$(TargetOS)"/>
+      <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
       <Debugging>
         <DebugInfoType Value="dsDwarf3"/>
       </Debugging>
     </Linking>
-    <Other>
-      <Verbosity>
-        <ShowLineNum Value="True"/>
-      </Verbosity>
-    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions>
