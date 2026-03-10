@@ -19,7 +19,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="11"/>
       <RevisionNr Value="2"/>
-      <BuildNr Value="67"/>
+      <BuildNr Value="68"/>
       <StringTable ProductName="vBuhAssist"/>
     </VersionInfo>
     <BuildModes>
@@ -315,7 +315,7 @@
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
       <OtherUnitFiles Value="Inc/Unit;Inc/Type;IncP/Form;IncP/Unit;IncP/DataModule;Report;Inc/Form"/>
-      <UnitOutputDirectory Value="_lib/$(TargetCPU)-$(TargetOS)"/>
+      <UnitOutputDirectory Value="_lib_vBuhAssist/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
       <Debugging>

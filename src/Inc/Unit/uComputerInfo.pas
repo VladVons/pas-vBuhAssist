@@ -53,7 +53,7 @@ begin
   if (ObjSet.Count > 0) then
   begin
     Obj := ObjSet.ItemIndex(0);
-    Result := VarToStr(Obj.Properties_.Item(WmiField).Value);
+    Result := Trim(VarToStr(Obj.Properties_.Item(WmiField).Value));
   end;
 end;
 

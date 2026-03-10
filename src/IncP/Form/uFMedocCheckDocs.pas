@@ -395,7 +395,7 @@ begin
     MenuItemRefreshClick(nil);
 
   Msg := Format('%s: %s %s, %s', [
-      TButton(Sender).Caption,
+      BitBtnFind.Caption,
       ComboBoxMonth.Text,
       ComboBoxYear.Text,
       ComboBoxDoc.Text
@@ -566,9 +566,10 @@ begin
   fFirmCodesLicensed := DmCommon.Licence_GetFromHttp();
   if (fFirmCodesLicensed.Count = 0) then
     Log.Print('i', 'Не знайдено ліцензій')
-  else
-    Log.Print('i', 'Знайдено ліцензії для кодів ' +
-      fFirmCodesLicensed.DelimitedText);
+  else begin
+    Log.Print('i', 'Знайдено ліцензії для кодів ' + fFirmCodesLicensed.DelimitedText);
+    QueryCurOpen();
+  end;
 
   Settings.SetItem('Licence', 'LastUpdate', DateTimeToStr(Now()));
 end;

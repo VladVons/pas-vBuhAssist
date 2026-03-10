@@ -9,7 +9,6 @@
 *.res
 *.json
 
-lib/
 _lib*/
 backup
 junk

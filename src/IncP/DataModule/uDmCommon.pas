@@ -96,11 +96,10 @@ var
   FirmCodes: TStringList;
   User, Passw: string;
 begin
+  FirmCodes := GetQueryField(DataSource, SQLQueryCodes, 'EDRPOU');
+  Log.Print('i', 'Запит ліцензій для кодів ' + FirmCodes.CommaText);
   if (TFLogin.Execute(User, Passw, 'Активація програми', 'Користувач', 'Ключ')) then
   begin
-    FirmCodes := GetQueryField(DataSource, SQLQueryCodes, 'EDRPOU');
-
-    //Log.Print('i', 'Запит ліцензій ' + FirmCodes.CommaText);
     Licence.OrderFromHttp(FirmCodes, aModule, User, Passw);
     if (Licence.LastErr.IsEmpty()) then
       Log.Print('i', 'Запит на отримання ліцензій відправлено')

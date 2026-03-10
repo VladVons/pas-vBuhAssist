@@ -26,6 +26,7 @@ type
     procedure LoadFromFile();
     function GetTypeFromHttp(const aType: string): TJSONObject;
     function GetFirmCodes(const aModule: string): TStringList;
+    function GetLicCount(): integer;
     procedure OrderFromHttp(aFirmCodes: TStringList; const aModule, aDealerName, aDealerPassw: string);
   end;
 
@@ -54,6 +55,14 @@ begin
   FreeAndNil(fJObjLic);
   inherited;
 end;
+
+function TLicence.GetLicCount(): integer;
+begin
+  Result := 0;
+  if (Assigned(fJObjLic)) and (Assigned(fJObjLic.Find('licences'))) then
+    Result := fJObjLic.Arrays['licences'].Count;
+end;
+
 
 function TLicence.Request(aParam: TJSONObject): TJSONObject;
 var
@@ -149,9 +158,11 @@ begin
 
     // get already encrypted data (more secure)
     Encrypted := JObj.get('licences', '');
-    StrToFile(Encrypted, fFile);
     Decrypted := StrDecrypt_AES(Encrypted, fCryptKey);
+
     fJObjLic := TJSONObject(GetJSON(Decrypted));
+    if (GetLicCount() > 0) then
+      StrToFile(Encrypted, fFile);
   end;
 end;
 
@@ -181,20 +192,20 @@ var
   JObjItem: TJSONObject;
 begin
   Result := TStringList.Create();
-  if (Assigned(fJObjLic)) and (Assigned(fJObjLic.Find('licences'))) then
+  if (GetLicCount() = 0) then
+     Exit();
+
+  Today := FormatDateTime('yyyy-mm-dd', Date);
+  JArr := fJObjLic.Arrays['licences'];
+  for i := 0 to JArr.Count - 1 do
   begin
-    Today := FormatDateTime('yyyy-mm-dd', Date);
-    JArr := fJObjLic.Arrays['licences'];
-    for i := 0 to JArr.Count - 1 do
+    JObjItem := JArr.Objects[i];
+    Till := JObjItem.Get('till', '');
+    if (JObjItem.Get('module', '') = aModule) and (Today <= Till) then
     begin
-      JObjItem := JArr.Objects[i];
-      Till := JObjItem.Get('till', '');
-      if (JObjItem.Get('module', '') = aModule) and (Today <= Till) then
-      begin
-        Code := JObjItem.Get('firm', '');
-        //Result.Add(Code);
-        Result.Values[Code] := Till;
-      end;
+      Code := JObjItem.Get('firm', '');
+      //Result.Add(Code);
+      Result.Values[Code] := Till;
     end;
   end;
 end;
