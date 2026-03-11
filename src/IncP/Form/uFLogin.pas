@@ -12,9 +12,7 @@ uses
   StdCtrls;
 
 type
-
   { TFLogin }
-
   TFLogin = class(TForm)
     ButtonOk: TButton;
     EditUser: TLabeledEdit;

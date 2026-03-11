@@ -70,4 +70,3 @@ begin
   for i := 0 to aFirms.Count - 1 do
     ComboBoxFirm.Items.Add(aFirms.Names[i]);
 end;
-

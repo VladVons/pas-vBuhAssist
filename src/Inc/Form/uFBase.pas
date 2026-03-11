@@ -12,7 +12,6 @@ uses
   uStateStore;
 
 type
-
   { TFBase }
   TFBase = class(TForm)
     LabelTitle: TLabel;

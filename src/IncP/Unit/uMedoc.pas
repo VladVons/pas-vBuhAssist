@@ -15,6 +15,7 @@ const
   cPerTypeAll = 500;
   cChooseAll  = '- Всі';
   cArrExcl: TStringArray = ('FJ-12%', 'FJ-13%', 'FJ-14%', 'PD%', 'Z0%');
+  cArrIncl: TStringArray = ('J12032%', 'J12042%');
 
 type
   TMedocIni = class(TSettings)

@@ -655,7 +655,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
   object DataSourceGridPrev: TDataSource[10]
     DataSet = SQLQueryGridPrev
     Left = 128
-    Top = 240
+    Top = 256
   end
   object SQLQueryGridPrev: TSQLQuery[11]
     FieldDefs = <    
@@ -814,8 +814,8 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Size = 8
     end
     object SQLQueryGridPrevFORM_NAME: TStringField
-      DisplayLabel = 'Документ'
-      DisplayWidth = 35
+      DisplayLabel = 'Звіт'
+      DisplayWidth = 50
       FieldKind = fkData
       FieldName = 'FORM_NAME'
       Index = 4

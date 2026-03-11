@@ -13,9 +13,7 @@ uses
   uFBase, uStateStore, uLog, uSys, uConst;
 
 type
-
   { TFSettings }
-
   TFSettings = class(TFBase)
     ButtonOk: TButton;
     CheckBoxUpdates: TCheckBox;
@@ -41,7 +39,6 @@ var
 implementation
 
 {$R *.lfm}
-
 { TFSettings }
 
 procedure TFSettings.ButtonOkClick(Sender: TObject);

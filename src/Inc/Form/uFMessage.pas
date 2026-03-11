@@ -12,7 +12,6 @@ uses
   uFBase;
 
 type
-
   { TFMessage }
   TFMessage = class(TFBase)
     ButtonOk: TButton;

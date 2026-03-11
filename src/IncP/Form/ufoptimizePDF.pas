@@ -12,9 +12,7 @@ uses
   uFBase, uGhostScript, uLog, uSettings, uSys, uSysVcl, uVarUtil, uStateStore;
 
 type
-
   { TFOptimizePDF }
-
   TFOptimizePDF = class(TFBase)
     ButtonConvert: TButton;
     ButtonDirIn: TButton;
@@ -135,6 +133,4 @@ begin
   StateStore.Save(self);
 end;
 
-
 end.
-

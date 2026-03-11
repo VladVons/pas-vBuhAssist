@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, ExtCtrls, fpjson, DateUtils, LConvEncoding, Dialogs, System.UITypes, Process, Windows,
-  uLog, uSettings, uLicence, uFMessage, uSys;
+  uLog, uSettings, uLicence, uFMessage, uSys, uConst;
 
 type
   TAnnonce = class(TSettings)
@@ -176,7 +176,7 @@ begin
       if (not Next.IsEmpty()) and (StrToDateTime(Next) > Now()) then
          continue;
 
-      Delay := JItem.Get('delay', 10000);
+      Delay := JItem.Get('delay', cDelayAnnonce);
 
       Timer := TTimer.Create(Nil);
       Timer.OnTimer := @OnTimer;

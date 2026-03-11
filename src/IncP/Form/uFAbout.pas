@@ -13,9 +13,7 @@ uses
   uSys, uVarUtil, uConst;
 
 type
-
   { TFAbout }
-
   TFAbout = class(TForm)
     Image1: TImage;
     LabeledEditMail: TLabeledEdit;
@@ -40,8 +38,6 @@ var
 implementation
 
 {$R *.lfm}
-
-{ TFAbout }
 
 procedure TFAbout.FormCreate(Sender: TObject);
 var

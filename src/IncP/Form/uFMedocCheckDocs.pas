@@ -17,7 +17,6 @@ uses
   uQuery, uMedoc, uDmCommon, uProtectTimer, uProtectDbg, uConst;
 
 type
-
   { TFMedocCheckDocs }
   TFMedocCheckDocs = class(TFBase)
     BitBtnRunMedoc: TBitBtn;
@@ -110,7 +109,7 @@ type
     procedure InitEmptyGrid();
     procedure InitMedocControl();
     function IsDemo(aCode: string; aField: TField): boolean;
-    procedure QueryCharcodeNot(aQuery: TSQLQuery; aArr: TStringArray);
+    procedure QueryCharcodeNot(aQuery: TSQLQuery; aArrExcl, aArrIncl: TStringArray);
   public
   end;
 
@@ -170,15 +169,22 @@ begin
   end;
 end;
 
-procedure TFMedocCheckDocs.QueryCharcodeNot(aQuery: TSQLQuery; aArr: TStringArray);
+procedure TFMedocCheckDocs.QueryCharcodeNot(aQuery: TSQLQuery; aArrExcl, aArrIncl: TStringArray);
 var
-  Macro, Str: string;
+  Macro, StrExcl, StrIncl: string;
   SL1, SL2: TStringList;
 begin
-  SL1 := TStringList.Create().AddArray(aArr);
+  SL1 := TStringList.Create().AddArray(aArrExcl);
   SL2 := TStringList.Create().AddExtDelim(SL1);
-  Str := QuotedStr(SL2.GetJoin('|'));
-  Macro := Format(' AND FORM.CHARCODE NOT SIMILAR TO (%s)', [Str]);
+  StrExcl := QuotedStr(SL2.GetJoin('|'));
+  if (Length(aArrIncl) = 0) then
+    Macro := Format(' AND (FORM.CHARCODE NOT SIMILAR TO (%s))', [StrExcl])
+  else begin
+    SL1.Clear();
+    SL1.AddArray(aArrIncl);
+    StrIncl := QuotedStr(SL1.GetJoin('|'));
+    Macro := Format(' AND ((FORM.CHARCODE NOT SIMILAR TO (%s)) OR (FORM.CHARCODE SIMILAR TO (%s)))', [StrExcl, StrIncl]);
+  end;
   aQuery.MacroByName('_COND_CHARCODE_NOT').Value := Macro;
 
   SL1.Free();
@@ -222,7 +228,7 @@ begin
   SQLQueryGridPrev.MacroByName('_COND_CHARCODES').Value := StrMacro;
   SL.Free();
 
-  QueryCharcodeNot(SQLQueryGridPrev, Concat(cArrExcl, ['FJ-30010%']));
+  QueryCharcodeNot(SQLQueryGridPrev, Concat(cArrExcl, ['FJ-30010%']), cArrIncl);
 
   //Log.Print('i', ExpandSQL(SQLQueryGridPrev));
 
@@ -290,7 +296,7 @@ begin
     Macro := Format(' AND (ORG.EDRPOU = %s)', [Code]);
   SQLQueryGridCur.MacroByName('_COND_ORG').Value := Macro;
 
-  QueryCharcodeNot(SQLQueryGridCur, cArrExcl);
+  QueryCharcodeNot(SQLQueryGridCur, cArrExcl, []);
 
   Macro := ', '''' AS FJ';
   if (Pos('FJ-0500110', ComboBoxDoc.Text) = 1) then

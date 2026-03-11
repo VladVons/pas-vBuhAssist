@@ -8,7 +8,6 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs;
 
 type
-
   { TFHtmlView }
   TFHtmlView = class(TForm)
     procedure FormCreate(Sender: TObject);
