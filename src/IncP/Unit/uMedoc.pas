@@ -12,10 +12,12 @@ uses
   uSettings, uVarUtil;
 
 const
-  cPerTypeAll = 500;
-  cChooseAll  = '- Всі';
+  cPerTypeAll  = 500;
+  cChooseAll   = '- Всі';
+  cBaseCodeLen = 6;
   cArrExcl: TStringArray = ('FJ-12%', 'FJ-13%', 'FJ-14%', 'PD%', 'Z0%');
-  cArrIncl: TStringArray = ('J12032%', 'J12042%');
+  //cArrIncl: TStringArray = ('J12032%', 'J12042%');
+  cArrDayDoc: TStringArray = ('J02104', 'J02107');
 
 type
   TMedocIni = class(TSettings)

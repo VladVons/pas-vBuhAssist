@@ -192,8 +192,6 @@ begin
 end;
 
 function TFMedocCheckDocs.QueryPrevOpen(const aCode: string; aPerType, aYear, aMonth: integer): integer;
-const
-  cBaseLen = 6;
 var
   Year, Month, Day: word;
   Str, StrMacro: string;
@@ -210,25 +208,25 @@ begin
 
   SQLQueryGridPrev.ParamByName('_PERTYPE').Value := aPerType;
 
+  //if (MatchStr('J02104', cArrDayDoc)) then
+
   DatePrev := PrevPeriodDate(PerTypeToChar(aPerType), aYear, aMonth);
   DecodeDate(DatePrev, Year, Month, Day);
   Str := FormatDateTime('yyyy-mm-dd', EncodeDate(Year, Month, 1));
   SQLQueryGridPrev.MacroByName('_PERDATE').Value := QuotedStr(Str);
 
   StrMacro := '';
-  SL := FieldToStrings(SQLQueryGridCur, 'CHARCODE');
+  SL := FieldToStrings(SQLQueryGridCur, 'CHARCODE').Uniq();
   if (SL.Count > 0) then
   begin
-    //SL.Quoted();
-    //StrMacro := Format(' AND (FORM.CHARCODE NOT IN (%s))', [SL.CommaText]);
-
-    SL.Left(cBaseLen).Quoted();
-    StrMacro := Format(' AND (LEFT(FORM.CHARCODE, %d) NOT IN (%s))', [cBaseLen ,SL.CommaText]);
+     SL.Left(cBaseCodeLen).Quoted();
+     //SL.Left(cBaseCodeLen).DelArray(cArrDayDoc).Quoted();
+     StrMacro := Format(' AND (LEFT(FORM.CHARCODE, %d) NOT IN (%s))', [cBaseCodeLen ,SL.CommaText]);
   end;
   SQLQueryGridPrev.MacroByName('_COND_CHARCODES').Value := StrMacro;
   SL.Free();
 
-  QueryCharcodeNot(SQLQueryGridPrev, Concat(cArrExcl, ['FJ-30010%']), cArrIncl);
+  QueryCharcodeNot(SQLQueryGridPrev, Concat(cArrExcl, ['FJ-30010%']), []);
 
   //Log.Print('i', ExpandSQL(SQLQueryGridPrev));
 
@@ -284,8 +282,8 @@ begin
   Str := UpperCase(ComboBoxDoc.Items.Names[ComboBoxDoc.ItemIndex]);
   if (Str <> cChooseAll) then
   begin
-    SL := TStringList.Create().AddExtDelim(Str).Quoted();
-    Macro := Format(' AND (FORM.CHARCODE IN (%s))', [SL.CommaText]);
+    SL := TStringList.Create().AddExtDelim(Str).Left(cBaseCodeLen).Quoted();
+    Macro := Format(' AND (LEFT(FORM.CHARCODE, %d) IN (%s))', [cBaseCodeLen ,SL.CommaText]);
     FreeAndNil(SL);
   end;
   SQLQueryGridCur.MacroByName('_COND_CHARCODE').Value := Macro;

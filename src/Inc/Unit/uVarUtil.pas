@@ -17,12 +17,15 @@ type
     function AddJson(const aArr : TJSONArray): TStringList;
     function AddExtDelim(const aStr: string; const aDelim: string = '-'): TStringList;
     function AddExtDelim(const aSL: TStringList; const aDelim: string = '-'): TStringList;
+    function DelArray(const aArr : TStringArray): TStringList;
     function GetJoin(const aDelim: string): string;
     function GetJson(): TJSONArray;
     function Formated(const aFormat: string): TStringList;
     function Left(aLen: integer): TStringList;
     function Quoted(): TStringList;
+    function Quoted(aChar: char): TStringList;
     function Replace(const aFind, aRep: string): TStringList;
+    function Uniq(): TStringList;
   end;
 
 function ExtractLatin(const aString: string): string;
@@ -45,6 +48,7 @@ var
 begin
   for i := 0 to Length(aArr) - 1 do
       Add(aArr[i]);
+
   Result := self;
 end;
 
@@ -54,6 +58,7 @@ var
 begin
   for i := 0 to aArr.Count - 1 do
      Add(aArr[i].AsString);
+
   Result := self;
 end;
 
@@ -80,6 +85,33 @@ var
 begin
   for i := 0 to aSL.Count - 1 do
     AddExtDelim(aSL[i], aDelim);
+
+  Result := self;
+end;
+
+function TStringListHelper.DelArray(const aArr : TStringArray): TStringList;
+var
+  Idx: integer;
+  Str: string;
+begin
+  for Str in aArr do
+  begin
+    Idx := IndexOf(Str);
+    if (Idx <> -1) then
+      Delete(Idx);
+  end;
+
+  Result := self;
+end;
+
+function TStringListHelper.Uniq(): TStringList;
+var
+  i: Integer;
+begin
+  for i := Count - 1 downto 0 do
+    if (IndexOf(self[i]) <> i) then
+      Delete(i);
+
   Result := self;
 end;
 
@@ -89,8 +121,20 @@ var
 begin
   for i := 0 to Count - 1 do
     self[i] := QuotedStr(self[i]);
+
   Result := self;
 end;
+
+function TStringListHelper.Quoted(aChar: char): TStringList;
+var
+  i: integer;
+begin
+  for i := 0 to Count - 1 do
+    self[i] := aChar + self[i] + aChar;
+
+  Result := self;
+end;
+
 
 function TStringListHelper.Formated(const aFormat: string): TStringList;
 var
@@ -98,6 +142,7 @@ var
 begin
   for i := 0 to Count - 1 do
     self[i] := Format(aFormat, [self[i]]);
+
   Result := self;
 end;
 
@@ -108,6 +153,7 @@ begin
   for i := 0 to Count - 1 do
     if (Self[i].Length > aLen) then
       self[i] := Copy(self[i], 1, aLen);
+
   Result := self;
 end;
 
@@ -129,6 +175,7 @@ var
 begin
   for i := 0 to Count - 1 do
     self[i] := StringReplace(self[i], aFind, aRep, [rfReplaceAll]);
+
   Result := self;
 end;
 

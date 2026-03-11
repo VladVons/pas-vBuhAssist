@@ -58,6 +58,8 @@ begin
   ComboBoxDoc.Items.AddPair('FJ-0200126', 'Податкова декларація з податку на додану вартість');
   ComboBoxDoc.Items.AddPair('FJ-0500110', 'Податковий розрахунок сум доходу ... ЄСВ');
   ComboBoxDoc.Items.AddPair('FJ-0209513', 'Податкова декларація акцизного податку');
+  ComboBoxDoc.Items.AddPair('FJ-0210401', 'Довідка про зведені за добу залишки ПАЛЬНЕ');
+  ComboBoxDoc.Items.AddPair('FJ-0210702', 'Довідка про зведені за добу залишки СПИРТ');
   ComboBoxDoc.ItemIndex := 0;
 end;
 

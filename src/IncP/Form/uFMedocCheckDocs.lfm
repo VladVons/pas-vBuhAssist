@@ -2,33 +2,33 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
   Left = 407
   Height = 418
   Top = 171
-  Width = 680
+  Width = 724
   BorderStyle = bsNone
   Caption = 'Звітне стикування'
   ClientHeight = 418
-  ClientWidth = 680
+  ClientWidth = 724
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   inherited PanelTitle: TPanel
     Height = 40
-    Width = 680
+    Width = 724
     ClientHeight = 40
-    ClientWidth = 680
+    ClientWidth = 724
   end
   object Panel1: TPanel[1]
     Left = 0
     Height = 184
     Top = 40
-    Width = 680
+    Width = 724
     Align = alTop
     ClientHeight = 184
-    ClientWidth = 680
+    ClientWidth = 724
     TabOrder = 1
     object ComboBoxPath: TComboBox
       Left = 120
       Height = 28
       Top = 8
-      Width = 448
+      Width = 552
       ItemHeight = 20
       TabOrder = 0
       OnEditingDone = ComboBoxPathEditingDone
@@ -37,17 +37,17 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Left = 120
       Height = 28
       Top = 40
-      Width = 224
+      Width = 168
       DropDownCount = 24
       ItemHeight = 20
       ReadOnly = True
       TabOrder = 2
     end
     object ComboBoxYear: TComboBox
-      Left = 352
+      Left = 296
       Height = 28
       Top = 40
-      Width = 215
+      Width = 143
       DropDownCount = 20
       ItemHeight = 20
       ReadOnly = True
@@ -58,7 +58,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Left = 120
       Height = 28
       Top = 72
-      Width = 224
+      Width = 168
       DropDownCount = 20
       ItemHeight = 20
       ReadOnly = True
@@ -68,7 +68,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Left = 121
       Height = 28
       Top = 104
-      Width = 447
+      Width = 551
       DropDownCount = 20
       ItemHeight = 20
       ReadOnly = True
@@ -105,9 +105,9 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       Caption = 'ЄДРПОУ'
     end
     object ButtonPath: TButton
-      Left = 568
+      Left = 672
       Height = 25
-      Top = 8
+      Top = 11
       Width = 24
       Caption = '...'
       TabOrder = 1
@@ -165,7 +165,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     Left = 0
     Height = 194
     Top = 224
-    Width = 680
+    Width = 724
     ActivePage = TabSheetCur
     Align = alClient
     TabIndex = 0
@@ -174,12 +174,12 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     object TabSheetCur: TTabSheet
       Caption = 'Поточні'
       ClientHeight = 161
-      ClientWidth = 672
+      ClientWidth = 716
       object DbGridCur: TDBGrid
         Left = 0
         Height = 161
         Top = 0
-        Width = 672
+        Width = 716
         Align = alClient
         Color = clWindow
         Columns = <>
@@ -195,13 +195,13 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     object TabSheetPrev: TTabSheet
       Caption = 'Пропоновані'
       ClientHeight = 161
-      ClientWidth = 672
+      ClientWidth = 716
       TabVisible = False
       object DBGridPrev: TDBGrid
         Left = 0
         Height = 161
         Top = 0
-        Width = 672
+        Width = 716
         Align = alClient
         Color = clWindow
         Columns = <>

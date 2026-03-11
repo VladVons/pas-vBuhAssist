@@ -18,5 +18,6 @@ upx.exe -5 %FileExe%
 vAppUpd.exe --log --crc=%FileExe%
 7z.exe a %FileArch% %FileExe%
 wput.exe %FileArch% ftp://vladvons:19710819@oster.com.ua/www/download/public/update/vBuhAssist/
+cp %FileExe% ..
 del %FileArch%
 del %FileExe%
