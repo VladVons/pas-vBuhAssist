@@ -13,7 +13,7 @@ uses
   StdCtrls, DBGrids, Grids,
   ExtCtrls, Buttons, Menus, Dialogs, ComCtrls, LR_Class, LR_DBSet,
   LR_PGrid, LR_Desgn, DB, fpjson,
-  Math, uFBase, uSys, uLog, uLicence, uSettings, uVarUtil, uStateStore,
+  Math, uFBase, uSys, uLog, uLicence, uSettings, uVarUtil, uVarHelper, uStateStore,
   uQuery, uMedoc, uDmCommon, uProtectTimer, uProtectDbg, uConst;
 
 type
@@ -262,7 +262,6 @@ begin
 
   PerType := -1;
   MonthToType(PerType, Month);
-
 
   MacroPerType := '';
   MacroPerDate := '';

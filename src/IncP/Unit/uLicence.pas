@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, fpjson,
-  uUserData, uHttp, uCryptAES, uSys, uConst, uLog, uComputerInfo, uVarUtil;
+  uUserData, uHttp, uCryptAES, uSys, uConst, uLog, uComputerInfo, uVarHelper;
 
 type
   TLicence = class(TUserData)
