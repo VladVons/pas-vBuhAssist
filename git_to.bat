@@ -10,6 +10,6 @@ git status
 git add .
 set /p msg="Enter commit message: "
 git commit -m "%msg%"
-git push origin main
-rem git push origin main --force
+rem git push origin main
+git push origin main --force
 pause
