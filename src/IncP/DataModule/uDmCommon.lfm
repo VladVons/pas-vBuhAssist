@@ -1,4 +1,5 @@
 object DmCommon: TDmCommon
+  OnDestroy = DataModuleDestroy
   OldCreateOrder = False
   Height = 455
   HorizontalOffset = 593

@@ -21,9 +21,11 @@ type
     SQLQueryCodes: TSQLQuery;
     SQLQueryTablesMain: TSQLQuery;
     SQLTransaction: TSQLTransaction;
+    procedure DataModuleDestroy(Sender: TObject);
   private
   public
     procedure Connect(const aName: string; aPort: integer);
+    procedure Close();
     function GetTablesMain(): TStringList;
     function Licence_GetFromHttp(): TStringList;
     procedure Licence_OrderToHttp(const aModule: string);
@@ -42,18 +44,18 @@ begin
   IBConnection.UserName := 'SYSDBA';
   IBConnection.Password := 'masterkey';
 
-  if (aPort > 0) then
+  if (aPort = 0) then
   begin
-    IBConnection.HostName := 'localhost';
-    IBConnection.Port := aPort;
-  end else begin
     IBConnection.HostName := '';
     IBConnection.Port := 0;
+  end else begin
+    IBConnection.HostName := 'localhost';
+    IBConnection.Port := aPort;
   end;
 
   IBConnection.DatabaseName := aName;
+  IBConnection.Connected := False;
   try
-    IBConnection.Connected := False;
     IBConnection.Connected := True;
   except
     on E: EDatabaseError do
@@ -112,6 +114,17 @@ end;
 function TDmCommon.GetTablesMain(): TStringList;
 begin
   Result := GetQueryField(DataSource, SQLQueryTablesMain, 'TABLE_NAME');
+end;
+
+procedure TDmCommon.Close();
+begin
+  if (IBConnection.Connected) then
+    IBConnection.Connected := False;
+end;
+
+procedure TDmCommon.DataModuleDestroy(Sender: TObject);
+begin
+  Close();
 end;
 
 end.

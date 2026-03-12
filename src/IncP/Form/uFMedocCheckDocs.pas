@@ -157,14 +157,18 @@ end;
 procedure TFMedocCheckDocs.ConnectToDB();
 var
   JObj: TJSONObject;
-  DbName: string;
+  DbName, Port: string;
 begin
   JObj := GetCurPathObj();
   DbName := JObj.Get('db', '');
   if (not DmCommon.IBConnection.Connected) or
     (DmCommon.IBConnection.DatabaseName <> DbName) then
   begin
-    DmCommon.Connect(DbName, JObj.Get('port', 0));
+    Port := JObj.Get('port', '');
+    if (Port.IsEmpty()) then
+       Port := '0';
+
+    DmCommon.Connect(DbName, StrToInt(Port));
     fTablesMain := DmCommon.GetTablesMain();
   end;
 end;
@@ -654,7 +658,7 @@ end;
 procedure TFMedocCheckDocs.InitMedocControl();
 var
   i: integer;
-  Str: string;
+  Path, Port: string;
   BtnEnable: boolean;
   JObj: TJSONObject;
 begin
@@ -662,8 +666,9 @@ begin
   for i := 0 to fJMedocApp.Count - 1 do
   begin
     JObj := fJMedocApp.Objects[i];
-    Str := JObj.Get('path', '');
-    ComboBoxPath.Items.AddObject(Str, JObj);
+    Path := JObj.Get('path', '');
+    Port := JObj.Get('port', '');
+    ComboBoxPath.Items.AddObject(Path, JObj);
   end;
 
   BtnEnable := (fJMedocApp.Count > 0);

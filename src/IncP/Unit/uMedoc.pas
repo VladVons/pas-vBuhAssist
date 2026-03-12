@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, StrUtils, XMLRead, DOM, LConvEncoding, Registry, fpjson,
-  uSettings, uVarUtil;
+  uSettings, uVarUtil, uHttp;
 
 const
   cPerTypeAll  = 500;
@@ -82,11 +82,13 @@ begin
 end;
 
 function TMedocIni.GetPort(const aDir: string): string;
+const
+  cPort = '3050';
 begin
+  Result := '';
   if (DirectoryExists(ConcatPaths([aDir, 'client']))) then
-     Result := '3050'
-  else
-     Result := ''
+    if (IsPortOpen('localhost', cPort)) then
+      Result := cPort;
 end;
 
 function TMedocIni.DirToFileApp(const aDir: string): string;
@@ -192,7 +194,7 @@ end;
 function TMedocIni.ToJson(): TJSONArray;
 var
   i: integer;
-  App, Section: string;
+  App, Section, Port, Db: string;
   SL: TStringList;
   Obj: TJSONObject;
 begin
@@ -206,10 +208,13 @@ begin
       App := ConcatPaths([Section, 'ezvit.exe']);
       if (FileExists(App)) then
       begin
+        Db := GetItem(Section, 'db', '');
+        Port := GetItem(Section, 'port', '');
+
         Obj := TJSONObject.Create();
         Obj.Add('path', Section);
-        Obj.Add('db', GetItem(Section, 'db', ''));
-        Obj.Add('port', GetItem(Section, 'port', ''));
+        Obj.Add('db', Db);
+        Obj.Add('port', Port);
         Result.Add(Obj);
       end;
     end;

@@ -1,0 +1,51 @@
+function IsPortOpenSynapse(const aHost: string; aPort: string; TimeoutMS: Integer): Boolean;
+var
+  Sock: TTCPBlockSocket;
+begin
+  Sock := TTCPBlockSocket.Create();
+  try
+    Sock.ConnectionTimeout := TimeoutMS;
+    Sock.Connect(aHost, aPort);
+    Result := (Sock.LastError = 0);
+  finally
+    Sock.Free();
+  end;
+end;
+
+
+function PostJSON(const aURL: string; aJSON: TJSONObject): TJSONObject;
+var
+  http: THTTPSend;
+  jsonData: TStringStream;
+  responseStr: string;
+begin
+  Result := nil;
+  http := THTTPSend.Create;
+  try
+    jsonData := TStringStream.Create(aJSON.AsJSON, TEncoding.UTF8);
+    try
+      http.Headers.Clear;
+      http.Headers.Add('Content-Type: application/json; charset=UTF-8');
+      http.Headers.Add('Accept: application/json');
+      http.Headers.Add('Connection: close');
+
+      http.Document.LoadFromStream(jsonData);
+      http.Document.Position := 0;
+
+      if http.HTTPMethod('POST', aURL) then
+      begin
+        responseStr := http.Document.ReadAnsiString;
+        if (http.ResultCode = 200) and (responseStr <> '') then
+          Result := TJSONObject(GetJSON(responseStr))
+        else
+          Writeln('HTTP error: ', http.ResultCode, ' body: ', responseStr);
+      end
+      else
+        Writeln('HTTP error: ', http.ResultCode);
+    finally
+      jsonData.Free;
+    end;
+  finally
+    http.Free;
+  end;
+end;

@@ -34,6 +34,10 @@ begin
   Application.Initialize();
   Application.CreateForm(TDmCommon, DmCommon);
   Application.CreateForm(TFMain, FMain);
-  Application.Run();
+  try
+    Application.Run();
+  finally
+    DmCommon.Close();
+  end;
 end.
 

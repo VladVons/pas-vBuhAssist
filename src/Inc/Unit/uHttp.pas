@@ -10,11 +10,14 @@ unit uHttp;
 interface
 
 uses
-  Classes, SysUtils, fphttpclient, opensslsockets, fpjson;
+  Classes, SysUtils, fphttpclient, opensslsockets, fpjson, Winsock, Sockets;
 
 function PostJSON(const aURL: string; aJSON: TJSONObject): TJSONObject;
 function GetUrlToString(const aURL: string; out aData: string): integer;
 function GetUrlToFile(const aURL, aDir: string; aFileName: string = ''): string;
+function IsPortOpen(const aHost, aPort: string): Boolean;
+function HostToIP(const aHost: string): string;
+
 
 implementation
 
@@ -89,6 +92,50 @@ begin
     FreeAndNil(Client);
     FreeAndNil(FS);
   end;
+end;
+
+function HostToIP(const aHost: string): string;
+var
+  H: PHostEnt;
+  Addr: LongWord;
+begin
+  Result := '';
+  H := GetHostByName(PChar(aHost));
+  if Assigned(H) and (H^.h_addr_list[0] <> nil) then
+  begin
+    Addr := PLongWord(H^.h_addr_list[0])^;
+    Result := Format('%d.%d.%d.%d',
+      [Addr and $FF,
+       (Addr shr 8) and $FF,
+       (Addr shr 16) and $FF,
+       (Addr shr 24) and $FF]);
+  end;
+end;
+
+function IsPortOpen(const aHost, aPort: string): Boolean;
+var
+  Sock: LongInt;
+  Addr: TSockAddr;
+  Ip: string;
+begin
+  Result := False;
+
+  Sock := fpSocket(AF_INET, SOCK_STREAM, 0);
+  if Sock < 0 then
+    Exit;
+
+  Ip := HostToIP(aHost);
+  if (Ip.IsEmpty()) then
+    Exit;
+
+  Addr := Default(TSockAddr);
+  Addr.sin_family := AF_INET;
+  Addr.sin_port := htons(StrToInt(aPort));
+  Addr.sin_addr := StrToNetAddr(Ip);
+  if fpConnect(Sock, @Addr, SizeOf(Addr)) = 0 then
+    Result := True;
+
+  CloseSocket(Sock);
 end;
 
 initialization
