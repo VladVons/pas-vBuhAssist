@@ -24,6 +24,7 @@ type
     function GetArray(): TStringArray;
     function GetJoin(const aDelim: string): string;
     function GetJson(): TJSONArray;
+    function GetLast(aIdx: integer = 0): string;
     function Formated(const aFormat: string): TStringList;
     function Intersect(const aSL: TStrings): TStringList;
     function Left(aLen: integer): TStringList;
@@ -108,6 +109,15 @@ begin
       Delete(i);
 
   Result := Self;
+end;
+
+function TStringListHelper.GetLast(aIdx: integer): string;
+begin
+  aIdx := Self.Count - 1 - aIdx;
+  if (aIdx >= 0) and (aIdx < Self.Count) then
+    Result := Self[aIdx]
+  else
+    Result := '';
 end;
 
 function TStringListHelper.Uniq(): TStringList;

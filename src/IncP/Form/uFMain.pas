@@ -11,7 +11,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList, Windows, ExtCtrls,
   ComCtrls, StdCtrls, fpjson,
   uFAbout, uFMedocCheckDocs, uFOptimizePDF, uFSettings, uFLogin, uFMessage,
-  uWinManager, uLicence, uLog, uSettings, uStateStore, uSys, uSysVcl, uConst, uProtectTimer, uAnnonce, uMedoc;
+  uWinManager, uLicence, uLog, uSettings, uStateStore, uSys, uSysVcl, uConst, uProtectTimer, uAnnonce, uMedoc, uVarHelper;
 
 type
   { TFMain }
@@ -63,6 +63,7 @@ type
     procedure CheckPassw();
     procedure CheckUserAgreement();
     procedure CheckAnnonce();
+    procedure FormsLoad();
     function UserAgreement(aConfirm: boolean): boolean;
     procedure WMShowMe(var aMsg: TMessage); message TOneInstance.WM_SHOWME;
   public
@@ -197,7 +198,38 @@ begin
       TimerAnnonce.Enabled := True;
     end;
   end;
+end;
 
+procedure TFMain.FormsLoad();
+const
+  cSect = 'Forms';
+var
+  i: integer;
+  SL: TStringList;
+  Cls: TClass;
+begin
+  RegisterClasses([TFMedocCheckDocs, TFOptimizePDF, TFSettings]);
+  WinManager := TWinManager.Create(PageControl1, PopupMenu1);
+
+  SL := Settings.GetSection(cSect);
+  try
+    if (SL.Count = 0) then
+    begin
+      SL.Add('TFMedocCheckDocs');
+      Settings.SetItem(cSect, SL.GetLast(), 1);
+    end;
+
+    for i := 0 to SL.Count - 1 do
+      if (Settings.GetItem(cSect, SL[i], 0) = 1) then
+      begin
+        Cls := GetClass(SL[i]);
+        if (Assigned(Cls)) then
+          WinManager.Add(TFormClass(Cls));
+      end;
+    WinManager.SetActivePage(0);
+  finally
+    SL.Free();
+  end;
 end;
 
 procedure TFMain.FormCreate(Sender: TObject);
@@ -221,14 +253,7 @@ begin
   OneInstance.Register(Handle);
   OneInstance.Free();
 
-  WinManager := TWinManager.Create(PageControl1, PopupMenu1);
-  WinManager.Adds([
-    TFMedocCheckDocs,
-    //TFOptimizePDF,
-    //TFHtmlView,
-    TFSettings
-  ]);
-  WinManager.SetActivePage(0);
+  FormsLoad();
 
   CheckPassw();
   CheckAnnonce();
@@ -241,7 +266,6 @@ procedure TFMain.FormDestroy(Sender: TObject);
 begin
   Log.Print('i', 'Завершення роботи');
 end;
-
 
 end.
 
