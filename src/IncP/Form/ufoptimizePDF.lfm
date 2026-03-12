@@ -1,19 +1,21 @@
 inherited FOptimizePDF: TFOptimizePDF
   Left = 276
-  Height = 190
-  Width = 390
+  Height = 258
+  Width = 474
   Caption = 'Оптимізація PDF'
-  ClientHeight = 190
-  ClientWidth = 390
+  ClientHeight = 258
+  ClientWidth = 474
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   inherited PanelTitle: TPanel
+    Width = 474
+    ClientWidth = 474
     TabOrder = 6
   end
   object ButtonConvert: TButton[1]
     Left = 24
     Height = 25
-    Top = 136
+    Top = 152
     Width = 72
     Caption = 'Виконати'
     TabOrder = 0
@@ -21,37 +23,37 @@ inherited FOptimizePDF: TFOptimizePDF
   end
   object LabeledEditDirIn: TLabeledEdit[2]
     Left = 24
-    Height = 23
-    Top = 24
+    Height = 28
+    Top = 40
     Width = 296
-    EditLabel.Height = 15
+    EditLabel.Height = 20
     EditLabel.Width = 296
     EditLabel.Caption = 'Папка вхідна'
     TabOrder = 1
   end
   object LabeledEditDirOut: TLabeledEdit[3]
     Left = 24
-    Height = 23
-    Top = 72
+    Height = 28
+    Top = 88
     Width = 296
-    EditLabel.Height = 15
+    EditLabel.Height = 20
     EditLabel.Width = 296
     EditLabel.Caption = 'Папка вихідна'
     TabOrder = 2
   end
   object ButtonDirIn: TButton[4]
-    Left = 328
+    Left = 320
     Height = 25
-    Top = 22
+    Top = 43
     Width = 24
     Caption = '...'
     TabOrder = 3
     OnClick = ButtonDirInClick
   end
   object ButtonDirOut: TButton[5]
-    Left = 328
+    Left = 320
     Height = 25
-    Top = 70
+    Top = 91
     Width = 24
     Caption = '...'
     TabOrder = 4
@@ -59,14 +61,14 @@ inherited FOptimizePDF: TFOptimizePDF
   end
   object CheckBoxCheckName: TCheckBox[6]
     Left = 24
-    Height = 19
-    Top = 104
-    Width = 146
+    Height = 24
+    Top = 120
+    Width = 184
     Caption = 'Контроль назви файлів'
     TabOrder = 5
   end
   object SelectDirectoryDialog1: TSelectDirectoryDialog[7]
-    Left = 136
-    Top = 136
+    Left = 384
+    Top = 40
   end
 end
