@@ -6,7 +6,7 @@
 function Api($aData)
 {
     $DataJson = $aData | ConvertTo-Json -Compress
-    $File=$aData['type'] + '.json'
+    $File = $aData['user'] + '_' + $aData['type'] + '.json'
 
     Invoke-WebRequest "https://windows.cloud-server.com.ua/api" `
         -Method POST `
@@ -22,7 +22,9 @@ function Api($aData)
 $Data = @{
   type = 'get_licences_user'
   app  = 'vBuhAssist'
+  #count = $true
   #date = '2026-03-05'
+  date = '2026-03'
   user = 'yuta'
   passw = 'xxxx'
 }

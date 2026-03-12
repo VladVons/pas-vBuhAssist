@@ -20,7 +20,7 @@ Api()
 #Api '{"type":"get_licence","app":"vBuhAssist", "module": "FMedocCheckDocs", "firms":["24620181","40050963", "24620182"]}'
 
 #Api '{"type":"get_licences_user", "app": "vBuhAssist", "user": "yuta", "passw": "26022026"}'
-Api '{"type":"get_licences_user", "app": "vBuhAssist", "user": "yuta", "passw": "26022026", "date":"2026-03"}'
+Api '{"type":"get_licences_user", "app": "vBuhAssist", "user": "yuta", "passw": "26022026", "date":"2026-03", "count": true}'
 
 #Api '{"type":"order_licence","app":"vBuhAssist", "module": "FMedocCheckDocs", "user":"yuta","passw":"26022026","firms":["24620183"]}'
 
