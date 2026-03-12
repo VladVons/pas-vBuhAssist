@@ -28,7 +28,7 @@ type
     procedure Close();
     function GetTablesMain(): TStringList;
     function Licence_GetFromHttp(): TStringList;
-    procedure Licence_OrderToHttp(const aModule: string);
+    procedure Licence_OrderToHttp(const aModule: string; aMaxFree: integer = -1);
   end;
 
 var
@@ -93,12 +93,18 @@ begin
   end;
 end;
 
-procedure TDmCommon.Licence_OrderToHttp(const aModule: string);
+procedure TDmCommon.Licence_OrderToHttp(const aModule: string; aMaxFree: integer);
 var
   FirmCodes: TStringList;
   User, Passw: string;
 begin
   FirmCodes := GetQueryField(DataSource, SQLQueryCodes, 'EDRPOU');
+  if (aMaxFree <> -1) and (aMaxFree < FirmCodes.Count) then
+  begin
+    Log.Print('i', Format('В базі більше ніж %d фірма', [aMaxFree]) );
+    Exit();
+  end;
+
   Log.Print('i', 'Запит ліцензій для кодів ' + FirmCodes.CommaText);
   if (TFLogin.Execute(User, Passw, 'Активація програми', 'Користувач', 'Ключ')) then
   begin

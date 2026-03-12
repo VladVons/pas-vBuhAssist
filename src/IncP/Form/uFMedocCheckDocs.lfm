@@ -639,8 +639,12 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
   object PopupMenuActivation: TPopupMenu[8]
     Left = 552
     Top = 288
+    object MenuItemOrderFree: TMenuItem
+      Caption = 'Активувати одну'
+      OnClick = MenuItemOrderFreeClick
+    end
     object MenuItemOrder: TMenuItem
-      Caption = 'Активувати'
+      Caption = 'Активувати всі'
       OnClick = MenuItemOrderClick
     end
     object MenuItemRefresh: TMenuItem

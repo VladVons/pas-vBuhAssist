@@ -40,6 +40,7 @@ type
     Label2: TLabel;
     Label3: TLabel;
     Label5: TLabel;
+    MenuItemOrderFree: TMenuItem;
     MenuItemOrder: TMenuItem;
     MenuItemRefresh: TMenuItem;
     PageControl: TPageControl;
@@ -87,6 +88,7 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure FrPrintGrid1GetValue(const ParName: String; var ParValue: Variant);
     procedure MenuItemOrderClick(Sender: TObject);
+    procedure MenuItemOrderFreeClick(Sender: TObject);
     procedure MenuItemRefreshClick(Sender: TObject);
     procedure PageControlChange(Sender: TObject);
     procedure SQLQueryGridCurCalcFields(DataSet: TDataSet);
@@ -566,6 +568,12 @@ procedure TFMedocCheckDocs.MenuItemOrderClick(Sender: TObject);
 begin
   ConnectToDb();
   DmCommon.Licence_OrderToHttp(Name);
+end;
+
+procedure TFMedocCheckDocs.MenuItemOrderFreeClick(Sender: TObject);
+begin
+ ConnectToDb();
+ DmCommon.Licence_OrderToHttp(Name, 1);
 end;
 
 procedure TFMedocCheckDocs.MenuItemRefreshClick(Sender: TObject);
