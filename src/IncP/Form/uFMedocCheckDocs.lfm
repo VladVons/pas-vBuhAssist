@@ -21,6 +21,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
     Top = 40
     Width = 724
     Align = alTop
+    BevelColor = clNone
     ClientHeight = 184
     ClientWidth = 724
     TabOrder = 1
@@ -65,7 +66,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       TabOrder = 4
     end
     object ComboBoxDoc: TComboBox
-      Left = 121
+      Left = 120
       Height = 28
       Top = 104
       Width = 551
@@ -115,7 +116,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       OnClick = ButtonPathClick
     end
     object BitBtnFind: TBitBtn
-      Left = 121
+      Left = 120
       Height = 38
       Top = 142
       Width = 120
@@ -137,7 +138,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       OnClick = BitBtnPrintClick
     end
     object BitBtnRunMedoc: TBitBtn
-      Left = 385
+      Left = 392
       Height = 38
       Top = 142
       Width = 134
@@ -148,7 +149,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       OnClick = BitBtnRunMedocClick
     end
     object BitBtnActivation: TBitBtn
-      Left = 528
+      Left = 631
       Height = 38
       Hint = 'Активація'
       Top = 142
