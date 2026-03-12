@@ -15,7 +15,7 @@ const
   cYearsBack             = 3;
   cLicenceRefrehDays     = 30;
   cDelayAnnonce          = 15*1000;
-  cDelayFind             = 1000;
+  cDelayFind             = 750;
 
 implementation
 

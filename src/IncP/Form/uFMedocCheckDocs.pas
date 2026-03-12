@@ -445,6 +445,9 @@ procedure TFMedocCheckDocs.ComboBoxPathEditingDone(Sender: TObject);
 var
   Idx: integer;
 begin
+  DmCommon.Close();
+  InitEmptyGrid();
+
   if (not MedocIni.DirToFileApp(ComboBoxPath.Text).IsEmpty()) then
   begin
     SetComboBoxFirm(fFirmCodesLicensed);
