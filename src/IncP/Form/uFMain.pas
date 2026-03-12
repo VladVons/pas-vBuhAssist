@@ -203,7 +203,7 @@ end;
 procedure TFMain.FormCreate(Sender: TObject);
 begin
   ProtectTimer := TProtectTimer.Create(ParamStr(0));
-  ProtectTimer.TimerRunRnd(True, 10000);
+  ProtectTimer.TimerRunRnd(True, cDelayAnnonce);
 
   Log := TLog.Create('app.log', MemoInfo1);
   Log.Print('i', 'Початок роботи');
@@ -214,6 +214,7 @@ begin
   Licence.LoadFromFile();
 
   Settings := TSettings.Create('app.ini');
+  CheckUserAgreement();
 
   MedocIni := TMedocIni.Create('app_ezvit.ini');
 
@@ -229,7 +230,6 @@ begin
   ]);
   WinManager.SetActivePage(0);
 
-  CheckUserAgreement();
   CheckPassw();
   CheckAnnonce();
 

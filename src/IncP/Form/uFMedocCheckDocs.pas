@@ -93,6 +93,7 @@ type
     procedure PageControlChange(Sender: TObject);
     procedure SQLQueryGridCurCalcFields(DataSet: TDataSet);
   private
+    fCount: integer;
     fSortField: string;
     fSortAsc: boolean;
     fJMedocApp: TJSONArray;
@@ -101,7 +102,7 @@ type
     procedure SetComboBoxToCurrentMonth(aComboBox: TComboBox);
     procedure SetComboBoxToYear(aComboBox: TComboBox; aYear: integer = 0);
     procedure SetComboBoxDoc();
-    procedure SetComboBoxFirm(aFirms: TStringList);
+    procedure SetComboBoxFirm();
     function QueryCurOpen(): integer;
     function QueryPrevOpen(const aCode: string; aPerType, aYear, aMonth: integer): integer;
     procedure SetEmbededPath(aIdx: integer);
@@ -394,6 +395,8 @@ var
   Msg, LastUpdate: string;
   Delay, Records: integer;
 begin
+  Inc(fCount);
+
   //TabSheetPrev.TabVisible := (ComboBoxFirm.Text <> cChooseAll);
   TabSheetPrev.TabVisible := True;
 
@@ -452,7 +455,7 @@ begin
 
   if (not MedocIni.DirToFileApp(ComboBoxPath.Text).IsEmpty()) then
   begin
-    SetComboBoxFirm(fFirmCodesLicensed);
+    SetComboBoxFirm();
     ComboBoxFirm.ItemIndex := 0;
     if (MedocIni.AddPath(ComboBoxPath.Text)) then
     begin
@@ -582,6 +585,7 @@ begin
 
   Log.Print('i', 'Завантаження ліцензій ...');
   fFirmCodesLicensed := DmCommon.Licence_GetFromHttp();
+  SetComboBoxFirm();
   if (fFirmCodesLicensed.Count = 0) then
     Log.Print('i', 'Не знайдено ліцензій')
   else begin
@@ -698,6 +702,7 @@ begin
 
   ProtectTimer.TimingStart();
 
+  fCount := 0;
   fSortField := 'CARDSTATUS_NAME';
   fSortAsc := True;
 
@@ -726,7 +731,7 @@ begin
     Log.Print('w', 'Файл ліцензій не знайдено');
 
   fFirmCodesLicensed := Licence.GetFirmCodes(Name);
-  SetComboBoxFirm(fFirmCodesLicensed);
+  SetComboBoxFirm();
 
   fDemoFields := TStringList.Create();
   fDemoFields.Add('CARDSTATUS_NAME');
@@ -755,7 +760,8 @@ end;
 
 procedure TFMedocCheckDocs.FormDestroy(Sender: TObject);
 begin
-  StateStore.Save(self);
+  if (fCount > 0) then
+    StateStore.Save(self);
 
   FreeAndNil(fJMedocApp);
   FreeAndNil(fFirmCodesLicensed);

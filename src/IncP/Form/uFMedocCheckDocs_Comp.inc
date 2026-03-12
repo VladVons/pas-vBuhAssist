@@ -63,12 +63,13 @@ begin
   ComboBoxDoc.ItemIndex := 0;
 end;
 
-procedure TFMedocCheckDocs.SetComboBoxFirm(aFirms: TStringList);
+procedure TFMedocCheckDocs.SetComboBoxFirm();
 var
   i: integer;
 begin
   ComboBoxFirm.Clear();
   ComboBoxFirm.Items.Add(cChooseAll);
-  for i := 0 to aFirms.Count - 1 do
-    ComboBoxFirm.Items.Add(aFirms.Names[i]);
+  for i := 0 to fFirmCodesLicensed.Count - 1 do
+    ComboBoxFirm.Items.Add(fFirmCodesLicensed.Names[i]);
+  ComboBoxFirm.ItemIndex := 0;
 end;

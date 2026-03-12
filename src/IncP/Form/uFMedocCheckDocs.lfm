@@ -335,7 +335,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       '        CARDSENDSTT.NAME AS CARDSENDSTT_NAME,'
       '        CARD.PERTYPE,'
       '        FORM.CHARCODE,'
-      '        LEFT(FORM.NAME, 100) AS FORM_NAME,'
+      '        FORM.NAME AS FORM_NAME,'
       '        CAST(CARD.MODDATE AS DATE) AS MODDATE,'
       '        CARDSTATUS.NAME AS CARDSTATUS_NAME,'
       '        CARDBLOB.XMLVALS'
@@ -536,7 +536,7 @@ inherited FMedocCheckDocs: TFMedocCheckDocs
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
       Required = False
-      Size = 25
+      Size = 60
     end
     object SQLQueryGridCurHZ: TStringField
       DisplayLabel = 'Ознака'
