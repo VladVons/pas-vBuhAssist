@@ -8,6 +8,7 @@
 *.dll
 *.res
 *.json
+*.log
 
 _lib*/
 backup
