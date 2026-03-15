@@ -10,12 +10,13 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList, Windows, ExtCtrls,
   ComCtrls, StdCtrls, fpjson,
-  uFAbout, uFMedocCheckDocs, uFOptimizePDF, uFSettings, uFLogin, uFMessage,
-  uWinManager, uLicence, uLog, uSettings, uStateStore, uSys, uSysVcl, uConst, uProtectTimer, uAnnonce, uMedoc, uVarHelper;
+  uFAbout, uFMedFindZvit, uFMedFindAkz, uFOptimizePDF, uFSettings, uFLogin, uFMessage,
+  uWinManager, uLicence, uLog, uSettings, uStateStore, uSys, uSysVcl, uConst, uProtectTimer, uAnnonce, uMed, uVarHelper;
 
 type
   { TFMain }
   TFMain = class(TForm)
+    ActionFMedFindAkz: TAction;
     ActionHelp: TAction;
     ActionName: TAction;
     ActionCheckForUpdate: TAction;
@@ -23,12 +24,13 @@ type
     ActionExit: TAction;
     ActionOptimizePDF: TAction;
     ActionUserAgreement: TAction;
-    ActionFMedocCheckDocs: TAction;
+    ActionFMedFindZvit: TAction;
     ActionFAbout: TAction;
     ActionList1: TActionList;
     MainMenu1: TMainMenu;
     ManuItemHelp: TMenuItem;
     MemoInfo1: TMemo;
+    MenuItemFMedFindAkz: TMenuItem;
     MenuItemHep: TMenuItem;
     MenuItemCheckForUpdates: TMenuItem;
     Separator2: TMenuItem;
@@ -37,7 +39,7 @@ type
     Separator1: TMenuItem;
     MenuItemExit: TMenuItem;
     MenuItemCloseTab: TMenuItem;
-    MenuItemMedoc: TMenuItem;
+    MenuItemFMedFindZvit: TMenuItem;
     MenuItemLicense: TMenuItem;
     MenuItemOprimizePDF: TMenuItem;
     MenuItemFile: TMenuItem;
@@ -50,7 +52,8 @@ type
     procedure ActionCheckForUpdateExecute(Sender: TObject);
     procedure ActionExitExecute(Sender: TObject);
     procedure ActionFAboutExecute(Sender: TObject);
-    procedure ActionFMedocCheckDocsExecute(Sender: TObject);
+    procedure ActionFMedFindAkzExecute(Sender: TObject);
+    procedure ActionFMedFindZvitExecute(Sender: TObject);
     procedure ActionHelpExecute(Sender: TObject);
     procedure ActionUserAgreementExecute(Sender: TObject);
     procedure ActionOptimizePDFExecute(Sender: TObject);
@@ -95,9 +98,14 @@ begin
   Annonce.CheckForUpdate();
 end;
 
-procedure TFMain.ActionFMedocCheckDocsExecute(Sender: TObject);
+procedure TFMain.ActionFMedFindZvitExecute(Sender: TObject);
 begin
-  WinManager.Add(TFMedocCheckDocs);
+  WinManager.Add(TFMedFindZvit);
+end;
+
+procedure TFMain.ActionFMedFindAkzExecute(Sender: TObject);
+begin
+  WinManager.Add(TFMedFindAkz);
 end;
 
 procedure TFMain.ActionHelpExecute(Sender: TObject);
@@ -190,7 +198,6 @@ begin
   CheckUpdates := StateStore.GetItem('FSettings', 'CheckBoxUpdates_Checked', 0);
   if (CheckUpdates <> 0) then
   begin
-    Annonce := TAnnonce.Create('app_annonce.ini', Licence);
     if (cDelayAnnonce = 0) then
       Annonce.CheckWithDelay()
     else begin
@@ -208,14 +215,16 @@ var
   SL: TStringList;
   Cls: TClass;
 begin
-  RegisterClasses([TFMedocCheckDocs, TFOptimizePDF, TFSettings]);
+  RegisterClasses([TFMedFindZvit, TFMedFindAkz, TFOptimizePDF, TFSettings]);
   WinManager := TWinManager.Create(PageControl1, PopupMenu1);
 
   SL := Settings.GetSection(cSect);
   try
     if (SL.Count = 0) then
     begin
-      SL.Add('TFMedocCheckDocs');
+      SL.Add('TFMedFindZvit');
+      Settings.SetItem(cSect, SL.GetLast(), 1);
+      SL.Add('TFMedFindAkz');
       Settings.SetItem(cSect, SL.GetLast(), 1);
     end;
 
@@ -245,10 +254,12 @@ begin
   Licence := TLicence.Create('app.lic');
   Licence.LoadFromFile();
 
+  Annonce := TAnnonce.Create('app_annonce.ini', Licence);
+
   Settings := TSettings.Create('app.ini');
   CheckUserAgreement();
 
-  MedocIni := TMedocIni.Create('app_ezvit.ini');
+  MedIni := TMedIni.Create('app_med.ini');
 
   OneInstance.Register(Handle);
   OneInstance.Free();

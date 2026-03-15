@@ -8,8 +8,7 @@ unit uWinManager;
 interface
 
 uses
-  Classes, Forms, Windows, Controls, ComCtrls, Menus, DateUtils, SysUtils,
-  uFBase;
+  Classes, Forms, Windows, Controls, ComCtrls, Menus, DateUtils, SysUtils, fpjson;
 
 type
   TFormClass = class of TForm;
@@ -24,6 +23,7 @@ type
     procedure Add(aFormClass: TFormClass);
     procedure Adds(aForms: array of TFormClass);
     function FindTabIndex(aFormClass: TFormClass): integer;
+    procedure SendMsg(aForm: TForm; const aData: TJSONObject);
     procedure CloseActive();
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure SetActivePage(aIdx: integer);
@@ -50,6 +50,9 @@ var
   OneInstance: TOneInstance;
 
 implementation
+
+uses
+  uFBase;
 
 constructor TOneInstance.Create();
 begin
@@ -116,6 +119,27 @@ begin
     end;
 end;
 
+procedure TWinManager.SendMsg(aForm: TForm; const aData: TJSONObject);
+var
+  i, j: Integer;
+  Tab: TTabSheet;
+  Form: TFBase;
+begin
+  for i := 0 to fPageControl.PageCount - 1 do
+  begin
+    Tab := fPageControl.Pages[i];
+
+    for j := 0 to Tab.ControlCount - 1 do
+      if (Tab.Controls[j] is TForm) then
+      begin
+        Form := TFBase(Tab.Controls[j]);
+        if (Form <> aForm) then
+          if (Form.OnSendMsg(aForm, aData)) then
+             Exit;
+      end;
+  end;
+end;
+
 procedure TWinManager.Add(aFormClass: TFormClass);
 var
   Form: TForm;
@@ -131,6 +155,7 @@ begin
     Tab.PageControl := fPageControl;
 
     Form := aFormClass.Create(Application);
+    Form.Tag := integer(self);
     Form.Parent := Tab;
     Form.Align := alClient;
     Form.BorderStyle := bsNone;
@@ -154,7 +179,6 @@ begin
   for i := 0 to High(aForms) do
     Add(aForms[i]);
 end;
-
 
 procedure TWinManager.CloseActive();
 var

@@ -4,6 +4,6 @@ object FHtmlView: TFHtmlView
   Top = 191
   Width = 527
   Caption = 'FHtmlView'
-  LCLVersion = '4.4.0.0'
+  LCLVersion = '4.6.0.0'
   OnCreate = FormCreate
 end

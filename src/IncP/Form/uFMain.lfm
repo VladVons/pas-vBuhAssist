@@ -54,8 +54,12 @@ object FMain: TFMain
     Top = 20
     object MenuItemFile: TMenuItem
       Caption = 'Файл'
-      object MenuItemMedoc: TMenuItem
-        Action = ActionFMedocCheckDocs
+      object MenuItemFMedFindZvit: TMenuItem
+        Action = ActionFMedFindZvit
+      end
+      object MenuItemFMedFindAkz: TMenuItem
+        Caption = 'Акциз'
+        OnClick = ActionFMedFindAkzExecute
       end
       object MenuItemOprimizePDF: TMenuItem
         Action = ActionOptimizePDF
@@ -102,9 +106,9 @@ object FMain: TFMain
       Caption = 'Про програму'
       OnExecute = ActionFAboutExecute
     end
-    object ActionFMedocCheckDocs: TAction
+    object ActionFMedFindZvit: TAction
       Caption = 'Звітне стикування'
-      OnExecute = ActionFMedocCheckDocsExecute
+      OnExecute = ActionFMedFindZvitExecute
     end
     object ActionUserAgreement: TAction
       Caption = 'Ліцензійна угода'
@@ -132,6 +136,10 @@ object FMain: TFMain
     object ActionHelp: TAction
       Caption = 'Допомога'
       OnExecute = ActionHelpExecute
+    end
+    object ActionFMedFindAkz: TAction
+      Caption = 'Акциз'
+      OnExecute = ActionFMedFindAkzExecute
     end
   end
   object PopupMenu1: TPopupMenu

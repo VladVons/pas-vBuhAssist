@@ -1,0 +1,641 @@
+inherited FMedFindAkz: TFMedFindAkz
+  Height = 385
+  Width = 799
+  Caption = 'Акциз'
+  ClientHeight = 385
+  ClientWidth = 799
+  OnCreate = FormCreate
+  inherited PanelTitle: TPanel
+    Width = 799
+    ClientWidth = 799
+  end
+  inherited PanelFrame: TPanel
+    Height = 337
+    Width = 799
+    ClientHeight = 337
+    ClientWidth = 799
+    inherited PanelComboBox: TPanel
+      Width = 797
+      ClientWidth = 797
+    end
+    inherited PageControl: TPageControl
+      Height = 160
+      Width = 797
+      ActivePage = TabSheetCur
+      TabIndex = 0
+      inherited TabSheetCur: TTabSheet
+        ClientHeight = 127
+        ClientWidth = 789
+        inherited DbGridCur: TDBGrid
+          Height = 127
+          Width = 789
+          DataSource = DataSourceCur
+        end
+      end
+      inherited TabSheetPrev: TTabSheet
+        ClientHeight = 127
+        ClientWidth = 789
+        inherited DBGridPrev: TDBGrid
+          Height = 127
+          Width = 789
+          DataSource = DataSourcePrev
+        end
+      end
+    end
+  end
+  object DataSourcePrev: TDataSource[7]
+    Left = 120
+    Top = 304
+  end
+  object DataSourceCur: TDataSource[8]
+    Left = 48
+    Top = 304
+  end
+  object SQLQueryCur: TSQLQuery[9]
+    FieldDefs = <    
+      item
+        Name = 'EDRPOU'
+        DataType = ftString
+        Precision = -1
+        Size = 10
+      end    
+      item
+        Name = 'DEPT'
+        DataType = ftString
+        Precision = -1
+        Size = 4
+      end    
+      item
+        Name = 'SHORTNAME'
+        DataType = ftString
+        Precision = -1
+        Size = 100
+      end    
+      item
+        Name = 'INDTAXNUM'
+        DataType = ftString
+        Precision = -1
+        Size = 14
+      end    
+      item
+        Name = 'VAT'
+        DataType = ftString
+        Precision = -1
+        Size = 10
+      end    
+      item
+        Name = 'PERTYPE'
+        DataType = ftInteger
+        Size = 8
+      end    
+      item
+        Name = 'PERDATE'
+        DataType = ftString
+        Precision = -1
+        Size = 8
+      end    
+      item
+        Name = 'PERDATE_STR'
+        DataType = ftString
+        Precision = -1
+        Size = 12
+      end    
+      item
+        Name = 'CHARCODE'
+        DataType = ftString
+        Precision = -1
+        Size = 8
+      end    
+      item
+        Name = 'CARDSENDSTT_NAME'
+        DataType = ftString
+        Precision = -1
+        Size = 50
+      end    
+      item
+        Name = 'MODDATE'
+        DataType = ftDateTime
+        Precision = -1
+      end    
+      item
+        Name = 'CARDSTATUS_NAME'
+        DataType = ftString
+        Precision = -1
+        Size = 30
+      end    
+      item
+        Name = 'HZ'
+        DataType = ftString
+        Precision = -1
+        Size = 12
+      end    
+      item
+        Name = 'XMLVALS'
+        DataType = ftBlob
+        Precision = -1
+        Size = 8
+      end    
+      item
+        Name = 'FJ'
+        DataType = ftString
+        Precision = -1
+        Size = 10
+      end>
+    SQL.Strings = (
+      'SELECT'
+      '    ORG.EDRPOU,'
+      '    ORG.DEPT,'
+      '    ORG.SHORTNAME,'
+      '    ORG.INDTAXNUM,'
+      '    CASE WHEN TRIM(ORG.INDTAXNUM) <> ''100000000000'' AND TRIM(ORG.INDTAXNUM) <> '''''
+      '      THEN CAST(''ПДВ'' AS VARCHAR(10))'
+      '      ELSE '''''
+      '    END AS vat,'
+      '    T2.PERTYPE,'
+      '    T2.PERDATE,'
+      '    CAST(T2.PERDATE AS VARCHAR(10)) AS PERDATE_STR,'
+      '    T2.CHARCODE,'
+      '    T2.FORM_NAME,'
+      '    T2.CARDSENDSTT_NAME,'
+      '    T2.MODDATE,'
+      '    T2.CARDSTATUS_NAME,'
+      '    T2.XMLVALS,'
+      '    T2.FJ'
+      'FROM'
+      '    ORG'
+      'LEFT JOIN ('
+      '    SELECT'
+      '        CARD.IDORG,'
+      '        CARD.PERDATE,'
+      '        CARDSENDSTT.NAME AS CARDSENDSTT_NAME,'
+      '        CARD.PERTYPE,'
+      '        FORM.CHARCODE,'
+      '        FORM.NAME AS FORM_NAME,'
+      '        CAST(CARD.MODDATE AS DATE) AS MODDATE,'
+      '        CARDSTATUS.NAME AS CARDSTATUS_NAME,'
+      '        CARDBLOB.XMLVALS'
+      '        %_SELECT_T2'
+      '    FROM'
+      '      CARD'
+      '    LEFT JOIN FORM'
+      '        ON FORM.CODE = CARD.FORM'
+      '    LEFT JOIN CARDSTATUS'
+      '        ON CARDSTATUS.CODE = CARD.STATUS'
+      '    LEFT JOIN CARDSENDSTT'
+      '        ON CARDSENDSTT.CODE = CARD.SENDSTT'
+      '    LEFT JOIN CARDBLOB'
+      '        ON CARDBLOB.CODE = CARD.CODE'
+      '    %_FROM_T2'
+      '    WHERE'
+      '            (CARD.IDPARENT IS NULL)'
+      '        AND (CARD.FORM > 0)'
+      '        AND (CARD.INTRASH = 0)'
+      '        %_COND_PERTYPE'
+      '        %_COND_PERDATE'
+      '        %_COND_CHARCODE'
+      '        %_COND_CHARCODE_NOT'
+      ') T2'
+      '    ON T2.IDORG = ORG.CODE'
+      'WHERE'
+      '    (ORG.DEPT IS NULL OR ORG.DEPT <> ''0'')'
+      '    %_COND_ORG'
+      'ORDER BY'
+      '  %_ORDER %_ASC'
+      ''
+    )
+    Params = <>
+    Macros = <    
+      item
+        DataType = ftUnknown
+        Name = '_SELECT_T2'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = '_FROM_T2'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = '_COND_PERTYPE'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = '_COND_PERDATE'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = '_COND_CHARCODE'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = '_COND_CHARCODE_NOT'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = '_COND_ORG'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = '_ORDER'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = '_ASC'
+        ParamType = ptInput
+      end>
+    MacroCheck = True
+    Left = 48
+    Top = 264
+    object SQLQueryCurEDRPOU: TStringField
+      DisplayLabel = 'ЄДРПОУ'
+      FieldKind = fkData
+      FieldName = 'EDRPOU'
+      Index = 0
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 10
+    end
+    object SQLQueryCurDEPT: TStringField
+      DisplayLabel = 'Філія'
+      DisplayWidth = 6
+      FieldKind = fkData
+      FieldName = 'DEPT'
+      Index = 1
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 4
+    end
+    object SQLQueryCurSHORTNAME: TStringField
+      DisplayLabel = 'Найменування'
+      DisplayWidth = 20
+      FieldKind = fkData
+      FieldName = 'SHORTNAME'
+      Index = 2
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 50
+    end
+    object SQLQueryCurINDTAXNUM: TStringField
+      DisplayLabel = 'ІПН'
+      DisplayWidth = 10
+      FieldKind = fkData
+      FieldName = 'INDTAXNUM'
+      Index = 3
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 14
+    end
+    object SQLQueryCurVAT: TStringField
+      DisplayLabel = 'Оподаткування'
+      DisplayWidth = 8
+      FieldKind = fkData
+      FieldName = 'VAT'
+      Index = 4
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = True
+      Visible = False
+      Size = 10
+    end
+    object SQLQueryCurPERTYPE: TIntegerField
+      DisplayLabel = 'Тип період'
+      DisplayWidth = 8
+      FieldKind = fkData
+      FieldName = 'PERTYPE'
+      Index = 5
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Visible = False
+    end
+    object SQLQueryCurPERDATE: TDateField
+      DisplayLabel = 'Період'
+      DisplayWidth = 10
+      FieldKind = fkData
+      FieldName = 'PERDATE'
+      Index = 6
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Visible = False
+    end
+    object SQLQueryCurPERDATE_STR: TStringField
+      DisplayLabel = 'Період'
+      DisplayWidth = 10
+      FieldKind = fkCalculated
+      FieldName = 'PERDATE_STR'
+      Index = 7
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 35
+    end
+    object SQLQueryCurCHARCODE: TStringField
+      DisplayLabel = 'Код'
+      DisplayWidth = 10
+      FieldKind = fkData
+      FieldName = 'CHARCODE'
+      Index = 8
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 8
+    end
+    object SQLQueryCurFORM_NAME: TStringField
+      DisplayLabel = 'Звіт'
+      DisplayWidth = 20
+      FieldKind = fkData
+      FieldName = 'FORM_NAME'
+      Index = 9
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 60
+    end
+    object SQLQueryCurHZ: TStringField
+      DisplayLabel = 'Ознака'
+      DisplayWidth = 12
+      FieldKind = fkCalculated
+      FieldName = 'HZ'
+      Index = 10
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = True
+      Required = False
+      Size = 30
+    end
+    object SQLQueryCurMODDATE: TDateTimeField
+      DisplayLabel = 'Модифікація'
+      DisplayWidth = 10
+      FieldKind = fkData
+      FieldName = 'MODDATE'
+      Index = 11
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+    object SQLQueryCurCARDSTATUS_NAME: TStringField
+      DisplayLabel = 'Примітка'
+      FieldKind = fkData
+      FieldName = 'CARDSTATUS_NAME'
+      Index = 12
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 10
+    end
+    object SQLQueryCurCARDSENDSTT_NAME: TStringField
+      DisplayLabel = 'Стан'
+      DisplayWidth = 10
+      FieldKind = fkData
+      FieldName = 'CARDSENDSTT_NAME'
+      Index = 13
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 50
+    end
+    object SQLQueryCurXMLVALS: TBlobField
+      FieldKind = fkData
+      FieldName = 'XMLVALS'
+      Index = 14
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Visible = False
+      Size = 8
+    end
+    object SQLQueryCurFJ: TStringField
+      FieldKind = fkData
+      FieldName = 'FJ'
+      Index = 15
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Visible = False
+      Size = 5
+    end
+  end
+  object SQLQueryPrev: TSQLQuery[10]
+    FieldDefs = <    
+      item
+        Name = 'EDRPOU'
+        DataType = ftString
+        Precision = -1
+        Size = 10
+      end    
+      item
+        Name = 'SHORTNAME'
+        DataType = ftString
+        Precision = -1
+        Size = 100
+      end    
+      item
+        Name = 'PERDATE'
+        DataType = ftString
+        Precision = -1
+        Size = 8
+      end    
+      item
+        Name = 'CHARCODE'
+        DataType = ftString
+        Precision = -1
+        Size = 8
+      end    
+      item
+        Name = 'FORM_NAME'
+        DataType = ftString
+        Precision = -1
+        Size = 50
+      end    
+      item
+        Name = 'CARDSENDSTT_NAME'
+        DataType = ftString
+        Precision = -1
+        Size = 50
+      end    
+      item
+        Name = 'CARDSTATUS_NAME'
+        DataType = ftString
+        Precision = -1
+        Size = 30
+      end>
+    SQL.Strings = (
+      'SELECT'
+      '    ORG.EDRPOU,'
+      '    ORG.SHORTNAME,'
+      '    CARD.PERDATE,'
+      '    CARDSENDSTT.NAME AS CARDSENDSTT_NAME,'
+      '    FORM.CHARCODE,'
+      '    FORM.NAME AS FORM_NAME,'
+      '    CARDSTATUS.NAME AS CARDSTATUS_NAME'
+      'FROM'
+      '    ORG'
+      'LEFT JOIN CARD'
+      '    ON CARD.IDORG = ORG.CODE'
+      'LEFT JOIN FORM'
+      '    ON FORM.CODE = CARD.FORM'
+      'LEFT JOIN CARDSTATUS'
+      '    ON CARDSTATUS.CODE = CARD.STATUS'
+      'LEFT JOIN CARDSENDSTT'
+      '    ON CARDSENDSTT.CODE = CARD.SENDSTT'
+      'WHERE'
+      '        (ORG.EDRPOU = :_EDRPOU)'
+      '    AND (ORG.DEPT IS NULL OR ORG.DEPT <> ''0'')'
+      '    AND (CARD.PERTYPE = :_PERTYPE)'
+      '    AND (CARD.PERDATE = DATE %_PERDATE)'
+      '    AND (CARD.IDPARENT IS NULL)'
+      '    AND (CARD.FORM > 0)'
+      '    AND (CARD.INTRASH = 0)'
+      '    %_COND_CHARCODES'
+      '    %_COND_CHARCODE_NOT'
+      'ORDER BY'
+      '  CHARCODE ASC'
+      ''
+    )
+    Params = <    
+      item
+        DataType = ftUnknown
+        Name = '_EDRPOU'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = '_PERTYPE'
+        ParamType = ptInput
+      end>
+    Macros = <    
+      item
+        DataType = ftUnknown
+        Name = '_PERDATE'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = '_COND_CHARCODES'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = '_COND_CHARCODE_NOT'
+        ParamType = ptInput
+      end>
+    MacroCheck = True
+    Left = 120
+    Top = 264
+    object SQLQueryPrevEDRPOU: TStringField
+      DisplayLabel = 'ЄДРПОУ'
+      FieldKind = fkData
+      FieldName = 'EDRPOU'
+      Index = 0
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 10
+    end
+    object SQLQueryPrevSHORTNAME: TStringField
+      DisplayLabel = 'Найменування'
+      DisplayWidth = 20
+      FieldKind = fkData
+      FieldName = 'SHORTNAME'
+      Index = 1
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 50
+    end
+    object SQLQueryPrevPERDATE: TDateField
+      DisplayLabel = 'Період'
+      FieldKind = fkData
+      FieldName = 'PERDATE'
+      Index = 2
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Visible = False
+    end
+    object SQLQueryPrevCHARCODE: TStringField
+      DisplayLabel = 'Код'
+      DisplayWidth = 10
+      FieldKind = fkData
+      FieldName = 'CHARCODE'
+      Index = 3
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 8
+    end
+    object SQLQueryPrevFORM_NAME: TStringField
+      DisplayLabel = 'Звіт'
+      DisplayWidth = 50
+      FieldKind = fkData
+      FieldName = 'FORM_NAME'
+      Index = 4
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Size = 50
+    end
+    object SQLQueryPrevCARDSTATUS_NAME: TStringField
+      DisplayLabel = 'Примітка'
+      FieldKind = fkData
+      FieldName = 'CARDSTATUS_NAME'
+      Index = 5
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Visible = False
+      Size = 10
+    end
+    object SQLQueryPrevCARDSENDSTT_NAME: TStringField
+      DisplayLabel = 'Стан'
+      DisplayWidth = 10
+      FieldKind = fkData
+      FieldName = 'CARDSENDSTT_NAME'
+      Index = 6
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Visible = False
+      Size = 50
+    end
+  end
+  object SQLTransaction: TSQLTransaction[11]
+    Active = False
+    Left = 48
+    Top = 183
+  end
+end

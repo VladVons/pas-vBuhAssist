@@ -23,11 +23,10 @@ object FBase: TFBase
     object LabelTitle: TLabel
       Left = 20
       Height = 29
-      Top = 0
+      Top = 10
       Width = 398
       AutoSize = False
       Caption = 'Title'
-      Font.CharSet = RUSSIAN_CHARSET
       Font.Height = -20
       Font.Style = [fsBold]
       ParentFont = False

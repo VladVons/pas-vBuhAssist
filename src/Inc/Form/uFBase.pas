@@ -8,8 +8,8 @@ unit uFBase;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls,
-  uStateStore;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, fpjson,
+  uStateStore, uWinManager;
 
 type
   { TFBase }
@@ -21,8 +21,9 @@ type
   private
   protected
     procedure SetFont(aForm: TForm);
+    procedure SendMsg(const aData: TJSONObject);
   public
-
+    function OnSendMsg(aForm: TForm; const aJObj: TJSONObject): boolean; virtual;
   end;
 
 
@@ -49,6 +50,21 @@ begin
   PanelTitle.Align := alNone;
   PanelTitle.Align := alTop;
   LabelTitle.Caption := Caption;
+end;
+
+function TFBase.OnSendMsg(aForm: TForm; const aJObj: TJSONObject): boolean;
+begin
+  Result := False;
+end;
+
+procedure TFBase.SendMsg(const aData: TJSONObject);
+var
+  WinManager: TWinManager;
+begin
+  WinManager := TWinManager(Tag);
+
+  if Assigned(WinManager) and (WinManager is TWinManager) then
+    WinManager.SendMsg(Self, aData);
 end;
 
 procedure TFBase.FormCreate(Sender: TObject);

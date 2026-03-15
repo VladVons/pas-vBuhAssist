@@ -1,133 +1,106 @@
 // CreateComboBoxDocd: 2026.02.05
 // Author: Vladimir Vons <VladVons@gmail.com>
 
-unit uFMedocCheckDocs;
+unit uFMedFind;
 
 {$mode ObjFPC}{$H+}
-{$NOTES OFF}
 
 interface
 
 uses
-  Classes, SysUtils, StrUtils, DateUtils, SQLDB, Forms, Graphics,
-  StdCtrls, DBGrids, Grids,
-  ExtCtrls, Buttons, Menus, Dialogs, ComCtrls, LR_Class, LR_DBSet,
-  LR_PGrid, LR_Desgn, DB, fpjson,
-  Math, uFBase, uSys, uLog, uLicence, uSettings, uVarUtil, uVarHelper, uStateStore,
-  uQuery, uMedoc, uDmCommon, uProtectTimer, uProtectDbg, uConst;
+  Classes, SysUtils, Forms, Controls, StdCtrls, ExtCtrls, ComCtrls, Buttons, Graphics,
+  DBGrids, Dialogs, Menus, LR_Class, LR_DBSet, LR_PGrid, fpjson, SQLDB, DB, Grids,
+  DateUtils, Math, StrUtils,
+  uDmCommon,
+  uFBase, uConst, uMed, uSys, uVarHelper, uVarUtil, uQuery, uProtectDbg, uProtectTimer,
+  uLog, uSettings, uStateStore, uLicence;
 
 type
-  { TFMedocCheckDocs }
-  TFMedocCheckDocs = class(TFBase)
-    BitBtnRunMedoc: TBitBtn;
-    BitBtnActivation: TBitBtn;
-    BitBtnPrint: TBitBtn;
-    BitBtnFind: TBitBtn;
-    ButtonPath: TButton;
-    ComboBoxDoc: TComboBox;
-    ComboBoxFirm: TComboBox;
-    ComboBoxMonth: TComboBox;
-    ComboBoxPath: TComboBox;
-    ComboBoxYear: TComboBox;
-    DataSourceGridCur: TDataSource;
-    DataSourceGridPrev: TDataSource;
-    DBGridPrev: TDBGrid;
-    DbGridCur: TDBGrid;
-    frDBDataSet1: TfrDBDataSet;
-    FrPrintGrid1: TFrPrintGrid;
-    frReport1: TfrReport;
-    Label1: TLabel;
-    Label2: TLabel;
-    Label3: TLabel;
-    Label5: TLabel;
-    MenuItemOrderFree: TMenuItem;
-    MenuItemOrder: TMenuItem;
-    MenuItemRefresh: TMenuItem;
-    PageControl: TPageControl;
-    Panel1: TPanel;
-    PopupMenuActivation: TPopupMenu;
-    SelectDirectoryDialog1: TSelectDirectoryDialog;
-    SQLQueryGridCur: TSQLQuery;
-    SQLQueryGridCurCARDSENDSTT_NAME: TStringField;
-    SQLQueryGridCurCHARCODE: TStringField;
-    SQLQueryGridCurFORM_NAME: TStringField;
-    SQLQueryGridCurDEPT: TStringField;
-    SQLQueryGridCurEDRPOU: TStringField;
-    SQLQueryGridCurHZ: TStringField;
-    SQLQueryGridCurINDTAXNUM: TStringField;
-    SQLQueryGridCurMODDATE: TDateTimeField;
-    SQLQueryGridCurPERTYPE: TIntegerField;
-    SQLQueryGridCurPERDATE: TDateField;
-    SQLQueryGridCurPERDATE_STR: TStringField;
-    SQLQueryGridCurSHORTNAME: TStringField;
-    SQLQueryGridCurCARDSTATUS_NAME: TStringField;
-    SQLQueryGridCurVAT: TStringField;
-    SQLQueryGridCurXMLVALS: TBlobField;
-    SQLQueryGridCurFJ: TStringField;
-    SQLQueryGridPrev: TSQLQuery;
-    SQLQueryGridPrevEDRPOU: TStringField;
-    SQLQueryGridPrevCARDSENDSTT_NAME: TStringField;
-    SQLQueryGridPrevCARDSTATUS_NAME: TStringField;
-    SQLQueryGridPrevCHARCODE: TStringField;
-    SQLQueryGridPrevFORM_NAME: TStringField;
-    SQLQueryGridPrevPERDATE: TDateField;
-    SQLQueryGridPrevSHORTNAME: TStringField;
-    TabSheetPrev: TTabSheet;
-    TabSheetCur: TTabSheet;
-    procedure BitBtnActivationClick(Sender: TObject);
-    procedure BitBtnFindClick(Sender: TObject);
-    procedure BitBtnPrintClick(Sender: TObject);
-    procedure BitBtnRunMedocClick(Sender: TObject);
-    procedure ButtonPathClick(Sender: TObject);
-    procedure ComboBoxPathEditingDone(Sender: TObject);
-    procedure ComboBoxYearDropDown(Sender: TObject);
-    procedure DbGridCurColumnSized(Sender: TObject);
-    procedure DbGridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: integer; Column: TColumn; State: TGridDrawState);
-    procedure DbGridCurTitleClick(Column: TColumn);
-    procedure FormCreate(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
-    procedure FrPrintGrid1GetValue(const ParName: String; var ParValue: Variant);
-    procedure MenuItemOrderClick(Sender: TObject);
-    procedure MenuItemOrderFreeClick(Sender: TObject);
-    procedure MenuItemRefreshClick(Sender: TObject);
-    procedure PageControlChange(Sender: TObject);
-    procedure SQLQueryGridCurCalcFields(DataSet: TDataSet);
-  private
-    fCount: integer;
-    fSortField: string;
-    fSortAsc: boolean;
-    fJMedocApp: TJSONArray;
-    fFirmCodesLicensed, fTablesMain, fDemoFields: TStringList;
-    fColorYelow: TColor;
-    procedure SetComboBoxToCurrentMonth(aComboBox: TComboBox);
-    procedure SetComboBoxToYear(aComboBox: TComboBox; aYear: integer = 0);
-    procedure SetComboBoxDoc();
-    procedure SetComboBoxFirm();
-    function QueryCurOpen(): integer;
-    function QueryPrevOpen(const aCode: string; aPerType, aYear, aMonth: integer): integer;
-    procedure SetEmbededPath(aIdx: integer);
-    procedure ConnectToDb();
-    procedure Disconnect();
-    function GetCurPathObj(): TJSONObject;
-    procedure InitEmptyGrid();
-    procedure InitMedocControl();
-    function IsDemo(aCode: string; aField: TField): boolean;
-    procedure QueryCharcodeNot(aQuery: TSQLQuery; aArrExcl, aArrIncl: TStringArray);
-  public
-  end;
-
-var
-  FMedocCheckDocs: TFMedocCheckDocs;
+  { TFMedFind }
+  {$I uFMedFind.pas.inc}
 
 implementation
-
 {$R *.lfm}
-{$I uFMedocCheckDocs_Comp.inc}
 
+procedure TFMedFind.SetComboBoxDoc(aSL: TStringList);
+var
+  i: integer;
+begin
+  ComboBoxDoc.Clear();
+  ComboBoxDoc.Items.AddPair(cChooseAll, '');
+  for i := 0 to aSL.Count - 1 do
+    ComboBoxDoc.Items.Add(aSL[i]);
+  ComboBoxDoc.ItemIndex := 0;
+end;
 
-{ TFMedocCheckDocs }
+procedure TFMedFind.SetComboBoxMonth();
+begin
+  with ComboBoxMonth.Items do
+  begin
+    Clear();
+    AddObject(cChooseAll, TObject(cPerTypeAll));
+    AddObject('Січень', TObject(1));
+    AddObject('Лютий', TObject(2));
+    AddObject('Березень', TObject(3));
+    AddObject('- I Квартал', TObject(101));
+    AddObject('Квітень', TObject(4));
+    AddObject('Травень', TObject(5));
+    AddObject('Червень', TObject(6));
+    AddObject('- II Квартал', TObject(102));
+    AddObject('- I Півріччя', TObject(201));
+    AddObject('Липень', TObject(7));
+    AddObject('Серпень', TObject(8));
+    AddObject('Вересень', TObject(9));
+    AddObject('- III Квартал', TObject(103));
+    AddObject('- 9 Місяців', TObject(301));
+    AddObject('Жовтень', TObject(10));
+    AddObject('Листопад', TObject(11));
+    AddObject('Грудень', TObject(12));
+    AddObject('- IV Квартал', TObject(104));
+    AddObject('- II Півріччя', TObject(202));
+    AddObject('- Рік', TObject(401));
+  end;
+  ComboBoxMonth.ItemIndex := 0;
+end;
 
-procedure TFMedocCheckDocs.SetEmbededPath(aIdx: integer);
+procedure TFMedFind.SetComboBoxYear(aYear: Integer = 0);
+var
+  i, YearNext: Integer;
+begin
+  YearNext := YearOf(IncYear(Date(), 1));
+  if (aYear = 0) then
+    aYear := YearOf(IncYear(Date(), -cYearsBack));
+  aYear := Max(aYear, YearNext - 15);
+
+  ComboBoxYear.Items.Clear();
+  for i := aYear to YearNext do
+    ComboBoxYear.Items.AddObject(IntToStr(i), TObject(i));
+end;
+
+procedure TFMedFind.SetComboBoxFirm(aSL: TStringList);
+var
+  i: integer;
+begin
+  ComboBoxFirm.Clear();
+  ComboBoxFirm.Items.Add(cChooseAll);
+  for i := 0 to aSL.Count - 1 do
+    ComboBoxFirm.Items.Add(aSL.Names[i]);
+
+  ComboBoxFirm.ItemIndex := 0;
+end;
+
+function TFMedFind.GetCurPathObj(): TJSONObject;
+var
+  Idx: integer;
+begin
+  if (ComboBoxPath.Items.Count > 0) then
+  begin
+    Idx := ComboBoxPath.ItemIndex;
+    Result := TJSONObject(ComboBoxPath.Items.Objects[Idx]);
+  end;
+end;
+
+procedure TFMedFind.SetEmbededPath(aIdx: integer);
 var
   JObj: TJSONObject;
   Path: string;
@@ -141,23 +114,12 @@ begin
   AddDirDll(Path);
 end;
 
-function TFMedocCheckDocs.GetCurPathObj(): TJSONObject;
-var
-  Idx: integer;
-begin
-  if (ComboBoxPath.Items.Count > 0) then
-  begin
-    Idx := ComboBoxPath.ItemIndex;
-    Result := TJSONObject(ComboBoxPath.Items.Objects[Idx]);
-  end;
-end;
-
-procedure TFMedocCheckDocs.Disconnect();
+procedure TFMedFind.Disconnect();
 begin
   DmCommon.IBConnection.Connected := False;
 end;
 
-procedure TFMedocCheckDocs.ConnectToDB();
+procedure TFMedFind.ConnectToDB();
 var
   JObj: TJSONObject;
   DbName, Port: string;
@@ -176,82 +138,93 @@ begin
   end;
 end;
 
-procedure TFMedocCheckDocs.QueryCharcodeNot(aQuery: TSQLQuery; aArrExcl, aArrIncl: TStringArray);
+procedure TFMedFind.QueryCharcodeNot(aQuery: TSQLQuery; aArrExcl: TStringArray);
 var
-  Macro, StrExcl, StrIncl: string;
+  Macro, StrExcl: string;
   SL1, SL2: TStringList;
 begin
-  SL1 := TStringList.Create().AddArray(aArrExcl);
-  SL2 := TStringList.Create().AddExtDelim(SL1);
-  StrExcl := QuotedStr(SL2.GetJoin('|'));
-  if (Length(aArrIncl) = 0) then
-    Macro := Format(' AND (FORM.CHARCODE NOT SIMILAR TO (%s))', [StrExcl])
-  else begin
-    SL1.Clear();
-    SL1.AddArray(aArrIncl);
-    StrIncl := QuotedStr(SL1.GetJoin('|'));
-    Macro := Format(' AND ((FORM.CHARCODE NOT SIMILAR TO (%s)) OR (FORM.CHARCODE SIMILAR TO (%s)))', [StrExcl, StrIncl]);
+  Macro := '';
+  if (Length(aArrExcl) <> 0) then
+  begin
+    SL1 := TStringList.Create().AddArray(aArrExcl);
+    SL2 := TStringList.Create().AddExtDelim(SL1);
+    StrExcl := QuotedStr(SL2.GetJoin('|'));
+    Macro := Format(' AND (FORM.CHARCODE NOT SIMILAR TO (%s))', [StrExcl]);
+    SL1.Free();
+    SL2.Free();
   end;
   aQuery.MacroByName('_COND_CHARCODE_NOT').Value := Macro;
-
-  SL1.Free();
-  SL2.Free();
 end;
 
-function TFMedocCheckDocs.QueryPrevOpen(const aCode: string; aPerType, aYear, aMonth: integer): integer;
+function TFMedFind.GetDocsAll(): TStringList;
+var
+  i, j: integer;
+  Str: string;
+  SL: TStringList;
+begin
+  Result := TStringList.Create();
+
+  SL := TStringList.Create();
+  try
+    for i := 1 to ComboBoxDoc.Items.Count - 1 do
+    begin
+      SL.Clear();
+      SL.AddExtDelim(ComboBoxDoc.Items.Names[i]);
+      for j := 0 to SL.Count - 1 do
+      begin
+        Str := Copy(SL[j], 1, cBaseCodeLen);
+        Result.Add(Str);
+      end;
+    end;
+  finally
+    SL.Free();
+  end;
+end;
+
+function TFMedFind.QueryPrevOpen(aQuery: TSQLQuery; aSLCodes: TStringList; const aCode: string; aPerType, aYear, aMonth: integer): integer;
 var
   Year, Month, Day: word;
   Str, StrMacro: string;
   DatePrev: TDate;
-  SL: TStringList;
 begin
-  SQLQueryGridPrev.Close();
-  SQLQueryGridPrev.DataBase := DmCommon.IBConnection;
-  SQLQueryGridPrev.Transaction := DmCommon.SQLTransaction;
+  aQuery.Close();
 
   DbGridPrev.Columns.Clear();
 
-  SQLQueryGridPrev.ParamByName('_EDRPOU').Value := aCode;
+  aQuery.ParamByName('_EDRPOU').Value := aCode;
 
-  SQLQueryGridPrev.ParamByName('_PERTYPE').Value := aPerType;
-
-  //if (MatchStr('J02104', cArrDayDoc)) then
+  aQuery.ParamByName('_PERTYPE').Value := aPerType;
 
   DatePrev := PrevPeriodDate(PerTypeToChar(aPerType), aYear, aMonth);
   DecodeDate(DatePrev, Year, Month, Day);
   Str := FormatDateTime('yyyy-mm-dd', EncodeDate(Year, Month, 1));
-  SQLQueryGridPrev.MacroByName('_PERDATE').Value := QuotedStr(Str);
+  aQuery.MacroByName('_PERDATE').Value := QuotedStr(Str);
 
   StrMacro := '';
-  SL := FieldToStrings(SQLQueryGridCur, 'CHARCODE').Uniq();
-  if (SL.Count > 0) then
+  if (aSLCodes.Count > 0) then
   begin
-     SL.Left(cBaseCodeLen).Quoted();
+     aSLCodes.Left(cBaseCodeLen).Quoted();
      //SL.Left(cBaseCodeLen).DelArray(cArrDayDoc).Quoted();
-     StrMacro := Format(' AND (LEFT(FORM.CHARCODE, %d) NOT IN (%s))', [cBaseCodeLen ,SL.CommaText]);
+     StrMacro := Format(' AND (LEFT(FORM.CHARCODE, %d) NOT IN (%s))', [cBaseCodeLen ,aSLCodes.CommaText]);
   end;
-  SQLQueryGridPrev.MacroByName('_COND_CHARCODES').Value := StrMacro;
-  SL.Free();
+  aQuery.MacroByName('_COND_CHARCODES').Value := StrMacro;
 
-  QueryCharcodeNot(SQLQueryGridPrev, Concat(cArrExcl, ['FJ-30010%']), []);
+  QueryCharcodeNot(aQuery, Concat(cArrExcl, ['FJ-30010%']));
 
   //Log.Print('i', ExpandSQL(SQLQueryGridPrev));
 
-  SQLQueryGridPrev.Open();
-  Result := SQLQueryGridPrev.RecordCount;
+  aQuery.Open();
+  Result := aQuery.RecordCount;
 end;
 
-function TFMedocCheckDocs.QueryCurOpen(): integer;
+function TFMedFind.QueryCurOpen(aQuery, aQueryPrev: TSQLQuery): integer;
 var
   Month, Year, PerType, Records: integer;
   Str, StrDb, Macro, MacroPerType, MacroPerDate, Code: string;
   SL: TStringList;
 begin
-  DmCommon.SQLTransaction.Rollback();  //refresh
-
-  SQLQueryGridCur.Close();
-  SQLQueryGridCur.DataBase := DmCommon.IBConnection;
-  SQLQueryGridCur.Transaction := DmCommon.SQLTransaction;
+  GetParentTransaction().Rollback();  //refresh
+  aQuery.Close();
 
   DbGridCur.Columns.Clear();
   DbGridCur.Visible := True;
@@ -280,27 +253,28 @@ begin
     Str := FormatDateTime('yyyy-mm-dd', EncodeDate(Year, Month, 1));
     MacroPerDate := Format(' AND (CARD.PERDATE = DATE %s)', [QuotedStr(Str)]);
   end;
+  aQuery.MacroByName('_COND_PERTYPE').Value := MacroPerType;
+  aQuery.MacroByName('_COND_PERDATE').Value := MacroPerDate;
 
-  SQLQueryGridCur.MacroByName('_COND_PERTYPE').Value := MacroPerType;
-  SQLQueryGridCur.MacroByName('_COND_PERDATE').Value := MacroPerDate;
-
-  Macro := '';
   Str := UpperCase(ComboBoxDoc.Items.Names[ComboBoxDoc.ItemIndex]);
   if (Str <> cChooseAll) then
   begin
     SL := TStringList.Create().AddExtDelim(Str).Left(cBaseCodeLen).Quoted();
-    Macro := Format(' AND (LEFT(FORM.CHARCODE, %d) IN (%s))', [cBaseCodeLen ,SL.CommaText]);
-    FreeAndNil(SL);
+  end else begin
+    SL := GetDocsAll().Quoted();
   end;
-  SQLQueryGridCur.MacroByName('_COND_CHARCODE').Value := Macro;
+  Macro := Format(' AND (LEFT(FORM.CHARCODE, %d) IN (%s))', [cBaseCodeLen ,SL.CommaText]);
+  aQuery.MacroByName('_COND_CHARCODE').Value := Macro;
+  FreeAndNil(SL);
 
   Macro := '';
   Code := ComboBoxFirm.Text;
   if (Code <> cChooseAll) then
     Macro := Format(' AND (ORG.EDRPOU = %s)', [Code]);
-  SQLQueryGridCur.MacroByName('_COND_ORG').Value := Macro;
+  aQuery.MacroByName('_COND_ORG').Value := Macro;
 
-  QueryCharcodeNot(SQLQueryGridCur, cArrExcl, []);
+  //QueryCharcodeNot(aQuery, cArrExcl);
+  QueryCharcodeNot(aQuery, []);
 
   Macro := ', '''' AS FJ';
   if (Pos('FJ-0500110', ComboBoxDoc.Text) = 1) then
@@ -309,38 +283,40 @@ begin
     if (fTablesMain.IndexOf(StrDb) <> 0) then
     begin
       Macro := ', TFJ.HZ || ''-'' || TFJ.HZN || ''-'' || TFJ.HZU AS FJ';
-      SQLQueryGridCur.MacroByName('_FROM_T2').Value :=
+      aQuery.MacroByName('_FROM_T2').Value :=
         Format(' LEFT JOIN %s TFJ ON TFJ.CARDCODE = CARD.CODE', [StrDb]);
     end;
   end;
-  SQLQueryGridCur.MacroByName('_SELECT_T2').Value := Macro;
+  aQuery.MacroByName('_SELECT_T2').Value := Macro;
 
-  SQLQueryGridCur.MacroByName('_ORDER').Value := fSortField;
-  SQLQueryGridCur.MacroByName('_ASC').Value := IfThen(fSortAsc, 'ASC', 'DESC');
-
-  //SQLQueryGridCur.AfterOpen := nil;
-  //SQLQueryGridCur.OnCalcFields := nil;
-  //SQLQueryGridCur.AfterScroll := nil;
-  //DbGridCur.OnDrawColumnCell := nil;
+  aQuery.MacroByName('_ORDER').Value := fSortField;
+  aQuery.MacroByName('_ASC').Value := IfThen(fSortAsc, 'ASC', 'DESC');
 
   //Log.Print('i', ExpandSQL(SQLQueryGridCur));
-
-  //DmCommon.SQLTransaction.CommitRetaining();
-  //DmCommon.SQLTransaction.Commit();
-  SQLQueryGridCur.Open();
-  //SQLQueryGridCur.Refresh();
+  aQuery.Open();
 
   if (Code <> cChooseAll) and (Month <> cPerTypeAll) then
   begin
-    Records := QueryPrevOpen(Code, PerType, Year, Month);
+    SL := FieldToStrings(aQuery, 'CHARCODE').Uniq();
+    Records := QueryPrevOpen(aQueryPrev, SL, Code, PerType, Year, Month);
     if (Records > 0) then
        Log.Print('i', Format('Знайдено пропоновані звіти %d', [Records]));
+    SL.Free();
+
+    Str := IntToStr(Records);
+    DBGridPrev.Visible := True;
+  end else begin
+    Str := '?';
+    DBGridPrev.Visible := False;
   end;
 
-  Result := SQLQueryGridCur.RecordCount;
+  TabSheetCur.Caption := Format('%s (%d)', [fCurCaption, aQuery.RecordCount]) ;
+  TabSheetPrev.Caption := Format('%s (%s)', [fPrevCaption, Str]) ;
+
+  Result := aQuery.RecordCount;
 end;
 
-procedure TFMedocCheckDocs.SQLQueryGridCurCalcFields(DataSet: TDataSet);
+procedure TFMedFind.SQLQueryGridCurCalcFields(DataSet: TDataSet);
 var
   i, PerType: integer;
   FieldPerDate, FieldXML, FieldFJ, FieldHZ: TField;
@@ -387,12 +363,13 @@ begin
     FreeAndNil(DataSet);
 
   if (ProtectTimer.TimingCheck()) then
-    fFirmCodesLicensed.Clear();
+    fCodesLic.Clear();
 end;
 
-procedure TFMedocCheckDocs.BitBtnFindClick(Sender: TObject);
+procedure TFMedFind.BitBtnFindClick(Sender: TObject);
 var
   Msg, LastUpdate: string;
+
   Delay, Records: integer;
 begin
   Inc(fCount);
@@ -415,9 +392,10 @@ begin
   Log.Print('i', Msg);
 
   ConnectToDb();
-  Records := QueryCurOpen();
+  Records := QueryCurOpen(GetParentQueryCur(), GetParentQueryPrev());
 
-  // we are not so fast comparing to MEDOC
+
+  // we are not so fast comparing to MED
   Delay := Settings.GetItem('Common', 'Delay', cDelayFind);
   if (not IsDeveloper()) then
     Sleep(Delay + Random(Delay));
@@ -426,7 +404,7 @@ begin
   Log.Print('i', Format('Відібрано записів %d', [Records]));
 end;
 
-procedure TFMedocCheckDocs.BitBtnActivationClick(Sender: TObject);
+procedure TFMedFind.BitBtnActivationClick(Sender: TObject);
 var
   P: TPoint;
 begin
@@ -434,7 +412,7 @@ begin
   PopupMenuActivation.PopUp(P.X, P.Y);
 end;
 
-procedure TFMedocCheckDocs.ButtonPathClick(Sender: TObject);
+procedure TFMedFind.ButtonPathClick(Sender: TObject);
 begin
   if (DirectoryExists(ComboBoxPath.Text)) then
     SelectDirectoryDialog1.InitialDir := ComboBoxPath.Text;
@@ -446,20 +424,42 @@ begin
   end;
 end;
 
-procedure TFMedocCheckDocs.ComboBoxPathEditingDone(Sender: TObject);
+function TFMedFind.OnSendMsg(aForm: TForm; const aJObj: TJSONObject): boolean;
+var
+  id: string;
+begin
+  if (Assigned(aJObj)) then
+  begin
+   id := aJObj.Get('id', '');
+   if (id = 'combobox_path_db') then
+   begin
+     ComboBoxPath.ItemIndex := aJObj.Get('index', 0);
+     ComboBoxPathEditingDone(Nil);
+   end;
+  end;
+
+  Result := False;
+end;
+
+procedure TFMedFind.ComboBoxPathEditingDone(Sender: TObject);
 var
   Idx: integer;
+  JObj: TJSONObject;
 begin
-  DmCommon.Close();
-  InitEmptyGrid();
+  // prevent recursion from OnSendMsgs
+  if (not Assigned(Sender)) then
+    Exit;
 
-  if (not MedocIni.DirToFileApp(ComboBoxPath.Text).IsEmpty()) then
+  DmCommon.Close();
+  InitEmptyGrid(GetParentQueryCur());
+
+  if (not MedIni.DirToFileApp(ComboBoxPath.Text).IsEmpty()) then
   begin
-    SetComboBoxFirm();
+    SetComboBoxFirm(fCodesLic);
     ComboBoxFirm.ItemIndex := 0;
-    if (MedocIni.AddPath(ComboBoxPath.Text)) then
+    if (MedIni.AddPath(ComboBoxPath.Text)) then
     begin
-      InitMedocControl();
+      InitMedControl();
       Log.Print('i', 'Додано шлях ' + ComboBoxPath.Text);
     end;
   end;
@@ -469,25 +469,31 @@ begin
   begin
     ComboBoxPath.ItemIndex := Idx;
     SetEmbededPath(Idx);
+
+    JObj := TJSONObject.Create();
+    JObj.Add('id', 'combobox_path_db');
+    JObj.Add('index', Idx);
+    SendMsg(JObj);
+    JObj.Free();
   end;
 end;
 
-procedure TFMedocCheckDocs.ComboBoxYearDropDown(Sender: TObject);
+procedure TFMedFind.ComboBoxYearDropDown(Sender: TObject);
 var
   Val: integer;
 begin
   Val := StateStore.GetItem('FSettings', 'SpinEditBeginYear_Value', 0);
-  SetComboBoxToYear(ComboBoxYear, Val);
+  SetComboBoxYear(Val);
   if (Val = 0) then
     ComboBoxYear.ItemIndex := ComboBoxYear.Items.Count - 2;
 end;
 
-procedure TFMedocCheckDocs.DbGridCurColumnSized(Sender: TObject);
+procedure TFMedFind.DbGridCurColumnSized(Sender: TObject);
 begin
   StateStore.SaveGrid(Name, DbGridCur);
 end;
 
-procedure TFMedocCheckDocs.DbGridDrawColumnCell(Sender: TObject;
+procedure TFMedFind.DbGridDrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: integer; Column: TColumn; State: TGridDrawState);
 var
   DisplayText: string;
@@ -514,7 +520,7 @@ var
   end;
 end;
 
-procedure TFMedocCheckDocs.DbGridCurTitleClick(Column: TColumn);
+procedure TFMedFind.DbGridCurTitleClick(Column: TColumn);
 var
   Field: string;
 begin
@@ -530,11 +536,11 @@ begin
     fSortAsc := True;
   end;
 
-  QueryCurOpen();
+  QueryCurOpen(GetParentQueryCur(), GetParentQueryPrev());
   DbGridCur.Invalidate();
 end;
 
-function TFMedocCheckDocs.IsDemo(aCode: string; aField: TField): boolean;
+function TFMedFind.IsDemo(aCode: string; aField: TField): boolean;
 var
   Idx: integer;
   Str: string;
@@ -543,13 +549,13 @@ begin
   if (not ProtectTimer.CompareRnd()) then
     Exit(True);
 
-  Idx := fFirmCodesLicensed.IndexOfName(aCode);
+  Idx := fCodesLic.IndexOfName(aCode);
   if (Idx = -1) then
     Exit(True);
 
   if (not aField.IsNull) then
   begin
-    Str := fFirmCodesLicensed.ValueFromIndex[Idx];
+    Str := fCodesLic.ValueFromIndex[Idx];
     LicDate := ScanDateTime('yyyy-mm-dd', Str);
     if (aField.AsDateTime > LicDate) then
       Exit(True);
@@ -557,7 +563,8 @@ begin
 
   Result := False;
 end;
-procedure TFMedocCheckDocs.FrPrintGrid1GetValue(const ParName: String; var ParValue: Variant);
+
+procedure TFMedFind.FrPrintGrid1GetValue(const ParName: String; var ParValue: Variant);
 begin
   if (ParName = 'AppName') then
     ParValue := Format('%s %s', [cAppName, GetAppVer()])
@@ -567,36 +574,38 @@ begin
     ParValue := Format('%s', [ComboBoxDoc.Text]);
 end;
 
-procedure TFMedocCheckDocs.MenuItemOrderClick(Sender: TObject);
+procedure TFMedFind.MenuItemOrderClick(Sender: TObject);
 begin
   ConnectToDb();
   DmCommon.Licence_OrderToHttp(Name);
 end;
 
-procedure TFMedocCheckDocs.MenuItemOrderFreeClick(Sender: TObject);
+procedure TFMedFind.MenuItemOrderFreeClick(Sender: TObject);
 begin
  ConnectToDb();
  DmCommon.Licence_OrderToHttp(Name, 1);
 end;
 
-procedure TFMedocCheckDocs.MenuItemRefreshClick(Sender: TObject);
+procedure TFMedFind.MenuItemRefreshClick(Sender: TObject);
+var
+  Str: string;
 begin
   ConnectToDb();
 
   Log.Print('i', 'Завантаження ліцензій ...');
-  fFirmCodesLicensed := DmCommon.Licence_GetFromHttp();
-  SetComboBoxFirm();
-  if (fFirmCodesLicensed.Count = 0) then
+  fCodesLic := DmCommon.Licence_GetFromHttp(Name);
+  SetComboBoxFirm(fCodesLic);
+  if (fCodesLic.Count = 0) then
     Log.Print('i', 'Не знайдено ліцензій')
   else begin
-    Log.Print('i', 'Знайдено ліцензії для кодів ' + fFirmCodesLicensed.DelimitedText);
-    QueryCurOpen();
+    Log.Print('i', Format('Знайдено %d. Ліцензії для кодів %s', [fCodesLic.Count, fCodesLic.DelimitedText]));
+    QueryCurOpen(GetParentQueryCur(), GetParentQueryPrev());
   end;
 
   Settings.SetItem('Licence', 'LastUpdate', DateTimeToStr(Now()));
 end;
 
-procedure TFMedocCheckDocs.PageControlChange(Sender: TObject);
+procedure TFMedFind.PageControlChange(Sender: TObject);
 begin
   if (PageControl.ActivePage.Name = 'TabSheetPrev') and (ComboBoxFirm.Text = cChooseAll) then
   begin
@@ -606,34 +615,45 @@ begin
   end;
 end;
 
-procedure TFMedocCheckDocs.BitBtnPrintClick(Sender: TObject);
+procedure TFMedFind.Panel1Click(Sender: TObject);
+begin
+
+end;
+
+procedure TFMedFind.BitBtnPrintClick(Sender: TObject);
 var
   PropGuard: TPropGuard;
 begin
-  if (SQLQueryGridCur.RecordCount = 0) then
+  if (GetParentQueryCur().RecordCount = 0) then
   begin
     Log.Print('i', 'Немає даних для друку');
     Exit();
   end;
 
   PropGuard := TPropGuard.Create([
-    SQLQueryGridCurINDTAXNUM,
-    SQLQueryGridCurCARDSTATUS_NAME,
-    SQLQueryGridCurPERDATE,
-    SQLQueryGridCurFORM_NAME
+    //SQLQueryGridCurINDTAXNUM,
+    //SQLQueryGridCurCARDSTATUS_NAME,
+    //SQLQueryGridCurPERDATE,
+    //SQLQueryGridCurFORM_NAME
   ], 'Visible', False);
 
   try
     //FrPrintGrid1.Caption := Format('%s -- Період: %s %s року--Звіт: %s)',
     //  [cAppName, ComboBoxMonth.Text, ComboBoxYear.Text, ComboBoxDoc.Text]);
 
-    //ResourceLoadReport('Report_FMedocCheckDocs1', frReport1);
+    //ResourceLoadReport('Report_FMedCheckDocs1', frReport1);
+    FrPrintGrid1.OnGetValue := @FrPrintGrid1GetValue;
     FrPrintGrid1.Template := 'res\Report\CheckDocs2.lrf';
-    FrPrintGrid1.PreviewReport();
-    Exit();
+    if (not FileExists(FrPrintGrid1.Template)) then
+    begin
+      Log.Print('e', 'Шаблон не існує ' + FrPrintGrid1.Template);
+      Exit();
+    end;
 
-    //ResourceLoadReport('Report_FMedocCheckDocs1', frReport1);
-    //frReport1.LoadFromFile('Res\Report\FMedocCheckDocs1.lrf');
+    FrPrintGrid1.PreviewReport();
+
+    //ResourceLoadReport('Report_FMedCheckDocs1', frReport1);
+    //frReport1.LoadFromFile('Res\Report\FMedCheckDocs1.lrf');
     //if (frReport1.PrepareReport()) then
     //  frReport1.ShowReport();
   finally
@@ -641,7 +661,7 @@ begin
   end;
 end;
 
-procedure TFMedocCheckDocs.BitBtnRunMedocClick(Sender: TObject);
+procedure TFMedFind.BitBtnRunMedClick(Sender: TObject);
 var
   Path: string;
   JObj: TJSONObject;
@@ -651,7 +671,7 @@ begin
   begin
     Log.Print('i', 'Не мережева версія програми');
     Disconnect();
-    InitEmptyGrid();
+    InitEmptyGrid(GetParentQueryCur());
   end;
 
   Path := ConcatPaths([ComboBoxPath.Text, 'ezvit.exe']);
@@ -659,56 +679,56 @@ begin
   ExecProcess(Path);
 end;
 
-procedure TFMedocCheckDocs.InitEmptyGrid();
+procedure TFMedFind.InitEmptyGrid(aQuery: TSQLQuery);
 var
   i: integer;
 begin
   // Add cloumn visualisation in empty Grid
-  for i := 0 to SQLQueryGridCur.Fields.Count - 1 do
-    if SQLQueryGridCur.Fields[i].Visible then
+  for i := 0 to aQuery.Fields.Count - 1 do
+    if (aQuery.Fields[i].Visible) then
       with DbGridCur.Columns.Add do
-        FieldName := SQLQueryGridCur.Fields[i].DisplayLabel;
+        FieldName := aQuery.Fields[i].DisplayLabel;
 end;
 
-procedure TFMedocCheckDocs.InitMedocControl();
+procedure TFMedFind.InitMedControl();
 var
   i: integer;
   Path, Port: string;
   BtnEnable: boolean;
   JObj: TJSONObject;
 begin
-  fJMedocApp := MedocIni.ToJson();
-  for i := 0 to fJMedocApp.Count - 1 do
+  fJMedApp := MedIni.ToJson();
+  for i := 0 to fJMedApp.Count - 1 do
   begin
-    JObj := fJMedocApp.Objects[i];
+    JObj := fJMedApp.Objects[i];
     Path := JObj.Get('path', '');
     Port := JObj.Get('port', '');
     ComboBoxPath.Items.AddObject(Path, JObj);
   end;
 
-  BtnEnable := (fJMedocApp.Count > 0);
-  BitBtnRunMedoc.Enabled := BtnEnable;
+  BtnEnable := (fJMedApp.Count > 0);
+  BitBtnRunMed.Enabled := BtnEnable;
   BitBtnFind.Enabled := BtnEnable;
   BitBtnActivation.Enabled := BtnEnable;
   BitBtnPrint.Enabled := BtnEnable;
 end;
 
-procedure TFMedocCheckDocs.FormCreate(Sender: TObject);
-var
-  i: integer;
+procedure TFMedFind.FormCreate(Sender: TObject);
 begin
   inherited;
-  SetFont(self);
 
+  SetFont(self);
   ProtectTimer.TimingStart();
 
   fCount := 0;
+  fCurCaption := TabSheetCur.Caption;
+  fPrevCaption := TabSheetPrev.Caption;
   fSortField := 'CARDSTATUS_NAME';
   fSortAsc := True;
 
-  if (not MedocIni.IsFile()) then
-    MedocIni.AddFromRegistry();
-  InitMedocControl();
+  if (not MedIni.IsFile()) then
+    MedIni.AddFromRegistry();
+  InitMedControl();
 
   if (ComboBoxPath.Items.Count = 0) then
   begin
@@ -722,16 +742,15 @@ begin
 
   if (not IsDebugger1()) or (IsDeveloper()) then
   begin
-    SetComboBoxToCurrentMonth(ComboBoxMonth);
-    SetComboBoxDoc();
+    SetComboBoxMonth();
     ComboBoxYearDropDown(nil);
   end;
 
   if (not Licence.IsFile()) then
     Log.Print('w', 'Файл ліцензій не знайдено');
 
-  fFirmCodesLicensed := Licence.GetFirmCodes(Name);
-  SetComboBoxFirm();
+  fCodesLic := Licence.GetFirmCodes(Name);
+  SetComboBoxFirm(fCodesLic);
 
   fDemoFields := TStringList.Create();
   fDemoFields.Add('CARDSTATUS_NAME');
@@ -740,9 +759,9 @@ begin
   fDemoFields.Add('CARDSENDSTT_NAME');
   fDemoFields.Add('HZ');
 
-  Panel1.Font.Size := 10;
+  PanelComboBox.Font.Size := 10;
 
-  InitEmptyGrid();
+  InitEmptyGrid(GetParentQueryCur());
 
   StateStore.Load(self);
   StateStore.ComboBoxSetIndex([ComboBoxYear, ComboBoxMonth, ComboBoxDoc, ComboBoxFirm]);
@@ -754,19 +773,20 @@ begin
   if (ProtectTimer.TimingCheck()) then
   begin
     ComboBoxMonth.Clear();
-    fFirmCodesLicensed.Clear();
+    fCodesLic.Clear();
   end;
 end;
 
-procedure TFMedocCheckDocs.FormDestroy(Sender: TObject);
+procedure TFMedFind.FormDestroy(Sender: TObject);
 begin
   if (fCount > 0) then
     StateStore.Save(self);
 
-  FreeAndNil(fJMedocApp);
-  FreeAndNil(fFirmCodesLicensed);
+  FreeAndNil(fJMedApp);
+  FreeAndNil(fCodesLic);
   FreeAndNil(fTablesMain);
   FreeAndNil(fDemoFields);
 end;
 
 end.
+

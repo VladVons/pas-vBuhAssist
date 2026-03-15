@@ -1,0 +1,81 @@
+// CreateComboBoxDocd: 2026.02.05
+// Author: Vladimir Vons <VladVons@gmail.com>
+
+  TFMedFind = class(TFBase)
+    BitBtnActivation: TBitBtn;
+    BitBtnFind: TBitBtn;
+    BitBtnPrint: TBitBtn;
+    BitBtnRunMed: TBitBtn;
+    ButtonPath: TButton;
+    ComboBoxDoc: TComboBox;
+    ComboBoxFirm: TComboBox;
+    ComboBoxMonth: TComboBox;
+    ComboBoxPath: TComboBox;
+    ComboBoxYear: TComboBox;
+    DbGridCur: TDBGrid;
+    DBGridPrev: TDBGrid;
+    frDBDataSet1: TfrDBDataSet;
+    FrPrintGrid1: TFrPrintGrid;
+    frReport1: TfrReport;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    Label5: TLabel;
+    MenuItemOrder: TMenuItem;
+    MenuItemOrderFree: TMenuItem;
+    MenuItemRefresh: TMenuItem;
+    PageControl: TPageControl;
+    PanelComboBox: TPanel;
+    PanelFrame: TPanel;
+    PopupMenuActivation: TPopupMenu;
+    SelectDirectoryDialog1: TSelectDirectoryDialog;
+    TabSheetCur: TTabSheet;
+    TabSheetPrev: TTabSheet;
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure BitBtnActivationClick(Sender: TObject);
+    procedure BitBtnFindClick(Sender: TObject);
+    procedure BitBtnPrintClick(Sender: TObject);
+    procedure BitBtnRunMedClick(Sender: TObject);
+    procedure ButtonPathClick(Sender: TObject);
+    procedure ComboBoxPathEditingDone(Sender: TObject);
+    procedure ComboBoxYearDropDown(Sender: TObject);
+    procedure DbGridCurColumnSized(Sender: TObject);
+    procedure DbGridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: integer; Column: TColumn; State: TGridDrawState);
+    procedure DbGridCurTitleClick(Column: TColumn);
+    procedure FrPrintGrid1GetValue(const ParName: String; var ParValue: Variant);
+    procedure MenuItemOrderClick(Sender: TObject);
+    procedure MenuItemOrderFreeClick(Sender: TObject);
+    procedure MenuItemRefreshClick(Sender: TObject);
+    procedure PageControlChange(Sender: TObject);
+    procedure Panel1Click(Sender: TObject);
+    procedure SQLQueryGridCurCalcFields(DataSet: TDataSet);
+  private
+    fCount: integer;
+    fSortField, fCurCaption, fPrevCaption: string;
+    fSortAsc: boolean;
+    fJMedApp: TJSONArray;
+    fCodesLic, fTablesMain, fDemoFields: TStringList;
+    fColorYelow: TColor;
+    procedure SetComboBoxYear(aYear: Integer = 0);
+    procedure SetComboBoxMonth();
+    procedure SetEmbededPath(aIdx: integer);
+    function GetCurPathObj(): TJSONObject;
+    function QueryCurOpen(aQuery, aQueryPrev: TSQLQuery): integer;
+    function QueryPrevOpen(aQuery: TSQLQuery; aSLCodes: TStringList; const aCode: string; aPerType, aYear, aMonth: integer): integer;
+    procedure ConnectToDb();
+    procedure Disconnect();
+    procedure InitEmptyGrid(aQuery: TSQLQuery);
+    procedure InitMedControl();
+    function IsDemo(aCode: string; aField: TField): boolean;
+    procedure QueryCharcodeNot(aQuery: TSQLQuery; aArrExcl: TStringArray);
+    function GetDocsAll(): TStringList;
+  protected
+    function  GetParentQueryCur(): TSQLQuery; virtual; abstract;
+    function  GetParentQueryPrev(): TSQLQuery; virtual; abstract;
+    function  GetParentTransaction(): TSQLTransaction; virtual; abstract;
+    procedure SetComboBoxDoc(aSL: TStringList);
+    procedure SetComboBoxFirm(aSL: TStringList);
+  public
+    function OnSendMsg(aForm: TForm; const aJObj: TJSONObject): boolean; override;
+  end;

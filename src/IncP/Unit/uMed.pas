@@ -1,7 +1,7 @@
 // Created: 2026.02.18
 // Author: Vladimir Vons <VladVons@gmail.com>
 
-unit uMedoc;
+unit uMed;
 
 {$mode ObjFPC}{$H+}
 
@@ -20,7 +20,7 @@ const
   cArrDayDoc: TStringArray = ('J02104', 'J02107');
 
 type
-  TMedocIni = class(TSettings)
+  TMedIni = class(TSettings)
   private
     function AddPaths(const aDirApp, aDirDb, aPort: string): boolean;
     procedure AddFromRegistry(aKey: HKEY);
@@ -43,11 +43,11 @@ type
   procedure MonthToType(var aPerType, aMonth: integer);
 
 var
-  MedocIni: TMedocIni;
+  MedIni: TMedIni;
 
 implementation
 
-procedure TMedocIni.AddFromRegistry(aKey: HKEY);
+procedure TMedIni.AddFromRegistry(aKey: HKEY);
 var
   i: integer;
   Reg: TRegistry;
@@ -75,13 +75,13 @@ begin
   end;
 end;
 
-procedure TMedocIni.AddFromRegistry();
+procedure TMedIni.AddFromRegistry();
 begin
   AddFromRegistry(HKEY_LOCAL_MACHINE);
   AddFromRegistry(HKEY_CURRENT_USER);
 end;
 
-function TMedocIni.GetPort(const aDir: string): string;
+function TMedIni.GetPort(const aDir: string): string;
 const
   cPort = '3050';
 begin
@@ -91,21 +91,21 @@ begin
       Result := cPort;
 end;
 
-function TMedocIni.DirToFileApp(const aDir: string): string;
+function TMedIni.DirToFileApp(const aDir: string): string;
 begin
   Result := ConcatPaths([aDir, 'ezvit.exe']);
   if (not FileExists(Result)) then
     Result := '';
 end;
 
-function TMedocIni.DirToFileDb(const aDir: string): string;
+function TMedIni.DirToFileDb(const aDir: string): string;
 begin
   Result := ConcatPaths([aDir, 'db', 'zvit.fdb']);
   if (not FileExists(Result)) then
     Result := '';
 end;
 
-function TMedocIni.AddPaths(const aDirApp, aDirDb, aPort: string): boolean;
+function TMedIni.AddPaths(const aDirApp, aDirDb, aPort: string): boolean;
 var
   StrDb: string;
 begin
@@ -121,7 +121,7 @@ begin
   Result := True;
 end;
 
-function TMedocIni.GetPathDbFromXML(const aFile: string): string;
+function TMedIni.GetPathDbFromXML(const aFile: string): string;
 var
   Doc: TXMLDocument;
   Node: TDOMNode;
@@ -138,7 +138,7 @@ begin
   end;
 end;
 
-function TMedocIni.FindDbInDir(aSL: TStringList): string;
+function TMedIni.FindDbInDir(aSL: TStringList): string;
 var
   i: integer;
 begin
@@ -148,7 +148,7 @@ begin
   Result := '';
 end;
 
-function TMedocIni.AddPath(const aDirApp: string): boolean;
+function TMedIni.AddPath(const aDirApp: string): boolean;
 const
   cPF = '\Program Files\';
 var
@@ -191,7 +191,7 @@ begin
   end;
 end;
 
-function TMedocIni.ToJson(): TJSONArray;
+function TMedIni.ToJson(): TJSONArray;
 var
   i: integer;
   App, Section, Port, Db: string;

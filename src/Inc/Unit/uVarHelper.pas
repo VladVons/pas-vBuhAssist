@@ -3,7 +3,7 @@
 
 unit uVarHelper;
 
-{$mode ObjFPC}{$H+}
+{$mode objfpc}{$H+}
 
 interface
 
@@ -11,6 +11,10 @@ uses
   Classes, SysUtils, fpjson;
 
 type
+  //TStringHelper1 = type helper for SysUtils.AnsiString
+  //public
+  //end;
+
   TStringMapFunc = function(const aStr: string): string;
 
   TStringListHelper = class helper for TStringList
@@ -19,6 +23,7 @@ type
     function AddJson(const aArr : TJSONArray): TStringList;
     function AddExtDelim(const aStr: string; const aDelim: string = '-'): TStringList;
     function AddExtDelim(const aSL: TStringList; const aDelim: string = '-'): TStringList;
+    function AddNames(const aSL: TStrings): TStringList;
     function DelArray(const aArr : TStringArray): TStringList;
     function DelEmpty(): TStringList;
     function GetArray(): TStringArray;
@@ -71,6 +76,16 @@ begin
     for i := 1 to Length(Prefix) do
       self.Add(Prefix[i] + Num);
   end;
+
+  Result := self;
+end;
+
+function TStringListHelper.AddNames(const aSL: TStrings): TStringList;
+var
+  i: Integer;
+begin
+  for i := 0 to aSL.Count - 1 do
+      self.Add(aSL.Names[i]);
 
   Result := self;
 end;

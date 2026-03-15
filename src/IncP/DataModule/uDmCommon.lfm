@@ -9,32 +9,24 @@ object DmCommon: TDmCommon
   object IBConnection: TIBConnection
     Connected = False
     LoginPrompt = False
-    DatabaseName = 'C:\ProgramData\Medoc\Medoc\db\ZVIT.FDB'
     KeepConnection = False
     Password = 'masterkey'
-    Transaction = SQLTransaction
+    Transaction = SQLTransactionDm
     UserName = 'SYSDBA'
     CharSet = 'UTF8'
-    HostName = 'localhost'
     CheckTransactionParams = False
     UseConnectionCharSetIfNone = False
     Left = 50
     Top = 20
   end
-  object SQLTransaction: TSQLTransaction
-    Active = False
-    Database = IBConnection
-    Left = 50
-    Top = 90
-  end
   object DataSource: TDataSource
     Left = 150
-    Top = 20
+    Top = 224
   end
   object SQLQueryCodes: TSQLQuery
     FieldDefs = <>
     Database = IBConnection
-    Transaction = SQLTransaction
+    Transaction = SQLTransactionDm
     SQL.Strings = (
       'SELECT'
       '  ORG.EDRPOU'
@@ -49,13 +41,13 @@ object DmCommon: TDmCommon
     Params = <>
     Macros = <>
     MacroCheck = True
-    Left = 150
-    Top = 90
+    Left = 152
+    Top = 120
   end
   object SQLQueryTablesMain: TSQLQuery
     FieldDefs = <>
     Database = IBConnection
-    Transaction = SQLTransaction
+    Transaction = SQLTransactionDm
     SQL.Strings = (
       'SELECT'
       '  RDB$RELATION_NAME AS TABLE_NAME'
@@ -71,14 +63,14 @@ object DmCommon: TDmCommon
     Params = <>
     Macros = <>
     MacroCheck = True
-    Left = 150
-    Top = 160
+    Left = 152
+    Top = 176
   end
   object ImageList1: TImageList
     Height = 24
     Width = 24
-    Left = 344
-    Top = 96
+    Left = 336
+    Top = 32
     Bitmap = {
       4C7A040000001800000018000000631100000000000078DAE5586958546796FE
       C40503EE222AA289769BC99ECE323D59BAA7939E89DDD3793A891AA3C62DD1B8
@@ -221,5 +213,11 @@ object DmCommon: TDmCommon
       B7FBA90DED5FC176DA1FFA322F9C8FC58DEBD770CCCBCB4CFBF3154F735FB077
       D7A64F3C3DDC1AE9CCBD71EBD6AD0BFFAFF6237F01F47CB3D8
     }
+  end
+  object SQLTransactionDm: TSQLTransaction
+    Active = False
+    Database = IBConnection
+    Left = 48
+    Top = 96
   end
 end

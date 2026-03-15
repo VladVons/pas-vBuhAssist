@@ -163,6 +163,7 @@ begin
     fJObjLic := TJSONObject(GetJSON(Decrypted));
     if (GetLicCount() > 0) then
       StrToFile(Encrypted, fFile);
+      //StrToFile(Decrypted, fFile);
   end;
 end;
 

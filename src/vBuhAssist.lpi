@@ -18,7 +18,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="11"/>
-      <RevisionNr Value="2"/>
+      <RevisionNr Value="3"/>
       <BuildNr Value="75"/>
       <StringTable ProductName="vBuhAssist"/>
     </VersionInfo>
@@ -32,7 +32,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="Inc/Unit;Inc/Type;IncP/Form;IncP/Unit;IncP/DataModule;Report;Inc/Form"/>
+            <OtherUnitFiles Value="Inc/Unit;Inc/Type;IncP/Form;IncP/Unit;IncP/DataModule;Report;Inc/Form;IncP/Frame"/>
             <UnitOutputDirectory Value="_lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -76,7 +76,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="Inc/Unit;Inc/Type;IncP/Form;IncP/Unit;IncP/DataModule;Report;Inc/Form"/>
+            <OtherUnitFiles Value="Inc/Unit;Inc/Type;IncP/Form;IncP/Unit;IncP/DataModule;Report;Inc/Form;IncP/Frame"/>
             <UnitOutputDirectory Value="_lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -153,27 +153,18 @@
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="IncP/Form/uFMedocCheckDocs.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="FMedocCheckDocs"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-      </Unit>
-      <Unit>
-        <Filename Value="IncP/Form/uFlicense.pas"/>
+        <Filename Value="IncP/Form/uFLicense.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FLicence"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="uFLicense"/>
       </Unit>
       <Unit>
-        <Filename Value="IncP/Form/ufoptimizePDF.pas"/>
+        <Filename Value="IncP/Form/uFOptimizePDF.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FOptimizePDF"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="uFOptimizePDF"/>
       </Unit>
       <Unit>
         <Filename Value="IncP/DataModule/uDmCommon.pas"/>
@@ -241,7 +232,7 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="IncP/Unit/uMedoc.pas"/>
+        <Filename Value="IncP/Unit/uMed.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
@@ -309,6 +300,20 @@
         <Filename Value="Inc/Unit/uVarHelper.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="IncP/Form/uFMedFindAkz.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FMedFindAkz"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="IncP/Form/uFMedFindZvit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FMedFindZvit"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -318,7 +323,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="Inc/Unit;Inc/Type;Inc/Form;IncP/Form;IncP/Unit;IncP/DataModule;../../lib/synapse"/>
+      <OtherUnitFiles Value="Inc/Unit;Inc/Type;Inc/Form;IncP/Form;IncP/Unit;IncP/DataModule;../../lib/synapse;IncP/Frame"/>
       <UnitOutputDirectory Value="_lib_vBuhAssist/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

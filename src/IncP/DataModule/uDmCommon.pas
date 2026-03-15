@@ -20,14 +20,14 @@ type
     ImageList1: TImageList;
     SQLQueryCodes: TSQLQuery;
     SQLQueryTablesMain: TSQLQuery;
-    SQLTransaction: TSQLTransaction;
+    SQLTransactionDm: TSQLTransaction;
     procedure DataModuleDestroy(Sender: TObject);
   private
   public
     procedure Connect(const aName: string; aPort: integer);
     procedure Close();
     function GetTablesMain(): TStringList;
-    function Licence_GetFromHttp(): TStringList;
+    function Licence_GetFromHttp(const aModule: string): TStringList;
     procedure Licence_OrderToHttp(const aModule: string; aMaxFree: integer = -1);
   end;
 
@@ -69,27 +69,24 @@ begin
   end;
 end;
 
-function TDmCommon.Licence_GetFromHttp(): TStringList;
+function TDmCommon.Licence_GetFromHttp(const aModule: string): TStringList;
 var
-  FirmCodes, FirmCodesLic: TStringList;
+  FirmCodes: TStringList;
 begin
   Result := TStringList.Create();
+  FirmCodes := GetQueryField(DataSource, SQLQueryCodes, 'EDRPOU');
   try
-    //QueryOpen();
-    FirmCodes := GetQueryField(DataSource, SQLQueryCodes, 'EDRPOU');
     //Log.Print('i', 'Запит на коди ' + FirmCodes.CommaText)
     Licence.HttpToFileEncrypt(FirmCodes);
     if (Licence.LastErr <> '') then
        Log.Print('e', 'Помилка ' + Licence.LastErr)
     else begin
-      FirmCodesLic := Licence.GetFirmCodes('FMedocCheckDocs');
-      FirmCodesLic.Delimiter := ',';
-      FirmCodesLic.StrictDelimiter := True;
-      Result.Assign(FirmCodesLic);
+      Result := Licence.GetFirmCodes(aModule);
+      Result.Delimiter := ',';
+      Result.StrictDelimiter := True;
     end;
   finally
-    FreeAndNil(FirmCodesLic);
-    FirmCodes.Free();
+    FreeAndNil(FirmCodes);
   end;
 end;
 
