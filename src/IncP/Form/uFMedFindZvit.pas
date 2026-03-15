@@ -1,3 +1,6 @@
+// Created: 2026.03.14
+// Author: Vladimir Vons <VladVons@gmail.com>
+
 unit uFMedFindZvit;
 
 {$mode ObjFPC}{$H+}
