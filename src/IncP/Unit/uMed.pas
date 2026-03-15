@@ -9,15 +9,13 @@ interface
 
 uses
   Classes, SysUtils, StrUtils, XMLRead, DOM, LConvEncoding, Registry, fpjson,
-  uSettings, uVarUtil, uHttp;
+  uSettings, uVarUtil, uHttp, uVarHelper;
 
 const
   cPerTypeAll  = 500;
   cChooseAll   = '- Всі';
   cBaseCodeLen = 6;
   cArrExcl: TStringArray = ('FJ-12%', 'FJ-13%', 'FJ-14%', 'PD%', 'Z0%');
-  //cArrIncl: TStringArray = ('J12032%', 'J12042%');
-  cArrDayDoc: TStringArray = ('J02104', 'J02107');
 
 type
   TMedIni = class(TSettings)
@@ -41,6 +39,7 @@ type
   function GetYearPart(aDate: TDate; aDiv: integer): Integer;
   function PerTypeToChar(aPerType: integer): char;
   procedure MonthToType(var aPerType, aMonth: integer);
+  function GetDocsFilter(aSL: TStrings): TStringList;
 
 var
   MedIni: TMedIni;
@@ -355,5 +354,31 @@ begin
     aMonth := 12;
   end;
 end;
+
+function GetDocsFilter(aSL: TStrings): TStringList;
+var
+  i, j: integer;
+  Str: string;
+  SL: TStringList;
+begin
+  Result := TStringList.Create();
+
+  SL := TStringList.Create();
+  try
+    for i := 1 to aSL.Count - 1 do
+    begin
+      SL.Clear();
+      SL.AddExtDelim(aSL.Names[i]);
+      for j := 0 to SL.Count - 1 do
+      begin
+        Str := Copy(SL[j], 1, cBaseCodeLen);
+        Result.Add(Str);
+      end;
+    end;
+  finally
+    SL.Free();
+  end;
+end;
+
 
 end.

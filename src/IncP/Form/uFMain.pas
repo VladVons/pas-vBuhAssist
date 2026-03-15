@@ -10,12 +10,13 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList, Windows, ExtCtrls,
   ComCtrls, StdCtrls, fpjson,
-  uFAbout, uFMedFindZvit, uFMedFindAkz, uFOptimizePDF, uFSettings, uFLogin, uFMessage,
+  uFAbout, uFMedFindZvit, uFMedFindAkz, uFMedFindPdv, uFOptimizePDF, uFSettings, uFLogin, uFMessage,
   uWinManager, uLicence, uLog, uSettings, uStateStore, uSys, uSysVcl, uConst, uProtectTimer, uAnnonce, uMed, uVarHelper;
 
 type
   { TFMain }
   TFMain = class(TForm)
+    ActionFMedFindPdv: TAction;
     ActionFMedFindAkz: TAction;
     ActionHelp: TAction;
     ActionName: TAction;
@@ -30,15 +31,17 @@ type
     MainMenu1: TMainMenu;
     ManuItemHelp: TMenuItem;
     MemoInfo1: TMemo;
+    MenuItemFMedFindPdv: TMenuItem;
+    MenuItemCloseTab: TMenuItem;
     MenuItemFMedFindAkz: TMenuItem;
     MenuItemHep: TMenuItem;
     MenuItemCheckForUpdates: TMenuItem;
+    PopupMenuPageControl: TPopupMenu;
     Separator2: TMenuItem;
     MenuItemSettings: TMenuItem;
     MenuItemPrint: TMenuItem;
     Separator1: TMenuItem;
     MenuItemExit: TMenuItem;
-    MenuItemCloseTab: TMenuItem;
     MenuItemFMedFindZvit: TMenuItem;
     MenuItemLicense: TMenuItem;
     MenuItemOprimizePDF: TMenuItem;
@@ -46,13 +49,13 @@ type
     MenuItemAboutApp: TMenuItem;
     PageControl1: TPageControl;
     Panel1: TPanel;
-    PopupMenu1: TPopupMenu;
     Splitter1: TSplitter;
     TimerAnnonce: TTimer;
     procedure ActionCheckForUpdateExecute(Sender: TObject);
     procedure ActionExitExecute(Sender: TObject);
     procedure ActionFAboutExecute(Sender: TObject);
     procedure ActionFMedFindAkzExecute(Sender: TObject);
+    procedure ActionFMedFindPdvExecute(Sender: TObject);
     procedure ActionFMedFindZvitExecute(Sender: TObject);
     procedure ActionHelpExecute(Sender: TObject);
     procedure ActionUserAgreementExecute(Sender: TObject);
@@ -106,6 +109,11 @@ end;
 procedure TFMain.ActionFMedFindAkzExecute(Sender: TObject);
 begin
   WinManager.Add(TFMedFindAkz);
+end;
+
+procedure TFMain.ActionFMedFindPdvExecute(Sender: TObject);
+begin
+  WinManager.Add(TFMedFindPdv);
 end;
 
 procedure TFMain.ActionHelpExecute(Sender: TObject);
@@ -210,23 +218,23 @@ end;
 procedure TFMain.FormsLoad();
 const
   cSect = 'Forms';
+  cAutoForm: TStringArray = ('TFMedFindZvit', 'TFMedFindAkz', 'TFMedFindPdv', 'TFSettings');
 var
   i: integer;
   SL: TStringList;
   Cls: TClass;
 begin
-  RegisterClasses([TFMedFindZvit, TFMedFindAkz, TFOptimizePDF, TFSettings]);
-  WinManager := TWinManager.Create(PageControl1, PopupMenu1);
+  RegisterClasses([TFMedFindZvit, TFMedFindAkz, TFMedFindPdv, TFOptimizePDF, TFSettings]);
+  WinManager := TWinManager.Create(PageControl1, PopupMenuPageControl);
 
   SL := Settings.GetSection(cSect);
   try
     if (SL.Count = 0) then
-    begin
-      SL.Add('TFMedFindZvit');
-      Settings.SetItem(cSect, SL.GetLast(), 1);
-      SL.Add('TFMedFindAkz');
-      Settings.SetItem(cSect, SL.GetLast(), 1);
-    end;
+      for i := 0 to Length(cAutoForm) - 1 do
+      begin
+        SL.Add(cAutoForm[i]);
+        Settings.SetItem(cSect, SL.GetLast(), 1);
+      end;
 
     for i := 0 to SL.Count - 1 do
       if (Settings.GetItem(cSect, SL[i], 0) = 1) then

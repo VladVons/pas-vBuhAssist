@@ -22,6 +22,11 @@ type
 implementation
 {$R *.lfm}
 
+function TFMedFind.GetParentDocsExcl(): TStringArray;
+begin
+  Result := [];
+end;
+
 procedure TFMedFind.SetComboBoxDoc(aSL: TStringList);
 var
   i: integer;
@@ -156,31 +161,6 @@ begin
   aQuery.MacroByName('_COND_CHARCODE_NOT').Value := Macro;
 end;
 
-function TFMedFind.GetDocsAll(): TStringList;
-var
-  i, j: integer;
-  Str: string;
-  SL: TStringList;
-begin
-  Result := TStringList.Create();
-
-  SL := TStringList.Create();
-  try
-    for i := 1 to ComboBoxDoc.Items.Count - 1 do
-    begin
-      SL.Clear();
-      SL.AddExtDelim(ComboBoxDoc.Items.Names[i]);
-      for j := 0 to SL.Count - 1 do
-      begin
-        Str := Copy(SL[j], 1, cBaseCodeLen);
-        Result.Add(Str);
-      end;
-    end;
-  finally
-    SL.Free();
-  end;
-end;
-
 function TFMedFind.QueryPrevOpen(aQuery: TSQLQuery; aSLCodes: TStringList; const aCode: string; aPerType, aYear, aMonth: integer): integer;
 var
   Year, Month, Day: word;
@@ -209,7 +189,7 @@ begin
   end;
   aQuery.MacroByName('_COND_CHARCODES').Value := StrMacro;
 
-  QueryCharcodeNot(aQuery, Concat(cArrExcl, ['FJ-30010%']));
+  QueryCharcodeNot(aQuery, Concat(GetParentDocsExcl(), ['FJ-30010%']));
 
   //Log.Print('i', ExpandSQL(SQLQueryGridPrev));
 
@@ -256,14 +236,16 @@ begin
   aQuery.MacroByName('_COND_PERTYPE').Value := MacroPerType;
   aQuery.MacroByName('_COND_PERDATE').Value := MacroPerDate;
 
-  Str := UpperCase(ComboBoxDoc.Items.Names[ComboBoxDoc.ItemIndex]);
-  if (Str <> cChooseAll) then
-  begin
-    SL := TStringList.Create().AddExtDelim(Str).Left(cBaseCodeLen).Quoted();
-  end else begin
-    SL := GetDocsAll().Quoted();
-  end;
-  Macro := Format(' AND (LEFT(FORM.CHARCODE, %d) IN (%s))', [cBaseCodeLen ,SL.CommaText]);
+  Str := ComboBoxDoc.Items.Names[ComboBoxDoc.ItemIndex];
+  if (Str = cChooseAll) then
+    SL := GetParentDocsIncl()
+  else
+    SL := TStringList.Create().AddExtDelim(Str).Left(cBaseCodeLen);
+
+  if (SL.Count > 0) then
+    Macro := Format(' AND (LEFT(FORM.CHARCODE, %d) IN (%s))', [cBaseCodeLen ,SL.Quoted().CommaText])
+  else
+    Macro := '';
   aQuery.MacroByName('_COND_CHARCODE').Value := Macro;
   FreeAndNil(SL);
 
@@ -273,8 +255,7 @@ begin
     Macro := Format(' AND (ORG.EDRPOU = %s)', [Code]);
   aQuery.MacroByName('_COND_ORG').Value := Macro;
 
-  //QueryCharcodeNot(aQuery, cArrExcl);
-  QueryCharcodeNot(aQuery, []);
+  QueryCharcodeNot(aQuery, GetParentDocsExcl());
 
   Macro := ', '''' AS FJ';
   if (Pos('FJ-0500110', ComboBoxDoc.Text) = 1) then
@@ -630,13 +611,7 @@ begin
     Exit();
   end;
 
-  PropGuard := TPropGuard.Create([
-    //SQLQueryGridCurINDTAXNUM,
-    //SQLQueryGridCurCARDSTATUS_NAME,
-    //SQLQueryGridCurPERDATE,
-    //SQLQueryGridCurFORM_NAME
-  ], 'Visible', False);
-
+  PropGuard := TPropGuard.Create(GetParentHideFiealds(), 'Visible', False);
   try
     //FrPrintGrid1.Caption := Format('%s -- Період: %s %s року--Звіт: %s)',
     //  [cAppName, ComboBoxMonth.Text, ComboBoxYear.Text, ComboBoxDoc.Text]);

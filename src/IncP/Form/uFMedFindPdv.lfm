@@ -1,7 +1,7 @@
-inherited FMedFindAkz: TFMedFindAkz
+inherited FMedFindPdv: TFMedFindPdv
   Height = 385
   Width = 799
-  Caption = 'Облік акцизу'
+  Caption = 'Облік ПДВ'
   ClientHeight = 385
   ClientWidth = 799
   OnCreate = FormCreate

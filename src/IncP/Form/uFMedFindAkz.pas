@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  uFMedFind, uDmCommon;
+  uFMedFind, uMed, uVarHelper, uDmCommon;
 
 type
   { TFMedFindAkz }
@@ -44,6 +44,8 @@ type
     function  GetParentQueryCur(): TSQLQuery; override;
     function  GetParentQueryPrev(): TSQLQuery; override;
     function  GetParentTransaction(): TSQLTransaction; override;
+    function  GetParentHideFiealds(): TObjectArray; override;
+    function  GetParentDocsIncl(): TStringList; override;
   public
 
   end;
@@ -71,6 +73,21 @@ begin
   Result := SQLTransaction;
 end;
 
+function TFMedFindAkz.GetParentDocsIncl(): TStringList;
+begin
+  Result := GetDocsFilter(ComboBoxDoc.Items);
+end;
+
+function TFMedFindAkz.GetParentHideFiealds(): TObjectArray;
+begin
+  Result := [
+    SQLQueryCurINDTAXNUM,
+    SQLQueryCurCARDSTATUS_NAME,
+    SQLQueryCurPERDATE,
+    SQLQueryCurFORM_NAME
+  ];
+end;
+
 procedure TFMedFindAkz.FormCreate(Sender: TObject);
 var
   SL: TStringList;
@@ -89,10 +106,10 @@ begin
   DataSourcePrev.DataSet := SQLQueryPrev;
   DbGridPrev.DataSource := DataSourcePrev;
 
-
-  SL := TStringList.Create();
-  SL.AddPair('FJ-0210401', 'Довідка про зведені за добу залишки ПАЛЬНЕ');
-  SL.AddPair('FJ-0210702', 'Довідка про зведені за добу залишки СПИРТ');
+  SL := TStringList.Create().AddArray([
+    'FJ-0210401=Довідка про зведені за добу залишки ПАЛЬНЕ',
+    'FJ-0210702=Довідка про зведені за добу залишки СПИРТ'
+  ]);
   SetComboBoxDoc(SL);
   SL.Free();
 end;

@@ -1,6 +1,8 @@
 // CreateComboBoxDocd: 2026.02.05
 // Author: Vladimir Vons <VladVons@gmail.com>
 
+  TObjectArray = array of TObject;
+
   TFMedFind = class(TFBase)
     BitBtnActivation: TBitBtn;
     BitBtnFind: TBitBtn;
@@ -69,11 +71,13 @@
     procedure InitMedControl();
     function IsDemo(aCode: string; aField: TField): boolean;
     procedure QueryCharcodeNot(aQuery: TSQLQuery; aArrExcl: TStringArray);
-    function GetDocsAll(): TStringList;
   protected
     function  GetParentQueryCur(): TSQLQuery; virtual; abstract;
     function  GetParentQueryPrev(): TSQLQuery; virtual; abstract;
     function  GetParentTransaction(): TSQLTransaction; virtual; abstract;
+    function  GetParentHideFiealds(): TObjectArray; virtual; abstract;
+    function  GetParentDocsIncl(): TStringList; virtual; abstract;
+    function  GetParentDocsExcl(): TStringArray; virtual;
     procedure SetComboBoxDoc(aSL: TStringList);
     procedure SetComboBoxFirm(aSL: TStringList);
   public

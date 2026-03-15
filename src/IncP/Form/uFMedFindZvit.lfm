@@ -24,8 +24,6 @@ inherited FMedFindZvit: TFMedFindZvit
       ActivePage = TabSheetCur
       TabIndex = 0
       inherited TabSheetCur: TTabSheet
-        ClientHeight = 172
-        ClientWidth = 789
         inherited DbGridCur: TDBGrid
           Height = 172
           Width = 789
@@ -33,8 +31,6 @@ inherited FMedFindZvit: TFMedFindZvit
         end
       end
       inherited TabSheetPrev: TTabSheet
-        ClientHeight = 172
-        ClientWidth = 789
         inherited DBGridPrev: TDBGrid
           Height = 172
           Width = 789

@@ -1,4 +1,4 @@
-unit uFMedFindZvit;
+unit uFMedFindPdv;
 
 {$mode ObjFPC}{$H+}
 
@@ -9,8 +9,8 @@ uses
   uFMedFind, uMed, uVarHelper, uDmCommon;
 
 type
-  { TFMedFindZvit }
-  TFMedFindZvit = class(TFMedFind)
+  { TFMedFindPdv }
+  TFMedFindPdv = class(TFMedFind)
     DataSourceCur: TDataSource;
     DataSourcePrev: TDataSource;
     SQLQueryCur: TSQLQuery;
@@ -44,47 +44,41 @@ type
     function  GetParentQueryCur(): TSQLQuery; override;
     function  GetParentQueryPrev(): TSQLQuery; override;
     function  GetParentTransaction(): TSQLTransaction; override;
-    function  GetParentHideFiealds(): TObjectArray ; override;
+    function  GetParentHideFiealds(): TObjectArray; override;
     function  GetParentDocsIncl(): TStringList; override;
-    function  GetParentDocsExcl(): TStringArray; override;
   public
 
   end;
 
 var
-  FMedFindZvit: TFMedFindZvit;
+  FMedFindPdv: TFMedFindPdv;
 
 implementation
 
 {$R *.lfm}
-{ TFMedFindZvit }
+{ TFMedFindPdv }
 
-function TFMedFindZvit.GetParentQueryCur(): TSQLQuery;
+function TFMedFindPdv.GetParentQueryCur(): TSQLQuery;
 begin
   Result := SQLQueryCur;
 end;
 
-function TFMedFindZvit.GetParentQueryPrev(): TSQLQuery;
+function TFMedFindPdv.GetParentQueryPrev(): TSQLQuery;
 begin
   Result := SQLQueryPrev;
 end;
 
-function TFMedFindZvit.GetParentTransaction(): TSQLTransaction;
+function TFMedFindPdv.GetParentTransaction(): TSQLTransaction;
 begin
   Result := SQLTransaction;
 end;
 
-function TFMedFindZvit.GetParentDocsIncl(): TStringList;
+function TFMedFindPdv.GetParentDocsIncl(): TStringList;
 begin
-  Result := TStringList.Create();
+  Result := GetDocsFilter(ComboBoxDoc.Items);
 end;
 
-function TFMedFindZvit.GetParentDocsExcl(): TStringArray;
-begin
-  Result := cArrExcl;
-end;
-
-function TFMedFindZvit.GetParentHideFiealds(): TObjectArray;
+function TFMedFindPdv.GetParentHideFiealds(): TObjectArray;
 begin
   Result := [
     SQLQueryCurINDTAXNUM,
@@ -94,7 +88,7 @@ begin
   ];
 end;
 
-procedure TFMedFindZvit.FormCreate(Sender: TObject);
+procedure TFMedFindPdv.FormCreate(Sender: TObject);
 var
   SL: TStringList;
 begin
@@ -113,9 +107,10 @@ begin
   DbGridPrev.DataSource := DataSourcePrev;
 
   SL := TStringList.Create().AddArray([
-    'FJ-0200126=Податкова декларація з податку на додану вартість',
-    'FJ-0500110=Податковий розрахунок сум доходу ... ЄСВ',
-    'FJ-0209513=Податкова декларація акцизного податку'
+    'FJ-1201016=Податкова накладна',
+    'FJ-1201216=Розрахунок коригування кількісних і вартісних показників',
+    'FJ-1211001=Податкова накладна (експортне забезбечення',
+    'FJ-1211201=Розрахунок коригування кількісних і вартісних показників (експ. заб.)'
   ]);
   SetComboBoxDoc(SL);
   SL.Free();

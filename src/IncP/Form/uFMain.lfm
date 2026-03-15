@@ -58,8 +58,11 @@ object FMain: TFMain
         Action = ActionFMedFindZvit
       end
       object MenuItemFMedFindAkz: TMenuItem
-        Caption = 'Акциз'
+        Action = ActionFMedFindAkz
         OnClick = ActionFMedFindAkzExecute
+      end
+      object MenuItemFMedFindPdv: TMenuItem
+        Action = ActionFMedFindPdv
       end
       object MenuItemOprimizePDF: TMenuItem
         Action = ActionOptimizePDF
@@ -107,7 +110,7 @@ object FMain: TFMain
       OnExecute = ActionFAboutExecute
     end
     object ActionFMedFindZvit: TAction
-      Caption = 'Звітне стикування'
+      Caption = 'Звітність'
       OnExecute = ActionFMedFindZvitExecute
     end
     object ActionUserAgreement: TAction
@@ -138,16 +141,12 @@ object FMain: TFMain
       OnExecute = ActionHelpExecute
     end
     object ActionFMedFindAkz: TAction
-      Caption = 'Акциз'
+      Caption = 'Облік Акцизу'
       OnExecute = ActionFMedFindAkzExecute
     end
-  end
-  object PopupMenu1: TPopupMenu
-    Left = 40
-    Top = 160
-    object MenuItemCloseTab: TMenuItem
-      Caption = 'Закрити'
-      OnClick = MenuItemCloseTabClick
+    object ActionFMedFindPdv: TAction
+      Caption = 'Облік ПДВ'
+      OnExecute = ActionFMedFindPdvExecute
     end
   end
   object TimerAnnonce: TTimer
@@ -156,5 +155,13 @@ object FMain: TFMain
     OnTimer = TimerAnnonceTimer
     Left = 136
     Top = 24
+  end
+  object PopupMenuPageControl: TPopupMenu
+    Left = 40
+    Top = 160
+    object MenuItemCloseTab: TMenuItem
+      Caption = 'Закрити'
+      OnClick = MenuItemCloseTabClick
+    end
   end
 end
