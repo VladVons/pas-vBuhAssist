@@ -22,6 +22,11 @@ type
 implementation
 {$R *.lfm}
 
+procedure TFMedFind.Log(aType: char; const aMsg: string);
+begin
+  uLog.Log.Print(aType, Format('%s %s', [Caption, aMsg]));
+end;
+
 function TFMedFind.GetParentDocsExcl(): TStringArray;
 begin
   Result := [];
@@ -38,34 +43,67 @@ begin
   ComboBoxDoc.ItemIndex := 0;
 end;
 
-procedure TFMedFind.SetComboBoxMonth();
+procedure TFMedFind.SetComboBoxPair(aComboBox: TComboBox; aSL: TStringList);
+var
+  i, Idx: integer;
 begin
-  with ComboBoxMonth.Items do
+  with aComboBox.Items do
   begin
     Clear();
     AddObject(cChooseAll, TObject(cPerTypeAll));
-    AddObject('Січень', TObject(1));
-    AddObject('Лютий', TObject(2));
-    AddObject('Березень', TObject(3));
-    AddObject('- I Квартал', TObject(101));
-    AddObject('Квітень', TObject(4));
-    AddObject('Травень', TObject(5));
-    AddObject('Червень', TObject(6));
-    AddObject('- II Квартал', TObject(102));
-    AddObject('- I Півріччя', TObject(201));
-    AddObject('Липень', TObject(7));
-    AddObject('Серпень', TObject(8));
-    AddObject('Вересень', TObject(9));
-    AddObject('- III Квартал', TObject(103));
-    AddObject('- 9 Місяців', TObject(301));
-    AddObject('Жовтень', TObject(10));
-    AddObject('Листопад', TObject(11));
-    AddObject('Грудень', TObject(12));
-    AddObject('- IV Квартал', TObject(104));
-    AddObject('- II Півріччя', TObject(202));
-    AddObject('- Рік', TObject(401));
+    for i := 0 to aSL.Count - 1 do
+    begin
+      Idx := StrToInt(aSL.Names[i]);
+      AddObject(aSL.ValueFromIndex[i], TObject(Idx));
+    end;
   end;
-  ComboBoxMonth.ItemIndex := 0;
+
+  aComboBox.ItemIndex := 0;
+end;
+
+procedure TFMedFind.SetComboBoxMonth();
+var
+  SL: TStringList;
+begin
+  SL := TStringList.Create().AddArray([
+    '1=Січень',
+    '2=Лютий',
+    '3=Березень',
+    '101=- I Квартал',
+    '4=Квітень',
+    '5=Травень',
+    '6=Червень',
+    '102=- II Квартал',
+    '201=- I Півріччя',
+    '7=Липень',
+    '8=Серпень',
+    '9=Вересень',
+    '103=- III Квартал',
+    '301=- 9 Місяців',
+    '10=Жовтень',
+    '11=Листопад',
+    '12=Грудень',
+    '104=- IV Квартал',
+    '202=- II Півріччя',
+    '401=- Рік'
+  ]);
+  SetComboBoxPair(ComboBoxMonth, SL);
+  SL.Free();
+end;
+
+procedure TFMedFind.SetComboBoxStatus();
+var
+  SL: TStringList;
+begin
+  SL := TStringList.Create().AddArray([
+    '1=Новий',
+    '2=Перевірений',
+    '3=Помилковий',
+    '4=Імпортований',
+    '5=Копія'
+  ]);
+  SetComboBoxPair(ComboBoxStatus, SL);
+  SL.Free();
 end;
 
 procedure TFMedFind.SetComboBoxYear(aYear: Integer = 0);
@@ -199,7 +237,7 @@ end;
 
 function TFMedFind.QueryCurOpen(aQuery, aQueryPrev: TSQLQuery): integer;
 var
-  Month, Year, PerType, Records: integer;
+  Int, Month, Year, PerType, Records: integer;
   Str, StrDb, Macro, MacroPerType, MacroPerDate, Code: string;
   SL: TStringList;
 begin
@@ -255,6 +293,18 @@ begin
     Macro := Format(' AND (ORG.EDRPOU = %s)', [Code]);
   aQuery.MacroByName('_COND_ORG').Value := Macro;
 
+  Macro := '';
+  Int := integer(ComboBoxStatus.Items.Objects[ComboBoxStatus.ItemIndex]);
+  if (Int <> cPerTypeAll) then
+    Macro := Format(' AND (CARD.STATUS = %d)', [Int]);
+  aQuery.MacroByName('_COND_STATUS').Value := Macro;
+
+  Macro := '';
+  Int := integer(ComboBoxSendStatus.Items.Objects[ComboBoxSendStatus.ItemIndex]);
+  if (Int <> cPerTypeAll) then
+    Macro := Format(' AND (CARD.SENDSTT = %d)', [Int]);
+  aQuery.MacroByName('_COND_SENDSTT').Value := Macro;
+
   QueryCharcodeNot(aQuery, GetParentDocsExcl());
 
   Macro := ', '''' AS FJ';
@@ -281,7 +331,7 @@ begin
     SL := FieldToStrings(aQuery, 'CHARCODE').Uniq();
     Records := QueryPrevOpen(aQueryPrev, SL, Code, PerType, Year, Month);
     if (Records > 0) then
-       Log.Print('i', Format('Знайдено пропоновані звіти %d', [Records]));
+       Log('i', Format('Знайдено пропоновані звіти %d', [Records]));
     SL.Free();
 
     Str := IntToStr(Records);
@@ -364,17 +414,13 @@ begin
   else if (DaysBetween(Now(), StrToDateTime(LastUpdate)) > cLicenceRefrehDays) then
     MenuItemRefreshClick(nil);
 
-  Msg := Format('%s: %s %s, %s', [
-      BitBtnFind.Caption,
-      ComboBoxMonth.Text,
-      ComboBoxYear.Text,
-      ComboBoxDoc.Text
+  Msg := Format('%s %s %s %s', [
+    BitBtnFind.Caption,  ComboBoxMonth.Text,  ComboBoxYear.Text, ComboBoxDoc.Text
   ]);
-  Log.Print('i', Msg);
+  Log('i', Msg);
 
   ConnectToDb();
   Records := QueryCurOpen(GetParentQueryCur(), GetParentQueryPrev());
-
 
   // we are not so fast comparing to MED
   Delay := Settings.GetItem('Common', 'Delay', cDelayFind);
@@ -382,7 +428,7 @@ begin
     Sleep(Delay + Random(Delay));
 
   StateStore.LoadGrid(Name, DbGridCur);
-  Log.Print('i', Format('Відібрано записів %d', [Records]));
+  Log('i', Format('Відібрано записів %d', [Records]));
 end;
 
 procedure TFMedFind.BitBtnActivationClick(Sender: TObject);
@@ -441,7 +487,7 @@ begin
     if (MedIni.AddPath(ComboBoxPath.Text)) then
     begin
       InitMedControl();
-      Log.Print('i', 'Додано шлях ' + ComboBoxPath.Text);
+      Log('i', 'Додано шлях ' + ComboBoxPath.Text);
     end;
   end;
 
@@ -573,13 +619,13 @@ var
 begin
   ConnectToDb();
 
-  Log.Print('i', 'Завантаження ліцензій ...');
+  Log('i', 'Завантаження ліцензій ...');
   fCodesLic := DmCommon.Licence_GetFromHttp(Name);
   SetComboBoxFirm(fCodesLic);
   if (fCodesLic.Count = 0) then
-    Log.Print('i', 'Не знайдено ліцензій')
+    Log('i', 'Не знайдено ліцензій')
   else begin
-    Log.Print('i', Format('Знайдено %d. Ліцензії для кодів %s', [fCodesLic.Count, fCodesLic.DelimitedText]));
+    Log('i', Format('Знайдено %d. Ліцензії для кодів %s', [fCodesLic.Count, fCodesLic.DelimitedText]));
     QueryCurOpen(GetParentQueryCur(), GetParentQueryPrev());
   end;
 
@@ -590,7 +636,7 @@ procedure TFMedFind.PageControlChange(Sender: TObject);
 begin
   if (PageControl.ActivePage.Name = 'TabSheetPrev') and (ComboBoxFirm.Text = cChooseAll) then
   begin
-    Log.Print('i', 'Пропоновані звіти формуються тільки по ЄДРПОУ та періоду');
+    Log('i', 'Пропоновані звіти формуються тільки по ЄДРПОУ та періоду');
     if (ComboBoxFirm.CanFocus) then
         ComboBoxFirm.SetFocus();
   end;
@@ -607,7 +653,7 @@ var
 begin
   if (GetParentQueryCur().RecordCount = 0) then
   begin
-    Log.Print('i', 'Немає даних для друку');
+    Log('i', 'Немає даних для друку');
     Exit();
   end;
 
@@ -621,7 +667,7 @@ begin
     FrPrintGrid1.Template := 'res\Report\CheckDocs2.lrf';
     if (not FileExists(FrPrintGrid1.Template)) then
     begin
-      Log.Print('e', 'Шаблон не існує ' + FrPrintGrid1.Template);
+      Log('e', 'Шаблон не існує ' + FrPrintGrid1.Template);
       Exit();
     end;
 
@@ -644,13 +690,13 @@ begin
   JObj := GetCurPathObj();
   if (JObj.Get('port', 0) = 0) then
   begin
-    Log.Print('i', 'Не мережева версія програми');
+    Log('i', 'Не мережева версія програми');
     Disconnect();
     InitEmptyGrid(GetParentQueryCur());
   end;
 
   Path := ConcatPaths([ComboBoxPath.Text, 'ezvit.exe']);
-  Log.Print('i', 'Запуск програми ' + Path);
+  Log('i', 'Запуск програми ' + Path);
   ExecProcess(Path);
 end;
 
@@ -707,7 +753,7 @@ begin
 
   if (ComboBoxPath.Items.Count = 0) then
   begin
-    Log.Print('w', 'Неможливо знайти програму звітності');
+    Log('w', 'Неможливо знайти програму звітності');
     ComboBoxPath.Text :=  '';
     //Enabled := False;
   end else begin
@@ -718,11 +764,12 @@ begin
   if (not IsDebugger1()) or (IsDeveloper()) then
   begin
     SetComboBoxMonth();
+    SetComboBoxStatus();
     ComboBoxYearDropDown(nil);
   end;
 
   if (not Licence.IsFile()) then
-    Log.Print('w', 'Файл ліцензій не знайдено');
+    Log('w', 'Файл ліцензій не знайдено');
 
   fCodesLic := Licence.GetFirmCodes(Name);
   SetComboBoxFirm(fCodesLic);

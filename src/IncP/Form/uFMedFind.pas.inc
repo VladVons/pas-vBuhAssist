@@ -10,9 +10,11 @@
     BitBtnRunMed: TBitBtn;
     ButtonPath: TButton;
     ComboBoxDoc: TComboBox;
+    ComboBoxStatus: TComboBox;
     ComboBoxFirm: TComboBox;
     ComboBoxMonth: TComboBox;
     ComboBoxPath: TComboBox;
+    ComboBoxSendStatus: TComboBox;
     ComboBoxYear: TComboBox;
     DbGridCur: TDBGrid;
     DBGridPrev: TDBGrid;
@@ -22,6 +24,7 @@
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
+    Label4: TLabel;
     Label5: TLabel;
     MenuItemOrder: TMenuItem;
     MenuItemOrderFree: TMenuItem;
@@ -72,6 +75,7 @@
     function IsDemo(aCode: string; aField: TField): boolean;
     procedure QueryCharcodeNot(aQuery: TSQLQuery; aArrExcl: TStringArray);
   protected
+    procedure Log(aType: char; const aMsg: string);
     function  GetParentQueryCur(): TSQLQuery; virtual; abstract;
     function  GetParentQueryPrev(): TSQLQuery; virtual; abstract;
     function  GetParentTransaction(): TSQLTransaction; virtual; abstract;
@@ -80,6 +84,8 @@
     function  GetParentDocsExcl(): TStringArray; virtual;
     procedure SetComboBoxDoc(aSL: TStringList);
     procedure SetComboBoxFirm(aSL: TStringList);
+    procedure SetComboBoxStatus();
+    procedure SetComboBoxPair(aComboBox: TComboBox; aSL: TStringList);
   public
     function OnSendMsg(aForm: TForm; const aJObj: TJSONObject): boolean; override;
   end;

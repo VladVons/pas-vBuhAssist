@@ -43,6 +43,7 @@ type
     SQLQueryPrevSHORTNAME: TStringField;
     SQLTransaction: TSQLTransaction;
     procedure FormCreate(Sender: TObject);
+    procedure SQLQueryCurCalcFields(DataSet: TDataSet);
   protected
     function  GetParentQueryCur(): TSQLQuery; override;
     function  GetParentQueryPrev(): TSQLQuery; override;
@@ -91,6 +92,11 @@ begin
   ];
 end;
 
+procedure TFMedFindPdv.SQLQueryCurCalcFields(DataSet: TDataSet);
+begin
+  SQLQueryGridCurCalcFields(DataSet);
+end;
+
 procedure TFMedFindPdv.FormCreate(Sender: TObject);
 var
   SL: TStringList;
@@ -116,6 +122,16 @@ begin
     'FJ-1211201=Розрахунок коригування кількісних і вартісних показників (експ. заб.)'
   ]);
   SetComboBoxDoc(SL);
+  SL.Free();
+
+  SL := TStringList.Create().AddArray([
+    '2=Вірний',
+    '20=Очікується квитанція №1',
+    '21=Не прийнято в ДПС',
+    '110=Реєстрація зупинена',
+    '114=Реєстрація скасовано'
+  ]);
+  SetComboBoxPair(ComboBoxSendStatus, SL);
   SL.Free();
 end;
 

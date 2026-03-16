@@ -43,6 +43,7 @@ type
     SQLQueryPrevSHORTNAME: TStringField;
     SQLTransaction: TSQLTransaction;
     procedure FormCreate(Sender: TObject);
+    procedure SQLQueryCurCalcFields(DataSet: TDataSet);
   protected
     function  GetParentQueryCur(): TSQLQuery; override;
     function  GetParentQueryPrev(): TSQLQuery; override;
@@ -97,6 +98,11 @@ begin
   ];
 end;
 
+procedure TFMedFindZvit.SQLQueryCurCalcFields(DataSet: TDataSet);
+begin
+  SQLQueryGridCurCalcFields(DataSet);
+end;
+
 procedure TFMedFindZvit.FormCreate(Sender: TObject);
 var
   SL: TStringList;
@@ -121,6 +127,14 @@ begin
     'FJ-0209513=Податкова декларація акцизного податку'
   ]);
   SetComboBoxDoc(SL);
+  SL.Free();
+
+  SL := TStringList.Create().AddArray([
+    '2=Вірний',
+    '13=Отриманий',
+    '21=Не прийнято в ДПС'
+  ]);
+  SetComboBoxPair(ComboBoxSendStatus, SL);
   SL.Free();
 end;
 

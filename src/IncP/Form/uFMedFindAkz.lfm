@@ -5,39 +5,22 @@ inherited FMedFindAkz: TFMedFindAkz
   ClientHeight = 385
   ClientWidth = 799
   OnCreate = FormCreate
-  inherited PanelTitle: TPanel
-    Width = 799
-    ClientWidth = 799
-  end
   inherited PanelFrame: TPanel
-    Height = 337
-    Width = 799
-    ClientHeight = 337
-    ClientWidth = 799
     inherited PanelComboBox: TPanel
-      Width = 797
-      ClientWidth = 797
-    end
-    inherited PageControl: TPageControl
-      Height = 160
-      Width = 797
-      ActivePage = TabSheetCur
-      TabIndex = 0
-      inherited TabSheetCur: TTabSheet
-        inherited DbGridCur: TDBGrid
-          Height = 127
-          Width = 789
-          DataSource = DataSourceCur
-        end
-      end
-      inherited TabSheetPrev: TTabSheet
-        inherited DBGridPrev: TDBGrid
-          Height = 127
-          Width = 789
-          DataSource = DataSourcePrev
-        end
+      inherited ComboBoxYear: TComboBox
+        Width = 199
       end
     end
+  end
+  inherited frReport1: TfrReport[2]
+  end
+  inherited frDBDataSet1: TfrDBDataSet[3]
+  end
+  inherited FrPrintGrid1: TFrPrintGrid[4]
+  end
+  inherited SelectDirectoryDialog1: TSelectDirectoryDialog[5]
+  end
+  inherited PopupMenuActivation: TPopupMenu[6]
   end
   object DataSourcePrev: TDataSource[7]
     Left = 120
@@ -137,6 +120,7 @@ inherited FMedFindAkz: TFMedFindAkz
         Precision = -1
         Size = 10
       end>
+    OnCalcFields = SQLQueryCurCalcFields
     SQL.Strings = (
       'SELECT'
       '    ORG.EDRPOU,'
@@ -166,7 +150,7 @@ inherited FMedFindAkz: TFMedFindAkz
       '        CARDSENDSTT.NAME AS CARDSENDSTT_NAME,'
       '        CARD.PERTYPE,'
       '        FORM.CHARCODE,'
-      '        FORM.NAME AS FORM_NAME,'
+      '        COALESCE(CARD.DOCNAME, FORM.NAME) AS FORM_NAME,'
       '        CAST(CARD.MODDATE AS DATE) AS MODDATE,'
       '        CARDSTATUS.NAME AS CARDSTATUS_NAME,'
       '        CARDBLOB.XMLVALS'
@@ -190,6 +174,8 @@ inherited FMedFindAkz: TFMedFindAkz
       '        %_COND_PERDATE'
       '        %_COND_CHARCODE'
       '        %_COND_CHARCODE_NOT'
+      '        %_COND_STATUS'
+      '        %_COND_SENDSTT'
       ') T2'
       '    ON T2.IDORG = ORG.CODE'
       'WHERE'
@@ -229,6 +215,11 @@ inherited FMedFindAkz: TFMedFindAkz
       item
         DataType = ftUnknown
         Name = '_COND_CHARCODE_NOT'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = '_COND_STATUS'
         ParamType = ptInput
       end    
       item

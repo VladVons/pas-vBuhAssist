@@ -1,7 +1,7 @@
 inherited FMedFind: TFMedFind
-  Height = 391
+  Height = 453
   Width = 845
-  ClientHeight = 391
+  ClientHeight = 453
   ClientWidth = 845
   OnCreate = FormCreate
   OnDestroy = FormDestroy
@@ -11,38 +11,38 @@ inherited FMedFind: TFMedFind
   end
   object PanelFrame: TPanel[1]
     Left = 0
-    Height = 343
+    Height = 405
     Top = 48
     Width = 845
     Align = alClient
-    ClientHeight = 343
+    ClientHeight = 405
     ClientWidth = 845
     TabOrder = 1
     object PanelComboBox: TPanel
       Left = 1
-      Height = 175
+      Height = 199
       Top = 1
       Width = 843
       Align = alTop
       BevelColor = clNone
-      ClientHeight = 175
+      ClientHeight = 199
       ClientWidth = 843
       TabOrder = 0
       object ComboBoxMonth: TComboBox
-        Left = 125
+        Left = 128
         Height = 28
         Top = 31
-        Width = 168
+        Width = 227
         DropDownCount = 24
         ItemHeight = 20
         ReadOnly = True
         TabOrder = 0
       end
       object ComboBoxYear: TComboBox
-        Left = 301
+        Left = 360
         Height = 28
-        Top = 31
-        Width = 143
+        Top = 32
+        Width = 223
         DropDownCount = 20
         ItemHeight = 20
         ReadOnly = True
@@ -50,17 +50,17 @@ inherited FMedFind: TFMedFind
         OnDropDown = ComboBoxYearDropDown
       end
       object ComboBoxFirm: TComboBox
-        Left = 125
+        Left = 128
         Height = 28
         Top = 63
-        Width = 168
+        Width = 227
         DropDownCount = 20
         ItemHeight = 20
         ReadOnly = True
-        TabOrder = 2
+        TabOrder = 11
       end
       object ComboBoxDoc: TComboBox
-        Left = 125
+        Left = 128
         Height = 28
         Top = 95
         Width = 551
@@ -68,6 +68,26 @@ inherited FMedFind: TFMedFind
         ItemHeight = 20
         ReadOnly = True
         TabOrder = 3
+      end
+      object ComboBoxStatus: TComboBox
+        Left = 128
+        Height = 28
+        Top = 128
+        Width = 224
+        DropDownCount = 20
+        ItemHeight = 20
+        ReadOnly = True
+        TabOrder = 10
+      end
+      object ComboBoxSendStatus: TComboBox
+        Left = 360
+        Height = 28
+        Top = 128
+        Width = 224
+        DropDownCount = 20
+        ItemHeight = 20
+        ReadOnly = True
+        TabOrder = 2
       end
       object Label2: TLabel
         Left = 12
@@ -90,10 +110,17 @@ inherited FMedFind: TFMedFind
         Width = 58
         Caption = 'ЄДРПОУ'
       end
+      object Label4: TLabel
+        Left = 12
+        Height = 20
+        Top = 136
+        Width = 43
+        Caption = 'Статус'
+      end
       object BitBtnFind: TBitBtn
         Left = 124
         Height = 38
-        Top = 135
+        Top = 160
         Width = 120
         Caption = 'Знайти'
         Images = DmCommon.ImageList1
@@ -104,7 +131,7 @@ inherited FMedFind: TFMedFind
       object BitBtnPrint: TBitBtn
         Left = 253
         Height = 38
-        Top = 135
+        Top = 160
         Width = 134
         Caption = 'Друкувати'
         Images = DmCommon.ImageList1
@@ -115,7 +142,7 @@ inherited FMedFind: TFMedFind
       object BitBtnRunMed: TBitBtn
         Left = 396
         Height = 38
-        Top = 135
+        Top = 160
         Width = 134
         Caption = 'Запустити'
         Images = DmCommon.ImageList1
@@ -127,7 +154,7 @@ inherited FMedFind: TFMedFind
         Left = 635
         Height = 38
         Hint = 'Активація'
-        Top = 135
+        Top = 160
         Width = 40
         Images = DmCommon.ImageList1
         ImageIndex = 1
@@ -146,7 +173,7 @@ inherited FMedFind: TFMedFind
         ParentColor = False
       end
       object ComboBoxPath: TComboBox
-        Left = 124
+        Left = 128
         Height = 28
         Top = 0
         Width = 552
@@ -167,21 +194,21 @@ inherited FMedFind: TFMedFind
     end
     object PageControl: TPageControl
       Left = 1
-      Height = 166
-      Top = 176
+      Height = 204
+      Top = 200
       Width = 843
-      ActivePage = TabSheetPrev
+      ActivePage = TabSheetCur
       Align = alClient
-      TabIndex = 1
+      TabIndex = 0
       TabOrder = 1
       OnChange = PageControlChange
       object TabSheetCur: TTabSheet
-        Caption = 'Поточні'
-        ClientHeight = 133
+        Caption = 'Всі'
+        ClientHeight = 171
         ClientWidth = 835
         object DbGridCur: TDBGrid
           Left = 0
-          Height = 133
+          Height = 171
           Top = 0
           Width = 835
           Align = alClient
@@ -197,12 +224,12 @@ inherited FMedFind: TFMedFind
       end
       object TabSheetPrev: TTabSheet
         Caption = 'Пропоновані'
-        ClientHeight = 133
+        ClientHeight = 171
         ClientWidth = 835
         TabVisible = False
         object DBGridPrev: TDBGrid
           Left = 0
-          Height = 133
+          Height = 171
           Top = 0
           Width = 835
           Align = alClient
@@ -222,12 +249,12 @@ inherited FMedFind: TFMedFind
     Options = []
     PreviewButtons = [pbZoom, pbLoad, pbSave, pbPrint, pbFind, pbHelp, pbExit, pbSettings, pbPageSetup]
     DataType = dtDataSet
-    Left = 312
-    Top = 224
+    Left = 344
+    Top = 272
   end
   object frDBDataSet1: TfrDBDataSet[3]
-    Left = 312
-    Top = 280
+    Left = 344
+    Top = 314
   end
   object FrPrintGrid1: TFrPrintGrid[4]
     DBGrid = DbGridCur
@@ -236,8 +263,8 @@ inherited FMedFind: TFMedFind
     PrinterIndex = -1
     ShowCaption = True
     OnGetValue = FrPrintGrid1GetValue
-    Left = 312
-    Top = 336
+    Left = 344
+    Top = 352
   end
   object SelectDirectoryDialog1: TSelectDirectoryDialog[5]
     Left = 586

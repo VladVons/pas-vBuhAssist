@@ -43,6 +43,7 @@ type
     SQLQueryPrevSHORTNAME: TStringField;
     SQLTransaction: TSQLTransaction;
     procedure FormCreate(Sender: TObject);
+    procedure SQLQueryCurCalcFields(DataSet: TDataSet);
   protected
     function  GetParentQueryCur(): TSQLQuery; override;
     function  GetParentQueryPrev(): TSQLQuery; override;
@@ -91,6 +92,11 @@ begin
   ];
 end;
 
+procedure TFMedFindAkz.SQLQueryCurCalcFields(DataSet: TDataSet);
+begin
+  SQLQueryGridCurCalcFields(DataSet);
+end;
+
 procedure TFMedFindAkz.FormCreate(Sender: TObject);
 var
   SL: TStringList;
@@ -115,8 +121,18 @@ begin
   ]);
   SetComboBoxDoc(SL);
   SL.Free();
-end;
 
+  SL := TStringList.Create().AddArray([
+    '2=Вірний',
+    '20=Очікується квитанція №1',
+    '21=Не прийнято в ДПС',
+    '54=Очікування квитанції №2',
+    '102=Зареєстровано в ЄРАН'
+  ]);
+  SetComboBoxPair(ComboBoxSendStatus, SL);
+  SL.Free();
+
+end;
 
 end.
 
