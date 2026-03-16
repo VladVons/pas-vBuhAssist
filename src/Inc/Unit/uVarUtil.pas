@@ -10,7 +10,6 @@ interface
 uses
   Classes, SysUtils, fpjson, Variants;
 
-function ExtractLatin(const aString: string): string;
 function GetJsonNested(const aJObj: TJSONObject; const Path: string; aDef: Variant): Variant;
 function ReplMacros(const aText: string; aDict: TStringList): string;
 function Between(aVal, aMin, aMax: integer): boolean;
@@ -38,23 +37,6 @@ begin
   end;
 
   Result := IncMonth(EncodeDate(aYear, aMonth, 1), -ShiftMonths);
-end;
-
-function ExtractLatin(const aString: string): string;
-var
-  R: TRegExpr;
-begin
-  Result := '';
-  R := TRegExpr.Create();
-  try
-    R.Expression := '[A-Za-z]';
-    if R.Exec(aString) then
-      repeat
-        Result := Result + R.Match[0];
-      until not R.ExecNext;
-  finally
-    R.Free();
-  end;
 end;
 
 generic function IIF<T>(aCond: boolean; const aValTrue, aValFalse: T): T; inline;

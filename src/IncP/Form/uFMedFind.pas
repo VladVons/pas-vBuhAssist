@@ -53,7 +53,7 @@ begin
     AddObject(cChooseAll, TObject(cPerTypeAll));
     for i := 0 to aSL.Count - 1 do
     begin
-      Idx := StrToInt(aSL.Names[i]);
+      Idx := aSL.Names[i].ToInteger();
       AddObject(aSL.ValueFromIndex[i], TObject(Idx));
     end;
   end;
@@ -176,7 +176,7 @@ begin
     if (Port.IsEmpty()) then
        Port := '0';
 
-    DmCommon.Connect(DbName, StrToInt(Port));
+    DmCommon.Connect(DbName, Port.ToInteger());
     fTablesMain := DmCommon.GetTablesMain();
   end;
 end;

@@ -85,6 +85,7 @@ inherited FMedFind: TFMedFind
         Top = 128
         Width = 224
         DropDownCount = 20
+        Enabled = False
         ItemHeight = 20
         ReadOnly = True
         TabOrder = 2

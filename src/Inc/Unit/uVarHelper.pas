@@ -4,33 +4,36 @@
 unit uVarHelper;
 
 {$mode objfpc}{$H+}
+{$modeswitch typehelpers}
 
 interface
 
 uses
-  Classes, SysUtils, fpjson;
+  Classes, SysUtils, fpjson, RegExpr;
 
 type
-  //TStringHelper1 = type helper for SysUtils.AnsiString
-  //public
-  //end;
-
   TStringMapFunc = function(const aStr: string): string;
+
+  TStringHelperEx = type helper(TStringHelper) for string
+    function Left(aLen: integer; aIsCut: boolean = False): string;
+    function Right(aLen: Integer; aIsCut: boolean = False): string;
+    function GetLatin(): string;
+  end;
 
   TStringListHelper = class helper for TStringList
   public
     function AddArray(const aArr : TStringArray): TStringList;
-    function AddJson(const aArr : TJSONArray): TStringList;
-    function AddExtDelim(const aStr: string; const aDelim: string = '-'): TStringList;
     function AddExtDelim(const aSL: TStringList; const aDelim: string = '-'): TStringList;
+    function AddExtDelim(const aStr: string; const aDelim: string = '-'): TStringList;
+    function AddJson(const aArr : TJSONArray): TStringList;
     function AddNames(const aSL: TStrings): TStringList;
     function DelArray(const aArr : TStringArray): TStringList;
     function DelEmpty(): TStringList;
+    function Formated(const aFormat: string): TStringList;
     function GetArray(): TStringArray;
     function GetJoin(const aDelim: string): string;
     function GetJson(): TJSONArray;
     function GetLast(aIdx: integer = 0): string;
-    function Formated(const aFormat: string): TStringList;
     function Intersect(const aSL: TStrings): TStringList;
     function Left(aLen: integer): TStringList;
     function Map(aFunc: TStringMapFunc): TStringList;
@@ -43,6 +46,61 @@ type
 
 implementation
 
+
+// --- TStringHelperEx
+function TStringHelperEx.Left(aLen: integer; aIsCut: boolean = False): string;
+var
+  Len: integer;
+begin
+  if (aLen <= 0) then
+    Exit('');
+
+  Len := System.Length(self);
+  if (aLen >= Len) then
+      Exit(Self);
+
+  if (aIsCut) then
+    Result := System.Copy(self, aLen + 1, Len - aLen)
+  else
+    Result := System.Copy(self, 1, aLen);
+end;
+
+function TStringHelperEx.Right(aLen: Integer; aIsCut: boolean = False): string;
+var
+  Len: Integer;
+begin
+  if (aLen <= 0) then
+    Exit('');
+
+  Len := System.Length(Self);
+  if (aLen >= Len) then
+    Exit(Self);
+
+  if (aIsCut) then
+    Result := System.Copy(self, 1, Len - aLen)
+  else
+    Result := System.Copy(Self, Len - aLen + 1, aLen);
+end;
+
+function TStringHelperEx.GetLatin(): string;
+var
+  R: TRegExpr;
+begin
+  Result := '';
+  R := TRegExpr.Create();
+  try
+    R.Expression := '[A-Za-z]';
+    if R.Exec(self) then
+      repeat
+        Result := Result + R.Match[0];
+      until not R.ExecNext;
+  finally
+    R.Free();
+  end;
+end;
+
+
+// --- TStringListHelper
 function TStringListHelper.AddArray(const aArr: TStringArray): TStringList;
 var
   i:  integer;
@@ -183,7 +241,7 @@ var
 begin
   for i := 0 to Count - 1 do
     if (Self[i].Length > aLen) then
-      self[i] := Copy(self[i], 1, aLen);
+      self[i] := self[i].Left(aLen);
 
   Result := self;
 end;

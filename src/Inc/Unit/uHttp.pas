@@ -10,7 +10,8 @@ unit uHttp;
 interface
 
 uses
-  Classes, SysUtils, fphttpclient, opensslsockets, fpjson, Winsock, Sockets;
+  Classes, SysUtils, fphttpclient, opensslsockets, fpjson, Winsock, Sockets,
+  uVarHelper;
 
 function PostJSON(const aURL: string; aJSON: TJSONObject): TJSONObject;
 function GetUrlToString(const aURL: string; out aData: string): integer;
@@ -130,7 +131,7 @@ begin
 
   Addr := Default(TSockAddr);
   Addr.sin_family := AF_INET;
-  Addr.sin_port := htons(StrToInt(aPort));
+  Addr.sin_port := htons(aPort.ToInteger());
   Addr.sin_addr := StrToNetAddr(Ip);
   if fpConnect(Sock, @Addr, SizeOf(Addr)) = 0 then
     Result := True;

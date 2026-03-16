@@ -371,7 +371,7 @@ begin
       SL.AddExtDelim(aSL.Names[i]);
       for j := 0 to SL.Count - 1 do
       begin
-        Str := Copy(SL[j], 1, cBaseCodeLen);
+        Str := SL[j].Left(cBaseCodeLen);
         Result.Add(Str);
       end;
     end;
