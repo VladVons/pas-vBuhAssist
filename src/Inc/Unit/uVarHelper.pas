@@ -15,8 +15,10 @@ type
   TStringMapFunc = function(const aStr: string): string;
 
   TStringHelperEx = type helper(TStringHelper) for string
-    function Left(aLen: integer; aIsCut: boolean = False): string;
-    function Right(aLen: Integer; aIsCut: boolean = False): string;
+    function Left(aLen: integer; aDoCut: boolean = False): string;
+    function Right(aLen: Integer; aDoCut: boolean = False): string;
+    function TrimExt(const aChars: TSysCharSet = [' ']): string;
+    function TrimInt(const aChars: TSysCharSet = [' ']): string;
     function GetLatin(): string;
   end;
 
@@ -48,7 +50,7 @@ implementation
 
 
 // --- TStringHelperEx
-function TStringHelperEx.Left(aLen: integer; aIsCut: boolean = False): string;
+function TStringHelperEx.Left(aLen: integer; aDoCut: boolean = False): string;
 var
   Len: integer;
 begin
@@ -59,13 +61,13 @@ begin
   if (aLen >= Len) then
       Exit(Self);
 
-  if (aIsCut) then
+  if (aDoCut) then
     Result := System.Copy(self, aLen + 1, Len - aLen)
   else
     Result := System.Copy(self, 1, aLen);
 end;
 
-function TStringHelperEx.Right(aLen: Integer; aIsCut: boolean = False): string;
+function TStringHelperEx.Right(aLen: Integer; aDoCut: boolean = False): string;
 var
   Len: Integer;
 begin
@@ -76,29 +78,79 @@ begin
   if (aLen >= Len) then
     Exit(Self);
 
-  if (aIsCut) then
+  if (aDoCut) then
     Result := System.Copy(self, 1, Len - aLen)
   else
     Result := System.Copy(Self, Len - aLen + 1, aLen);
 end;
 
-function TStringHelperEx.GetLatin(): string;
+function TStringHelperEx.TrimExt(const aChars: TSysCharSet = [' ']): string;
 var
-  R: TRegExpr;
+  Ofs, Len: integer;
 begin
-  Result := '';
-  R := TRegExpr.Create();
-  try
-    R.Expression := '[A-Za-z]';
-    if R.Exec(self) then
-      repeat
-        Result := Result + R.Match[0];
-      until not R.ExecNext;
-  finally
-    R.Free();
-  end;
+  Len := System.Length(self);
+  while (Len > 0) and (self[Len] in aChars) do
+    Dec(Len);
+
+  Ofs := 1;
+  while (Ofs <= Len) and (self[Ofs] in aChars) do
+    Inc(Ofs);
+
+  Result := System.Copy(self, Ofs, 1 + Len - Ofs);
 end;
 
+function TStringHelperEx.TrimInt(const aChars: TSysCharSet = [' ']): string;
+var
+  i, Len: Integer;
+  PrevSpace: Boolean;
+  c: Char;
+begin
+  SetLength(Result, System.Length(Self));
+  Len := 0;
+  PrevSpace := False;
+
+  for i := 1 to System.Length(Self) do
+  begin
+    c := Self[i];
+    if (c in aChars) then
+    begin
+      if (not PrevSpace) then
+      begin
+        Inc(Len);
+        Result[Len] := ' ';
+        PrevSpace := True;
+      end;
+    end else begin
+      Inc(Len);
+      Result[Len] := c;
+      PrevSpace := False;
+    end;
+  end;
+
+  SetLength(Result, Len);
+end;
+
+function TStringHelperEx.GetLatin(): string;
+var
+  i, Len: Integer;
+  C: Char;
+begin
+  SetLength(Result, System.Length(Self));
+  Len := 0;
+
+  for i := 1 to System.Length(Self) do
+  begin
+    C := Self[i];
+
+    if ((C >= 'A') and (C <= 'Z')) or ((C >= 'a') and (C <= 'z')) then
+    begin
+      Inc(Len);
+      Result[Len] := C;
+    end;
+  end;
+
+  SetLength(Result, Len);
+end;
 
 // --- TStringListHelper
 function TStringListHelper.AddArray(const aArr: TStringArray): TStringList;

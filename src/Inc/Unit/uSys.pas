@@ -8,7 +8,7 @@ unit uSys;
 interface
 
 uses
-  Classes, Windows, SysUtils, StrUtils, FileInfo, Process;
+  Classes, Windows, SysUtils, StrUtils, FileInfo, Process, fpjson, LConvEncoding;
 
 function AddDllDirectory(aDir: PWideChar): THandle; stdcall; external 'kernel32.dll';
 function SetDllDirectoryW(lpPathName: PWideChar): BOOL; stdcall; external 'kernel32.dll';
@@ -25,6 +25,7 @@ function GetDirFiles(const aDir, aMask: string): TStringList;
 procedure AddDirDll(const aPath: string);
 function FileGetSize(const aFileName: string): Int64;
 function FileGetModDate(const aFile: string): TDateTime;
+function FileLoadJson(const aFile: string): TJSONData;
 procedure FileAppendText(const aFile, aMsg: string);
 procedure StrToFile(const aStr: AnsiString; aFile: string);
 function StrFromFile(const aFile: string): AnsiString;
@@ -33,6 +34,19 @@ procedure WaitProcess(aPID: DWORD);
 function QuotedFile(const aStr: string): string;
 
 implementation
+
+function FileLoadJson(const aFile: string): TJSONData;
+var
+  SL: TStringList;
+begin
+  SL := TStringList.Create();
+  try
+    SL.LoadFromFile(aFile);
+    Result := GetJSON(CP1251ToUTF8(SL.Text));
+  finally
+    SL.Free();
+  end;
+end;
 
 function ExecProcess(const aFile: string; aParam: TStrings = Nil; aWaitOnExit: boolean = True): TProcess;
 var

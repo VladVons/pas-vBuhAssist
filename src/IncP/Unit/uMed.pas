@@ -15,7 +15,6 @@ const
   cPerTypeAll  = 500;
   cChooseAll   = '- Всі';
   cBaseCodeLen = 6;
-  cArrExcl: TStringArray = ('FJ-12%', 'FJ-13%', 'FJ-14%', 'PD%', 'Z0%');
 
 type
   TMedIni = class(TSettings)

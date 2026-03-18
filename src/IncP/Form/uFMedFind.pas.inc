@@ -10,7 +10,6 @@
     BitBtnRunMed: TBitBtn;
     ButtonPath: TButton;
     ComboBoxDoc: TComboBox;
-    ComboBoxStatus: TComboBox;
     ComboBoxFirm: TComboBox;
     ComboBoxMonth: TComboBox;
     ComboBoxPath: TComboBox;
@@ -53,14 +52,13 @@
     procedure MenuItemOrderFreeClick(Sender: TObject);
     procedure MenuItemRefreshClick(Sender: TObject);
     procedure PageControlChange(Sender: TObject);
-    procedure Panel1Click(Sender: TObject);
     procedure SQLQueryGridCurCalcFields(DataSet: TDataSet);
   private
     fCount: integer;
     fSortField, fCurCaption, fPrevCaption: string;
     fSortAsc: boolean;
     fJMedApp: TJSONArray;
-    fCodesLic, fTablesMain, fDemoFields: TStringList;
+    fCodesLic, fDemoFields: TStringList;
     fColorYelow: TColor;
     function GetCurPathObj(): TJSONObject;
     function IsDemo(aCode: string; aField: TField): boolean;
@@ -70,22 +68,24 @@
     procedure Disconnect();
     procedure InitEmptyGrid(aQuery: TSQLQuery);
     procedure InitMedControl();
-    procedure QueryCharcodeNot(aQuery: TSQLQuery; aArrExcl: TStringArray);
-    procedure SetComboBoxMonth();
     procedure SetComboBoxYear(aYear: Integer = 0);
     procedure SetEmbededPath(aIdx: integer);
   protected
-    function  GetParentDocsExcl(): TStringArray; virtual;
+    fTablesMain: TStringList;
+    fJData: TJSONObject;
+    function  GetParentDocsExcl(): TStringList; virtual;
     function  GetParentDocsIncl(): TStringList; virtual; abstract;
     function  GetParentHideFiealds(): TObjectArray; virtual; abstract;
     function  GetParentQueryCur(): TSQLQuery; virtual; abstract;
     function  GetParentQueryPrev(): TSQLQuery; virtual; abstract;
     function  GetParentTransaction(): TSQLTransaction; virtual; abstract;
+    procedure LoadJsonData();
+    procedure ParentQueryCurOpen(aQuery: TSQLQuery); virtual;
+    procedure ParentCalcFields(DataSet: TDataSet); virtual;
     procedure Log(aType: char; const aMsg: string);
-    procedure SetComboBoxDoc(aSL: TStringList);
-    procedure SetComboBoxFirm(aSL: TStringList);
-    procedure SetComboBoxPair(aComboBox: TComboBox; aSL: TStringList);
-    procedure SetComboBoxStatus();
+    procedure SetComboBoxAsObj(aComboBox: TComboBox; aSL: TStringList);
+    procedure SetComboBoxAsPair(aComboBox: TComboBox; aSL: TStringList);
+    procedure SetComboBox(aComboBox: TComboBox; aSL: TStringList);
   public
     function OnSendMsg(aForm: TForm; const aJObj: TJSONObject): boolean; override;
   end;

@@ -19,7 +19,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="11"/>
       <RevisionNr Value="3"/>
-      <BuildNr Value="81"/>
+      <BuildNr Value="84"/>
       <StringTable ProductName="vBuhAssist"/>
     </VersionInfo>
     <BuildModes>
@@ -318,6 +318,13 @@
         <Filename Value="IncP/Form/uFMedFindPdv.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FMedFindPdv"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="IncP/Form/uFMedFind.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FMedFind"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>

@@ -1,26 +1,42 @@
 inherited FMedFindAkz: TFMedFindAkz
-  Height = 385
-  Width = 799
+  Height = 449
+  Width = 852
   Caption = 'Облік акцизу'
-  ClientHeight = 385
-  ClientWidth = 799
+  ClientHeight = 449
+  ClientWidth = 852
   OnCreate = FormCreate
+  inherited PanelTitle: TPanel
+    Width = 852
+    ClientWidth = 852
+  end
   inherited PanelFrame: TPanel
+    Height = 401
+    Width = 852
+    ClientHeight = 401
+    ClientWidth = 852
     inherited PanelComboBox: TPanel
+      Width = 850
+      ClientWidth = 850
       inherited ComboBoxYear: TComboBox
         Width = 199
       end
     end
-  end
-  inherited frReport1: TfrReport[2]
-  end
-  inherited frDBDataSet1: TfrDBDataSet[3]
-  end
-  inherited FrPrintGrid1: TFrPrintGrid[4]
-  end
-  inherited SelectDirectoryDialog1: TSelectDirectoryDialog[5]
-  end
-  inherited PopupMenuActivation: TPopupMenu[6]
+    inherited PageControl: TPageControl
+      Height = 184
+      Width = 850
+      inherited TabSheetCur: TTabSheet
+        inherited DbGridCur: TDBGrid
+          Height = 151
+          Width = 842
+        end
+      end
+      inherited TabSheetPrev: TTabSheet
+        inherited DBGridPrev: TDBGrid
+          Height = 151
+          Width = 842
+        end
+      end
+    end
   end
   object DataSourcePrev: TDataSource[7]
     Left = 120
@@ -138,34 +154,27 @@ inherited FMedFindAkz: TFMedFindAkz
       '    T2.FORM_NAME,'
       '    T2.CARDSENDSTT_NAME,'
       '    T2.MODDATE,'
-      '    T2.CARDSTATUS_NAME,'
-      '    T2.XMLVALS,'
-      '    T2.FJ'
+      '    T2.CARDSTATUS_NAME'
       'FROM'
       '    ORG'
       'LEFT JOIN ('
       '    SELECT'
       '        CARD.IDORG,'
       '        CARD.PERDATE,'
-      '        CARDSENDSTT.NAME AS CARDSENDSTT_NAME,'
+      '        RDSTTSPR.NAME AS CARDSENDSTT_NAME,'
       '        CARD.PERTYPE,'
       '        FORM.CHARCODE,'
       '        COALESCE(CARD.DOCNAME, FORM.NAME) AS FORM_NAME,'
       '        CAST(CARD.MODDATE AS DATE) AS MODDATE,'
-      '        CARDSTATUS.NAME AS CARDSTATUS_NAME,'
-      '        CARDBLOB.XMLVALS'
-      '        %_SELECT_T2'
+      '        CARDSTATUS.NAME AS CARDSTATUS_NAME'
       '    FROM'
       '      CARD'
       '    LEFT JOIN FORM'
       '        ON FORM.CODE = CARD.FORM'
       '    LEFT JOIN CARDSTATUS'
       '        ON CARDSTATUS.CODE = CARD.STATUS'
-      '    LEFT JOIN CARDSENDSTT'
-      '        ON CARDSENDSTT.CODE = CARD.SENDSTT'
-      '    LEFT JOIN CARDBLOB'
-      '        ON CARDBLOB.CODE = CARD.CODE'
-      '    %_FROM_T2'
+      '    LEFT JOIN RDSTTSPR'
+      '        ON RDSTTSPR.CODE = CARD.SENDSTT'
       '    WHERE'
       '            (CARD.IDPARENT IS NULL)'
       '        AND (CARD.FORM > 0)'
@@ -173,8 +182,6 @@ inherited FMedFindAkz: TFMedFindAkz
       '        %_COND_PERTYPE'
       '        %_COND_PERDATE'
       '        %_COND_CHARCODE'
-      '        %_COND_CHARCODE_NOT'
-      '        %_COND_STATUS'
       '        %_COND_SENDSTT'
       ') T2'
       '    ON T2.IDORG = ORG.CODE'
@@ -187,16 +194,6 @@ inherited FMedFindAkz: TFMedFindAkz
     )
     Params = <>
     Macros = <    
-      item
-        DataType = ftUnknown
-        Name = '_SELECT_T2'
-        ParamType = ptInput
-      end    
-      item
-        DataType = ftUnknown
-        Name = '_FROM_T2'
-        ParamType = ptInput
-      end    
       item
         DataType = ftUnknown
         Name = '_COND_PERTYPE'
@@ -214,12 +211,7 @@ inherited FMedFindAkz: TFMedFindAkz
       end    
       item
         DataType = ftUnknown
-        Name = '_COND_CHARCODE_NOT'
-        ParamType = ptInput
-      end    
-      item
-        DataType = ftUnknown
-        Name = '_COND_STATUS'
+        Name = '_COND_SENDSTT'
         ParamType = ptInput
       end    
       item
@@ -405,28 +397,6 @@ inherited FMedFindAkz: TFMedFindAkz
       ReadOnly = False
       Required = False
       Size = 50
-    end
-    object SQLQueryCurXMLVALS: TBlobField
-      FieldKind = fkData
-      FieldName = 'XMLVALS'
-      Index = 14
-      LookupCache = False
-      ProviderFlags = [pfInUpdate, pfInWhere]
-      ReadOnly = False
-      Required = False
-      Visible = False
-      Size = 8
-    end
-    object SQLQueryCurFJ: TStringField
-      FieldKind = fkData
-      FieldName = 'FJ'
-      Index = 15
-      LookupCache = False
-      ProviderFlags = [pfInUpdate, pfInWhere]
-      ReadOnly = False
-      Required = False
-      Visible = False
-      Size = 5
     end
   end
   object SQLQueryPrev: TSQLQuery[10]

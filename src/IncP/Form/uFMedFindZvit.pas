@@ -8,7 +8,7 @@ unit uFMedFindZvit;
 interface
 
 uses
-  Classes, SysUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  Classes, SysUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ExtCtrls, fpjson,
   uFMedFind, uMed, uVarHelper, uDmCommon;
 
 type
@@ -50,7 +50,10 @@ type
     function  GetParentTransaction(): TSQLTransaction; override;
     function  GetParentHideFiealds(): TObjectArray ; override;
     function  GetParentDocsIncl(): TStringList; override;
-    function  GetParentDocsExcl(): TStringArray; override;
+    function  GetParentDocsExcl(): TStringList; override;
+    procedure ParentQueryCurOpen(aQuery: TSQLQuery); override;
+    procedure ParentCalcFields(DataSet: TDataSet); override;
+    procedure QueryCharcodeNot(aQuery: TSQLQuery; aSL: TStringList);
   public
 
   end;
@@ -83,9 +86,14 @@ begin
   Result := TStringList.Create();
 end;
 
-function TFMedFindZvit.GetParentDocsExcl(): TStringArray;
+function TFMedFindZvit.GetParentDocsExcl(): TStringList;
+var
+  JData: TJSONData;
+  Arr: TJSONArray;
 begin
-  Result := cArrExcl;
+  //JData := fJData.FindPath('Filter/DocExcl'); Fuck
+  Arr := TJSONObject(fJData.FindPath('Filter')).Arrays['DocExcl'];
+  Result := TStringList.Create().AddJson(Arr);
 end;
 
 function TFMedFindZvit.GetParentHideFiealds(): TObjectArray;
@@ -101,6 +109,64 @@ end;
 procedure TFMedFindZvit.SQLQueryCurCalcFields(DataSet: TDataSet);
 begin
   SQLQueryGridCurCalcFields(DataSet);
+end;
+
+procedure TFMedFindZvit.QueryCharcodeNot(aQuery: TSQLQuery; aSL: TStringList);
+var
+  Macro, StrExcl: string;
+  SL: TStringList;
+begin
+  Macro := '';
+  if Assigned(aSL) and (aSL.Count > 0) then
+  begin
+    SL := TStringList.Create().AddExtDelim(aSL);
+    StrExcl := QuotedStr(SL.GetJoin('|'));
+    Macro := Format(' AND (FORM.CHARCODE NOT SIMILAR TO (%s))', [StrExcl]);
+    SL.Free();
+  end;
+  aQuery.MacroByName('_COND_CHARCODE_NOT').Value := Macro;
+end;
+
+procedure TFMedFindZvit.ParentCalcFields(DataSet: TDataSet);
+var
+  FieldXML, FieldFJ, FieldHZ: TField;
+begin
+  FieldXML := DataSet.FieldByName('XMLVALS');
+  FieldFJ := DataSet.FieldByName('FJ');
+  FieldHZ := DataSet.FieldByName('HZ');
+
+  if (DataSet.FieldByName('CHARCODE').IsNull) then
+    FieldHZ.AsString := 'Відсутній'
+  else if (DataSet.FieldByName('CHARCODE').AsString.StartsWith('S')) then
+    FieldHZ.AsString := 'Звітний'
+  else if (not FieldXML.IsNull) and (not FieldXML.AsString.IsEmpty()) then
+    FieldHZ.AsString := GetHzXml(FieldXML.AsString)
+  else if (not FieldFJ.AsString.IsEmpty()) then
+    FieldHZ.AsString := GetHzStr(FieldFJ.AsString);
+end;
+
+procedure TFMedFindZvit.ParentQueryCurOpen(aQuery: TSQLQuery);
+var
+  Str, Macro: string;
+  SL: TStringList;
+begin
+  SL := GetParentDocsExcl();
+  QueryCharcodeNot(aQuery, SL);
+  SL.Free();
+
+  Macro := ', '''' AS FJ';
+  if (Pos('FJ-0500110', ComboBoxDoc.Text) = 1) then
+  begin
+    Str := 'FJ0500106_MAIN';
+    if (fTablesMain.IndexOf(Str) <> 0) then
+    begin
+      Macro := ', TFJ.HZ || ''-'' || TFJ.HZN || ''-'' || TFJ.HZU AS FJ';
+      aQuery.MacroByName('_FROM_T2').Value :=
+        Format(' LEFT JOIN %s TFJ ON TFJ.CARDCODE = CARD.CODE', [Str]);
+    end;
+  end;
+  aQuery.MacroByName('_SELECT_T2').Value := Macro;
+
 end;
 
 procedure TFMedFindZvit.FormCreate(Sender: TObject);
@@ -121,21 +187,7 @@ begin
   DataSourcePrev.DataSet := SQLQueryPrev;
   DbGridPrev.DataSource := DataSourcePrev;
 
-  SL := TStringList.Create().AddArray([
-    'FJ-0200126=Податкова декларація з податку на додану вартість',
-    'FJ-0500110=Податковий розрахунок сум доходу ... ЄСВ',
-    'FJ-0209513=Податкова декларація акцизного податку'
-  ]);
-  SetComboBoxDoc(SL);
-  SL.Free();
-
-  SL := TStringList.Create().AddArray([
-    '2=Вірний',
-    '13=Отриманий',
-    '21=Не прийнято в ДПС'
-  ]);
-  SetComboBoxPair(ComboBoxSendStatus, SL);
-  SL.Free();
+  LoadJsonData();
 end;
 
 

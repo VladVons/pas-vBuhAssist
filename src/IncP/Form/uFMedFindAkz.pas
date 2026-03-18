@@ -22,7 +22,6 @@ type
     SQLQueryCurCHARCODE: TStringField;
     SQLQueryCurDEPT: TStringField;
     SQLQueryCurEDRPOU: TStringField;
-    SQLQueryCurFJ: TStringField;
     SQLQueryCurFORM_NAME: TStringField;
     SQLQueryCurHZ: TStringField;
     SQLQueryCurINDTAXNUM: TStringField;
@@ -32,7 +31,6 @@ type
     SQLQueryCurPERTYPE: TIntegerField;
     SQLQueryCurSHORTNAME: TStringField;
     SQLQueryCurVAT: TStringField;
-    SQLQueryCurXMLVALS: TBlobField;
     SQLQueryPrev: TSQLQuery;
     SQLQueryPrevCARDSENDSTT_NAME: TStringField;
     SQLQueryPrevCARDSTATUS_NAME: TStringField;
@@ -115,23 +113,7 @@ begin
   DataSourcePrev.DataSet := SQLQueryPrev;
   DbGridPrev.DataSource := DataSourcePrev;
 
-  SL := TStringList.Create().AddArray([
-    'FJ-0210401=Довідка про зведені за добу залишки ПАЛЬНЕ',
-    'FJ-0210702=Довідка про зведені за добу залишки СПИРТ'
-  ]);
-  SetComboBoxDoc(SL);
-  SL.Free();
-
-  SL := TStringList.Create().AddArray([
-    '2=Вірний',
-    '20=Очікується квитанція №1',
-    '21=Не прийнято в ДПС',
-    '54=Очікування квитанції №2',
-    '102=Зареєстровано в ЄРАН'
-  ]);
-  SetComboBoxPair(ComboBoxSendStatus, SL);
-  SL.Free();
-
+  LoadJsonData();
 end;
 
 end.

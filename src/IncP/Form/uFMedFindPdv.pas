@@ -22,7 +22,6 @@ type
     SQLQueryCurCHARCODE: TStringField;
     SQLQueryCurDEPT: TStringField;
     SQLQueryCurEDRPOU: TStringField;
-    SQLQueryCurFJ: TStringField;
     SQLQueryCurFORM_NAME: TStringField;
     SQLQueryCurHZ: TStringField;
     SQLQueryCurINDTAXNUM: TStringField;
@@ -32,7 +31,6 @@ type
     SQLQueryCurPERTYPE: TIntegerField;
     SQLQueryCurSHORTNAME: TStringField;
     SQLQueryCurVAT: TStringField;
-    SQLQueryCurXMLVALS: TBlobField;
     SQLQueryPrev: TSQLQuery;
     SQLQueryPrevCARDSENDSTT_NAME: TStringField;
     SQLQueryPrevCARDSTATUS_NAME: TStringField;
@@ -115,24 +113,7 @@ begin
   DataSourcePrev.DataSet := SQLQueryPrev;
   DbGridPrev.DataSource := DataSourcePrev;
 
-  SL := TStringList.Create().AddArray([
-    'FJ-1201016=Податкова накладна',
-    'FJ-1201216=Розрахунок коригування кількісних і вартісних показників',
-    'FJ-1211001=Податкова накладна (експортне забезбечення',
-    'FJ-1211201=Розрахунок коригування кількісних і вартісних показників (експ. заб.)'
-  ]);
-  SetComboBoxDoc(SL);
-  SL.Free();
-
-  SL := TStringList.Create().AddArray([
-    '2=Вірний',
-    '20=Очікується квитанція №1',
-    '21=Не прийнято в ДПС',
-    '110=Реєстрація зупинена',
-    '114=Реєстрація скасовано'
-  ]);
-  SetComboBoxPair(ComboBoxSendStatus, SL);
-  SL.Free();
+  LoadJsonData();
 end;
 
 

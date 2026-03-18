@@ -5,22 +5,42 @@ inherited FMedFindZvit: TFMedFindZvit
   ClientHeight = 430
   ClientWidth = 799
   OnCreate = FormCreate
+  inherited PanelTitle: TPanel
+    Width = 799
+    ClientWidth = 799
+  end
   inherited PanelFrame: TPanel
+    Height = 382
+    Width = 799
+    ClientHeight = 382
+    ClientWidth = 799
     inherited PanelComboBox: TPanel
+      Width = 797
+      ClientWidth = 797
       inherited ComboBoxYear: TComboBox
         Width = 199
       end
     end
-  end
-  inherited frReport1: TfrReport[2]
-  end
-  inherited frDBDataSet1: TfrDBDataSet[3]
-  end
-  inherited FrPrintGrid1: TFrPrintGrid[4]
-  end
-  inherited SelectDirectoryDialog1: TSelectDirectoryDialog[5]
-  end
-  inherited PopupMenuActivation: TPopupMenu[6]
+    inherited PageControl: TPageControl
+      Height = 165
+      Width = 797
+      inherited TabSheetCur: TTabSheet
+        ClientHeight = 132
+        ClientWidth = 789
+        inherited DbGridCur: TDBGrid
+          Height = 132
+          Width = 789
+        end
+      end
+      inherited TabSheetPrev: TTabSheet
+        ClientHeight = 132
+        ClientWidth = 789
+        inherited DBGridPrev: TDBGrid
+          Height = 132
+          Width = 789
+        end
+      end
+    end
   end
   object DataSourcePrev: TDataSource[7]
     Left = 104
@@ -147,12 +167,12 @@ inherited FMedFindZvit: TFMedFindZvit
       '    SELECT'
       '        CARD.IDORG,'
       '        CARD.PERDATE,'
-      '        CARDSENDSTT.NAME AS CARDSENDSTT_NAME,'
+      '        CARDSENDSTT.NAME || '' '' || CARD.SENDSTT AS CARDSENDSTT_NAME,'
       '        CARD.PERTYPE,'
       '        FORM.CHARCODE,'
       '        COALESCE(CARD.DOCNAME, FORM.NAME) AS FORM_NAME,'
       '        CAST(CARD.MODDATE AS DATE) AS MODDATE,'
-      '        CARDSTATUS.NAME AS CARDSTATUS_NAME,'
+      '        CARDSTATUS.NAME || '' '' || CARD.STATUS  AS CARDSTATUS_NAME,'
       '        CARDBLOB.XMLVALS'
       '        %_SELECT_T2'
       '    FROM'
@@ -220,6 +240,11 @@ inherited FMedFindZvit: TFMedFindZvit
       item
         DataType = ftUnknown
         Name = '_COND_STATUS'
+        ParamType = ptInput
+      end    
+      item
+        DataType = ftUnknown
+        Name = '_COND_SENDSTT'
         ParamType = ptInput
       end    
       item

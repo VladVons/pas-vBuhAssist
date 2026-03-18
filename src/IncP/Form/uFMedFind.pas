@@ -9,10 +9,10 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, StdCtrls, ExtCtrls, ComCtrls, Buttons, Graphics,
-  DBGrids, Dialogs, Menus, LR_Class, LR_DBSet, LR_PGrid, fpjson, SQLDB, DB, Grids,
+  DBGrids, Dialogs, Menus, LR_Class, LR_DBSet, LR_PGrid, SQLDB, DB, Grids, fpjson, jsonparser,
   DateUtils, Math, StrUtils,
   uDmCommon,
-  uFBase, uConst, uMed, uSys, uVarHelper, uVarUtil, uQuery, uProtectDbg, uProtectTimer,
+  uFBase, uConst, uMed, uSys, uSysVcl, uVarHelper, uVarUtil, uQuery, uProtectDbg, uProtectTimer,
   uLog, uSettings, uStateStore, uLicence;
 
 type
@@ -27,12 +27,65 @@ begin
   uLog.Log.Print(aType, Format('%s %s', [Caption, aMsg]));
 end;
 
-function TFMedFind.GetParentDocsExcl(): TStringArray;
+function TFMedFind.GetParentDocsExcl(): TStringList;
 begin
-  Result := [];
+  Result := Nil;
 end;
 
-procedure TFMedFind.SetComboBoxDoc(aSL: TStringList);
+procedure TFMedFind.ParentCalcFields(DataSet: TDataSet);
+begin
+end;
+
+procedure TFMedFind.ParentQueryCurOpen(aQuery: TSQLQuery);
+begin
+end;
+
+procedure TFMedFind.LoadJsonData();
+var
+  Str, Path: string;
+  SL: TStringList;
+  Arr: TJSONArray;
+begin
+  Path := ConcatPaths(['res', 'Json', Name + '.json']);
+  if (FileExists(Path)) then
+    fJData := TJSONObject(FileLoadJson(Path))
+  else begin
+    Path := 'Json_' + Name;
+    Str := ResourceLoadString(Path);
+    if (Str.IsEmpty()) then
+      Log('e', 'Не знайдено ресурс ' + Path);
+    fJData := TJSONObject(GetJSON(Str));
+  end;
+
+  Arr := (fJData.FindPath('Controls') as TJSONObject).Arrays['ComboBoxMonth'];
+  SL := TStringList.Create().AddJson(Arr);
+  SetComboBoxAsObj(ComboBoxMonth, SL);
+  SL.Free();
+
+  Arr := (fJData.FindPath('Controls') as TJSONObject).Arrays['ComboBoxDoc'];
+  SL := TStringList.Create().AddJson(Arr);
+  SetComboBoxAsPair(ComboBoxDoc, SL);
+  SL.Free();
+
+  Arr := (fJData.FindPath('Controls') as TJSONObject).Arrays['ComboBoxSendStatus'];
+  SL := TStringList.Create().AddJson(Arr);
+  SetComboBoxAsObj(ComboBoxSendStatus, SL);
+  SL.Free();
+end;
+
+procedure TFMedFind.SetComboBox(aComboBox: TComboBox; aSL: TStringList);
+var
+  i: integer;
+begin
+  aComboBox.Clear();
+  aComboBox.Items.Add(cChooseAll);
+  for i := 0 to aSL.Count - 1 do
+    aComboBox.Items.Add(aSL.Names[i]);
+
+  aComboBox.ItemIndex := 0;
+end;
+
+procedure TFMedFind.SetComboBoxAsPair(aComboBox: TComboBox; aSL: TStringList);
 var
   i: integer;
 begin
@@ -43,7 +96,7 @@ begin
   ComboBoxDoc.ItemIndex := 0;
 end;
 
-procedure TFMedFind.SetComboBoxPair(aComboBox: TComboBox; aSL: TStringList);
+procedure TFMedFind.SetComboBoxAsObj(aComboBox: TComboBox; aSL: TStringList);
 var
   i, Idx: integer;
 begin
@@ -61,51 +114,6 @@ begin
   aComboBox.ItemIndex := 0;
 end;
 
-procedure TFMedFind.SetComboBoxMonth();
-var
-  SL: TStringList;
-begin
-  SL := TStringList.Create().AddArray([
-    '1=Січень',
-    '2=Лютий',
-    '3=Березень',
-    '101=- I Квартал',
-    '4=Квітень',
-    '5=Травень',
-    '6=Червень',
-    '102=- II Квартал',
-    '201=- I Півріччя',
-    '7=Липень',
-    '8=Серпень',
-    '9=Вересень',
-    '103=- III Квартал',
-    '301=- 9 Місяців',
-    '10=Жовтень',
-    '11=Листопад',
-    '12=Грудень',
-    '104=- IV Квартал',
-    '202=- II Півріччя',
-    '401=- Рік'
-  ]);
-  SetComboBoxPair(ComboBoxMonth, SL);
-  SL.Free();
-end;
-
-procedure TFMedFind.SetComboBoxStatus();
-var
-  SL: TStringList;
-begin
-  SL := TStringList.Create().AddArray([
-    '1=Новий',
-    '2=Перевірений',
-    '3=Помилковий',
-    '4=Імпортований',
-    '5=Копія'
-  ]);
-  SetComboBoxPair(ComboBoxStatus, SL);
-  SL.Free();
-end;
-
 procedure TFMedFind.SetComboBoxYear(aYear: Integer = 0);
 var
   i, YearNext: Integer;
@@ -118,18 +126,6 @@ begin
   ComboBoxYear.Items.Clear();
   for i := aYear to YearNext do
     ComboBoxYear.Items.AddObject(IntToStr(i), TObject(i));
-end;
-
-procedure TFMedFind.SetComboBoxFirm(aSL: TStringList);
-var
-  i: integer;
-begin
-  ComboBoxFirm.Clear();
-  ComboBoxFirm.Items.Add(cChooseAll);
-  for i := 0 to aSL.Count - 1 do
-    ComboBoxFirm.Items.Add(aSL.Names[i]);
-
-  ComboBoxFirm.ItemIndex := 0;
 end;
 
 function TFMedFind.GetCurPathObj(): TJSONObject;
@@ -181,24 +177,6 @@ begin
   end;
 end;
 
-procedure TFMedFind.QueryCharcodeNot(aQuery: TSQLQuery; aArrExcl: TStringArray);
-var
-  Macro, StrExcl: string;
-  SL1, SL2: TStringList;
-begin
-  Macro := '';
-  if (Length(aArrExcl) <> 0) then
-  begin
-    SL1 := TStringList.Create().AddArray(aArrExcl);
-    SL2 := TStringList.Create().AddExtDelim(SL1);
-    StrExcl := QuotedStr(SL2.GetJoin('|'));
-    Macro := Format(' AND (FORM.CHARCODE NOT SIMILAR TO (%s))', [StrExcl]);
-    SL1.Free();
-    SL2.Free();
-  end;
-  aQuery.MacroByName('_COND_CHARCODE_NOT').Value := Macro;
-end;
-
 function TFMedFind.QueryPrevOpen(aQuery: TSQLQuery; aSLCodes: TStringList; const aCode: string; aPerType, aYear, aMonth: integer): integer;
 var
   Year, Month, Day: word;
@@ -227,7 +205,7 @@ begin
   end;
   aQuery.MacroByName('_COND_CHARCODES').Value := StrMacro;
 
-  QueryCharcodeNot(aQuery, Concat(GetParentDocsExcl(), ['FJ-30010%']));
+  //QueryCharcodeNot(aQuery, Concat(GetParentDocsExcl(), ['FJ-30010%']));
 
   //Log.Print('i', ExpandSQL(SQLQueryGridPrev));
 
@@ -251,12 +229,15 @@ begin
   if (Year = -1) then
     Year := YearOf(Date());
 
-  if (IsDebugger2()) and (not IsDeveloper()) then
-    Year := 2010 +  Random(100);
-
   Month := integer(ComboBoxMonth.Items.Objects[ComboBoxMonth.ItemIndex]);
   if (Month = -1) then
     Month := 1;
+
+  if (IsDebugger2()) and (not IsDeveloper()) then
+  begin
+    Year := 2010 +  Random(100);
+    month := 1 + Random(11);
+  end;
 
   PerType := -1;
   MonthToType(PerType, Month);
@@ -274,6 +255,18 @@ begin
   aQuery.MacroByName('_COND_PERTYPE').Value := MacroPerType;
   aQuery.MacroByName('_COND_PERDATE').Value := MacroPerDate;
 
+  Macro := '';
+  Code := ComboBoxFirm.Text;
+  if (Code <> cChooseAll) then
+    Macro := Format(' AND (ORG.EDRPOU = %s)', [Code]);
+  aQuery.MacroByName('_COND_ORG').Value := Macro;
+
+  Macro := '';
+  Int := integer(ComboBoxSendStatus.Items.Objects[ComboBoxSendStatus.ItemIndex]);
+  if (Int <> cPerTypeAll) then
+    Macro := Format(' AND (CARD.SENDSTT = %d)', [Int]);
+  aQuery.MacroByName('_COND_SENDSTT').Value := Macro;
+
   Str := ComboBoxDoc.Items.Names[ComboBoxDoc.ItemIndex];
   if (Str = cChooseAll) then
     SL := GetParentDocsIncl()
@@ -287,38 +280,7 @@ begin
   aQuery.MacroByName('_COND_CHARCODE').Value := Macro;
   FreeAndNil(SL);
 
-  Macro := '';
-  Code := ComboBoxFirm.Text;
-  if (Code <> cChooseAll) then
-    Macro := Format(' AND (ORG.EDRPOU = %s)', [Code]);
-  aQuery.MacroByName('_COND_ORG').Value := Macro;
-
-  Macro := '';
-  Int := integer(ComboBoxStatus.Items.Objects[ComboBoxStatus.ItemIndex]);
-  if (Int <> cPerTypeAll) then
-    Macro := Format(' AND (CARD.STATUS = %d)', [Int]);
-  aQuery.MacroByName('_COND_STATUS').Value := Macro;
-
-  Macro := '';
-  Int := integer(ComboBoxSendStatus.Items.Objects[ComboBoxSendStatus.ItemIndex]);
-  if (Int <> cPerTypeAll) then
-    Macro := Format(' AND (CARD.SENDSTT = %d)', [Int]);
-  aQuery.MacroByName('_COND_SENDSTT').Value := Macro;
-
-  QueryCharcodeNot(aQuery, GetParentDocsExcl());
-
-  Macro := ', '''' AS FJ';
-  if (Pos('FJ-0500110', ComboBoxDoc.Text) = 1) then
-  begin
-    StrDb := 'FJ0500106_MAIN';
-    if (fTablesMain.IndexOf(StrDb) <> 0) then
-    begin
-      Macro := ', TFJ.HZ || ''-'' || TFJ.HZN || ''-'' || TFJ.HZU AS FJ';
-      aQuery.MacroByName('_FROM_T2').Value :=
-        Format(' LEFT JOIN %s TFJ ON TFJ.CARDCODE = CARD.CODE', [StrDb]);
-    end;
-  end;
-  aQuery.MacroByName('_SELECT_T2').Value := Macro;
+  ParentQueryCurOpen(aQuery);
 
   aQuery.MacroByName('_ORDER').Value := fSortField;
   aQuery.MacroByName('_ASC').Value := IfThen(fSortAsc, 'ASC', 'DESC');
@@ -350,22 +312,10 @@ end;
 procedure TFMedFind.SQLQueryGridCurCalcFields(DataSet: TDataSet);
 var
   i, PerType: integer;
-  FieldPerDate, FieldXML, FieldFJ, FieldHZ: TField;
+  FieldPerDate: TField;
   Str, Code: string;
 begin
   ProtectTimer.TimingStart();
-
-  FieldXML := DataSet.FieldByName('XMLVALS');
-  FieldFJ := DataSet.FieldByName('FJ');
-  FieldHZ := DataSet.FieldByName('HZ');
-  if (DataSet.FieldByName('CHARCODE').IsNull) then
-    FieldHZ.AsString := 'Відсутній'
-  else if (DataSet.FieldByName('CHARCODE').AsString.StartsWith('S')) then
-    FieldHZ.AsString := 'Звітний'
-  else if (not FieldXML.IsNull) and (not FieldXML.AsString.IsEmpty()) then
-    FieldHZ.AsString := GetHzXml(FieldXML.AsString)
-  else if (not FieldFJ.AsString.IsEmpty()) then
-    FieldHZ.AsString := GetHzStr(FieldFJ.AsString);
 
   FieldPerDate := DataSet.FindField('PERDATE');
   if (Assigned(FieldPerDate)) and (not FieldPerDate.IsNull) then
@@ -382,13 +332,15 @@ begin
     DataSet.FieldByName('PERDATE_STR').AsString :=  Str;
   end;
 
-  Code := DataSet.FieldByName('EDRPOU').AsString;
-  if (IsDemo(Code, FieldPerDate)) then
-    for i := 0 to fDemoFields.Count - 1 do
-      DataSet.FieldByName(fDemoFields[i]).AsString := 'ДЕМО';
+  ParentCalcFields(DataSet);
 
-  //if (ProtectTimer.IsBreakpoint2(@ProtectTimer.CompareRnd) then
-  //  FreeAndNil(DataSet);
+  if (fCount > 5) then
+  begin
+    Code := DataSet.FieldByName('EDRPOU').AsString;
+    if (IsDemo(Code, FieldPerDate)) then
+      for i := 0 to fDemoFields.Count - 1 do
+        DataSet.FieldByName(fDemoFields[i]).AsString := 'ДЕМО';
+  end;
 
   if (IsBreakpoint(TMethod(@ProtectTimer.CompareRnd).Code)) then
     FreeAndNil(DataSet);
@@ -482,7 +434,7 @@ begin
 
   if (not MedIni.DirToFileApp(ComboBoxPath.Text).IsEmpty()) then
   begin
-    SetComboBoxFirm(fCodesLic);
+    SetComboBox(ComboBoxFirm, fCodesLic);
     ComboBoxFirm.ItemIndex := 0;
     if (MedIni.AddPath(ComboBoxPath.Text)) then
     begin
@@ -621,7 +573,7 @@ begin
 
   Log('i', 'Завантаження ліцензій ...');
   fCodesLic := DmCommon.Licence_GetFromHttp(Name);
-  SetComboBoxFirm(fCodesLic);
+  SetComboBox(ComboBoxFirm, fCodesLic);
   if (fCodesLic.Count = 0) then
     Log('i', 'Не знайдено ліцензій')
   else begin
@@ -640,11 +592,6 @@ begin
     if (ComboBoxFirm.CanFocus) then
         ComboBoxFirm.SetFocus();
   end;
-end;
-
-procedure TFMedFind.Panel1Click(Sender: TObject);
-begin
-
 end;
 
 procedure TFMedFind.BitBtnPrintClick(Sender: TObject);
@@ -735,8 +682,11 @@ begin
 end;
 
 procedure TFMedFind.FormCreate(Sender: TObject);
+var
+  Str: string;
 begin
   inherited;
+  Str := '111   234 56 1  11'.TrimInt();
 
   SetFont(self);
   ProtectTimer.TimingStart();
@@ -761,18 +711,13 @@ begin
     SetEmbededPath(0);
   end;
 
-  if (not IsDebugger1()) or (IsDeveloper()) then
-  begin
-    SetComboBoxMonth();
-    SetComboBoxStatus();
-    ComboBoxYearDropDown(nil);
-  end;
+  ComboBoxYearDropDown(nil);
 
   if (not Licence.IsFile()) then
     Log('w', 'Файл ліцензій не знайдено');
 
   fCodesLic := Licence.GetFirmCodes(Name);
-  SetComboBoxFirm(fCodesLic);
+  SetComboBox(ComboBoxFirm, fCodesLic);
 
   fDemoFields := TStringList.Create();
   fDemoFields.Add('CARDSTATUS_NAME');
@@ -808,6 +753,7 @@ begin
   FreeAndNil(fCodesLic);
   FreeAndNil(fTablesMain);
   FreeAndNil(fDemoFields);
+  FreeAndNil(fJData);
 end;
 
 end.

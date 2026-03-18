@@ -1,2 +1,7 @@
-Report_CheckDocs1 RCDATA "Res/Report/CheckDocs1.lrf"
-Text_UserAgreement RCDATA "Res/Text/UserAgreement.txt"
+Report_CheckDocs1 RCDATA "res/Report/CheckDocs1.lrf"
+
+Text_UserAgreement RCDATA "res/Text/UserAgreement.txt"
+
+Json_FMedFindAkz RCDATA "res/Json/FMedFindAkz.json"
+Json_FMedFindPdv RCDATA "res/Json/FMedFindPdv.json"
+Json_FMedFindZvit RCDATA "res/Json/FMedFindZvit.json"
