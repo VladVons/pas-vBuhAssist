@@ -36,6 +36,7 @@ type
     function GetJoin(const aDelim: string): string;
     function GetJson(): TJSONArray;
     function GetLast(aIdx: integer = 0): string;
+    function IndexOfObject(aObj: TObject): Integer;
     function Intersect(const aSL: TStrings): TStringList;
     function Left(aLen: integer): TStringList;
     function Map(aFunc: TStringMapFunc): TStringList;
@@ -234,6 +235,17 @@ begin
       Delete(i);
 
   Result := Self;
+end;
+
+function TStringListHelper.IndexOfObject(aObj: TObject): Integer;
+var
+  i: Integer;
+begin
+  for i := 0 to self.Count - 1 do
+    if (self.Objects[i] = aObj) then
+      Exit(i);
+
+  Result := -1;
 end;
 
 function TStringListHelper.GetLast(aIdx: integer): string;

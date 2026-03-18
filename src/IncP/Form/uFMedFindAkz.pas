@@ -52,9 +52,6 @@ type
 
   end;
 
-var
-  FMedFindAkz: TFMedFindAkz;
-
 implementation
 
 {$R *.lfm}

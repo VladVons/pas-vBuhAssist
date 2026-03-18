@@ -93,6 +93,7 @@ begin
   ComboBoxDoc.Items.AddPair(cChooseAll, '');
   for i := 0 to aSL.Count - 1 do
     ComboBoxDoc.Items.Add(aSL[i]);
+
   ComboBoxDoc.ItemIndex := 0;
 end;
 
@@ -285,7 +286,7 @@ begin
   aQuery.MacroByName('_ORDER').Value := fSortField;
   aQuery.MacroByName('_ASC').Value := IfThen(fSortAsc, 'ASC', 'DESC');
 
-  //Log.Print('i', ExpandSQL(SQLQueryGridCur));
+  Log('i', ExpandSQL(aQuery));
   aQuery.Open();
 
   if (Code <> cChooseAll) and (Month <> cPerTypeAll) then
@@ -321,11 +322,11 @@ begin
   if (Assigned(FieldPerDate)) and (not FieldPerDate.IsNull) then
   begin
     PerType := DataSet.FieldByName('PERTYPE').AsInteger;
-    if (PerType = 0) then // month
+    if (PerType = cDbMonth) then
       Str := GetMonthNameUa(MonthOf(FieldPerDate.AsDateTime))
-    else if (PerType = 10) then  // quarter
+    else if (PerType = cDbQuarter) then
       Str := IntToRoman10(GetYearPart(FieldPerDate.AsDateTime, 3)) + ' ' + PerTypeToHuman(PerType)
-    else if (PerType = 20) then  // half year
+    else if (PerType = cDbYearHalf) then
       Str := IntToRoman10(GetYearPart(FieldPerDate.AsDateTime, 6)) + ' ' + PerTypeToHuman(PerType)
     else
       Str := PerTypeToHuman(PerType);

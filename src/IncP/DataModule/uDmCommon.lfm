@@ -28,7 +28,7 @@ object DmCommon: TDmCommon
     Database = IBConnection
     Transaction = SQLTransactionDm
     SQL.Strings = (
-      'SELECT'
+      'SELECT DISTINCT'
       '  ORG.EDRPOU'
       'FROM'
       '  ORG'
@@ -36,7 +36,6 @@ object DmCommon: TDmCommon
       '  (ORG.DEPT <> ''0'' OR ORG.DEPT IS NULL)'
       'ORDER BY'
       '  EDRPOU'
-      ''
     )
     Params = <>
     Macros = <>

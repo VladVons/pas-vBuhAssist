@@ -25,12 +25,16 @@ inherited FMedFindZvit: TFMedFindZvit
       Height = 165
       Width = 797
       inherited TabSheetCur: TTabSheet
+        ClientHeight = 132
+        ClientWidth = 789
         inherited DbGridCur: TDBGrid
           Height = 132
           Width = 789
         end
       end
       inherited TabSheetPrev: TTabSheet
+        ClientHeight = 132
+        ClientWidth = 789
         inherited DBGridPrev: TDBGrid
           Height = 132
           Width = 789
@@ -155,6 +159,7 @@ inherited FMedFindZvit: TFMedFindZvit
       '    T2.CARDSENDSTT_NAME,'
       '    T2.MODDATE,'
       '    T2.CARDSTATUS_NAME,'
+      '    T2.STATUS2,'
       '    T2.XMLVALS,'
       '    T2.FJ'
       'FROM'
@@ -169,6 +174,7 @@ inherited FMedFindZvit: TFMedFindZvit
       '        COALESCE(CARD.DOCNAME, FORM.NAME) AS FORM_NAME,'
       '        CAST(CARD.MODDATE AS DATE) AS MODDATE,'
       '        CARDSTATUS.NAME || '' '' || CARD.STATUS  AS CARDSTATUS_NAME,'
+      '        CARD.STATUS || CARD.SENDSTT AS STATUS2,'
       '        CARDBLOB.XMLVALS'
       '        %_SELECT_T2'
       '    FROM'
@@ -413,6 +419,7 @@ inherited FMedFindZvit: TFMedFindZvit
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
       Required = False
+      Visible = False
       Size = 10
     end
     object SQLQueryCurCARDSENDSTT_NAME: TStringField
@@ -427,10 +434,21 @@ inherited FMedFindZvit: TFMedFindZvit
       Required = False
       Size = 50
     end
+    object SQLQueryCurSTATUS2: TStringField
+      DisplayWidth = 8
+      FieldKind = fkData
+      FieldName = 'STATUS2'
+      Index = 14
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Visible = False
+    end
     object SQLQueryCurXMLVALS: TBlobField
       FieldKind = fkData
       FieldName = 'XMLVALS'
-      Index = 14
+      Index = 15
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -441,7 +459,7 @@ inherited FMedFindZvit: TFMedFindZvit
     object SQLQueryCurFJ: TStringField
       FieldKind = fkData
       FieldName = 'FJ'
-      Index = 15
+      Index = 16
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False

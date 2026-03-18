@@ -8,8 +8,8 @@ unit uFMedFindZvit;
 interface
 
 uses
-  Classes, SysUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ExtCtrls, fpjson,
-  uFMedFind, uMed, uVarHelper, uDmCommon;
+  Classes, SysUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  ActnList, StdCtrls, fpjson, uFMedFind, uMed, uVarHelper, uDmCommon;
 
 type
   { TFMedFindZvit }
@@ -19,6 +19,7 @@ type
     SQLQueryCur: TSQLQuery;
     SQLQueryCurCARDSENDSTT_NAME: TStringField;
     SQLQueryCurCARDSTATUS_NAME: TStringField;
+    SQLQueryCurSTATUS2: TStringField;
     SQLQueryCurCHARCODE: TStringField;
     SQLQueryCurDEPT: TStringField;
     SQLQueryCurEDRPOU: TStringField;
@@ -55,11 +56,7 @@ type
     procedure ParentCalcFields(DataSet: TDataSet); override;
     procedure QueryCharcodeNot(aQuery: TSQLQuery; aSL: TStringList);
   public
-
   end;
-
-var
-  FMedFindZvit: TFMedFindZvit;
 
 implementation
 
@@ -129,20 +126,29 @@ end;
 
 procedure TFMedFindZvit.ParentCalcFields(DataSet: TDataSet);
 var
-  FieldXML, FieldFJ, FieldHZ: TField;
+  Str: string;
+  Idx, Status2: integer;
+  FldXML, FldFJ, FldHZ: TField;
 begin
-  FieldXML := DataSet.FieldByName('XMLVALS');
-  FieldFJ := DataSet.FieldByName('FJ');
-  FieldHZ := DataSet.FieldByName('HZ');
+  Status2 := DataSet.FieldByName('STATUS2').AsInteger;
+  Idx := ComboBoxSendStatus.Items.IndexOfObject(TObject(Status2));
+  if (Idx = -1) then
+    Str := 'Не відомий'
+  else
+    Str := ComboBoxSendStatus.Items[Idx];
+  DataSet.FieldByName('CARDSENDSTT_NAME').AsString := Str;
 
+  FldXML := DataSet.FieldByName('XMLVALS');
+  FldFJ := DataSet.FieldByName('FJ');
+  FldHZ := DataSet.FieldByName('HZ');
   if (DataSet.FieldByName('CHARCODE').IsNull) then
-    FieldHZ.AsString := 'Відсутній'
+    FldHZ.AsString := 'Відсутній'
   else if (DataSet.FieldByName('CHARCODE').AsString.StartsWith('S')) then
-    FieldHZ.AsString := 'Звітний'
-  else if (not FieldXML.IsNull) and (not FieldXML.AsString.IsEmpty()) then
-    FieldHZ.AsString := GetHzXml(FieldXML.AsString)
-  else if (not FieldFJ.AsString.IsEmpty()) then
-    FieldHZ.AsString := GetHzStr(FieldFJ.AsString);
+    FldHZ.AsString := 'Звітний'
+  else if (not FldXML.IsNull) and (not FldXML.AsString.IsEmpty()) then
+    FldHZ.AsString := GetHzXml(FldXML.AsString)
+  else if (not FldFJ.AsString.IsEmpty()) then
+    FldHZ.AsString := GetHzStr(FldFJ.AsString);
 end;
 
 procedure TFMedFindZvit.ParentQueryCurOpen(aQuery: TSQLQuery);

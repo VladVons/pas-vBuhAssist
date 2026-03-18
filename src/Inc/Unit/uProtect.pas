@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, Windows, crc,
-  uProtectDbg, uSys;
+  uSys;
 
 const
   cTailSign = 1971;
@@ -61,10 +61,10 @@ end;
 
 function TProtect.CalculateFileTail(aLen: integer): TTail;
 const
-  BUF_SIZE = 64 * 1024;
+  cBufSize = 64 * 1024;
 var
   FS: TFileStream;
-  Buffer: array[0..BUF_SIZE - 1] of byte;
+  Buffer: array[0..cBufSize - 1] of byte;
   ToRead, Readed: integer;
   Remaining: Int64;
 begin
@@ -86,7 +86,7 @@ begin
     Remaining := aLen;
     while (Remaining > 0) do
     begin
-      ToRead := BUF_SIZE;
+      ToRead := cBufSize;
       if (Remaining < ToRead) then
         ToRead := integer(Remaining);
 
@@ -94,7 +94,7 @@ begin
       if Readed <= 0 then
          Break;
 
-      Result.CheckSum := crc32(Result.CheckSum, @Buffer[0], Readed);
+      Result.CheckSum := crc32(Result.CheckSum, Buffer, Readed);
       Dec(Remaining, Readed);
     end;
   finally

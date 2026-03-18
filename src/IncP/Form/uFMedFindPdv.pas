@@ -49,11 +49,7 @@ type
     function  GetParentHideFiealds(): TObjectArray; override;
     function  GetParentDocsIncl(): TStringList; override;
   public
-
   end;
-
-var
-  FMedFindPdv: TFMedFindPdv;
 
 implementation
 

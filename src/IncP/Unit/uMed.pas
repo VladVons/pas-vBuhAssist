@@ -16,6 +16,12 @@ const
   cChooseAll   = '- Всі';
   cBaseCodeLen = 6;
 
+  cDbMonth     = 0;
+  cDbQuarter   = 10;
+  cDbYearHalf  = 20;
+  cDbMonth9    = 25;
+  cDbYear      = 30;
+
 type
   TMedIni = class(TSettings)
   private
@@ -232,11 +238,11 @@ end;
 function PerTypeToHuman(aType: Integer): string;
 begin
   case aType of
-    0:  Result := 'Місяць';
-    10: Result := 'Квартал';
-    20: Result := 'Півріччя';
-    25: Result := '9 Місяців';
-    30: Result := 'Рік';
+    cDbMonth:    Result := 'Місяць';
+    cDbQuarter:  Result := 'Квартал';
+    cDbYearHalf: Result := 'Півріччя';
+    cDbMonth9:   Result := '9 Місяців';
+    cDbYear:     Result := 'Рік';
   else
     Result := 'Не відомий';
   end;
@@ -321,35 +327,35 @@ end;
 function PerTypeToChar(aPerType: integer): char;
 begin
   case aPerType of
-    0:  Result := 'm';
-    10: Result := 'q';
-    20: Result := 'h';
-    30: Result := 'y';
+    cDbMonth:    Result := 'm';
+    cDbQuarter:  Result := 'q';
+    cDbYearHalf: Result := 'h';
+    cDbYear:     Result := 'y';
   end;
 end;
 
 procedure MonthToType(var aPerType, aMonth: integer);
 begin
   if (Between(aMonth, 1, 12)) then // month
-    aPerType := 0
+    aPerType := cDbMonth
   else if (Between(aMonth, 101, 104)) then // quarter
   begin
-    aPerType := 10;
+    aPerType := cDbQuarter;
     aMonth := (aMonth - 100) * 3;
   end
   else if (Between(aMonth, 201, 202)) then // half year
   begin
-    aPerType := 20;
+    aPerType := cDbYearHalf;
     aMonth := (aMonth - 200) * 6;
   end
   else if (aMonth = 301) then // 9 month
   begin
-    aPerType := 25;
+    aPerType := cDbMonth9;
     aMonth := 9;
   end
   else if (aMonth = 401) then // year
   begin
-    aPerType := 30;
+    aPerType := cDbYear;
     aMonth := 12;
   end;
 end;
