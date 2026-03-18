@@ -18,12 +18,14 @@ Passw="xxx"
 
 #Api '{"type":"get_ver"}'
 
+Api '{"type":"get_log", "app":"vBuhAssist", "date":"2026-03-18"}'
+
 #Api '{"type":"get_annonce", "app": "vBuhAssist", "ver": "11.2.48"}'
 
 #Api '{"type":"get_licence","app":"vBuhAssist", "module": "FMedocCheckDocs", "firms":["24620181","40050963", "24620182"]}'
 
 #Api '{"type":"get_licences_user", "app": "vBuhAssist", "user": "yuta", "passw": "26022026"}'
-Api '{"type":"get_licences_user", "app": "vBuhAssist", "user": "'"$User"'", "passw": "'"$Passw"'", "date":"2026-03", "count": true}'
+#Api '{"type":"get_licences_user", "app": "vBuhAssist", "user": "'"$User"'", "passw": "'"$Passw"'", "date":"2026-03", "count": true}'
 
 #Api '{"type":"order_licence","app":"vBuhAssist", "module": "FMedocCheckDocs", "user":"'"$User"'","passw":"'"$Passw"'","firms":["24620183"]}'
 

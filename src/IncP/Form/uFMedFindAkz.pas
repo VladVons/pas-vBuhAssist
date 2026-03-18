@@ -96,8 +96,6 @@ begin
 end;
 
 procedure TFMedFindAkz.FormCreate(Sender: TObject);
-var
-  SL: TStringList;
 begin
   inherited;
 

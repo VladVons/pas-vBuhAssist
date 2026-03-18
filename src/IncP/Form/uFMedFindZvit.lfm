@@ -25,16 +25,12 @@ inherited FMedFindZvit: TFMedFindZvit
       Height = 165
       Width = 797
       inherited TabSheetCur: TTabSheet
-        ClientHeight = 132
-        ClientWidth = 789
         inherited DbGridCur: TDBGrid
           Height = 132
           Width = 789
         end
       end
       inherited TabSheetPrev: TTabSheet
-        ClientHeight = 132
-        ClientWidth = 789
         inherited DBGridPrev: TDBGrid
           Height = 132
           Width = 789

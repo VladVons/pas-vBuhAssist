@@ -96,8 +96,6 @@ begin
 end;
 
 procedure TFMedFindPdv.FormCreate(Sender: TObject);
-var
-  SL: TStringList;
 begin
   inherited;
 
