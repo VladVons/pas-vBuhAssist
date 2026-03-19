@@ -1,43 +1,20 @@
 inherited FMedFindAkz: TFMedFindAkz
-  Height = 449
-  Width = 852
   Caption = 'Облік акцизу'
-  ClientHeight = 449
-  ClientWidth = 852
   OnCreate = FormCreate
   inherited PanelTitle: TPanel
-    Width = 852
-    ClientWidth = 852
   end
   inherited PanelFrame: TPanel
-    Height = 401
-    Width = 852
-    ClientHeight = 401
-    ClientWidth = 852
     inherited PanelComboBox: TPanel
-      Width = 850
-      ClientWidth = 850
       inherited ComboBoxYear: TComboBox
-        Width = 199
       end
     end
     inherited PageControl: TPageControl
-      Height = 184
-      Width = 850
       inherited TabSheetCur: TTabSheet
-        ClientHeight = 151
-        ClientWidth = 842
         inherited DbGridCur: TDBGrid
-          Height = 151
-          Width = 842
         end
       end
       inherited TabSheetPrev: TTabSheet
-        ClientHeight = 151
-        ClientWidth = 842
         inherited DBGridPrev: TDBGrid
-          Height = 151
-          Width = 842
         end
       end
     end
@@ -380,7 +357,7 @@ inherited FMedFindAkz: TFMedFindAkz
       Required = False
     end
     object SQLQueryCurCARDSTATUS_NAME: TStringField
-      DisplayLabel = 'Примітка'
+      DisplayLabel = 'Стан'
       FieldKind = fkData
       FieldName = 'CARDSTATUS_NAME'
       Index = 12
@@ -391,7 +368,7 @@ inherited FMedFindAkz: TFMedFindAkz
       Size = 10
     end
     object SQLQueryCurCARDSENDSTT_NAME: TStringField
-      DisplayLabel = 'Стан'
+      DisplayLabel = 'Стан-примітка'
       DisplayWidth = 10
       FieldKind = fkData
       FieldName = 'CARDSENDSTT_NAME'
@@ -400,6 +377,7 @@ inherited FMedFindAkz: TFMedFindAkz
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
       Required = False
+      Visible = False
       Size = 50
     end
   end

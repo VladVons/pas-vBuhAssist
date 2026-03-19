@@ -111,7 +111,7 @@ inherited FMedFind: TFMedFind
         Left = 129
         Height = 38
         Top = 176
-        Width = 120
+        Width = 159
         Caption = 'Знайти'
         Images = DmCommon.ImageList1
         ImageIndex = 3
@@ -119,7 +119,7 @@ inherited FMedFind: TFMedFind
         OnClick = BitBtnFindClick
       end
       object BitBtnPrint: TBitBtn
-        Left = 258
+        Left = 304
         Height = 38
         Top = 176
         Width = 134
@@ -130,7 +130,7 @@ inherited FMedFind: TFMedFind
         OnClick = BitBtnPrintClick
       end
       object BitBtnRunMed: TBitBtn
-        Left = 401
+        Left = 447
         Height = 38
         Top = 176
         Width = 134

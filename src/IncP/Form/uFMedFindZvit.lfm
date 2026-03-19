@@ -1,39 +1,20 @@
 inherited FMedFindZvit: TFMedFindZvit
-  Height = 430
-  Width = 799
   Caption = 'Звітність'
-  ClientHeight = 430
-  ClientWidth = 799
   OnCreate = FormCreate
   inherited PanelTitle: TPanel
-    Width = 799
-    ClientWidth = 799
   end
   inherited PanelFrame: TPanel
-    Height = 382
-    Width = 799
-    ClientHeight = 382
-    ClientWidth = 799
     inherited PanelComboBox: TPanel
-      Width = 797
-      ClientWidth = 797
       inherited ComboBoxYear: TComboBox
-        Width = 199
       end
     end
     inherited PageControl: TPageControl
-      Height = 165
-      Width = 797
       inherited TabSheetCur: TTabSheet
         inherited DbGridCur: TDBGrid
-          Height = 132
-          Width = 789
         end
       end
       inherited TabSheetPrev: TTabSheet
         inherited DBGridPrev: TDBGrid
-          Height = 132
-          Width = 789
         end
       end
     end

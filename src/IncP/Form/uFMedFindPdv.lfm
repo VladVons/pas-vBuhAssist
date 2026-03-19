@@ -2,12 +2,8 @@ inherited FMedFindPdv: TFMedFindPdv
   Caption = 'Облік ПДВ'
   OnCreate = FormCreate
   object DataSourcePrev: TDataSource[7]
-    Left = 120
-    Top = 304
   end
   object DataSourceCur: TDataSource[8]
-    Left = 48
-    Top = 304
   end
   object SQLQueryCur: TSQLQuery[9]
     FieldDefs = <    
@@ -339,7 +335,7 @@ inherited FMedFindPdv: TFMedFindPdv
       Required = False
     end
     object SQLQueryCurCARDSTATUS_NAME: TStringField
-      DisplayLabel = 'Примітка'
+      DisplayLabel = 'Стан'
       FieldKind = fkData
       FieldName = 'CARDSTATUS_NAME'
       Index = 12
@@ -350,7 +346,7 @@ inherited FMedFindPdv: TFMedFindPdv
       Size = 10
     end
     object SQLQueryCurCARDSENDSTT_NAME: TStringField
-      DisplayLabel = 'Стан'
+      DisplayLabel = 'Стан-примітка'
       DisplayWidth = 10
       FieldKind = fkData
       FieldName = 'CARDSENDSTT_NAME'
@@ -359,6 +355,7 @@ inherited FMedFindPdv: TFMedFindPdv
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
       Required = False
+      Visible = False
       Size = 50
     end
   end
