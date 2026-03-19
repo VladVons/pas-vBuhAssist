@@ -13,6 +13,7 @@ uses
 
 type
     TStringArray = array of string;
+    TIntegerArray = array of Integer;
     TStringIntMap = specialize TFPGMap<string, integer>;
 
     //TStringHelper = type helper for <T>

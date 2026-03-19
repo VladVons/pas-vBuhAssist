@@ -178,6 +178,22 @@ begin
   end;
 end;
 
+procedure TFMedFind.QueryCharcodeNot(aQuery: TSQLQuery; aSL: TStringList);
+var
+  Macro, StrExcl: string;
+  SL: TStringList;
+begin
+  Macro := '';
+  if Assigned(aSL) and (aSL.Count > 0) then
+  begin
+    SL := TStringList.Create().AddExtDelim(aSL);
+    StrExcl := QuotedStr(SL.GetJoin('|'));
+    Macro := Format(' AND (FORM.CHARCODE NOT SIMILAR TO (%s))', [StrExcl]);
+    SL.Free();
+  end;
+  aQuery.MacroByName('_COND_CHARCODE_NOT').Value := Macro;
+end;
+
 function TFMedFind.QueryPrevOpen(aQuery: TSQLQuery; aSLCodes: TStringList; const aCode: string; aPerType, aYear, aMonth: integer): integer;
 var
   Year, Month, Day: word;
@@ -206,10 +222,10 @@ begin
   end;
   aQuery.MacroByName('_COND_CHARCODES').Value := StrMacro;
 
-  //QueryCharcodeNot(aQuery, Concat(GetParentDocsExcl(), ['FJ-30010%']));
+  //['FJ-30010%']
+  QueryCharcodeNot(aQuery, GetParentDocsExcl());
 
   //Log.Print('i', ExpandSQL(SQLQueryGridPrev));
-
   aQuery.Open();
   Result := aQuery.RecordCount;
 end;
@@ -217,7 +233,7 @@ end;
 function TFMedFind.QueryCurOpen(aQuery, aQueryPrev: TSQLQuery): integer;
 var
   Int, Month, Year, PerType, Records: integer;
-  Str, StrDb, Macro, MacroPerType, MacroPerDate, Code: string;
+  Str, Macro, MacroPerType, MacroPerDate, Code: string;
   SL: TStringList;
 begin
   GetParentTransaction().Rollback();  //refresh
@@ -286,7 +302,7 @@ begin
   aQuery.MacroByName('_ORDER').Value := fSortField;
   aQuery.MacroByName('_ASC').Value := IfThen(fSortAsc, 'ASC', 'DESC');
 
-  Log('i', ExpandSQL(aQuery));
+  //Log('i', ExpandSQL(aQuery));
   aQuery.Open();
 
   if (Code <> cChooseAll) and (Month <> cPerTypeAll) then
@@ -335,13 +351,10 @@ begin
 
   ParentCalcFields(DataSet);
 
-  if (fCount > 5) then
-  begin
-    Code := DataSet.FieldByName('EDRPOU').AsString;
-    if (IsDemo(Code, FieldPerDate)) then
-      for i := 0 to fDemoFields.Count - 1 do
-        DataSet.FieldByName(fDemoFields[i]).AsString := 'ДЕМО';
-  end;
+  Code := DataSet.FieldByName('EDRPOU').AsString;
+  if (IsDemo(Code, FieldPerDate)) then
+    for i := 0 to fDemoFields.Count - 1 do
+      DataSet.FieldByName(fDemoFields[i]).AsString := 'ДЕМО';
 
   if (IsBreakpoint(TMethod(@ProtectTimer.CompareRnd).Code)) then
     FreeAndNil(DataSet);

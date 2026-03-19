@@ -54,7 +54,6 @@ type
     function  GetParentDocsExcl(): TStringList; override;
     procedure ParentQueryCurOpen(aQuery: TSQLQuery); override;
     procedure ParentCalcFields(DataSet: TDataSet); override;
-    procedure QueryCharcodeNot(aQuery: TSQLQuery; aSL: TStringList);
   public
   end;
 
@@ -108,35 +107,22 @@ begin
   SQLQueryGridCurCalcFields(DataSet);
 end;
 
-procedure TFMedFindZvit.QueryCharcodeNot(aQuery: TSQLQuery; aSL: TStringList);
-var
-  Macro, StrExcl: string;
-  SL: TStringList;
-begin
-  Macro := '';
-  if Assigned(aSL) and (aSL.Count > 0) then
-  begin
-    SL := TStringList.Create().AddExtDelim(aSL);
-    StrExcl := QuotedStr(SL.GetJoin('|'));
-    Macro := Format(' AND (FORM.CHARCODE NOT SIMILAR TO (%s))', [StrExcl]);
-    SL.Free();
-  end;
-  aQuery.MacroByName('_COND_CHARCODE_NOT').Value := Macro;
-end;
-
 procedure TFMedFindZvit.ParentCalcFields(DataSet: TDataSet);
 var
-  Str: string;
-  Idx, Status2: integer;
+  Str, Status2: string;
+  Idx: integer;
   FldXML, FldFJ, FldHZ: TField;
 begin
-  Status2 := DataSet.FieldByName('STATUS2').AsInteger;
-  Idx := ComboBoxSendStatus.Items.IndexOfObject(TObject(Status2));
-  if (Idx = -1) then
-    Str := 'Не відомий'
-  else
-    Str := ComboBoxSendStatus.Items[Idx];
-  DataSet.FieldByName('CARDSENDSTT_NAME').AsString := Str;
+  Status2 := DataSet.FieldByName('STATUS2').AsString;
+  if (not Status2.IsEmpty()) then
+  begin
+    Idx := ComboBoxSendStatus.Items.IndexOfObject(TObject(Status2.ToInteger()));
+    if (Idx = -1) then
+      Str := 'Не відомий'
+    else
+      Str := ComboBoxSendStatus.Items[Idx];
+    DataSet.FieldByName('CARDSENDSTT_NAME').AsString := Str;
+  end;
 
   FldXML := DataSet.FieldByName('XMLVALS');
   FldFJ := DataSet.FieldByName('FJ');

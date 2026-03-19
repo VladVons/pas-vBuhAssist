@@ -86,6 +86,7 @@
     procedure SetComboBoxAsObj(aComboBox: TComboBox; aSL: TStringList);
     procedure SetComboBoxAsPair(aComboBox: TComboBox; aSL: TStringList);
     procedure SetComboBox(aComboBox: TComboBox; aSL: TStringList);
+    procedure QueryCharcodeNot(aQuery: TSQLQuery; aSL: TStringList);
   public
     function OnSendMsg(aForm: TForm; const aJObj: TJSONObject): boolean; override;
   end;

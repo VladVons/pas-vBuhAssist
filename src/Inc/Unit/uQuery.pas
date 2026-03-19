@@ -8,7 +8,8 @@ unit uQuery;
 interface
 
 uses
-  Classes, SysUtils, SQLDB, DB, RegExpr;
+  Classes, SysUtils, SQLDB, DB, RegExpr,
+  uVarUtil, uVarHelper, uType;
 
 function GetQueryField(aDataSource: TDataSource; aQuery: TSQLQuery; aField: string): TStringList;
 function ExpandSQL(aQuery: TSQLQuery): string;
@@ -16,6 +17,7 @@ function FieldToStrings(aQuery: TSQLQuery; aField: string): TStringList;
 
 
 implementation
+
 
 function GetQueryField(aDataSource: TDataSource; aQuery: TSQLQuery; aField: string): TStringList;
 var
@@ -36,37 +38,44 @@ begin
   aQuery.Close();
 end;
 
+function _SortParamByLen(aParams: TParams): TIntegerArray;
+var
+  i, j: integer;
+begin
+  SetLength(Result, aParams.Count);
+  for i := 0 to aParams.Count - 1 do
+    Result[i] := i;
+
+  // сортування по довжині імені (DESC)
+  for i := 0 to aParams.Count - 2 do
+    for j := i + 1 to aParams.Count - 1 do
+      if (aParams[Result[i]].Name.Length < aParams[Result[j]].Name.Length) then
+        Swap(Result[i], Result[j]);
+end;
+
 function ExpandSQL(aQuery: TSQLQuery): string;
 var
   i: integer;
-  SQL, sFind, sRepl: string;
-  Re: TRegExpr;
+  sFind, sRepl: string;
+  Sorted: TIntegerArray;
 begin
-  // спочатку беремо SQL з макросами
-  SQL := aQuery.SQL.Text;
+  Result := aQuery.SQL.Text;
 
-  Re := TRegExpr.Create();
-
-  // підставляємо макроси
-  for i := 0 to aQuery.Macros.Count - 1 do
+  Sorted := _SortParamByLen(aQuery.Macros);
+  for i := 0 to High(Sorted) do
   begin
-    sFind := '%' + aQuery.Macros[i].Name;
-    sRepl := aQuery.Macros[i].AsString;
-    //Re.Expression := sFind + '(?![A-Za-z0-9_])';
-    //SQL := Re.Replace(SQL, sRepl, True);
-    SQL := StringReplace(SQL, sFind, sRepl, [rfReplaceAll, rfIgnoreCase]);
+    sFind := '%' + aQuery.Macros[Sorted[i]].Name;
+    sRepl := aQuery.Macros[Sorted[i]].AsString;
+    Result := StringReplace(Result, sFind, sRepl, [rfReplaceAll, rfIgnoreCase]);
   end;
 
-  // тепер підставляємо параметри
-  for i := 0 to aQuery.Params.Count - 1 do
+  Sorted := _SortParamByLen(aQuery.Params);
+  for i := 0 to High(Sorted) do
   begin
-    sFind := ':' + aQuery.Params[i].Name;
-    sRepl := aQuery.Params[i].AsString;
-    SQL := StringReplace(SQL, sFind, sRepl, [rfReplaceAll, rfIgnoreCase]);
+    sFind := ':' + aQuery.Params[Sorted[i]].Name;
+    sRepl := aQuery.Params[Sorted[i]].AsString;
+    Result := StringReplace(Result, sFind, sRepl, [rfReplaceAll, rfIgnoreCase]);
   end;
-
-  Re.Free();
-  Result := SQL;
 end;
 
 function FieldToStrings(aQuery: TSQLQuery; aField: string): TStringList;

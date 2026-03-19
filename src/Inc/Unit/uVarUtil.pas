@@ -15,6 +15,7 @@ function ReplMacros(const aText: string; aDict: TStringList): string;
 function Between(aVal, aMin, aMax: integer): boolean;
 function PrevPeriodDate(aPerType: char; aYear, aMonth: Integer): TDate;
 function IntToRoman10(aVal: Integer): String;
+procedure Swap(var aA, aB: Integer); inline;
 
 generic function IIF<T>(aCond: boolean; const aValTrue, aValFalse: T): T; inline;
 
@@ -22,6 +23,15 @@ generic function IIF<T>(aCond: boolean; const aValTrue, aValFalse: T): T; inline
 implementation
 
 uses RegExpr;
+
+procedure Swap(var aA, aB: Integer);
+var
+  T: Integer;
+begin
+  T := aA;
+  aA := aB;
+  aB := T;
+end;
 
 function PrevPeriodDate(aPerType: char; aYear, aMonth: Integer): TDate;
 var

@@ -10,7 +10,7 @@ unit uExceptionHandler;
 interface
 
 uses
-  Classes, SysUtils, Forms,
+  Classes, SysUtils, Forms, Dialogs,
   uUserData, uSys;
 
  type
@@ -62,7 +62,9 @@ begin
     Msg := Msg + FormatDateTime('yyyy-mm-dd hh:nn:ss', Now()) + LineEnding;
     Stack := GetCallStack(E);
     Msg := Msg + Stack + LineEnding;
+
     FileAppendText(fFile, Msg);
+    MessageDlg('Помилка', Msg + LineEnding + fFile, mtError, [mbOK], 0);
 
     fFlagHandler := False;
   end;
