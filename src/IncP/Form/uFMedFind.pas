@@ -420,14 +420,18 @@ end;
 function TFMedFind.OnSendMsg(aForm: TForm; const aJObj: TJSONObject): boolean;
 var
   id: string;
+  IsNew: boolean;
 begin
   if (Assigned(aJObj)) then
   begin
    id := aJObj.Get('id', '');
    if (id = 'combobox_path_db') then
    begin
+     IsNew := aJObj.Get('is_new', false);
+     if (IsNew) then
+       InitMedControl();
+
      ComboBoxPath.ItemIndex := aJObj.Get('index', 0);
-     ComboBoxPathEditingDone(Nil);
    end;
   end;
 
@@ -437,21 +441,20 @@ end;
 procedure TFMedFind.ComboBoxPathEditingDone(Sender: TObject);
 var
   Idx: integer;
+  IsNew: boolean;
   JObj: TJSONObject;
 begin
-  // prevent recursion from OnSendMsgs
-  if (not Assigned(Sender)) then
-    Exit;
-
   DmCommon.Close();
   InitEmptyGrid(GetParentQueryCur());
 
+  IsNew := False;
   if (not MedIni.DirToFileApp(ComboBoxPath.Text).IsEmpty()) then
   begin
     SetComboBox(ComboBoxFirm, fCodesLic);
     ComboBoxFirm.ItemIndex := 0;
     if (MedIni.AddPath(ComboBoxPath.Text)) then
     begin
+      IsNew := True;
       InitMedControl();
       Log('i', 'Додано шлях ' + ComboBoxPath.Text);
     end;
@@ -466,6 +469,7 @@ begin
     JObj := TJSONObject.Create();
     JObj.Add('id', 'combobox_path_db');
     JObj.Add('index', Idx);
+    JObj.Add('is_new', IsNew);
     SendMsg(JObj);
     JObj.Free();
   end;
@@ -675,7 +679,7 @@ end;
 procedure TFMedFind.InitMedControl();
 var
   i: integer;
-  Path, Port: string;
+  Path: string;
   BtnEnable: boolean;
   JObj: TJSONObject;
 begin
@@ -684,15 +688,14 @@ begin
   begin
     JObj := fJMedApp.Objects[i];
     Path := JObj.Get('path', '');
-    Port := JObj.Get('port', '');
     ComboBoxPath.Items.AddObject(Path, JObj);
   end;
 
   BtnEnable := (fJMedApp.Count > 0);
-  BitBtnRunMed.Enabled := BtnEnable;
   BitBtnFind.Enabled := BtnEnable;
-  BitBtnActivation.Enabled := BtnEnable;
   BitBtnPrint.Enabled := BtnEnable;
+  BitBtnRunMed.Enabled := BtnEnable;
+  BitBtnActivation.Enabled := BtnEnable;
 end;
 
 procedure TFMedFind.FormCreate(Sender: TObject);
