@@ -1,24 +1,6 @@
 inherited FMedFindZvit: TFMedFindZvit
   Caption = 'Звітність'
   OnCreate = FormCreate
-  inherited PanelTitle: TPanel
-  end
-  inherited PanelFrame: TPanel
-    inherited PanelComboBox: TPanel
-      inherited ComboBoxYear: TComboBox
-      end
-    end
-    inherited PageControl: TPageControl
-      inherited TabSheetCur: TTabSheet
-        inherited DbGridCur: TDBGrid
-        end
-      end
-      inherited TabSheetPrev: TTabSheet
-        inherited DBGridPrev: TDBGrid
-        end
-      end
-    end
-  end
   object DataSourcePrev: TDataSource[7]
     Left = 104
     Top = 336
@@ -143,6 +125,7 @@ inherited FMedFindZvit: TFMedFindZvit
       '    ORG'
       'LEFT JOIN ('
       '    SELECT'
+      '        CARD.EDRPOU as CARD_EDRPOU,'
       '        CARD.IDORG,'
       '        CARD.PERDATE,'
       '        CARDSENDSTT.NAME || '' '' || CARD.SENDSTT AS CARDSENDSTT_NAME,'
@@ -176,9 +159,10 @@ inherited FMedFindZvit: TFMedFindZvit
       '        %_COND_STATUS'
       '        %_COND_SENDSTT'
       ') T2'
-      '    ON T2.IDORG = ORG.CODE'
+      '    ON (T2.IDORG = ORG.CODE)'
+      '    AND (T2.CARD_EDRPOU = ORG.EDRPOU) -- protect EDRPOU lic'
       'WHERE'
-      '    (ORG.DEPT IS NULL OR ORG.DEPT <> ''0'')'
+      '   (ORG.DEPT IS NULL OR ORG.DEPT <> ''0'')'
       '    %_COND_ORG'
       'ORDER BY'
       '  %_ORDER %_ASC'
