@@ -5,3 +5,5 @@ Text_UserAgreement RCDATA "res/Text/UserAgreement.txt"
 Json_FMedFindAkz RCDATA "res/Json/FMedFindAkz.json"
 Json_FMedFindPdv RCDATA "res/Json/FMedFindPdv.json"
 Json_FMedFindZvit RCDATA "res/Json/FMedFindZvit.json"
+
+Json_FWizardPdv1 RCDATA "res/Json/FWizardPdv1.json"

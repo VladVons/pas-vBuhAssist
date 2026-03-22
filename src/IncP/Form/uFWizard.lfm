@@ -1,0 +1,21 @@
+inherited FWizard: TFWizard
+  Left = 382
+  Height = 274
+  Top = 32
+  Width = 723
+  Caption = 'FWizard'
+  ClientHeight = 274
+  ClientWidth = 723
+  inherited PanelTitle: TPanel
+    Width = 723
+    ClientWidth = 723
+  end
+  object PageControl1: TPageControl[1]
+    Left = 0
+    Height = 226
+    Top = 48
+    Width = 723
+    Align = alClient
+    TabOrder = 1
+  end
+end

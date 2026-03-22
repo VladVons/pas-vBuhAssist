@@ -19,7 +19,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="11"/>
       <RevisionNr Value="3"/>
-      <BuildNr Value="90"/>
+      <BuildNr Value="91"/>
       <StringTable ProductName="vBuhAssist"/>
     </VersionInfo>
     <BuildModes>
@@ -328,6 +328,20 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
+      <Unit>
+        <Filename Value="IncP/Frame/uFmWizard1.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Frame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit>
+      <Unit>
+        <Filename Value="IncP/Form/uFWizard.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FWizard"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -337,7 +351,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="Inc/Unit;Inc/Type;Inc/Form;IncP/Form;IncP/Unit;IncP/DataModule;../../lib/synapse;IncP/Frame"/>
+      <OtherUnitFiles Value="Inc/Unit;Inc/Type;Inc/Form;IncP/Form;IncP/Unit;IncP/DataModule;IncP/Frame;../../lib/synapse"/>
       <UnitOutputDirectory Value="_lib_vBuhAssist/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>

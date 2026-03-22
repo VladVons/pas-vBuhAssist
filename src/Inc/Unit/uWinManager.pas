@@ -20,7 +20,8 @@ type
     procedure PageControlMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: integer);
   public
     constructor Create(aPageControl: TPageControl; aPopupMenu: TPopupMenu);
-    procedure Add(aFormClass: TFormClass);
+    procedure Add(aForm: TForm);
+    function Add(aFormClass: TFormClass): TForm;
     procedure Adds(aForms: array of TFormClass);
     function FindTabIndex(aFormClass: TFormClass): integer;
     procedure SendMsg(aForm: TForm; const aData: TJSONObject);
@@ -102,7 +103,8 @@ begin
   fPageControl := aPageControl;
   fPopupMenu := aPopupMenu;
 
-  fPageControl.OnMouseDown := @PageControlMouseDown;
+  if (Assigned(aPopupMenu)) then
+    fPageControl.OnMouseDown := @PageControlMouseDown;
 end;
 
 function TWinManager.FindTabIndex(aFormClass: TFormClass): integer;
@@ -111,8 +113,7 @@ var
 begin
   Result := -1; // не знайдено
   for i := 0 to fPageControl.PageCount - 1 do
-    if (fPageControl.Pages[i].ControlCount > 0) and
-      (fPageControl.Pages[i].Controls[0] is aFormClass) then
+    if (fPageControl.Pages[i].ControlCount > 0) and (fPageControl.Pages[i].Controls[0] is aFormClass) then
     begin
       Result := i;
       Exit;
@@ -140,35 +141,38 @@ begin
   end;
 end;
 
-procedure TWinManager.Add(aFormClass: TFormClass);
+procedure TWinManager.Add(aForm: TForm);
 var
-  Form: TForm;
-  TabIndex: integer;
   Tab: TTabSheet;
 begin
-  TabIndex := FindTabIndex(aFormClass);
+  Tab := TTabSheet.Create(fPageControl);
+  Tab.PageControl := fPageControl;
 
+  aForm.Tag := integer(self);
+  aForm.Parent := Tab;
+  aForm.Align := alClient;
+  aForm.BorderStyle := bsNone;
+  aForm.OnClose := @FormClose;
+  aForm.Show();
+
+  Tab.Caption := aForm.Caption;
+  Tab.Tag := integer(aForm);
+  fPageControl.ActivePage := Tab;
+end;
+
+function TWinManager.Add(aFormClass: TFormClass): TForm;
+var
+  TabIndex: integer;
+begin
+  TabIndex := FindTabIndex(aFormClass);
   if TabIndex = -1 then
   begin
-    // Створюємо нову вкладку та форму
-    Tab := TTabSheet.Create(fPageControl);
-    Tab.PageControl := fPageControl;
-
-    Form := aFormClass.Create(Application);
-    Form.Tag := integer(self);
-    Form.Parent := Tab;
-    Form.Align := alClient;
-    Form.BorderStyle := bsNone;
-    Form.OnClose := @FormClose;
-    Form.Show();
-
-    Tab.Caption := Form.Caption;
-    fPageControl.ActivePage := Tab;
-  end
-  else
-  begin
+    Result := aFormClass.Create(Application);
+    Add(Result);
+  end else begin
     // Вкладка вже існує — робимо її активною
     fPageControl.ActivePage := fPageControl.Pages[TabIndex];
+    Result := TForm(fPageControl.ActivePage.Tag);
   end;
 end;
 
@@ -208,8 +212,7 @@ begin
   end;
 end;
 
-procedure TWinManager.PageControlMouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: integer);
+procedure TWinManager.PageControlMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: integer);
 var
   TabIndex: integer;
 begin

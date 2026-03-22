@@ -8,12 +8,14 @@ unit uFMedFindPdv;
 interface
 
 uses
-  Classes, SysUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  uFMedFind, uMed, uVarHelper, uDmCommon;
+  Classes, SysUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ExtCtrls, Buttons,
+  uDmCommon, uFMedFind, uFWizard,
+  uMed, uVarHelper, uWinManager;
 
 type
   { TFMedFindPdv }
   TFMedFindPdv = class(TFMedFind)
+    BitBtnWizard: TBitBtn;
     DataSourceCur: TDataSource;
     DataSourcePrev: TDataSource;
     SQLQueryCur: TSQLQuery;
@@ -42,6 +44,7 @@ type
     SQLTransaction: TSQLTransaction;
     procedure FormCreate(Sender: TObject);
     procedure SQLQueryCurCalcFields(DataSet: TDataSet);
+    procedure BitBtnWizardClick(Sender: TObject);
   protected
     function  GetParentQueryCur(): TSQLQuery; override;
     function  GetParentQueryPrev(): TSQLQuery; override;
@@ -89,6 +92,14 @@ end;
 procedure TFMedFindPdv.SQLQueryCurCalcFields(DataSet: TDataSet);
 begin
   SQLQueryGridCurCalcFields(DataSet);
+end;
+
+procedure TFMedFindPdv.BitBtnWizardClick(Sender: TObject);
+var
+  Form: TFWizard;
+begin
+  Form := TFWizard(WinManager.Add(TFWizard));
+  Form.LoadScheme('FWizardPdv1');
 end;
 
 procedure TFMedFindPdv.FormCreate(Sender: TObject);

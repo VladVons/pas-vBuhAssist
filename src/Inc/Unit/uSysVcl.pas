@@ -8,10 +8,12 @@ unit uSysVcl;
 interface
 
 uses
-  Classes, Windows, SysUtils, StrUtils, FileInfo, Process, LR_Class, LazUTF8;
+  Classes, Windows, SysUtils, StrUtils, FileInfo, Process, LR_Class, LazUTF8, fpjson, jsonparser,
+  uSys;
 
 procedure ResourceLoadReport(const aName: string; aReport: TfrReport);
 function ResourceLoadString(const aName: string; aEncoding: TEncoding = Nil): string;
+function ResourceLoadJson(const aName: string): TJSONObject;
 function LatinToUkr(const aStr: string): string;
 function RemoveChars(const aStr, aRemove: string): string;
 
@@ -46,6 +48,20 @@ begin
   finally
     RS.Free();
     SS.Free();
+  end;
+end;
+
+function ResourceLoadJson(const aName: string): TJSONObject;
+var
+  Str, Path: string;
+begin
+  Path := ConcatPaths(['res', 'Json', aName + '.json']);
+  if (FileExists(Path)) then
+    Result := TJSONObject(FileLoadJson(Path))
+  else begin
+    Path := 'Json_' + aName;
+    Str := ResourceLoadString(Path);
+    Result := TJSONObject(GetJSON(Str));
   end;
 end;
 

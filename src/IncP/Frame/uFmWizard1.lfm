@@ -1,0 +1,10 @@
+object Frame: TFrame
+  Left = 0
+  Height = 308
+  Top = 0
+  Width = 696
+  DesignTimePPI = 120
+  LCLVersion = '4.6.0.0'
+  ParentFont = False
+  TabOrder = 0
+end

@@ -9,10 +9,10 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, StdCtrls, ExtCtrls, ComCtrls, Buttons, Graphics,
-  DBGrids, Dialogs, Menus, LR_Class, LR_DBSet, LR_PGrid, SQLDB, DB, Grids, fpjson, jsonparser,
+  DBGrids, Dialogs, Menus, LR_Class, LR_DBSet, LR_PGrid, SQLDB, DB, Grids, fpjson,
   DateUtils, Math, StrUtils,
-  uDmCommon,
-  uFBase, uConst, uMed, uSys, uSysVcl, uVarHelper, uVarUtil, uQuery, uProtectDbg, uProtectTimer,
+  uDmCommon, uFBase, uWinManager,
+  uConst, uMed, uSys, uSysVcl, uVarHelper, uVarUtil, uQuery, uProtectDbg, uProtectTimer,
   uLog, uSettings, uStateStore, uLicence;
 
 type
@@ -42,20 +42,10 @@ end;
 
 procedure TFMedFind.LoadJsonData();
 var
-  Str, Path: string;
   SL: TStringList;
   Arr: TJSONArray;
 begin
-  Path := ConcatPaths(['res', 'Json', Name + '.json']);
-  if (FileExists(Path)) then
-    fJData := TJSONObject(FileLoadJson(Path))
-  else begin
-    Path := 'Json_' + Name;
-    Str := ResourceLoadString(Path);
-    if (Str.IsEmpty()) then
-      Log('e', 'Не знайдено ресурс ' + Path);
-    fJData := TJSONObject(GetJSON(Str));
-  end;
+  fJData := ResourceLoadJson(Name);
 
   Arr := (fJData.FindPath('Controls') as TJSONObject).Arrays['ComboBoxMonth'];
   SL := TStringList.Create().AddJson(Arr);
@@ -669,6 +659,8 @@ procedure TFMedFind.InitEmptyGrid(aQuery: TSQLQuery);
 var
   i: integer;
 begin
+  DbGridCur.Columns.Clear();
+
   // Add cloumn visualisation in empty Grid
   for i := 0 to aQuery.Fields.Count - 1 do
     if (aQuery.Fields[i].Visible) then
