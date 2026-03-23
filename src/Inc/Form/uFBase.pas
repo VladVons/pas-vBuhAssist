@@ -69,7 +69,7 @@ var
 begin
   WinManager := TWinManager(Tag);
 
-  if Assigned(WinManager) and (WinManager is TWinManager) then
+  if (Assigned(WinManager) and (WinManager is TWinManager)) then
     WinManager.SendMsg(Self, aData);
 end;
 

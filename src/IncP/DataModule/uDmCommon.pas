@@ -61,7 +61,7 @@ begin
     on E: EDatabaseError do
     begin
       IBConnection.DatabaseName := '';
-      if Pos('used by another', LowerCase(E.Message)) > 0 then
+      if (Pos('used by another', LowerCase(E.Message)) > 0) then
         Log.Print('e', 'Процес занятий іншим користувачем')
       else
         raise;

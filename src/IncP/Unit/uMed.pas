@@ -61,7 +61,7 @@ begin
   Keys := TStringList.Create();
   try
     Reg.RootKey := aKey;
-    if Reg.OpenKeyReadOnly('\SOFTWARE\IntellectService') then
+    if (Reg.OpenKeyReadOnly('\SOFTWARE\IntellectService')) then
     begin
       Reg.GetKeyNames(Keys);
       Reg.CloseKey();
@@ -135,7 +135,7 @@ begin
   ReadXMLFile(Doc, aFile);
   try
     Node := Doc.DocumentElement.FindNode('APPDATA');
-    if Assigned(Node) then
+    if (Assigned(Node)) then
       Result := UTF8Encode(Node.TextContent);
   finally
     Doc.Free();
@@ -292,13 +292,13 @@ begin
     for i := 0 to NodeList.Count - 1 do
     begin
       RowNode := NodeList.Item[i];
-      if RowNode.Attributes.GetNamedItem('NAME') = nil then
+      if (not Assigned(RowNode.Attributes.GetNamedItem('NAME'))) then
         Continue;
 
       NameAttr := UTF8Encode(RowNode.Attributes.GetNamedItem('NAME').NodeValue);
 
       ValueNode := RowNode.FindNode('VALUE');
-      if ValueNode = nil then
+      if (not Assigned(ValueNode)) then
         Continue;
 
       if (NameAttr = 'HZ') then

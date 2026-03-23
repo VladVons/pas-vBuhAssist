@@ -192,7 +192,7 @@ begin
      if (GetOrdProp(aCtrl, 'ParentFont') <> 0) then
        aCtrl.Font.Assign(aFont);
 
-  if aCtrl is TWinControl then
+  if (aCtrl is TWinControl) then
     for i := 0 to TWinControl(aCtrl).ControlCount - 1 do
       SetCtrlFont(TWinControl(aCtrl).Controls[i], aFont);
 end;

@@ -150,7 +150,7 @@ end;
 procedure TFMain.WMShowMe(var aMsg: TMessage);
 begin
   Log.Print('w', 'Програма вже запущена');
-  if IsIconic(Handle) then
+  if (IsIconic(Handle)) then
     ShowWindow(Handle, SW_RESTORE);
 
   Application.Restore();

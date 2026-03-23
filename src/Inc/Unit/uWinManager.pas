@@ -73,7 +73,7 @@ begin
   h := GetTopWindow(0);
   while h <> 0 do
   begin
-    if GetProp(h, PChar(fUniqName)) <> 0 then
+    if (GetProp(h, PChar(fUniqName)) <> 0) then
     begin
       Result := h;
       Exit();
@@ -165,7 +165,7 @@ var
   TabIndex: integer;
 begin
   TabIndex := FindTabIndex(aFormClass);
-  if TabIndex = -1 then
+  if (TabIndex = -1) then
   begin
     Result := aFormClass.Create(Application);
     Add(Result);
@@ -193,7 +193,7 @@ begin
   if (Tab = nil) or (Tab.ControlCount = 0) then 
     Exit();
 
-  if Tab.Controls[0] is TForm then
+  if (Tab.Controls[0] is TForm) then
   begin
     Form := TForm(Tab.Controls[0]);
     Form.Close();
@@ -218,18 +218,18 @@ var
   TabIndex: integer;
 begin
   Shift := Shift;
-  if Button <> mbRight then
+  if (Button <> mbRight) then
     Exit(); // тільки правий клік
 
   TabIndex := fPageControl.IndexOfTabAt(X, Y);
-  if TabIndex < 0 then
+  if (TabIndex < 0) then
     Exit(); // клік не по вкладці
 
   // робимо вкладку активною
   fPageControl.ActivePageIndex := TabIndex;
 
   // відкриваємо попап меню прямо на курсорі
-  if Assigned(fPopupMenu) then
+  if (Assigned(fPopupMenu)) then
     fPopupMenu.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
 end;
 
@@ -263,14 +263,14 @@ begin
 
   // шукаємо вже створену форму
   for i := 0 to Screen.FormCount - 1 do
-    if Screen.Forms[i].ClassType = AClass then
+    if (Screen.Forms[i].ClassType = AClass) then
     begin
       Form := Screen.Forms[i];
       Break;
     end;
 
   // якщо знайдена — показуємо
-  if Assigned(Form) then
+  if (Assigned(Form)) then
   begin
     Form.Show();
     Form.BringToFront;

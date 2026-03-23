@@ -56,7 +56,7 @@ begin
     fFlagHandler := True;
 
     Msg := LineEnding;
-    if Assigned(Screen.ActiveForm) then
+    if (Assigned(Screen.ActiveForm)) then
        Msg := Msg + 'Form ' + Screen.ActiveForm.Name + LineEnding;
 
     Msg := Msg + FormatDateTime('yyyy-mm-dd hh:nn:ss', Now()) + LineEnding;

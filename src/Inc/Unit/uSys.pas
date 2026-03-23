@@ -103,7 +103,7 @@ function FileGetSize(const aFileName: string): Int64;
 var
   SR: TSearchRec;
 begin
-  if FindFirst(aFileName, faAnyFile, SR) = 0 then
+  if (FindFirst(aFileName, faAnyFile, SR) = 0) then
   begin
     Result := SR.Size;
     FindClose(SR);
@@ -115,7 +115,7 @@ function FileGetModDate(const aFile: string): TDateTime;
 var
   SR: TSearchRec;
 begin
-  if FindFirst(AFile, faAnyFile, SR) = 0 then
+  if (FindFirst(AFile, faAnyFile, SR) = 0) then
   begin
     Result := FileDateToDateTime(SR.Time);
     FindClose(SR);
@@ -140,7 +140,7 @@ begin
   try
     for I := 0 to Masks.Count - 1 do
     begin
-      if FindFirst(ConcatPaths([aDir, Masks[I]]), faAnyFile, SR) = 0 then
+      if (FindFirst(ConcatPaths([aDir, Masks[I]]), faAnyFile, SR) = 0) then
       begin
         repeat
           if (SR.Attr and faDirectory) = 0 then
@@ -193,7 +193,7 @@ var
   HFile: TextFile;
 begin
   AssignFile(HFile, aFile);
-  if FileExists(aFile) then
+  if (FileExists(aFile)) then
     Append(HFile)
   else
     Rewrite(HFile);
@@ -261,8 +261,8 @@ begin
 
   GetMem(VerBuf, InfoSize);
   try
-    if GetFileVersionInfo(PChar(aFile), Wnd, InfoSize, VerBuf) then
-      if VerQueryValue(VerBuf, '\', Pointer(VerValue), VerSize) then
+    if (GetFileVersionInfo(PChar(aFile), Wnd, InfoSize, VerBuf)) then
+      if (VerQueryValue(VerBuf, '\', Pointer(VerValue), VerSize)) then
         Result := Format('%d.%d.%d.%d',
           [HiWord(VerValue^.dwFileVersionMS),
            LoWord(VerValue^.dwFileVersionMS),

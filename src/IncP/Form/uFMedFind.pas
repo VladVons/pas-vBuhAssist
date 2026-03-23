@@ -169,7 +169,7 @@ var
   SL: TStringList;
 begin
   Macro := '';
-  if Assigned(aSL) and (aSL.Count > 0) then
+  if (Assigned(aSL)) and (aSL.Count > 0) then
   begin
     SL := TStringList.Create().AddExtDelim(aSL);
     StrExcl := QuotedStr(SL.GetJoin('|'));
@@ -487,7 +487,7 @@ var
   // Встановлюємо колір фону та шрифт
   with DbGrid.Canvas do
   begin
-    if gdSelected in State then
+    if (gdSelected in State) then
     begin
       Brush.Color := RGBToColor(254, 240, 220);
       Font.Color := clBlack;

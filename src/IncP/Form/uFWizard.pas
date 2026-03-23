@@ -69,7 +69,7 @@ var
   JData: TJSONData;
 begin
   JData := aJObj.Find(aName);
-  if Assigned(JData) then
+  if (Assigned(JData)) then
     case JData.JSONType of
       jtNumber:
         SetProperty(aCtrl, aName, jData.AsFloat);
@@ -88,7 +88,7 @@ begin
   if (aCol = 1) then // колонка "файл"
   begin
     OpenDialog := TOpenDialog.Create(Nil);
-    if OpenDialog.Execute() then
+    if (OpenDialog.Execute()) then
     begin
       StringGrid := Sender as TStringGrid;
       StringGrid.Cells[aCol, aRow] := ExtractFileName(OpenDialog.FileName);

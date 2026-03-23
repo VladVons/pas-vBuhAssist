@@ -105,7 +105,7 @@ begin
   Log.Print('i', 'Перевірка оновлень');
 
   JObj := Check();
-  if not (Assigned(JObj))then
+  if (not Assigned(JObj)) then
   begin
     Log.Print('e', 'Помилка перевірки оновлень');
     Exit();
@@ -162,7 +162,7 @@ var
   Timer: TTimer;
 begin
   JObj := Check();
-  if not (Assigned(JObj))then
+  if (not Assigned(JObj)) then
     Exit();
 
   try
