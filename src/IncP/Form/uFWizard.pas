@@ -17,6 +17,7 @@ type
     PageControl1: TPageControl;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure PanelTitleClick(Sender: TObject);
   private
     fJScheme: TJSONObject;
     fClassMap: TStringList;
@@ -53,13 +54,33 @@ begin
   inherited;
 end;
 
+procedure TFWizard.PanelTitleClick(Sender: TObject);
+begin
+
+end;
+
 procedure TFWizard.SetProperty(aCtrl: TComponent; const aName: string; aVal: variant);
 var
+  Str, P: string;
   PropInfo: PPropInfo;
+  Ctrl: TObject;
 begin
-  PropInfo := GetPropInfo(aCtrl, aName);
-  if (Assigned(PropInfo)) then
-    SetPropValue(aCtrl, aName, aVal)
+  Ctrl := aCtrl;
+  Str := aName;
+  while Pos('.', Str) > 0 do
+  begin
+     P := Str.Before('.');
+     Delete(Str, 1, Length(P) + 1);
+
+     PropInfo := GetPropInfo(Ctrl, P);
+     if (Assigned(PropInfo)) then
+       Ctrl := GetObjectProp(Ctrl, PropInfo)
+     else
+       Ctrl := Nil;
+  end;
+
+  if (Assigned(Ctrl)) and (Assigned(GetPropInfo(Ctrl, Str))) then
+    SetPropValue(Ctrl, Str, aVal)
   else
     Log('e', Format('Властивість `%s` не знайдена у `%s`', [aName, aCtrl.ClassName()]));
 end;
@@ -119,32 +140,29 @@ end;
 procedure TFWizard.AddControls(aForm: TForm; aCtrls: TJSONArray);
 var
   i, j, Idx, PosTop, PosLeft: integer;
-  Str, CtrlType: string;
+  Str, CtrlClass: string;
   JObjCtrl: TJSONObject;
   Ctrl: TControl;
   CClass: TComponentClass;
-  SLSkip: TStringList;
 begin
-  SLSkip := TStringList.Create().AddArray(['type']);
-
   PosTop := PanelTitle.Top + PanelTitle.Height + 20;
   PosLeft := 10;
 
   for i := 0 to aCtrls.Count - 1 do
   begin
     JObjCtrl := aCtrls.Objects[i];
-    if (not JObjCtrl.Get('enable', true)) then
+    if (not JObjCtrl.Get('_enable', true)) then
       continue;
 
-    CtrlType := JObjCtrl.Get('type', '');
-    Idx := fClassMap.IndexOf(CtrlType);
+    CtrlClass := JObjCtrl.Get('_class', '');
+    Idx := fClassMap.IndexOf(CtrlClass);
     if (Idx = -1) then
     begin
-      Log('e', Format('Не відомий тип %s', [CtrlType]));
+      Log('e', Format('Не відомий тип %s', [CtrlClass]));
       continue;
     end;
 
-    Str := JObjCtrl.Get('name', Format('%s_%d', [CtrlType, i]));
+    Str := JObjCtrl.Get('name', Format('%s_%d', [CtrlClass, i]));
     Ctrl := TControl(FindComponent(Str));
     if (not Assigned(Ctrl)) then
     begin
@@ -160,25 +178,28 @@ begin
     for j := 0 to JObjCtrl.Count - 1 do
     begin
       Str := JObjCtrl.Names[j];
-      if (SLSkip.IndexOf(Str) <> -1) then
+      if (Str.StartsWith('_')) then
         continue
       else if (Str = 'align') then
         SetProperty(Ctrl, Str, GetEnumValue(TypeInfo(TAlign), JObjCtrl.Get(Str, '')))
       else if (Str = 'borderstyle') then
         SetProperty(Ctrl, Str, GetEnumValue(TypeInfo(TBorderStyle), JObjCtrl.Get(Str, '')))
-      else if (Str = 'lines') and (CtrlType = 'TMemo') then
-        TMemo(Ctrl).Lines := TStringList.Create().AddArray(JObjCtrl.Arrays['lines'])
+      else if (Str = 'lines') and (CtrlClass = 'TMemo') then
+          TMemo(Ctrl).Lines := TStringList.Create().AddArray(JObjCtrl.Arrays[Str])
+      else if (Str = 'items') and (CtrlClass = 'TComboBox') then
+      begin
+          TComboBox(Ctrl).Items := TStringList.Create().AddArray(JObjCtrl.Arrays[Str]);
+          TComboBox(Ctrl).ItemIndex := 0;
+      end
       else
         SetProperty(Ctrl, Str, JObjCtrl);
     end;
 
-    if (CtrlType = 'TStringGrid') then
+    if (CtrlClass = 'TStringGrid') then
       CtrlSetStringGrid(TStringGrid(Ctrl), JObjCtrl);
 
     Inc(PosTop, Ctrl.Height + 5);
   end;
-
-  SLSkip.Free();
 end;
 
 procedure TFWizard.LoadScheme(const aName: string);
@@ -202,7 +223,7 @@ begin
   for i := 0 to Tabs.Count - 1 do
   begin
     TabObj := Tabs.Objects[i];
-    if (not TabObj.Get('enable', true)) then
+    if (not TabObj.Get('_enable', true)) then
       continue;
 
     Form := TFBase.Create(Nil);

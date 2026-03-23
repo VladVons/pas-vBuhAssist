@@ -15,7 +15,8 @@ uses
 type
   { TFMedFindPdv }
   TFMedFindPdv = class(TFMedFind)
-    BitBtnWizard: TBitBtn;
+    BitBtnWizard1: TBitBtn;
+    BitBtnWizard2: TBitBtn;
     DataSourceCur: TDataSource;
     DataSourcePrev: TDataSource;
     SQLQueryCur: TSQLQuery;
@@ -44,7 +45,8 @@ type
     SQLTransaction: TSQLTransaction;
     procedure FormCreate(Sender: TObject);
     procedure SQLQueryCurCalcFields(DataSet: TDataSet);
-    procedure BitBtnWizardClick(Sender: TObject);
+    procedure BitBtnWizard1Click(Sender: TObject);
+    procedure BitBtnWizard2Click(Sender: TObject);
   protected
     function  GetParentQueryCur(): TSQLQuery; override;
     function  GetParentQueryPrev(): TSQLQuery; override;
@@ -94,13 +96,22 @@ begin
   SQLQueryGridCurCalcFields(DataSet);
 end;
 
-procedure TFMedFindPdv.BitBtnWizardClick(Sender: TObject);
+procedure TFMedFindPdv.BitBtnWizard1Click(Sender: TObject);
 var
   Form: TFWizard;
 begin
   Form := TFWizard(WinManager.Add(TFWizard));
   Form.LoadScheme('FWizardPdv1');
 end;
+
+procedure TFMedFindPdv.BitBtnWizard2Click(Sender: TObject);
+var
+  Form: TFWizard;
+begin
+  Form := TFWizard(WinManager.Add(TFWizard));
+  Form.LoadScheme('FWizardPdv2');
+end;
+
 
 procedure TFMedFindPdv.FormCreate(Sender: TObject);
 begin

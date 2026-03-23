@@ -11,6 +11,7 @@ inherited FWizard: TFWizard
   inherited PanelTitle: TPanel
     Width = 723
     ClientWidth = 723
+    OnClick = PanelTitleClick
     inherited LabelTitle: TLabel
       Width = 398
     end

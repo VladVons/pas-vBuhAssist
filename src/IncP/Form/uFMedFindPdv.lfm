@@ -3,22 +3,41 @@ inherited FMedFindPdv: TFMedFindPdv
   OnCreate = FormCreate
   inherited PanelFrame: TPanel
     inherited PanelComboBox: TPanel
-      object BitBtnWizard: TBitBtn[16]
+      object BitBtnWizard1: TBitBtn[16]
         Left = 712
         Height = 38
-        Top = 176
+        Top = 128
         Width = 94
-        Caption = 'Wizard'
+        Caption = 'Wizard1'
         TabOrder = 11
-        OnClick = BitBtnWizardClick
+        OnClick = BitBtnWizard1Click
       end
     end
   end
-  object DataSourcePrev: TDataSource[7]
+  object BitBtnWizard2: TBitBtn[2]
+    Left = 712
+    Height = 38
+    Top = 224
+    Width = 94
+    Caption = 'Wizard2'
+    TabOrder = 2
+    OnClick = BitBtnWizard2Click
   end
-  object DataSourceCur: TDataSource[8]
+  inherited frReport1: TfrReport[3]
   end
-  object SQLQueryCur: TSQLQuery[9]
+  inherited frDBDataSet1: TfrDBDataSet[4]
+  end
+  inherited FrPrintGrid1: TFrPrintGrid[5]
+  end
+  inherited SelectDirectoryDialog1: TSelectDirectoryDialog[6]
+  end
+  inherited PopupMenuActivation: TPopupMenu[7]
+  end
+  object DataSourcePrev: TDataSource[8]
+  end
+  object DataSourceCur: TDataSource[9]
+  end
+  object SQLQueryCur: TSQLQuery[10]
     FieldDefs = <    
       item
         Name = 'EDRPOU'
@@ -373,7 +392,7 @@ inherited FMedFindPdv: TFMedFindPdv
       Size = 50
     end
   end
-  object SQLQueryPrev: TSQLQuery[10]
+  object SQLQueryPrev: TSQLQuery[11]
     FieldDefs = <    
       item
         Name = 'EDRPOU'
@@ -564,7 +583,7 @@ inherited FMedFindPdv: TFMedFindPdv
       Size = 50
     end
   end
-  object SQLTransaction: TSQLTransaction[11]
+  object SQLTransaction: TSQLTransaction[12]
     Active = False
     Left = 48
     Top = 183

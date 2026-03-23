@@ -9,13 +9,15 @@ unit uVarHelper;
 interface
 
 uses
-  Classes, SysUtils, fpjson, RegExpr;
+  Classes, SysUtils, StrUtils, fpjson, RegExpr;
 
 type
   TStringMapFunc = function(const aStr: string): string;
 
   TStringHelperEx = type helper(TStringHelper) for string
+    function Before(const aStr: string): string;
     function Left(aLen: integer; aDoCut: boolean = False): string;
+    function PosEx(const aStr: string; aOfst: integer = 1): integer;
     function Right(aLen: Integer; aDoCut: boolean = False): string;
     function TrimExt(const aChars: TSysCharSet = [' ']): string;
     function TrimInt(const aChars: TSysCharSet = [' ']): string;
@@ -66,6 +68,19 @@ begin
     Result := System.Copy(self, aLen + 1, Len - aLen)
   else
     Result := System.Copy(self, 1, aLen);
+end;
+
+function TStringHelperEx.PosEx(const aStr: string; aOfst: integer = 1): integer;
+begin
+  Result := Pos(aStr, self, aOfst);
+end;
+
+function TStringHelperEx.Before(const aStr: string): string;
+begin
+  if (Pos(aStr, self) > 0) then
+    Result := System.Copy(self, 1, Pos(aStr, self) - 1)
+  else
+    Result := self;
 end;
 
 function TStringHelperEx.Right(aLen: Integer; aDoCut: boolean = False): string;
