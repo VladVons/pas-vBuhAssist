@@ -98,7 +98,7 @@ begin
   begin
     JData := JObjCur.Find(Parts[i]);
     if (JData = nil) or not (JData is TJSONObject) then
-      Exit;
+      Exit();
     JObjCur := TJSONObject(JData);
   end;
 

@@ -82,7 +82,6 @@
     procedure LoadJsonData();
     procedure ParentQueryCurOpen(aQuery: TSQLQuery); virtual;
     procedure ParentCalcFields(DataSet: TDataSet); virtual;
-    procedure Log(aType: char; const aMsg: string);
     procedure SetComboBoxAsObj(aComboBox: TComboBox; aSL: TStringList);
     procedure SetComboBoxAsPair(aComboBox: TComboBox; aSL: TStringList);
     procedure SetComboBox(aComboBox: TComboBox; aSL: TStringList);

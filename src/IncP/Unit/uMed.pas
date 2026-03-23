@@ -284,7 +284,7 @@ begin
   aHZ := '';  aHZN := ''; aHZU := '';
 
   if (aXML.IsEmpty()) then
-    Exit;
+    Exit();
 
   ReadXMLFile(Doc, TStringStream.Create(aXML, TEncoding.UTF8));
   try

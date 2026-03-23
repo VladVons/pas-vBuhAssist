@@ -69,8 +69,8 @@ var
   Remaining: Int64;
 begin
   Result := Default(TTail);
-  if not FileExists(fFile) then
-     Exit;
+  if (not FileExists(fFile)) then
+     Exit();
 
   FS := TFileStream.Create(fFile, fmOpenRead or fmShareDenyWrite);
   try
@@ -107,8 +107,8 @@ var
   FS: TFileStream;
 begin
   Result := Default(TTail);
-  if not FileExists(fFile) then
-    Exit;
+  if (not FileExists(fFile)) then
+    Exit();
 
   FS := TFileStream.Create(fFile, fmOpenRead or fmShareDenyWrite);
   try

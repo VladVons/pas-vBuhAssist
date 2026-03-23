@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  uFMedFind, uMed, uVarHelper, uDmCommon;
+  uFMedFind, uMed, uDmCommon;
 
 type
   { TFMedFindAkz }

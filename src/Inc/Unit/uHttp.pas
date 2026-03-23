@@ -122,12 +122,12 @@ begin
   Result := False;
 
   Sock := fpSocket(AF_INET, SOCK_STREAM, 0);
-  if Sock < 0 then
-    Exit;
+  if (Sock < 0) then
+    Exit();
 
   Ip := HostToIP(aHost);
   if (Ip.IsEmpty()) then
-    Exit;
+    Exit();
 
   Addr := Default(TSockAddr);
   Addr.sin_family := AF_INET;

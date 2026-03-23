@@ -71,13 +71,13 @@ var
 begin
   Result := '';
   if (aBase64.Length = 0) then
-    Exit;
+    Exit();
 
   EncBytes := DecodeStringBase64(aBase64);
 
   // 🔴 КРИТИЧНА перевірка
   if (EncBytes.Length < SizeOf(IV)) then
-    Exit; // або raise
+    Exit(); // або raise
 
   Cipher := TDCP_rijndael.Create(nil);
   InStream := TMemoryStream.Create();
@@ -93,7 +93,7 @@ begin
 
     DataSize := InStream.Size - SizeOf(IV);
     if (DataSize <= 0) then
-      Exit;
+      Exit();
 
     if (not IsDebugger2()) or (IsDeveloper()) then
     begin

@@ -10,7 +10,7 @@ interface
 uses
   Classes, SysUtils,DateUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, ExtCtrls,
   StdCtrls, Spin,
-  uFBase, uStateStore, uLog, uSys, uConst;
+  uFBase, uStateStore, uSys, uConst;
 
 type
   { TFSettings }
@@ -44,7 +44,7 @@ implementation
 procedure TFSettings.ButtonOkClick(Sender: TObject);
 begin
   StateStore.Save(self);
-  Log.Print('i', 'Збережено');
+  Log('i', 'Збережено');
 end;
 
 procedure TFSettings.FormCreate(Sender: TObject);

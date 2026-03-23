@@ -95,11 +95,11 @@ end;
 
 procedure TMatrix.SetCells(aRow, aCol: integer; const Value: T);
 begin
-  if (aRow < 0) or (aRow >= Count)
-     then Exit;
+  if (aRow < 0) or (aRow >= Count) then
+    Exit();
 
-  if (aCol < 0) or (aCol >= Length(FData[aRow]))
-     then Exit;
+  if (aCol < 0) or (aCol >= Length(FData[aRow])) then
+    Exit();
 
   FData[aRow][aCol] := Value;
 end;
@@ -146,8 +146,8 @@ procedure TMatrix.Delete(aRowIdx: integer);
 var
   i: integer;
 begin
-  if (aRowIdx < 0) or (aRowIdx >= Count)
-     then Exit;
+  if (aRowIdx < 0) or (aRowIdx >= Count) then
+    Exit();
 
   for i := aRowIdx to Count - 2 do
     FData[i] := FData[i + 1];
@@ -159,8 +159,8 @@ procedure TMatrix.ColAdd(aRowIdx: integer; const aValue: T);
 var
   NewCol: integer;
 begin
-  if (aRowIdx < 0) or (aRowIdx >= Count)
-     then Exit;
+  if (aRowIdx < 0) or (aRowIdx >= Count) then
+    Exit();
 
   NewCol := Length(FData[aRowIdx]);
   SetLength(FData[aRowIdx], NewCol + 1);
@@ -171,12 +171,12 @@ procedure TMatrix.ColDel(aRowIdx, aColIdx: integer);
 var
   i, Len: integer;
 begin
-  if (aRowIdx < 0) or (aRowIdx >= Count)
-     then Exit;
+  if (aRowIdx < 0) or (aRowIdx >= Count) then
+    Exit();
 
   Len := Length(FData[aRowIdx]);
-  if (aColIdx < 0) or (aColIdx >= Len)
-     then Exit;
+  if (aColIdx < 0) or (aColIdx >= Len) then
+    Exit();
 
   for i := aColIdx to Len - 2 do
     FData[aRowIdx][i] := FData[aRowIdx][i + 1];
@@ -191,14 +191,14 @@ begin
   Result := -1;
 
   if (aColIdx < 0) or (Length(FData) = 0) then
-    Exit;
+    Exit();
 
   for i := aRowIdxStart to High(FData) do
   begin
     if (aColIdx <= High(FData[i])) and (FData[i][aColIdx] = aValue) then
     begin
       Result := i;
-      Exit;
+      Exit();
     end;
   end;
 end;

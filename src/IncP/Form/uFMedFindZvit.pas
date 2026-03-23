@@ -89,7 +89,7 @@ var
 begin
   //JData := fJData.FindPath('Filter/DocExcl'); Fuck
   Arr := TJSONObject(fJData.FindPath('Filter')).Arrays['DocExcl'];
-  Result := TStringList.Create().AddJson(Arr);
+  Result := TStringList.Create().AddArray(Arr);
 end;
 
 function TFMedFindZvit.GetParentHideFiealds(): TObjectArray;

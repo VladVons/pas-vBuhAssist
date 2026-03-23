@@ -116,7 +116,7 @@ begin
     if (fPageControl.Pages[i].ControlCount > 0) and (fPageControl.Pages[i].Controls[0] is aFormClass) then
     begin
       Result := i;
-      Exit;
+      Exit();
     end;
 end;
 
@@ -136,7 +136,7 @@ begin
         Form := TFBase(Tab.Controls[j]);
         if (Form <> aForm) then
           if (Form.OnSendMsg(aForm, aData)) then
-             Exit;
+             Exit();
       end;
   end;
 end;
@@ -190,7 +190,8 @@ var
   Form: TForm;
 begin
   Tab := fPageControl.ActivePage;
-  if (Tab = nil) or (Tab.ControlCount = 0) then Exit;
+  if (Tab = nil) or (Tab.ControlCount = 0) then 
+    Exit();
 
   if Tab.Controls[0] is TForm then
   begin
@@ -218,11 +219,11 @@ var
 begin
   Shift := Shift;
   if Button <> mbRight then
-    Exit; // тільки правий клік
+    Exit(); // тільки правий клік
 
   TabIndex := fPageControl.IndexOfTabAt(X, Y);
   if TabIndex < 0 then
-    Exit; // клік не по вкладці
+    Exit(); // клік не по вкладці
 
   // робимо вкладку активною
   fPageControl.ActivePageIndex := TabIndex;
@@ -236,10 +237,10 @@ procedure TWinManager.SetActivePage(aIdx: integer);
 var
   idx: integer;
 begin
-  if fPageControl.PageCount = 0 then Exit;
-  // немає вкладок, нічого не робимо
+  if (fPageControl.PageCount = 0) then 
+    Exit();
 
-  if aIdx >= 0 then
+  if (aIdx >= 0) then
     idx := aIdx
   else
     idx := fPageControl.PageCount + aIdx; // від’ємне: від останньої

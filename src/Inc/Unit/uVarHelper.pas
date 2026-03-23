@@ -25,9 +25,9 @@ type
   TStringListHelper = class helper for TStringList
   public
     function AddArray(const aArr : TStringArray): TStringList;
+    function AddArray(const aArr : TJSONArray): TStringList;
     function AddExtDelim(const aSL: TStringList; const aDelim: string = '-'): TStringList;
     function AddExtDelim(const aStr: string; const aDelim: string = '-'): TStringList;
-    function AddJson(const aArr : TJSONArray): TStringList;
     function AddNames(const aSL: TStrings): TStringList;
     function DelArray(const aArr : TStringArray): TStringList;
     function DelEmpty(): TStringList;
@@ -164,7 +164,7 @@ begin
   Result := self;
 end;
 
-function TStringListHelper.AddJson(const aArr: TJSONArray): TStringList;
+function TStringListHelper.AddArray(const aArr: TJSONArray): TStringList;
 var
   i:  integer;
 begin

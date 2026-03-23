@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, StdCtrls, fpjson,
-  uStateStore, uWinManager;
+  uStateStore, uWinManager, uLog;
 
 type
   { TFBase }
@@ -22,6 +22,7 @@ type
   protected
     procedure SetFont(aForm: TForm);
     procedure SendMsg(const aData: TJSONObject);
+    procedure Log(aType: char; const aMsg: string);
   public
     function OnSendMsg(aForm: TForm; const aJObj: TJSONObject): boolean; virtual;
   end;
@@ -29,6 +30,11 @@ type
 
 implementation
 {$R *.lfm}
+
+procedure TFBase.Log(aType: char; const aMsg: string);
+begin
+  uLog.Log.Print(aType, Format('%s %s', [Caption, aMsg]));
+end;
 
 procedure TFBase.SetFont(aForm: TForm);
 var

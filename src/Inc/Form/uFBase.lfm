@@ -1,11 +1,11 @@
 object FBase: TFBase
   Left = 362
-  Height = 300
+  Height = 337
   Top = 250
-  Width = 504
+  Width = 669
   Caption = 'FBase'
-  ClientHeight = 300
-  ClientWidth = 504
+  ClientHeight = 337
+  ClientWidth = 669
   DesignTimePPI = 120
   LCLVersion = '4.6.0.0'
   OnCreate = FormCreate
@@ -14,17 +14,17 @@ object FBase: TFBase
     Left = 0
     Height = 48
     Top = 0
-    Width = 504
+    Width = 669
     Align = alTop
     BevelOuter = bvNone
     ClientHeight = 48
-    ClientWidth = 504
+    ClientWidth = 669
     TabOrder = 0
     object LabelTitle: TLabel
       Left = 20
       Height = 29
       Top = 10
-      Width = 398
+      Width = 588
       AutoSize = False
       Caption = 'Title'
       Font.Height = -20

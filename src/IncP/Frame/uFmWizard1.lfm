@@ -1,10 +1,31 @@
 object Frame: TFrame
   Left = 0
-  Height = 308
+  Height = 334
   Top = 0
-  Width = 696
+  Width = 722
+  ClientHeight = 334
+  ClientWidth = 722
   DesignTimePPI = 120
   LCLVersion = '4.6.0.0'
   ParentFont = False
   TabOrder = 0
+  object StringGrid1: TStringGrid
+    Left = 0
+    Height = 149
+    Top = 185
+    Width = 722
+    Align = alBottom
+    TabOrder = 0
+  end
+  object Memo1: TMemo
+    Left = 0
+    Height = 97
+    Top = 88
+    Width = 722
+    Align = alBottom
+    Lines.Strings = (
+      'Memo1'
+    )
+    TabOrder = 1
+  end
 end

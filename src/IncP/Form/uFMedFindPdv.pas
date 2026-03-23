@@ -10,7 +10,7 @@ interface
 uses
   Classes, SysUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ExtCtrls, Buttons,
   uDmCommon, uFMedFind, uFWizard,
-  uMed, uVarHelper, uWinManager;
+  uMed, uWinManager;
 
 type
   { TFMedFindPdv }

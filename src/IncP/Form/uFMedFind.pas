@@ -11,9 +11,9 @@ uses
   Classes, SysUtils, Forms, Controls, StdCtrls, ExtCtrls, ComCtrls, Buttons, Graphics,
   DBGrids, Dialogs, Menus, LR_Class, LR_DBSet, LR_PGrid, SQLDB, DB, Grids, fpjson,
   DateUtils, Math, StrUtils,
-  uDmCommon, uFBase, uWinManager,
+  uDmCommon, uFBase,
   uConst, uMed, uSys, uSysVcl, uVarHelper, uVarUtil, uQuery, uProtectDbg, uProtectTimer,
-  uLog, uSettings, uStateStore, uLicence;
+  uSettings, uStateStore, uLicence;
 
 type
   { TFMedFind }
@@ -21,11 +21,6 @@ type
 
 implementation
 {$R *.lfm}
-
-procedure TFMedFind.Log(aType: char; const aMsg: string);
-begin
-  uLog.Log.Print(aType, Format('%s %s', [Caption, aMsg]));
-end;
 
 function TFMedFind.GetParentDocsExcl(): TStringList;
 begin
@@ -48,17 +43,17 @@ begin
   fJData := ResourceLoadJson(Name);
 
   Arr := (fJData.FindPath('Controls') as TJSONObject).Arrays['ComboBoxMonth'];
-  SL := TStringList.Create().AddJson(Arr);
+  SL := TStringList.Create().AddArray(Arr);
   SetComboBoxAsObj(ComboBoxMonth, SL);
   SL.Free();
 
   Arr := (fJData.FindPath('Controls') as TJSONObject).Arrays['ComboBoxDoc'];
-  SL := TStringList.Create().AddJson(Arr);
+  SL := TStringList.Create().AddArray(Arr);
   SetComboBoxAsPair(ComboBoxDoc, SL);
   SL.Free();
 
   Arr := (fJData.FindPath('Controls') as TJSONObject).Arrays['ComboBoxSendStatus'];
-  SL := TStringList.Create().AddJson(Arr);
+  SL := TStringList.Create().AddArray(Arr);
   SetComboBoxAsObj(ComboBoxSendStatus, SL);
   SL.Free();
 end;
@@ -691,11 +686,8 @@ begin
 end;
 
 procedure TFMedFind.FormCreate(Sender: TObject);
-var
-  Str: string;
 begin
   inherited;
-  Str := '111   234 56 1  11'.TrimInt();
 
   SetFont(self);
   ProtectTimer.TimingStart();

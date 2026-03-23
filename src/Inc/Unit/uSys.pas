@@ -256,8 +256,8 @@ begin
   Wnd := 0;
 
   InfoSize := GetFileVersionInfoSize(PChar(aFile), Wnd);
-  if InfoSize = 0 then
-     Exit;
+  if (InfoSize = 0) then
+     Exit();
 
   GetMem(VerBuf, InfoSize);
   try
