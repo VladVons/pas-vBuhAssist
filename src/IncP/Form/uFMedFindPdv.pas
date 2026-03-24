@@ -102,6 +102,7 @@ var
 begin
   Form := TFWizard(WinManager.Add(TFWizard));
   Form.LoadScheme('FWizardPdv1');
+  //Form.LoadData('Data\12345\FWizardPdv1.json');
 end;
 
 procedure TFMedFindPdv.BitBtnWizard2Click(Sender: TObject);

@@ -8,8 +8,8 @@ unit uFWizard;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls, ExtCtrls, Grids, fpjson, TypInfo,
-  uSysVcl, uVarHelper, uFBase, uWinManager;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls, ExtCtrls, Grids, fpjson, TypInfo, Variants,
+  uSys, uSysVcl, uVarHelper, uFBase, uWinManager;
 
 type
   { TFWizard }
@@ -17,17 +17,18 @@ type
     PageControl1: TPageControl;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure PanelTitleClick(Sender: TObject);
   private
     fJScheme: TJSONObject;
     fClassMap: TStringList;
     procedure AddControls(aForm: TForm; aCtrls: TJSONArray; aJConf: TJSONObject);
+    function GetFormName(aJObj: TJSONObject; aIdx: integer): string;
     procedure CtrlSetStringGrid(aCtrl: TStringGrid; aJObj: TJSONObject);
     procedure SetProperty(aCtrl: TComponent; const aName: string; aVal: variant);
     procedure SetProperty(aCtrl: TComponent; const aName: string; aJObj: TJSONObject);
     procedure OnStringGridSelectCell(Sender: TObject; aCol, aRow: Integer; var CanSelect: Boolean);
   public
     procedure LoadScheme(const aName: string);
+    procedure LoadData(const aFile: string);
   end;
 
 implementation
@@ -54,35 +55,92 @@ begin
   inherited;
 end;
 
-procedure TFWizard.PanelTitleClick(Sender: TObject);
+function TFWizard.GetFormName(aJObj: TJSONObject; aIdx: integer): string;
 begin
-
+  Result := aJObj.Get('name', Format('form_%d', [aIdx]));
 end;
+
+//procedure TFWizard.SetProperty(aCtrl: TComponent; const aName: string; aVal: variant);
+//var
+//  Str, P: string;
+//  PropInfo: PPropInfo;
+//  Ctrl: TObject;
+//begin
+//  Ctrl := aCtrl;
+//  Str := aName;
+//
+//  // "font.style" := "fsBold"
+//  while Pos('.', Str) > 0 do
+//  begin
+//     P := Str.Before('.');
+//     Delete(Str, 1, Length(P) + 1);
+//
+//     PropInfo := GetPropInfo(Ctrl, P);
+//     if (Assigned(PropInfo)) then
+//       Ctrl := GetObjectProp(Ctrl, PropInfo)
+//     else begin
+//       Log('e', Format('Властивість `%s` не знайдена у `%s`', [P, aCtrl.ClassName()]));
+//       Exit();
+//     end;
+//  end;
+//
+//  PropInfo := GetPropInfo(Ctrl, Str);
+//  if (not Assigned(PropInfo)) then
+//  begin
+//   Log('e', Format('Властивість `%s` не знайдена у `%s`', [aName, aCtrl.ClassName()]));
+//   Exit();
+//  end;
+//
+//  case PropInfo^.PropType^.Kind of
+//    tkEnumeration:
+//      SetOrdProp(Ctrl, PropInfo, GetEnumValue(PropInfo^.PropType, VarToStr(aVal)));
+//    tkSet:
+//      SetSetProp(Ctrl, PropInfo, VarToStr(aVal));
+//  else
+//    SetPropValue(Ctrl, Str, aVal);
+//  end;
+//end;
 
 procedure TFWizard.SetProperty(aCtrl: TComponent; const aName: string; aVal: variant);
 var
-  Str, P: string;
+  i: integer;
+  Part: string;
+  Parts: TStringArray;
   PropInfo: PPropInfo;
   Ctrl: TObject;
 begin
   Ctrl := aCtrl;
-  Str := aName;
-  while Pos('.', Str) > 0 do
+  Parts := aName.Split(['.']);
+  for i := 0 to High(Parts) do
   begin
-     P := Str.Before('.');
-     Delete(Str, 1, Length(P) + 1);
+     Part := Parts[i];
+     PropInfo := GetPropInfo(Ctrl, Part);
+     if (not Assigned(PropInfo)) then
+     begin
+       Log('e', Format('Помилка у %s.%s=%s', [aCtrl.ClassName(), aName, VarToStr(aVal)]));
+       Exit();
+     end;
 
-     PropInfo := GetPropInfo(Ctrl, P);
-     if (Assigned(PropInfo)) then
-       Ctrl := GetObjectProp(Ctrl, PropInfo)
-     else
-       Ctrl := Nil;
+     if (i < High(Parts)) then
+     begin
+       if (PropInfo^.PropType^.Kind <> tkClass) then
+       begin
+         Log('e', Format('Помилка у %s.%s=%s', [aCtrl.ClassName(), aName, VarToStr(aVal)]));
+         Exit();
+       end;
+
+       Ctrl := GetObjectProp(Ctrl, PropInfo);
+     end;
   end;
 
-  if (Assigned(Ctrl)) and (Assigned(GetPropInfo(Ctrl, Str))) then
-    SetPropValue(Ctrl, Str, aVal)
+  case PropInfo^.PropType^.Kind of
+    tkEnumeration:
+      SetOrdProp(Ctrl, PropInfo, GetEnumValue(PropInfo^.PropType, VarToStr(aVal)));
+    tkSet:
+      SetSetProp(Ctrl, PropInfo, VarToStr(aVal));
   else
-    Log('e', Format('Властивість `%s` не знайдена у `%s`', [aName, aCtrl.ClassName()]));
+    SetPropValue(Ctrl, Part, aVal);
+  end;
 end;
 
 procedure TFWizard.SetProperty(aCtrl: TComponent; const aName: string; aJObj: TJSONObject);
@@ -139,7 +197,7 @@ end;
 
 procedure TFWizard.AddControls(aForm: TForm; aCtrls: TJSONArray; aJConf: TJSONObject);
 var
-  i, j, Idx, PosTop, PosLeft, VertPad, ConfVertPad: integer;
+  i, j, Idx, PosTop, PosLeft, BottomPad, ConfBottomPad: integer;
   Str, CtrlClass: string;
   JObjCtrl: TJSONObject;
   Ctrl: TControl;
@@ -147,7 +205,7 @@ var
 begin
   PosTop := aJConf.Get('_top', 0);
   PosLeft := aJConf.Get('_left', 0);
-  ConfVertPad := aJConf.Get('_vertpad', 0);
+  ConfBottomPad := aJConf.Get('_bottompad', 0);
 
   for i := 0 to aCtrls.Count - 1 do
   begin
@@ -181,10 +239,10 @@ begin
       Str := JObjCtrl.Names[j];
       if (Str = 'left') then
         SetProperty(Ctrl, Str, PosLeft + JObjCtrl.Get(Str, 0))
-      else if (Str = 'align') then
-        SetProperty(Ctrl, Str, GetEnumValue(TypeInfo(TAlign), JObjCtrl.Get(Str, '')))
-      else if (Str = 'borderstyle') then
-        SetProperty(Ctrl, Str, GetEnumValue(TypeInfo(TBorderStyle), JObjCtrl.Get(Str, '')))
+      //else if (Str = 'align') then
+      //  SetProperty(Ctrl, Str, GetEnumValue(TypeInfo(TAlign), JObjCtrl.Get(Str, '')))
+      //else if (Str = 'borderstyle') then
+      //  SetProperty(Ctrl, Str, GetEnumValue(TypeInfo(TBorderStyle), JObjCtrl.Get(Str, '')))
       else if (Str = 'lines') and (CtrlClass = 'TMemo') then
           TMemo(Ctrl).Lines := TStringList.Create().AddArray(JObjCtrl.Arrays[Str])
       else if (Str = 'items') and (CtrlClass = 'TComboBox') then
@@ -199,64 +257,101 @@ begin
     if (CtrlClass = 'TStringGrid') then
       CtrlSetStringGrid(TStringGrid(Ctrl), JObjCtrl);
 
-    VertPad := JObjCtrl.Get('_vertpad', ConfVertPad);
-    if (Ctrl.Visible) and (VertPad > 0) then
-      Inc(PosTop, Ctrl.Height + VertPad);
+    BottomPad := JObjCtrl.Get('_bottompad', ConfBottomPad);
+    if (Ctrl.Visible) and (BottomPad > 0) then
+      Inc(PosTop, Ctrl.Height + BottomPad);
   end;
 end;
 
 procedure TFWizard.LoadScheme(const aName: string);
 var
-  i, j: integer;
-  Tabs, Ctrls: TJSONArray;
-  TabObj, ConfObj, ConfObjDef: TJSONObject;
+  i: integer;
+  JArrTab, JArrCtrl: TJSONArray;
+  JObjTab, JObjConf, JObjConfDef: TJSONObject;
   WinManager: TWinManager;
   Form: TFBase;
-  Point: TPoint;
-begin
+ begin
   WinManager := TWinManager.Create(PageControl1, Nil);
 
   fJScheme := ResourceLoadJson(aName);
-  Tabs := TJSONArray(fJScheme.Find('tabs'));
-  if (not Assigned(Tabs)) then
+  JArrTab := TJSONArray(fJScheme.Find('tabs'));
+  if (not Assigned(JArrTab)) then
   begin
     Log('e', Format('Не знайдено секцію `tabs` в %s', [aName]));
+    FreeAndNil(fJScheme);
     Exit();
   end;
 
-  for i := 0 to Tabs.Count - 1 do
+  for i := 0 to JArrTab.Count - 1 do
   begin
-    TabObj := Tabs.Objects[i];
-    if (not TabObj.Get('_enable', true)) then
+    JObjTab := JArrTab.Objects[i];
+    if (not JObjTab.Get('_enable', true)) then
       continue;
 
     Form := TFBase.Create(Nil);
-    Form.Name := Format('form_%d', [i]);
-    Form.Caption := TabObj.Get('caption', Format('caption %d', [i]));
+    Form.Name := GetFormName(JObjTab, i);
+    Form.Caption := JObjTab.Get('caption', Format('caption %d', [i]));
 
     WinManager.Add(Form);
-    Form.Parent.Caption := TabObj.Get('title', Format('title %d', [i]));
+    Form.Parent.Caption := JObjTab.Get('title', Format('title %d', [i]));
 
-    Ctrls := TJSONArray(TabObj.Find('controls'));
-    if (not Assigned(Ctrls)) then
+    JArrCtrl := TJSONArray(JObjTab.Find('controls'));
+    if (not Assigned(JArrCtrl)) then
     begin
       Log('e', Format('Не знайдено секцію `controls` в закладці %d', [i+1]));
       continue;
     end;
 
-    ConfObjDef := TJSONObject.Create();
-    ConfObjDef.Add('_vertpad', 6);
-    ConfObjDef.Add('_left', 5);
-    ConfObjDef.Add('_top', PanelTitle.Top + PanelTitle.Height + 15);
+    JObjConfDef := TJSONObject.Create();
+    JObjConfDef.Add('_bottompad', 5);
+    JObjConfDef.Add('_left', 5);
+    JObjConfDef.Add('_top', PanelTitle.Top + PanelTitle.Height + 15);
 
-    ConfObj := TJSONObject(TabObj.Find('conf'));
-    if (Assigned(ConfObj)) then
-      ConfObjDef.Update(ConfObj);
+    JObjConf := TJSONObject(JObjTab.Find('conf'));
+    if (Assigned(JObjConf)) then
+      JObjConfDef.Update(JObjConf);
 
-    AddControls(Form, Ctrls, ConfObjDef);
-    ConfObjDef.Free();
+    AddControls(Form, JArrCtrl, JObjConfDef);
+    JObjConfDef.Free();
   end;
+
   WinManager.SetActivePage(0);
+end;
+
+procedure TFWizard.LoadData(const aFile: string);
+var
+  i, j: integer;
+  Str, FormName: string;
+  JArrTab, JArrCtrl: TJSONArray;
+  JObjTab, JObjCtrl, JObjData: TJSONObject;
+begin
+   if (not FileExists(aFile)) then
+   begin
+     Log('e', Format('Не знайдено файл %s', [aFile]));
+     Exit();
+   end;
+   JObjData := TJSONObject(FileLoadJson(aFile));
+
+  if (not Assigned(fJScheme)) then
+  begin
+    Log('e', 'Схема не завантажна');
+    Exit();
+  end;
+
+  JArrTab := TJSONArray(fJScheme.Find('tabs'));
+  for i := 0 to JArrTab.Count - 1 do
+  begin
+    JObjTab := JArrTab.Objects[i];
+    FormName := GetFormName(JObjTab, i);
+
+    JArrCtrl := TJSONArray(JObjTab.Find('controls'));
+    for j := 0 to JArrCtrl.Count - 1 do
+    begin
+      JObjCtrl := JArrCtrl.Objects[j];
+      if (JObjCtrl.Get('_save', false)) then
+        Str := JObjData.Get('_class', '');
+    end;
+  end;
 end;
 
 end.

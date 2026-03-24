@@ -1,27 +1,27 @@
 inherited FWizard: TFWizard
   Left = 382
-  Height = 274
+  Height = 317
   Top = 32
-  Width = 723
+  Width = 801
   Caption = 'FWizard'
-  ClientHeight = 274
-  ClientWidth = 723
+  ClientHeight = 317
+  ClientWidth = 801
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   inherited PanelTitle: TPanel
-    Width = 723
-    ClientWidth = 723
-    OnClick = PanelTitleClick
+    Width = 801
+    ClientWidth = 801
     inherited LabelTitle: TLabel
       Width = 398
     end
   end
   object PageControl1: TPageControl[1]
     Left = 0
-    Height = 226
+    Height = 269
     Top = 48
-    Width = 723
+    Width = 801
     Align = alClient
+    ParentFont = False
     TabOrder = 1
   end
 end
