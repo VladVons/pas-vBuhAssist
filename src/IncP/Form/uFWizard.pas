@@ -21,7 +21,7 @@ type
   private
     fJScheme: TJSONObject;
     fClassMap: TStringList;
-    procedure AddControls(aForm: TForm; aCtrls: TJSONArray);
+    procedure AddControls(aForm: TForm; aCtrls: TJSONArray; aJConf: TJSONObject);
     procedure CtrlSetStringGrid(aCtrl: TStringGrid; aJObj: TJSONObject);
     procedure SetProperty(aCtrl: TComponent; const aName: string; aVal: variant);
     procedure SetProperty(aCtrl: TComponent; const aName: string; aJObj: TJSONObject);
@@ -137,16 +137,17 @@ begin
   end;
 end;
 
-procedure TFWizard.AddControls(aForm: TForm; aCtrls: TJSONArray);
+procedure TFWizard.AddControls(aForm: TForm; aCtrls: TJSONArray; aJConf: TJSONObject);
 var
-  i, j, Idx, PosTop, PosLeft: integer;
+  i, j, Idx, PosTop, PosLeft, VertPad, ConfVertPad: integer;
   Str, CtrlClass: string;
   JObjCtrl: TJSONObject;
   Ctrl: TControl;
   CClass: TComponentClass;
 begin
-  PosTop := PanelTitle.Top + PanelTitle.Height + 20;
-  PosLeft := 10;
+  PosTop := aJConf.Get('_top', 0);
+  PosLeft := aJConf.Get('_left', 0);
+  ConfVertPad := aJConf.Get('_vertpad', 0);
 
   for i := 0 to aCtrls.Count - 1 do
   begin
@@ -173,13 +174,13 @@ begin
 
     Ctrl.Parent := aForm;
     Ctrl.Top := PosTop;
-    Ctrl.Left := PosLeft;
+    Ctrl.Left := Ctrl.Left + PosLeft;
 
     for j := 0 to JObjCtrl.Count - 1 do
     begin
       Str := JObjCtrl.Names[j];
-      if (Str.StartsWith('_')) then
-        continue
+      if (Str = 'left') then
+        SetProperty(Ctrl, Str, PosLeft + JObjCtrl.Get(Str, 0))
       else if (Str = 'align') then
         SetProperty(Ctrl, Str, GetEnumValue(TypeInfo(TAlign), JObjCtrl.Get(Str, '')))
       else if (Str = 'borderstyle') then
@@ -191,24 +192,27 @@ begin
           TComboBox(Ctrl).Items := TStringList.Create().AddArray(JObjCtrl.Arrays[Str]);
           TComboBox(Ctrl).ItemIndex := 0;
       end
-      else
+      else if (not Str.StartsWith('_')) then
         SetProperty(Ctrl, Str, JObjCtrl);
     end;
 
     if (CtrlClass = 'TStringGrid') then
       CtrlSetStringGrid(TStringGrid(Ctrl), JObjCtrl);
 
-    Inc(PosTop, Ctrl.Height + 5);
+    VertPad := JObjCtrl.Get('_vertpad', ConfVertPad);
+    if (Ctrl.Visible) and (VertPad > 0) then
+      Inc(PosTop, Ctrl.Height + VertPad);
   end;
 end;
 
 procedure TFWizard.LoadScheme(const aName: string);
 var
-  i: integer;
+  i, j: integer;
   Tabs, Ctrls: TJSONArray;
-  TabObj: TJSONObject;
+  TabObj, ConfObj, ConfObjDef: TJSONObject;
   WinManager: TWinManager;
   Form: TFBase;
+  Point: TPoint;
 begin
   WinManager := TWinManager.Create(PageControl1, Nil);
 
@@ -240,9 +244,18 @@ begin
       continue;
     end;
 
-    AddControls(Form, Ctrls);
-  end;
+    ConfObjDef := TJSONObject.Create();
+    ConfObjDef.Add('_vertpad', 6);
+    ConfObjDef.Add('_left', 5);
+    ConfObjDef.Add('_top', PanelTitle.Top + PanelTitle.Height + 15);
 
+    ConfObj := TJSONObject(TabObj.Find('conf'));
+    if (Assigned(ConfObj)) then
+      ConfObjDef.Update(ConfObj);
+
+    AddControls(Form, Ctrls, ConfObjDef);
+    ConfObjDef.Free();
+  end;
   WinManager.SetActivePage(0);
 end;
 

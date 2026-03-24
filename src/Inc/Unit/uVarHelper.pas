@@ -49,6 +49,10 @@ type
     function Uniq(): TStringList;
   end;
 
+  TJSONObjectHelper = type helper for TJSONObject
+    procedure Update(aSrc: TJSONObject);
+  end;
+
 implementation
 
 
@@ -397,6 +401,23 @@ begin
     Self[i] := aFunc(Self[i]);
 
   Result := Self;
+end;
+
+//---
+
+procedure TJSONObjectHelper.Update(aSrc: TJSONObject);
+var
+  i, j: Integer;
+  Key: String;
+begin
+  for i := 0 to aSrc.Count - 1 do
+  begin
+    Key := aSrc.Names[i];
+    if (self.IndexOfName(Key) <> -1) then
+      self.Delete(Key);
+
+    self.Add(Key, aSrc.Items[i].Clone());
+  end;
 end;
 
 end.
