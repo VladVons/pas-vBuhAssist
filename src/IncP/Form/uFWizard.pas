@@ -224,7 +224,7 @@ end;
 procedure TFWizard.LoadData(const aFile: string);
 var
   i, j: integer;
-  CtrlName: string;
+  CtrlName, CtrlClass: string;
   JObj, JObjData: TJSONObject;
   Forms: TFormArray;
   Ctrl: TControl;
@@ -241,9 +241,13 @@ begin
     begin
       Ctrl := Forms[i].Controls[j];
       CtrlName := Format('%s.%s', [Forms[i].Name, Ctrl.Name]);
+      CtrlClass := Ctrl.ClassName();
       JObj := TJSONObject(JObjData.Find(CtrlName));
       if (Assigned(JObj)) then
-        Ctrl.SetJProperty(JObj, JObj.Get('prop', ''), 'val');
+        if (CtrlClass = 'TStringGrid') then
+          StringGridFromJSONArray(TStringGrid(Ctrl), JObj.Arrays['val'])
+        else
+          Ctrl.SetJProperty(JObj, JObj.Get('prop', ''), 'val');
     end;
 
   JObjData.Free();
@@ -252,8 +256,9 @@ end;
 procedure TFWizard.SaveData();
 var
   i, j: integer;
-  Str, Prop, CtrlName: string;
+  Str, Prop, CtrlName, CtrlClass: string;
   JObjData, JItem: TJSONObject;
+  JArr: TJSONArray;
   Forms: TFormArray;
   Ctrl: TControl;
 begin
@@ -267,14 +272,23 @@ begin
         CtrlName := Format('%s.%s', [Forms[i].Name, Ctrl.Name]);
         if (CtrlName.EndsWith('_s')) then
         begin
-          Prop := Ctrl.GetInputName();
-          if (not Prop.IsEmpty()) then
+          JItem := TJSONObject.Create();
+
+          CtrlClass := Ctrl.ClassName();
+          if (CtrlClass = 'TStringGrid') then
           begin
-            JItem := TJSONObject.Create();
-            JItem.Add('prop', Prop);
-            Ctrl.GetJProperty(JItem, Prop, 'val');
-            JObjData.Add(CtrlName, JItem);
+            JItem.Add('prop', 'data');
+            JArr := StringGridToJSONArray(TStringGrid(Ctrl));
+            JItem.Add('val', JArr);
+          end else begin
+            Prop := Ctrl.GetInputName();
+            if (not Prop.IsEmpty()) then
+            begin
+              JItem.Add('prop', Prop);
+              Ctrl.GetJProperty(JItem, Prop, 'val');
+            end;
           end;
+          JObjData.Add(CtrlName, JItem);
         end;
       end;
 
