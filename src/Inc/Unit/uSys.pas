@@ -42,7 +42,7 @@ begin
   SL := TStringList.Create();
   try
     SL.LoadFromFile(aFile);
-    Result := GetJSON(CP1251ToUTF8(SL.Text));
+    Result := GetJSON(SL.Text);
   finally
     SL.Free();
   end;

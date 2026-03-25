@@ -277,7 +277,6 @@ begin
           CtrlClass := Ctrl.ClassName();
           if (CtrlClass = 'TStringGrid') then
           begin
-            JItem.Add('prop', 'data');
             JArr := StringGridToJSONArray(TStringGrid(Ctrl));
             JItem.Add('val', JArr);
           end else begin

@@ -39,10 +39,10 @@ var
   RS: TResourceStream;
   SS: TStringStream;
 begin
-  if (aEncoding = Nil) then
-    aEncoding := TEncoding.GetEncoding(1251);
+  //if (aEncoding = Nil) then
+  //  aEncoding := TEncoding.GetEncoding(1251);
   SS := TStringStream.Create('', aEncoding);
-
+  
   RS := TResourceStream.Create(HInstance, aName, RT_RCDATA);
   try
     SS.CopyFrom(RS, RS.Size);
