@@ -11,7 +11,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList, Windows, ExtCtrls,
   ComCtrls, StdCtrls, fpjson,
   uFAbout, uFMedFindZvit, uFMedFindAkz, uFMedFindPdv, uFOptimizePDF, uFSettings, uFLogin, uFMessage,
-  uWinManager, uLicence, uLog, uSettings, uStateStore, uSys, uSysVcl, uConst, uProtectTimer, uAnnonce, uMed, uVarHelper;
+  uWinManager, uLicence, uLog, uSettings, uStateStore, uSys, uSysVcl, uConst, uProtectTimer, uAnnonce, uMed, uHelper;
 
 type
   { TFMain }

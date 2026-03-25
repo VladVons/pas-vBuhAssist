@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, SQLDB, DB, RegExpr,
-  uVarUtil, uVarHelper, uType;
+  uVarUtil, uHelper, uType;
 
 function GetQueryField(aDataSource: TDataSource; aQuery: TSQLQuery; aField: string): TStringList;
 function ExpandSQL(aQuery: TSQLQuery): string;

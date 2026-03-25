@@ -12,7 +12,7 @@ uses
   DBGrids, Dialogs, Menus, LR_Class, LR_DBSet, LR_PGrid, SQLDB, DB, Grids, fpjson,
   DateUtils, Math, StrUtils,
   uDmCommon, uFBase,
-  uConst, uMed, uSys, uSysVcl, uVarHelper, uVarUtil, uQuery, uProtectDbg, uProtectTimer,
+  uConst, uMed, uSys, uSysVcl, uHelper, uVarUtil, uQuery, uProtectDbg, uProtectTimer,
   uSettings, uStateStore, uLicence;
 
 type

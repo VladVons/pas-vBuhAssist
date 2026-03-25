@@ -1,7 +1,7 @@
 // Created: 2026.03.11
 // Author: Vladimir Vons <VladVons@gmail.com>
 
-unit uVarHelper;
+unit uHelper;
 
 {$mode objfpc}{$H+}
 {$modeswitch typehelpers}

@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, StrUtils, XMLRead, DOM, LConvEncoding, Registry, fpjson,
-  uSettings, uVarUtil, uHttp, uVarHelper;
+  uSettings, uVarUtil, uHttp, uHelper;
 
 const
   cPerTypeAll  = 500;

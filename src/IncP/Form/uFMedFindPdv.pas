@@ -97,12 +97,19 @@ begin
 end;
 
 procedure TFMedFindPdv.BitBtnWizard1Click(Sender: TObject);
+const
+  cDir = 'Data\12345';
+  cFile = 'FWizardPdv1';
 var
   Form: TFWizard;
 begin
   Form := TFWizard(WinManager.Add(TFWizard));
-  Form.LoadScheme('FWizardPdv1');
-  //Form.LoadData('Data\12345\FWizardPdv1.json');
+  Form.LoadScheme(cFile);
+
+  if (not DirectoryExists(cDir)) then
+    ForceDirectories(cDir);
+
+  Form.LoadData(ConcatPaths([cDir, cFile + '_dat.json']));
 end;
 
 procedure TFMedFindPdv.BitBtnWizard2Click(Sender: TObject);

@@ -12,6 +12,7 @@ uses
 
 type
   TFormClass = class of TForm;
+  TFormArray = array of TForm;
 
   TWinManager = class
   protected
@@ -23,6 +24,7 @@ type
     procedure Add(aForm: TForm);
     function Add(aFormClass: TFormClass): TForm;
     procedure Adds(aForms: array of TFormClass);
+    function GetForms(): TFormArray;
     function FindTabIndex(aFormClass: TFormClass): integer;
     procedure SendMsg(aForm: TForm; const aData: TJSONObject);
     procedure CloseActive();
@@ -107,17 +109,32 @@ begin
     fPageControl.OnMouseDown := @PageControlMouseDown;
 end;
 
+function TWinManager.GetForms(): TFormArray;
+var
+  i: integer;
+  Form: TForm;
+begin
+  SetLength(Result, fPageControl.PageCount);
+
+  for i := 0 to fPageControl.PageCount - 1 do
+  begin
+    Form := TForm(fPageControl.Pages[i].Tag);
+    Result[i] := Form;
+  end;
+end;
+
 function TWinManager.FindTabIndex(aFormClass: TFormClass): integer;
 var
   i: integer;
 begin
-  Result := -1; // не знайдено
   for i := 0 to fPageControl.PageCount - 1 do
     if (fPageControl.Pages[i].ControlCount > 0) and (fPageControl.Pages[i].Controls[0] is aFormClass) then
     begin
       Result := i;
       Exit();
     end;
+
+  Result := -1;
 end;
 
 procedure TWinManager.SendMsg(aForm: TForm; const aData: TJSONObject);
