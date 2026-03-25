@@ -1,3 +1,6 @@
+// Created: 2026.02.25
+// Author: Vladimir Vons <VladVons@gmail.com>
+
 unit uTextStore;
 
 {$mode objfpc}{$H+}

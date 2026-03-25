@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CONFIG>
-  <Lazarus Version="4.6"/>
-  <Compiler Value="C:\lazarus\fpc\3.2.2\bin\i386-win32\fpc.exe" Date="1549053684"/>
-  <Params Value="-MObjFPC -Scghi -O1 -g -gl -l -vewnhibq &quot;-FuC:\Documents and Settings\snoVdalV\Desktop\pas\pas-vBuhAssist\src\Inc\Package\TextStore\&quot; -FuC:\lazarus\packager\units\i386-win32 &quot;-FUC:\Documents and Settings\snoVdalV\Desktop\pas\pas-vBuhAssist\src\Inc\Package\TextStore\lib\i386-win32\&quot; TextStore.pas"/>
-</CONFIG>

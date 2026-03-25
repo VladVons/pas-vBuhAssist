@@ -1,3 +1,6 @@
+// Created: 2026.03.23
+// Author: Vladimir Vons <VladVons@gmail.com>
+
 unit uFmWizard1;
 
 {$mode ObjFPC}{$H+}

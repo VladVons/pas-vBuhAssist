@@ -30,6 +30,7 @@ begin
   begin
     JArr := TJSONArray.Create();
     HasData := False;
+
     for j := 0 to aGrid.ColCount - 1 do
     begin
       Str := aGrid.Cells[j, i];
