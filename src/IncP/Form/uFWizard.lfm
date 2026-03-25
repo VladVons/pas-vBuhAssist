@@ -11,9 +11,6 @@ inherited FWizard: TFWizard
   inherited PanelTitle: TPanel
     Width = 801
     ClientWidth = 801
-    inherited LabelTitle: TLabel
-      Width = 398
-    end
   end
   object PageControl1: TPageControl[1]
     Left = 0

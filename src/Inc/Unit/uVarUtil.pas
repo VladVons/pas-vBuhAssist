@@ -71,7 +71,7 @@ function GetJsonNested(const aJObj: TJSONObject; const Path: string; aDef: Varia
   begin
     {$NOTES OFF}
     Result := Nil;
-    if (Assigned(aJData)) then
+    if (aJData <> nil) then
       case aJData.JSONType of
         jtString:
           Result := aJData.AsString;

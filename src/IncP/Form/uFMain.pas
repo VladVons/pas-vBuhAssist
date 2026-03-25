@@ -240,7 +240,7 @@ begin
       if (Settings.GetItem(cSect, SL[i], 0) = 1) then
       begin
         Cls := GetClass(SL[i]);
-        if (Assigned(Cls)) then
+        if (Cls <> nil) then
           WinManager.Add(TFormClass(Cls));
       end;
     WinManager.SetActivePage(0);

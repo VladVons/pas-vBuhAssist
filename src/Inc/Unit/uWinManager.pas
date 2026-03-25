@@ -105,7 +105,7 @@ begin
   fPageControl := aPageControl;
   fPopupMenu := aPopupMenu;
 
-  if (Assigned(aPopupMenu)) then
+  if (aPopupMenu <> nil) then
     fPageControl.OnMouseDown := @PageControlMouseDown;
 end;
 
@@ -246,7 +246,7 @@ begin
   fPageControl.ActivePageIndex := TabIndex;
 
   // відкриваємо попап меню прямо на курсорі
-  if (Assigned(fPopupMenu)) then
+  if (fPopupMenu <> nil) then
     fPopupMenu.Popup(Mouse.CursorPos.X, Mouse.CursorPos.Y);
 end;
 
@@ -287,7 +287,7 @@ begin
     end;
 
   // якщо знайдена — показуємо
-  if (Assigned(Form)) then
+  if (Form <> nil) then
   begin
     Form.Show();
     Form.BringToFront;

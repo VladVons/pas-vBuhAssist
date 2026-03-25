@@ -102,7 +102,7 @@ var
 begin
   Result := '';
   H := GetHostByName(PChar(aHost));
-  if (Assigned(H)) and (H^.h_addr_list[0] <> nil) then
+  if (H <> nil) and (H^.h_addr_list[0] <> nil) then
   begin
     Addr := PLongWord(H^.h_addr_list[0])^;
     Result := Format('%d.%d.%d.%d',

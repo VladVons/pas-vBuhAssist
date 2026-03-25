@@ -169,7 +169,7 @@ var
   SL: TStringList;
 begin
   Macro := '';
-  if (Assigned(aSL)) and (aSL.Count > 0) then
+  if (aSL <> nil) and (aSL.Count > 0) then
   begin
     SL := TStringList.Create().AddExtDelim(aSL);
     StrExcl := QuotedStr(SL.GetJoin('|'));
@@ -320,7 +320,7 @@ begin
   ProtectTimer.TimingStart();
 
   FieldPerDate := DataSet.FindField('PERDATE');
-  if (Assigned(FieldPerDate)) and (not FieldPerDate.IsNull) then
+  if (FieldPerDate <> nil) and (not FieldPerDate.IsNull) then
   begin
     PerType := DataSet.FieldByName('PERTYPE').AsInteger;
     if (PerType = cDbMonth) then
@@ -407,7 +407,7 @@ var
   id: string;
   IsNew: boolean;
 begin
-  if (Assigned(aJObj)) then
+  if (aJObj <> nil) then
   begin
    id := aJObj.Get('id', '');
    if (id = 'combobox_path_db') then

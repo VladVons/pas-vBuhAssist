@@ -105,7 +105,7 @@ begin
   Log.Print('i', 'Перевірка оновлень');
 
   JObj := Check();
-  if (not Assigned(JObj)) then
+  if (JObj = nil) then
   begin
     Log.Print('e', 'Помилка перевірки оновлень');
     Exit();
@@ -115,7 +115,7 @@ begin
   Params := Nil;
   try
     JItem := FindUpdate(JObj);
-    if (not Assigned(JItem)) then
+    if (JItem = nil) then
     begin
       Log.Print('i', 'Не знайдено оновлень');
       Exit();
@@ -162,7 +162,7 @@ var
   Timer: TTimer;
 begin
   JObj := Check();
-  if (not Assigned(JObj)) then
+  if (JObj = nil) then
     Exit();
 
   try

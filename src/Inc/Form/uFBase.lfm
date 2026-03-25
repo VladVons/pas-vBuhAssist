@@ -21,7 +21,7 @@ object FBase: TFBase
     ClientWidth = 669
     TabOrder = 0
     object LabelTitle: TLabel
-      Left = 20
+      Left = 0
       Height = 29
       Top = 10
       Width = 588

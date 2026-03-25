@@ -51,7 +51,7 @@ var
   xItem: TComboBox;
 begin
   for xItem in aItems do
-      if (Assigned(xItem)) and (xItem.Items.Count > aIndex) and (xItem.ItemIndex = -1) then
+      if (xItem <> nil) and (xItem.Items.Count > aIndex) and (xItem.ItemIndex = -1) then
          xItem.ItemIndex := aIndex;
 end;
 

@@ -8,8 +8,9 @@ unit uFWizard;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls, ExtCtrls, Grids, fpjson, TypInfo, Variants, jsonparser,
-  uSys, uSysVcl, uHelper, uHelperVcl, uFBase, uWinManager, uGrid;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
+  ExtCtrls, Grids, ValEdit, fpjson, TypInfo, Variants, jsonparser, uSys,
+  uSysVcl, uHelper, uHelperVcl, uFBase, uWinManager, uGrid;
 
 type
   { TFWizard }
@@ -45,8 +46,10 @@ begin
   fClassMap.AddObject('TLabeledEdit', TObject(TLabeledEdit));
   fClassMap.AddObject('TEdit', TObject(TEdit));
   fClassMap.AddObject('TComboBox', TObject(TComboBox));
-  fClassMap.AddObject('TStringGrid', TObject(TStringGrid));
+  fClassMap.AddObject('TCheckBox', TObject(TCheckBox));
   fClassMap.AddObject('TMemo', TObject(TMemo));
+  fClassMap.AddObject('TStringGrid', TObject(TStringGrid));
+  fClassMap.AddObject('TValueListEditor', TObject(TValueListEditor));
 end;
 
 procedure TFWizard.FormDestroy(Sender: TObject);
@@ -106,16 +109,17 @@ begin
 
     Str := JObjCtrl.Get('name', Format('%s_%d', [CtrlClass, i]));
     Ctrl := TControl(FindComponent(Str));
-    if (not Assigned(Ctrl)) then
+    if (Ctrl = nil) then
     begin
       CClass := TComponentClass(fClassMap.Objects[Idx]);
       Ctrl := TControl(CClass.Create(aForm));
       Ctrl.Name := Str;
     end;
 
-    Ctrl.Parent := aForm;
+    Inc(PosTop, JObjCtrl.Get('_toppad', 0));
     Ctrl.Top := PosTop;
     Ctrl.Left := Ctrl.Left + PosLeft;
+    Ctrl.Parent := aForm;
 
     for j := 0 to JObjCtrl.Count - 1 do
     begin
@@ -158,7 +162,7 @@ var
 
   fJScheme := ResourceLoadJson(aName);
   JArrTab := TJSONArray(fJScheme.Find('tabs'));
-  if (not Assigned(JArrTab)) then
+  if (JArrTab = nil) then
   begin
     Log('e', Format('Не знайдено секцію `tabs` в %s', [aName]));
     FreeAndNil(fJScheme);
@@ -176,21 +180,24 @@ var
     Form.Parent.Caption := JObjTab.Get('title', Format('title %d', [i]));
     Form.Name := Form.GetJName(JObjTab, i);
     Form.Caption := JObjTab.Get('caption', Format('caption %d', [i]));
+    Form.Title := Form.Caption;
+
 
     JArrCtrl := TJSONArray(JObjTab.Find('controls'));
-    if (not Assigned(JArrCtrl)) then
+    if (JArrCtrl = nil) then
     begin
       Log('e', Format('Не знайдено секцію `controls` в закладці %d', [i+1]));
       continue;
     end;
 
     JObjConfDef := TJSONObject.Create();
+    JObjConfDef.Add('_toppad', 0);
     JObjConfDef.Add('_bottompad', 5);
     JObjConfDef.Add('_left', 5);
     JObjConfDef.Add('_top', PanelTitle.Top + PanelTitle.Height + 15);
 
     JObjConf := TJSONObject(JObjTab.Find('conf'));
-    if (Assigned(JObjConf)) then
+    if (JObjConf <> nil) then
       JObjConfDef.Update(JObjConf);
 
     AddControls(Form, JArrCtrl, JObjConfDef);
@@ -222,9 +229,11 @@ begin
       CtrlName := Format('%s.%s', [Forms[i].Name, Ctrl.Name]);
       CtrlClass := Ctrl.ClassName();
       JObj := TJSONObject(JObjData.Find(CtrlName));
-      if (Assigned(JObj)) then
+      if (JObj <> nil) then
         if (CtrlClass = 'TStringGrid') then
           StringGridDataFromJson(TStringGrid(Ctrl), JObj.Arrays['val'])
+        else if (CtrlClass = 'TValueListEditor') then
+          ValueListFromJson(TValueListEditor(Ctrl), JObj.Arrays['val'])
         else
           Ctrl.SetJProperty(JObj, JObj.Get('prop', ''), 'val');
     end;
@@ -257,6 +266,10 @@ begin
           if (CtrlClass = 'TStringGrid') then
           begin
             JArr := StringGridDataToJson(TStringGrid(Ctrl));
+            JItem.Add('val', JArr);
+          end else if (CtrlClass = 'TValueListEditor') then
+          begin
+            JArr := ValueListToJson(TValueListEditor(Ctrl));
             JItem.Add('val', JArr);
           end else begin
             Prop := Ctrl.GetInputName();

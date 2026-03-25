@@ -69,7 +69,7 @@ begin
   if (aWaitOnExit) then
     Result.Options := Result.Options + [poWaitOnExit];
 
-  if (Assigned(aParam)) then
+  if (aParam <> nil) then
     Result.Parameters := aParam;
 
   Result.Execute();

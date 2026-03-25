@@ -59,7 +59,7 @@ end;
 function TLicence.GetLicCount(): integer;
 begin
   Result := 0;
-  if (Assigned(fJObjLic)) and (Assigned(fJObjLic.Find('licences'))) then
+  if (fJObjLic <> nil) and (fJObjLic.Find('licences') <> nil) then
     Result := fJObjLic.Arrays['licences'].Count;
 end;
 
@@ -75,7 +75,7 @@ begin
     JReq.Add('app', GetAppName());
     JReq.Add('ver', GetAppVer());
     JReq.Add('uuid', fUUID);
-    if (Assigned(aParam)) then
+    if (aParam <> nil) then
        for i := 0 to aParam.Count - 1 do
        begin
          Key := aParam.Names[i];
@@ -84,7 +84,7 @@ begin
        end;
 
     Result := PostJSON(cHttpApi, JReq);
-    if (Assigned(Result)) then
+    if (Result <> nil) then
       LastErr := Result.Get('error', '')
     else
       LastErr := 'request error';
@@ -148,7 +148,7 @@ var
   JObj: TJSONObject;
 begin
   JObj := RefreshFromHttp(aFirmCodes);
-  if (Assigned(JObj)) then
+  if (JObj <> nil) then
   begin
     //// crypt string myself (not secure)
     //Str := JObj.AsJSON;

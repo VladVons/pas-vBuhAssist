@@ -8,9 +8,8 @@ unit uFMedFindPdv;
 interface
 
 uses
-  Classes, SysUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ExtCtrls, Buttons,
-  uDmCommon, uFMedFind, uFWizard,
-  uMed, uWinManager;
+  Classes, SysUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ExtCtrls,
+  Buttons, uDmCommon, uFMedFind, uFWizard, uMed, uWinManager;
 
 type
   { TFMedFindPdv }

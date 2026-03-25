@@ -23,7 +23,6 @@ type
 
 implementation
 
-
 // --- TControlHelper
 
 function TControlHelper.GetJName(aJObj: TJSONObject; aIdx: integer): string;
@@ -38,7 +37,7 @@ var
   i: integer;
 begin
   for i := 0 to Length(cArr) do
-    if (Assigned(GetPropInfo(self, cArr[i]))) then
+    if (GetPropInfo(self, cArr[i]) <> nil) then
       Exit(cArr[i]);
 
   Result := '';
@@ -58,7 +57,7 @@ begin
   begin
      Part := Parts[i];
      PropInfo := GetPropInfo(Ctrl, Part);
-     if (not Assigned(PropInfo)) then
+     if (PropInfo = nil) then
        Exit(false);
 
      if (i < High(Parts)) then
@@ -89,7 +88,7 @@ begin
     aKey := aProp;
 
   JData := aJObj.Find(aKey);
-  if (Assigned(JData)) then
+  if (JData <> nil) then
     case JData.JSONType of
       jtNumber:
         SetProperty(aProp, JData.AsFloat);
@@ -105,11 +104,11 @@ var
   V: Variant;
   PropInfo: PPropInfo;
 begin
-  if aKey.IsEmpty then
+  if (aKey.IsEmpty()) then
     aKey := aProp;
 
   PropInfo := GetPropInfo(self, aProp);
-  if (not Assigned(PropInfo))
+  if (PropInfo = nil)
     then Exit();
 
   V := GetPropValue(self, PropInfo, True);

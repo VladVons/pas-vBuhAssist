@@ -8,12 +8,13 @@ unit uGrid;
 interface
 
 uses
-  SysUtils, fpjson, Grids;
+  SysUtils, fpjson, Grids, ValEdit;
 
 function StringGridDataToJson(aGrid: TStringGrid): TJSONArray;
 procedure StringGridDataFromJson(aGrid: TStringGrid; aJArr: TJSONArray);
 procedure StringGridHeadFromJson(aGrid: TStringGrid; aJObj: TJSONObject);
-
+function ValueListToJson(aGrid: TValueListEditor): TJSONArray;
+procedure ValueListFromJson(aGrid: TValueListEditor; aJArr: TJSONArray);
 
 implementation
 
@@ -84,6 +85,52 @@ begin
   end;
 end;
 
+//---
+function ValueListToJson(aGrid: TValueListEditor): TJSONArray;
+var
+  i: Integer;
+  Key, Val: string;
+  JObj: TJSONObject;
+begin
+  Result := TJSONArray.Create();
+
+  for i := 1 to aGrid.RowCount - 1 do // 0 — це заголовок
+  begin
+    Key := aGrid.Keys[i];
+    Val := aGrid.Values[Key];
+    if (Key.IsEmpty() and Val.IsEmpty()) then
+      continue;
+
+    JObj := TJSONObject.Create();
+    JObj.Add('key', Key);
+    JObj.Add('value', Val);
+
+    Result.Add(JObj);
+  end;
+end;
+
+procedure ValueListFromJson(aGrid: TValueListEditor; aJArr: TJSONArray);
+var
+  i: Integer;
+  JObj: TJSONObject;
+  Key, Val: string;
+begin
+  if (aJArr = nil) or (aJArr.Count = 0) then
+    Exit();
+
+  aGrid.Strings.Clear;
+  for i := 0 to aJArr.Count - 1 do
+  begin
+    JObj := TJSONObject(aJArr[i]);
+
+    Key := JObj.Get('key', '');
+    Val := JObj.Get('value', '');
+    if (Key.IsEmpty() and Val.IsEmpty()) then
+      continue;
+
+    aGrid.InsertRow(Key, Val, True);
+  end;
+end;
 
 initialization
   //SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);

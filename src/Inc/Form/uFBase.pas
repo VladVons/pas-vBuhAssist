@@ -19,17 +19,30 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
+    procedure SetTitle(const aStr: string);
+    function  GetTitle(): string;
   protected
     procedure SetFont(aForm: TForm);
     procedure SendMsg(const aData: TJSONObject);
     procedure Log(aType: char; const aMsg: string);
   public
+    property Title: string read GetTitle write SetTitle;
     function OnSendMsg(aForm: TForm; const aJObj: TJSONObject): boolean; virtual;
   end;
 
 
 implementation
 {$R *.lfm}
+
+procedure TFBase.SetTitle(const aStr: string);
+begin
+  LabelTitle.Caption := aStr;
+end;
+
+function TFBase.GetTitle(): string;
+begin
+  Result := LabelTitle.Caption;
+end;
 
 procedure TFBase.Log(aType: char; const aMsg: string);
 begin
@@ -55,7 +68,7 @@ procedure TFBase.FormShow(Sender: TObject);
 begin
   PanelTitle.Align := alNone;
   PanelTitle.Align := alTop;
-  LabelTitle.Caption := Caption;
+  //LabelTitle.Caption := Caption;
 end;
 
 function TFBase.OnSendMsg(aForm: TForm; const aJObj: TJSONObject): boolean;
@@ -69,7 +82,7 @@ var
 begin
   WinManager := TWinManager(Tag);
 
-  if (Assigned(WinManager) and (WinManager is TWinManager)) then
+  if (WinManager <> nil) and (WinManager is TWinManager) then
     WinManager.SendMsg(Self, aData);
 end;
 
