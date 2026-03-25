@@ -8,7 +8,7 @@ unit uSysVcl;
 interface
 
 uses
-  Classes, Windows, SysUtils, StrUtils, FileInfo, Process, LR_Class, LazUTF8, fpjson, jsonparser, Grids,
+  Classes, Windows, SysUtils, LR_Class, LazUTF8, fpjson,
   uSys;
 
 procedure ResourceLoadReport(const aName: string; aReport: TfrReport);
@@ -16,9 +16,6 @@ function ResourceLoadString(const aName: string; aEncoding: TEncoding = Nil): st
 function ResourceLoadJson(const aName: string): TJSONObject;
 function LatinToUkr(const aStr: string): string;
 function RemoveChars(const aStr, aRemove: string): string;
-function StringGridToJSONArray(aGrid: TStringGrid): TJSONArray;
-procedure StringGridFromJSONArray(aGrid: TStringGrid; aJArr: TJSONArray);
-
 
 implementation
 
@@ -101,63 +98,16 @@ end;
 function RemoveChars(const aStr, aRemove: string): string;
 var
   i: integer;
-  c: string;
+  Str: string;
 begin
   Result := '';
   for i := 1 to UTF8Length(aStr) do
   begin
-    c := UTF8Copy(aStr, i, 1);
-    if (Pos(c, aRemove) = 0) then
-      Result := Result + c;
+    Str := UTF8Copy(aStr, i, 1);
+    if (Pos(Str, aRemove) = 0) then
+      Result := Result + Str;
   end;
 end;
-
-function StringGridToJSONArray(aGrid: TStringGrid): TJSONArray;
-var
-  i, j: Integer;
-  Str: string;
-  JArr: TJSONArray;
-  HasData: boolean;
-begin
-  Result := TJSONArray.Create();
-
-  for i := aGrid.FixedRows to aGrid.RowCount - 1 do
-  begin
-    JArr := TJSONArray.Create();
-    HasData := False;
-    for j := 0 to aGrid.ColCount - 1 do
-    begin
-      Str := aGrid.Cells[j, i];
-      JArr.Add(Str);
-      HasData := HasData or (not Str.IsEmpty());
-    end;
-
-    if (HasData) then
-      Result.Add(JArr)
-    else
-      JArr.Free();
-  end;
-end;
-
-procedure StringGridFromJSONArray(aGrid: TStringGrid; aJArr: TJSONArray);
-var
-  i, j: Integer;
-  RowArr: TJSONArray;
-begin
-  if (aJArr = nil) or (aJArr.Count = 0) then
-    Exit();
-
-  aGrid.ColCount := TJSONArray(aJArr[0]).Count;
-  aGrid.RowCount := aJArr.Count + aGrid.FixedRows;
-
-  for i := 0 to aJArr.Count - 1 do
-  begin
-    RowArr := TJSONArray(aJArr[i]);
-    for j := 0 to RowArr.Count - 1 do
-      aGrid.Cells[j, i + aGrid.FixedRows] := RowArr.Strings[j];
-  end;
-end;
-
 
 initialization
   //SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);

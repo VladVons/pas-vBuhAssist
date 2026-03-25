@@ -346,6 +346,10 @@
         <Filename Value="Inc/Unit/uHelperVcl.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="Inc/Unit/uGrid.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

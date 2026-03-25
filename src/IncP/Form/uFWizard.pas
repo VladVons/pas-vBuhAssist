@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls, ExtCtrls, Grids, fpjson, TypInfo, Variants, jsonparser,
-  uSys, uSysVcl, uHelper, uHelperVcl, uFBase, uWinManager;
+  uSys, uSysVcl, uHelper, uHelperVcl, uFBase, uWinManager, uGrid;
 
 type
   { TFWizard }
@@ -23,7 +23,6 @@ type
     fWinManager: TWinManager;
     fFileData: string;
     procedure AddControls(aForm: TForm; aCtrls: TJSONArray; aJConf: TJSONObject);
-    procedure SetCtrlStringGrid(aCtrl: TStringGrid; aJObj: TJSONObject);
     procedure SetCtrlProperty(aCtrl: TControl; const aName: string; aVal: variant);
     procedure OnStringGridSelectCell(Sender: TObject; aCol, aRow: Integer; var CanSelect: Boolean);
   public
@@ -76,26 +75,6 @@ begin
       StringGrid := Sender as TStringGrid;
       StringGrid.Cells[aCol, aRow] := ExtractFileName(OpenDialog.FileName);
     end;
-  end;
-end;
-
-procedure TFWizard.SetCtrlStringGrid(aCtrl: TStringGrid; aJObj: TJSONObject);
-var
-  i: integer;
-  Fields: TJSONArray;
-  JObj: TJSONObject;
-begin
-  aCtrl.Options := aCtrl.Options + [goEditing];
-  //aCtrl.OnSelectCell := @OnStringGridSelectCell;
-
-  Fields := aJObj.Arrays['fields'];
-  aCtrl.ColCount := Fields.Count;
-  aCtrl.FixedCols := 0;
-  for i := 0 to Fields.Count - 1 do
-  begin
-     JObj := Fields.Objects[i];
-     aCtrl.Cells[i, 0] := JObj.Get('caption', '');
-     aCtrl.ColWidths[i] := JObj.Get('width', 100);
   end;
 end;
 
@@ -159,7 +138,7 @@ begin
     end;
 
     if (CtrlClass = 'TStringGrid') then
-      SetCtrlStringGrid(TStringGrid(Ctrl), JObjCtrl);
+      StringGridHeadFromJson(TStringGrid(Ctrl), JObjCtrl);
 
     BottomPad := JObjCtrl.Get('_bottompad', ConfBottomPad);
     if (Ctrl.Visible) and (BottomPad > 0) then
@@ -245,7 +224,7 @@ begin
       JObj := TJSONObject(JObjData.Find(CtrlName));
       if (Assigned(JObj)) then
         if (CtrlClass = 'TStringGrid') then
-          StringGridFromJSONArray(TStringGrid(Ctrl), JObj.Arrays['val'])
+          StringGridDataFromJson(TStringGrid(Ctrl), JObj.Arrays['val'])
         else
           Ctrl.SetJProperty(JObj, JObj.Get('prop', ''), 'val');
     end;
@@ -277,7 +256,7 @@ begin
           CtrlClass := Ctrl.ClassName();
           if (CtrlClass = 'TStringGrid') then
           begin
-            JArr := StringGridToJSONArray(TStringGrid(Ctrl));
+            JArr := StringGridDataToJson(TStringGrid(Ctrl));
             JItem.Add('val', JArr);
           end else begin
             Prop := Ctrl.GetInputName();
