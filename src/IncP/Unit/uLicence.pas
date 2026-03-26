@@ -173,6 +173,7 @@ var
 begin
   if (IsFile()) then
   begin
+    Str := '';
     Str.FromFile(fFile);
     Decrypted := StrDecrypt_AES(Str, fCryptKey);
 

@@ -98,14 +98,14 @@ end;
 function TMedIni.DirToFileApp(const aDir: string): string;
 begin
   Result := ConcatPaths([aDir, 'ezvit.exe']);
-  if (not FileExists(Result)) then
+  if (not Result.FileExists()) then
     Result := '';
 end;
 
 function TMedIni.DirToFileDb(const aDir: string): string;
 begin
   Result := ConcatPaths([aDir, 'db', 'zvit.fdb']);
-  if (not FileExists(Result)) then
+  if (not Result.FileExists()) then
     Result := '';
 end;
 
@@ -162,19 +162,6 @@ var
 begin
   if (not GetItem(aDirApp, 'db', '').IsEmpty()) then
      Exit(False);
-
-  //Str := ConcatPaths([aDirApp, 'config', 'global_client.config']);
-  //if (FileExists(Str)) then
-  //begin
-  //  StrDb := GetPathDbFromXML(Str);
-  //  if (StrDb.IsEmpty()) then
-  //    Exit(False);
-  //end;
-
-  //StrDb := StrDb.Replace('APPDATA', 'PROGRAMDATA');
-  //StrDb := ExpandEnvVar(StrDb);
-  //if (DirToFileDb(StrDb) = '') then
-  //   StrDb := aDirApp;
 
   try
     SL := TStringList.Create();

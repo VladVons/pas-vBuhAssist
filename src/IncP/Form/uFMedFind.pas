@@ -569,8 +569,6 @@ begin
 end;
 
 procedure TFMedFind.MenuItemRefreshClick(Sender: TObject);
-var
-  Str: string;
 begin
   ConnectToDb();
 

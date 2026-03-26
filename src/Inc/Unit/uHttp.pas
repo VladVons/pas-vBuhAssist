@@ -10,8 +10,7 @@ unit uHttp;
 interface
 
 uses
-  Classes, SysUtils, fphttpclient, opensslsockets, fpjson, Winsock, Sockets,
-  uHelper;
+  Classes, SysUtils, fphttpclient, opensslsockets, fpjson, Winsock, Sockets;
 
 function PostJSON(const aURL: string; aJSON: TJSONObject): TJSONObject;
 function GetUrlToString(const aURL: string; out aData: string): integer;

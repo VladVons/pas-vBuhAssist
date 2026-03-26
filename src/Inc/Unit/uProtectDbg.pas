@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, Windows,
-  uSys;
+  uSys, uHelper;
 
 function IsBreakpoint(aMethod: Pointer): Boolean;
 function IsDebugger1(): boolean;
@@ -54,7 +54,7 @@ var
   Str: string;
 begin
   Str := GetAppName() + '.lpr';
-  Result := FileExists(Str);
+  Result := Str.FileExists();
 end;
 
 end.

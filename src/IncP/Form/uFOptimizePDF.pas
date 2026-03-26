@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ExtCtrls,
-  uFBase, uGhostScript, uSettings, uSys, uSysVcl, uVarUtil, uStateStore;
+  uFBase, uGhostScript, uSettings, uSys, uSysVcl, uStateStore;
 
 type
   { TFOptimizePDF }

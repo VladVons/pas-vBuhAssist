@@ -25,6 +25,7 @@ type
     function GetLatin(): string;
     procedure ToFile(const aFile: string);
     procedure FromFile(const aFile: string);
+    function FileExists(): boolean;
   end;
 
   TStringListHelper = class helper for TStringList
@@ -207,13 +208,17 @@ begin
   end;
 end;
 
+function TStringHelperEx.FileExists(): boolean;
+begin
+  Result := SysUtils.FileExists(self);
+end;
+
 function TStringHelperEx.DelBOM(): string;
 const
   cUTF8BOM = #$EF#$BB#$BF;
 begin
   Result := StringReplace(self, cUTF8BOM, '', []);
 end;
-
 
 
 // --- TStringListHelper
@@ -453,7 +458,7 @@ end;
 //--- TJSONObjectHelper
 procedure TJSONObjectHelper.Update(aSrc: TJSONObject);
 var
-  i, j: Integer;
+  i: Integer;
   Key: String;
 begin
   for i := 0 to aSrc.Count - 1 do

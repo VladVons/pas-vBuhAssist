@@ -216,7 +216,7 @@ var
   Ctrl: TControl;
 begin
   fFileData := aFile;
-  if (FileExists(aFile)) then
+  if (aFile.FileExists()) then
     JObjData := TJSONObject(FileLoadJson(aFile))
   else
     JObjData := TJSONObject.Create();

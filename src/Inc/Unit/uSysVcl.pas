@@ -54,12 +54,9 @@ end;
 function ResourceLoadJson(const aName: string): TJSONObject;
 var
   Str, Path: string;
-  Raw: RawByteString;
-  Parser: TJSONParser;
-  JD: TJSONData;
 begin
   Path := ConcatPaths(['Res', 'Json', aName + '.json']);
-  if (FileExists(Path)) then
+  if (Path.FileExists()) then
     Result := TJSONObject(FileLoadJson(Path))
   else begin
     Path := 'Json_' + aName;

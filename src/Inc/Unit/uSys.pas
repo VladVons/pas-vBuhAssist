@@ -8,7 +8,8 @@ unit uSys;
 interface
 
 uses
-  Classes, Windows, SysUtils, StrUtils, FileInfo, Process, fpjson, LConvEncoding;
+  Classes, Windows, SysUtils, StrUtils, FileInfo, Process, fpjson, LConvEncoding,
+  uHelper;
 
 function AddDllDirectory(aDir: PWideChar): THandle; stdcall; external 'kernel32.dll';
 function SetDllDirectoryW(lpPathName: PWideChar): BOOL; stdcall; external 'kernel32.dll';
@@ -50,7 +51,7 @@ function ExecProcess(const aFile: string; aParam: TStrings = Nil; aWaitOnExit: b
 var
   Dir: string;
 begin
-  if (not FileExists(aFile)) then
+  if (not aFile.FileExists()) then
     raise Exception.Create('Не знайдено ' + aFile);
 
   Result := TProcess.Create(nil);
@@ -160,7 +161,7 @@ var
   HFile: TextFile;
 begin
   AssignFile(HFile, aFile);
-  if (FileExists(aFile)) then
+  if (aFile.FileExists()) then
     Append(HFile)
   else
     Rewrite(HFile);
@@ -281,14 +282,6 @@ begin
     Result := '"' + aStr + '"'
   else
     Result := aStr;
-end;
-
-function TestPas(): string;
-var
-  i: integer;
-begin
-  for i := 1 to 10 do
-      WriteLn(i);
 end;
 
 initialization

@@ -9,7 +9,7 @@ interface
 
 uses
   SysUtils, Process, Classes,
-  uSys;
+  uSys, uHelper;
 
 const
   cGS_Dir = 'addons\gs';
@@ -68,7 +68,7 @@ var
   FilePath, FilePathUnix: string;
 begin
   FilePath := ConcatPaths([cGS_Dir, 'viewjpeg.ps']);
-  if (not FileExists(FilePath)) then
+  if (not FilePath.FileExists()) then
     raise Exception.Create('Не знайдено ' + FilePath);
 
   FilePathUnix := StringReplace(aFileIn , '\', '/', [rfReplaceAll]);
