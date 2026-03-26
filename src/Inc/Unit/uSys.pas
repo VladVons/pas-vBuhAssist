@@ -28,6 +28,7 @@ function FileGetSize(const aFileName: string): Int64;
 function FileGetModDate(const aFile: string): TDateTime;
 function FileLoadJson(const aFile: string): TJSONData;
 procedure FileAppendText(const aFile, aMsg: string);
+function StrFromFile(const aFile: string): string;
 function ExpandEnvVar(const aStr: string): string;
 procedure WaitProcess(aPID: DWORD);
 function QuotedFile(const aStr: string): string;
@@ -172,6 +173,26 @@ begin
     CloseFile(HFile);
   end;
 end;
+
+function StrFromFile(const aFile: string): string;
+var
+  FStream: TFileStream;
+  Size: integer;
+begin
+  Result := '';
+  FStream := TFileStream.Create(aFile, fmOpenRead or fmShareDenyNone);
+  try
+    Size := FStream.Size;
+    if (Size > 0) then
+    begin
+      SetLength(Result, Size div SizeOf(char));
+      FStream.ReadBuffer(Pointer(Result)^, Size);
+    end;
+  finally
+    FStream.Free();
+  end;
+end;
+
 
 function GetAppName(): string;
 begin

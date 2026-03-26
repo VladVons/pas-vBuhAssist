@@ -24,7 +24,6 @@ type
     function TrimInt(const aChars: TSysCharSet = [' ']): string;
     function GetLatin(): string;
     procedure ToFile(const aFile: string);
-    procedure FromFile(const aFile: string);
     function FileExists(): boolean;
   end;
 
@@ -184,25 +183,6 @@ begin
   FStream := TFileStream.Create(aFile, fmCreate);
   try
     FStream.WriteBuffer(Pointer(self)^, System.Length(self));
-  finally
-    FStream.Free();
-  end;
-end;
-
-procedure TStringHelperEx.FromFile(const aFile: string);
-var
-  FStream: TFileStream;
-  Size: integer;
-begin
-  self := '';
-  FStream := TFileStream.Create(aFile, fmOpenRead or fmShareDenyNone);
-  try
-    Size := FStream.Size;
-    if (Size > 0) then
-    begin
-      SetLength(self, Size div SizeOf(char));
-      FStream.ReadBuffer(Pointer(self)^, Size);
-    end;
   finally
     FStream.Free();
   end;
