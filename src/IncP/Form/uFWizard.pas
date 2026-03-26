@@ -250,6 +250,9 @@ var
   Forms: TFormArray;
   Ctrl: TControl;
 begin
+  if (fFileData.IsEmpty()) then
+    Exit();
+
   JObjData := TJSONObject.Create();
   try
     Forms := fWinManager.GetForms();
