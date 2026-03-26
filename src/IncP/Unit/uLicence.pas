@@ -162,7 +162,7 @@ begin
 
     fJObjLic := TJSONObject(GetJSON(Decrypted));
     if (GetLicCount() > 0) then
-      StrToFile(Encrypted, fFile);
+      Encrypted.ToFile(fFile);
       //StrToFile(Decrypted, fFile);
   end;
 end;
@@ -173,7 +173,7 @@ var
 begin
   if (IsFile()) then
   begin
-    Str := StrFromFile(fFile);
+    Str.FromFile(fFile);
     Decrypted := StrDecrypt_AES(Str, fCryptKey);
 
     FreeAndNil(fJObjLic);

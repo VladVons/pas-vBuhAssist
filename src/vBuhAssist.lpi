@@ -19,7 +19,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="11"/>
       <RevisionNr Value="3"/>
-      <BuildNr Value="96"/>
+      <BuildNr Value="97"/>
       <StringTable ProductName="vBuhAssist"/>
     </VersionInfo>
     <BuildModes>
@@ -297,10 +297,6 @@
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="Inc/Unit/uVarHelper.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
         <Filename Value="IncP/Form/uFMedFindAkz.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FMedFindAkz"/>
@@ -348,6 +344,10 @@
       </Unit>
       <Unit>
         <Filename Value="Inc/Unit/uGrid.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Inc/Unit/uHelper.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
     </Units>

@@ -27,8 +27,6 @@ function FileGetSize(const aFileName: string): Int64;
 function FileGetModDate(const aFile: string): TDateTime;
 function FileLoadJson(const aFile: string): TJSONData;
 procedure FileAppendText(const aFile, aMsg: string);
-procedure StrToFile(const aStr: AnsiString; aFile: string);
-function StrFromFile(const aFile: string): AnsiString;
 function ExpandEnvVar(const aStr: string): string;
 procedure WaitProcess(aPID: DWORD);
 function QuotedFile(const aStr: string): string;
@@ -154,37 +152,6 @@ begin
     end;
   finally
     Masks.Free();
-  end;
-end;
-
-procedure StrToFile(const aStr: AnsiString; aFile: string);
-var
-  FS: TFileStream;
-begin
-  FS := TFileStream.Create(aFile, fmCreate);
-  try
-    FS.WriteBuffer(Pointer(aStr)^, Length(aStr));
-  finally
-    FS.Free();
-  end;
-end;
-
-function StrFromFile(const aFile: string): AnsiString;
-var
-  FS: TFileStream;
-  Size: integer;
-begin
-  Result := '';
-  FS := TFileStream.Create(aFile, fmOpenRead or fmShareDenyNone);
-  try
-    Size := FS.Size;
-    if (Size > 0) then
-    begin
-      SetLength(Result, Size div SizeOf(char));
-      FS.ReadBuffer(Pointer(Result)^, Size);
-    end;
-  finally
-    FS.Free();
   end;
 end;
 

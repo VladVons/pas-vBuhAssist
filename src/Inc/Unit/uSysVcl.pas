@@ -8,8 +8,8 @@ unit uSysVcl;
 interface
 
 uses
-  Classes, Windows, SysUtils, LR_Class, LazUTF8, fpjson,
-  uSys;
+  Classes, Windows, SysUtils, LR_Class, LazUTF8, fpjson, jsonparser,
+  uSys, uHelper;
 
 procedure ResourceLoadReport(const aName: string; aReport: TfrReport);
 function ResourceLoadString(const aName: string; aEncoding: TEncoding = Nil): string;
@@ -33,35 +33,38 @@ end;
 
 function ResourceLoadString(const aName: string; aEncoding: TEncoding = Nil): string;
 var
-  RS: TResourceStream;
-  SS: TStringStream;
+  RStream: TResourceStream;
+  SStream: TStringStream;
 begin
-  //if (aEncoding = Nil) then
-  //  aEncoding := TEncoding.GetEncoding(1251);
-  SS := TStringStream.Create('', aEncoding);
+  if (aEncoding = Nil) then
+    aEncoding := TEncoding.UTF8;
+  SStream := TStringStream.Create('', aEncoding);
   
-  RS := TResourceStream.Create(HInstance, aName, RT_RCDATA);
+  RStream := TResourceStream.Create(HInstance, aName, RT_RCDATA);
   try
-    SS.CopyFrom(RS, RS.Size);
-    SS.Position := 0;
-    Result := SS.DataString;
+    SStream.CopyFrom(RStream, RStream.Size);
+    SStream.Position := 0;
+    Result := SStream.DataString;
   finally
-    RS.Free();
-    SS.Free();
+    RStream.Free();
+    SStream.Free();
   end;
 end;
 
 function ResourceLoadJson(const aName: string): TJSONObject;
 var
   Str, Path: string;
+  Raw: RawByteString;
+  Parser: TJSONParser;
+  JD: TJSONData;
 begin
-  Path := ConcatPaths(['res', 'Json', aName + '.json']);
+  Path := ConcatPaths(['Res', 'Json', aName + '.json']);
   if (FileExists(Path)) then
     Result := TJSONObject(FileLoadJson(Path))
   else begin
     Path := 'Json_' + aName;
     Str := ResourceLoadString(Path);
-    Result := TJSONObject(GetJSON(Str));
+    Result := TJSONObject(GetJSON(Str.DelBOM()));
   end;
 end;
 

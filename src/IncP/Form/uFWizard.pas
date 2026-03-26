@@ -284,7 +284,7 @@ begin
       end;
 
     Str := JObjData.FormatJSON();
-    StrToFile(Str, fFileData);
+    Str.ToFile(fFileData);
   finally
     JObjData.Free();
   end;

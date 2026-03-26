@@ -9,19 +9,22 @@ unit uHelper;
 interface
 
 uses
-  Classes, SysUtils, StrUtils, fpjson, RegExpr;
+  Classes, SysUtils, StrUtils, fpjson;
 
 type
   TStringMapFunc = function(const aStr: string): string;
 
   TStringHelperEx = type helper(TStringHelper) for string
     function Before(const aStr: string): string;
+    function DelBOM(): string;
     function Left(aLen: integer; aDoCut: boolean = False): string;
     function PosEx(const aStr: string; aOfst: integer = 1): integer;
     function Right(aLen: Integer; aDoCut: boolean = False): string;
     function TrimExt(const aChars: TSysCharSet = [' ']): string;
     function TrimInt(const aChars: TSysCharSet = [' ']): string;
     function GetLatin(): string;
+    procedure ToFile(const aFile: string);
+    procedure FromFile(const aFile: string);
   end;
 
   TStringListHelper = class helper for TStringList
@@ -54,6 +57,7 @@ type
   end;
 
 implementation
+
 
 
 // --- TStringHelperEx
@@ -171,6 +175,46 @@ begin
 
   SetLength(Result, Len);
 end;
+
+procedure TStringHelperEx.ToFile(const aFile: string);
+var
+  FStream: TFileStream;
+begin
+  FStream := TFileStream.Create(aFile, fmCreate);
+  try
+    FStream.WriteBuffer(Pointer(self)^, System.Length(self));
+  finally
+    FStream.Free();
+  end;
+end;
+
+procedure TStringHelperEx.FromFile(const aFile: string);
+var
+  FStream: TFileStream;
+  Size: integer;
+begin
+  self := '';
+  FStream := TFileStream.Create(aFile, fmOpenRead or fmShareDenyNone);
+  try
+    Size := FStream.Size;
+    if (Size > 0) then
+    begin
+      SetLength(self, Size div SizeOf(char));
+      FStream.ReadBuffer(Pointer(self)^, Size);
+    end;
+  finally
+    FStream.Free();
+  end;
+end;
+
+function TStringHelperEx.DelBOM(): string;
+const
+  cUTF8BOM = #$EF#$BB#$BF;
+begin
+  Result := StringReplace(self, cUTF8BOM, '', []);
+end;
+
+
 
 // --- TStringListHelper
 function TStringListHelper.AddArray(const aArr: TStringArray): TStringList;
@@ -403,8 +447,10 @@ begin
   Result := Self;
 end;
 
-//---
 
+
+
+//--- TJSONObjectHelper
 procedure TJSONObjectHelper.Update(aSrc: TJSONObject);
 var
   i, j: Integer;
