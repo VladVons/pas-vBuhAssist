@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, ExtCtrls, fpjson, DateUtils, LConvEncoding, Dialogs, System.UITypes, Process, Windows,
-  uLog, uSettings, uLicence, uFMessage, uSys, uConst;
+  uLog, uSettings, uLicence, uFMessage, uSys, uHelper, uConst;
 
 type
   TAnnonce = class(TSettings)
@@ -136,12 +136,12 @@ begin
 
     Params := TStringList.Create();
     Params.Add('--url=' + JItem.Get('url', ''));
-    Params.Add('--dir=' + QuotedFile(GetAppDir()));
-    Params.Add('--app=' + QuotedFile(ParamStr(0)));
+    Params.Add('--dir=' + GetAppDir().FileQuoted());
+    Params.Add('--app=' + ParamStr(0).FileQuoted());
     //Params.Add('--pid=' + IntToStr(GetCurrentProcessId()));
     Params.Add('--delay=2000');
-    Params.Add('--log=' + QuotedFile(FileLog));
-    Process := ExecProcess(cUpdater, Params, False);
+    Params.Add('--log=' + FileLog.FileQuoted());
+    Process := ExecProcess(cUpdater, Params);
 
     Log.Print('i', 'Перезавантаження програми');
     Sleep(1000);

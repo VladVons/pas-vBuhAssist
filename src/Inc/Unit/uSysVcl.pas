@@ -109,8 +109,5 @@ begin
   end;
 end;
 
-initialization
-  //SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
-
 end.
 

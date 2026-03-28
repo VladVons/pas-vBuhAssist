@@ -1,4 +1,4 @@
-object Frame: TFrame
+object FrWizard1: TFrWizard1
   Left = 0
   Height = 334
   Top = 0

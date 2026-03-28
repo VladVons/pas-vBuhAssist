@@ -13,18 +13,27 @@ uses
 
 type
   TStringMapFunc = function(const aStr: string): string;
+  TCharSet = set of Char;
 
   TStringHelperEx = type helper(TStringHelper) for string
+    function After(const aStr: string): string;
     function Before(const aStr: string): string;
+    function Between(const aStart, aEnd: string): string;
     function DelBOM(): string;
     function Left(aLen: integer; aDoCut: boolean = False): string;
+    function Macros(const aNames, aValues: TStringArray): string;
+    function Macros(aDict: TStringList): string;
     function PosEx(const aStr: string; aOfst: integer = 1): integer;
     function Right(aLen: Integer; aDoCut: boolean = False): string;
+    function Replaces(const aOld, aNew: TStringArray): string;
     function TrimExt(const aChars: TSysCharSet = [' ']): string;
     function TrimInt(const aChars: TSysCharSet = [' ']): string;
-    function GetLatin(): string;
+    function Filter(const aAllowed: TCharSet; aInvert: boolean = False): string;
+    function Filter(aFrom, aTo: char; aInvert: boolean = False): string;
+    function Filter(const aAllowed: string; aInvert: boolean = False): string;
     procedure ToFile(const aFile: string);
     function FileExists(): boolean;
+    function FileQuoted(): string;
   end;
 
   TStringListHelper = class helper for TStringList
@@ -83,12 +92,40 @@ begin
   Result := Pos(aStr, self, aOfst);
 end;
 
+function TStringHelperEx.After(const aStr: string): string;
+var
+  Idx: SizeInt;
+begin
+  Idx := Pos(aStr, self);
+  if (Idx > 0) then
+    Result := System.Copy(Self, Idx + System.Length(aStr), MaxInt)
+  else
+    Result := '';
+end;
+
 function TStringHelperEx.Before(const aStr: string): string;
 begin
   if (Pos(aStr, self) > 0) then
     Result := System.Copy(self, 1, Pos(aStr, self) - 1)
   else
     Result := self;
+end;
+
+function TStringHelperEx.Between(const aStart, aEnd: string): string;
+var
+  Pos1, Pos2: SizeInt;
+begin
+  Pos1 := Pos(aStart, Self);
+  if (Pos1 = 0) then
+    Exit('');
+
+  Inc(Pos1, System.Length(aStart));
+
+  Pos2 := System.Pos(aEnd, self, Pos1);
+  if (Pos2 = 0) then
+    Exit('');
+
+  Result := System.Copy(Self, Pos1, Pos2 - Pos1);
 end;
 
 function TStringHelperEx.Right(aLen: Integer; aDoCut: boolean = False): string;
@@ -154,7 +191,62 @@ begin
   SetLength(Result, Len);
 end;
 
-function TStringHelperEx.GetLatin(): string;
+function TStringHelperEx.Replaces(const aOld, aNew: TStringArray): string;
+var
+  i: Integer;
+begin
+  if (System.Length(aOld) <> System.Length(aNew)) then
+    raise Exception.Create('arrays length mismatch');
+
+  Result := self;
+  for i := 0 to System.Length(aOld) - 1 do
+    Result := StringReplace(Result, aOld[i], aNew[i], [rfReplaceAll]);
+end;
+
+function TStringHelperEx.Macros(const aNames, aValues: TStringArray): string;
+var
+  i: integer;
+begin
+  if (System.Length(aNames) <> System.Length(aValues)) then
+    raise Exception.Create('arrays length mismatch');
+
+  Result := self;
+  for i := 0 to System.Length(aNames) - 1do
+    Result := StringReplace(Result, '{{' + aNames[i] + '}}', aValues[i], [rfReplaceAll]);
+end;
+
+function TStringHelperEx.Macros(aDict: TStringList): string;
+var
+  i: integer;
+begin
+  Result := self;
+  for i := 0 to aDict.Count - 1 do
+    Result := StringReplace(Result, '{{' + aDict.Names[i] + '}}', aDict.ValueFromIndex[i], [rfReplaceAll]);
+end;
+
+//FilterSet(['A'..'Z', 'a'..'z'])
+function TStringHelperEx.Filter(const aAllowed: TCharSet; aInvert: boolean = False): string;
+var
+  i, Len: Integer;
+  C: Char;
+begin
+  SetLength(Result, System.Length(self));
+  Len := 0;
+
+  for i := 1 to System.Length(self) do
+  begin
+    C := self[i];
+    if (C in aAllowed) and (aInvert) then
+    begin
+      Inc(Len);
+      Result[Len] := C;
+    end;
+  end;
+
+  SetLength(Result, Len);
+end;
+
+function TStringHelperEx.Filter(aFrom, aTo: char; aInvert: boolean = False): string;
 var
   i, Len: Integer;
   C: Char;
@@ -164,9 +256,29 @@ begin
 
   for i := 1 to System.Length(Self) do
   begin
-    C := Self[i];
+    C := self[i];
+    if ((C >= aFrom) and (C <= aTo)) xor (aInvert) then
+    begin
+      Inc(Len);
+      Result[Len] := C;
+    end;
+  end;
 
-    if ((C >= 'A') and (C <= 'Z')) or ((C >= 'a') and (C <= 'z')) then
+  SetLength(Result, Len);
+end;
+
+function TStringHelperEx.Filter(const aAllowed: string; aInvert: boolean = False): string;
+var
+  i, Len: Integer;
+  C: Char;
+begin
+  SetLength(Result, System.Length(Self));
+  Len := 0;
+
+  for i := 1 to System.Length(Self) do
+  begin
+    C := self[i];
+    if (Pos(C, aAllowed) > 0) xor (aInvert) then
     begin
       Inc(Len);
       Result[Len] := C;
@@ -200,6 +312,13 @@ begin
   Result := StringReplace(self, cUTF8BOM, '', []);
 end;
 
+function TStringHelperEx.FileQuoted(): string;
+begin
+ if (Pos(' ', self) > 0) then
+    Result := '"' + self + '"'
+  else
+    Result := self;
+end;
 
 // --- TStringListHelper
 function TStringListHelper.AddArray(const aArr: TStringArray): TStringList;

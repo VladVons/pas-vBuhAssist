@@ -29,7 +29,8 @@ implementation
 
 constructor TProtectTimer.Create(const aFile: string);
 begin
-  inherited;
+  inherited.Create(aFile);
+
   fTimer := TTimer.Create(Nil);
   fTimer.Enabled := False;
 end;

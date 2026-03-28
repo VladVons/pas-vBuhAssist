@@ -6,6 +6,7 @@ inherited FWizard: TFWizard
   Caption = 'FWizard'
   ClientHeight = 317
   ClientWidth = 801
+  Visible = True
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   inherited PanelTitle: TPanel

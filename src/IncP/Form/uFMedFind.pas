@@ -210,7 +210,7 @@ begin
   //['FJ-30010%']
   QueryCharcodeNot(aQuery, GetParentDocsExcl());
 
-  //Log.Print('i', ExpandSQL(SQLQueryGridPrev));
+  //Log('i', ExpandSQL(aQuery));
   aQuery.Open();
   Result := aQuery.RecordCount;
 end;
@@ -684,8 +684,20 @@ begin
 end;
 
 procedure TFMedFind.FormCreate(Sender: TObject);
+var
+  Str1, Str2: string;
 begin
   inherited;
+
+  Str1 := '12345678901234567890';
+  //Str := Str.Between('23', '89');
+  //Str := Str.Replaces(['12', '7'], ['ab', '?']);
+  //Str1 := 'the {{town}} is a capital of Great britian';
+  //Str2 := Str1.Macros(['town'], ['london']);
+  //Str2 := Str1.Filter('6', '9');
+  //Str2 := Str1.Filter(['1'..'5'], True);
+  //Str2 := Str1.Filter('1234');
+
 
   SetFont(self);
   ProtectTimer.TimingStart();

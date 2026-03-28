@@ -11,7 +11,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Dialogs,
-  uUserData, uSys;
+  uUserData, uSys, uProtectDbg;
 
  type
   TAppException = class(TUserData)
@@ -64,7 +64,8 @@ begin
     Msg := Msg + Stack + LineEnding;
 
     FileAppendText(fFile, Msg);
-    MessageDlg('Помилка', Msg + LineEnding + fFile, mtError, [mbOK], 0);
+    if (IsDeveloper()) then
+      MessageDlg('Помилка', Msg + LineEnding + fFile, mtError, [mbOK], 0);
 
     fFlagHandler := False;
   end;

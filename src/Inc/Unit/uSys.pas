@@ -15,7 +15,7 @@ function AddDllDirectory(aDir: PWideChar): THandle; stdcall; external 'kernel32.
 function SetDllDirectoryW(lpPathName: PWideChar): BOOL; stdcall; external 'kernel32.dll';
 function SetDefaultDllDirectories(aDirFlags: DWORD): BOOL; stdcall; external 'kernel32.dll';
 
-function ExecProcess(const aFile: string; aParam: TStrings = Nil; aWaitOnExit: boolean = True): TProcess;
+function ExecProcess(const aFile: string; aParam: TStrings = Nil; aOptions: TProcessOptions = []): TProcess;
 function GetMonthNameUa(aMonthNum: integer): string;
 function GetAppProgramData(): string;
 function GetAppName(): string;
@@ -31,7 +31,6 @@ procedure FileAppendText(const aFile, aMsg: string);
 function StrFromFile(const aFile: string): string;
 function ExpandEnvVar(const aStr: string): string;
 procedure WaitProcess(aPID: DWORD);
-function QuotedFile(const aStr: string): string;
 
 implementation
 
@@ -48,7 +47,7 @@ begin
   end;
 end;
 
-function ExecProcess(const aFile: string; aParam: TStrings = Nil; aWaitOnExit: boolean = True): TProcess;
+function ExecProcess(const aFile: string; aParam: TStrings; aOptions: TProcessOptions): TProcess;
 var
   Dir: string;
 begin
@@ -64,10 +63,10 @@ begin
 
   Result.ShowWindow := swoHide;
 
-  Result.Options := [];
+  if (aOptions = []) then
+     aOptions :=  [poWaitOnExit];
+  Result.Options := aOptions;
   //Result.Options := [poUsePipes] //uncatched exception in slave;
-  if (aWaitOnExit) then
-    Result.Options := Result.Options + [poWaitOnExit];
 
   if (aParam <> nil) then
     Result.Parameters := aParam;
@@ -296,17 +295,6 @@ begin
     p1 := Pos('%', Result);
   end;
 end;
-
-function QuotedFile(const aStr: string): string;
-begin
- if (Pos(' ', aStr) > 0) then
-    Result := '"' + aStr + '"'
-  else
-    Result := aStr;
-end;
-
-initialization
-  //SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
 
 end.
 

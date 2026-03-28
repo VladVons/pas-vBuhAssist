@@ -30,6 +30,7 @@ type
     procedure CloseActive();
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure SetActivePage(aIdx: integer);
+    procedure Visible(aShow: boolean);
   end;
 
   TOneInstance = class
@@ -99,6 +100,8 @@ begin
   end;
 end;
 
+//--- TWinManager
+
 constructor TWinManager.Create(aPageControl: TPageControl; aPopupMenu: TPopupMenu);
 begin
   inherited Create();
@@ -107,6 +110,11 @@ begin
 
   if (aPopupMenu <> nil) then
     fPageControl.OnMouseDown := @PageControlMouseDown;
+end;
+
+procedure TWinManager.Visible(aShow: boolean);
+begin
+  fPageControl.Visible := aShow;
 end;
 
 function TWinManager.GetForms(): TFormArray;

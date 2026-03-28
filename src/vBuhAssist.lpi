@@ -19,7 +19,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="11"/>
       <RevisionNr Value="3"/>
-      <BuildNr Value="97"/>
+      <BuildNr Value="101"/>
       <StringTable ProductName="vBuhAssist"/>
     </VersionInfo>
     <BuildModes>
@@ -325,13 +325,6 @@
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="IncP/Frame/uFmWizard1.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="Frame"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Frame"/>
-      </Unit>
-      <Unit>
         <Filename Value="IncP/Form/uFWizard.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FWizard"/>
@@ -349,6 +342,20 @@
       <Unit>
         <Filename Value="Inc/Unit/uHelper.pas"/>
         <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="IncP/Frame/uFrStringGrid.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FrStringGrid"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit>
+      <Unit>
+        <Filename Value="IncP/Form/uFTest.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FTest"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
       </Unit>
     </Units>
   </ProjectOptions>

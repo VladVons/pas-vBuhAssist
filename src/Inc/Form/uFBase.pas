@@ -89,6 +89,7 @@ end;
 procedure TFBase.FormCreate(Sender: TObject);
 begin
   Color := clWhite;
+  Title := Caption;
 end;
 
 initialization

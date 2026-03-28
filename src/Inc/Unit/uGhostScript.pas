@@ -8,21 +8,22 @@ unit uGhostScript;
 interface
 
 uses
-  SysUtils, Process, Classes,
+  SysUtils, Classes, Process,
   uSys, uHelper;
 
 const
-  cGS_Dir = 'addons\gs';
+  cGS_Dir = 'addons' + PathDelim + 'gs';
 
 function GS_OptimizePdf(const aFileIn, aFileOut: string): integer;
 function GS_JpgToPdf(const aFileIn, aFileOut: string): integer;
+function GS_BmpToPdf(const aFileIn, aFileOut: string): integer;
 
 implementation
 
 function GS_Exec(aParam: TStrings): integer;
 var
   Process: TProcess;
-  FilePath, Dir: string;
+  Str, FilePath, Dir: string;
   Output: TStringList;
 begin
   Output := TStringList.Create();
@@ -30,12 +31,16 @@ begin
   Dir := ExtractFilePath(ParamStr(0));
   FilePath := ConcatPaths([Dir, cGS_Dir, 'gswin32c.exe']);
   try
-    Process := ExecProcess(FilePath, aParam);
+    Process := ExecProcess(FilePath, aParam, [poWaitOnExit, poUsePipes]);
     Result := Process.ExitStatus;
-
-    Output.LoadFromStream(Process.Stderr);
-    Output.LoadFromStream(Process.Output);
-    //WriteLn(Output.Text);
+    if (Result <> 0) then
+    begin
+      //Output.LoadFromStream(Process.Output);
+      //Str := Output.Text;
+      Output.LoadFromStream(Process.Stderr);
+      Str := Format('Process error (%d): %s', [Result, Output.Text]);
+      raise Exception.Create(Str);
+    end;
   finally
     Process.Free();
     Output.Free();
@@ -49,13 +54,38 @@ begin
   try
     Params := TStringList.Create();
     Params.Add('-sDEVICE=pdfwrite');
-    Params.Add('-dCompatibilityLevel=1.4');
     Params.Add('-dPDFSETTINGS=/ebook');
     Params.Add('-dNOPAUSE');
     Params.Add('-dQUIET');
     Params.Add('-dBATCH');
-    Params.Add('-sOutputFile=' + aFileOut);
-    Params.Add(aFileIn);
+    Params.Add('-sOutputFile=' + aFileOut.FileQuoted());
+    Params.Add(aFileIn.FileQuoted());
+    Result := GS_Exec(Params);
+  finally
+    Params.Free();
+  end;
+end;
+
+function GS_ScriptToPdf(const aFileIn, aFileOut, aFileScript, aScript: string): integer;
+var
+  Params: TStringList;
+  FilePath, FilePathUnix: string;
+begin
+  FilePath := ConcatPaths([ExtractFilePath(ParamStr(0)), cGS_Dir, aFileScript]);
+  if (not FilePath.FileExists()) then
+    raise Exception.Create('Не знайдено ' + FilePath);
+
+  FilePathUnix := aFileIn.Replaces(['\'], ['/']).FileQuoted();
+
+  Params := TStringList.Create();
+  Params.Add('-dNOSAFER');
+  Params.Add('-sDEVICE=pdfwrite');
+  Params.Add('-dPDFSETTINGS=/screen');
+  Params.Add('-dNOPAUSE');
+  Params.Add('-dBATCH');
+  Params.Add('-sOutputFile=' + aFileOut.FileQuoted());
+  Params.Add(Format('%s -c (%s) %s', [FilePath.FileQuoted(), FilePathUnix, aScript]));
+  try
     Result := GS_Exec(Params);
   finally
     Params.Free();
@@ -63,29 +93,13 @@ begin
 end;
 
 function GS_JpgToPdf(const aFileIn, aFileOut: string): integer;
-var
-  Params: TStringList;
-  FilePath, FilePathUnix: string;
 begin
-  FilePath := ConcatPaths([cGS_Dir, 'viewjpeg.ps']);
-  if (not FilePath.FileExists()) then
-    raise Exception.Create('Не знайдено ' + FilePath);
+  Result := GS_ScriptToPdf(aFileIn, aFileOut, 'viewjpeg.ps', 'viewJPEG');
+end;
 
-  FilePathUnix := StringReplace(aFileIn , '\', '/', [rfReplaceAll]);
-  try
-    Params := TStringList.Create();
-    Params.Add('-dNOSAFER');
-    Params.Add('-sDEVICE=pdfwrite');
-    Params.Add('-dCompatibilityLevel=1.4');
-    Params.Add('-dPDFSETTINGS=/screen');
-    Params.Add('-dNOPAUSE');
-    Params.Add('-dBATCH');
-    Params.Add('-sOutputFile=' + aFileOut);
-    Params.Add(FilePath + ' -c "(' + FilePathUnix  + ')" viewJPEG');
-    Result := GS_Exec(Params);
-  finally
-    Params.Free();
-  end;
+function GS_BmpToPdf(const aFileIn, aFileOut: string): integer;
+begin
+  //Result := GS_ScriptToPdf(aFileIn, aFileOut, 'view???.ps', 'view???');
 end;
 
 end.

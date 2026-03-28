@@ -2,9 +2,13 @@ Report_CheckDocs1 RCDATA "Res/Report/CheckDocs1.lrf"
 
 Text_UserAgreement RCDATA "Res/Text/UserAgreement.txt"
 
-Json_FMedFindAkz RCDATA "Res/Json/FMedFindAkz.json"
-Json_FMedFindPdv RCDATA "Res/Json/FMedFindPdv.json"
+Json_FMedFindAkz  RCDATA "Res/Json/FMedFindAkz.json"
+Json_FMedFindPdv  RCDATA "Res/Json/FMedFindPdv.json"
 Json_FMedFindZvit RCDATA "Res/Json/FMedFindZvit.json"
 
+Json_FWizardPdv0 RCDATA "Res/Json/FWizardPdv0.json"
 Json_FWizardPdv1 RCDATA "Res/Json/FWizardPdv1.json"
 Json_FWizardPdv2 RCDATA "Res/Json/FWizardPdv2.json"
+Json_FWizardPdv3 RCDATA "Res/Json/FWizardPdv3.json"
+Json_FWizardPdv4 RCDATA "Res/Json/FWizardPdv4.json"
+Json_FWizardPdv5 RCDATA "Res/Json/FWizardPdv5.json"

@@ -10,7 +10,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Menus, ActnList, Windows, ExtCtrls,
   ComCtrls, StdCtrls, fpjson,
-  uFAbout, uFMedFindZvit, uFMedFindAkz, uFMedFindPdv, uFOptimizePDF, uFSettings, uFLogin, uFMessage,
+  uFAbout, uFMedFindZvit, uFMedFindAkz, uFMedFindPdv, uFOptimizePDF, uFSettings, uFTest, uFLogin, uFMessage,
   uWinManager, uLicence, uLog, uSettings, uStateStore, uSys, uSysVcl, uConst, uProtectTimer, uAnnonce, uMed, uHelper;
 
 type
@@ -218,13 +218,13 @@ end;
 procedure TFMain.FormsLoad();
 const
   cSect = 'Forms';
-  cAutoForm: TStringArray = ('TFMedFindZvit', 'TFMedFindAkz', 'TFMedFindPdv', 'TFSettings');
+  cAutoForm: TStringArray = ('TFMedFindZvit', 'TFMedFindAkz', 'TFMedFindPdv', 'TFSettings', 'FTest');
 var
   i: integer;
   SL: TStringList;
   Cls: TClass;
 begin
-  RegisterClasses([TFMedFindZvit, TFMedFindAkz, TFMedFindPdv, TFOptimizePDF, TFSettings]);
+  RegisterClasses([TFMedFindZvit, TFMedFindAkz, TFMedFindPdv, TFOptimizePDF, TFSettings, TFTest]);
   WinManager := TWinManager.Create(PageControl1, PopupMenuPageControl);
 
   SL := Settings.GetSection(cSect);

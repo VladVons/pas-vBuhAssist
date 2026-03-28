@@ -14,8 +14,6 @@ uses
 type
   { TFMedFindPdv }
   TFMedFindPdv = class(TFMedFind)
-    BitBtnWizard1: TBitBtn;
-    BitBtnWizard2: TBitBtn;
     DataSourceCur: TDataSource;
     DataSourcePrev: TDataSource;
     SQLQueryCur: TSQLQuery;
@@ -44,8 +42,6 @@ type
     SQLTransaction: TSQLTransaction;
     procedure FormCreate(Sender: TObject);
     procedure SQLQueryCurCalcFields(DataSet: TDataSet);
-    procedure BitBtnWizard1Click(Sender: TObject);
-    procedure BitBtnWizard2Click(Sender: TObject);
   protected
     function  GetParentQueryCur(): TSQLQuery; override;
     function  GetParentQueryPrev(): TSQLQuery; override;
@@ -93,30 +89,6 @@ end;
 procedure TFMedFindPdv.SQLQueryCurCalcFields(DataSet: TDataSet);
 begin
   SQLQueryGridCurCalcFields(DataSet);
-end;
-
-procedure TFMedFindPdv.BitBtnWizard1Click(Sender: TObject);
-const
-  cDir = 'Data\12345';
-  cFile = 'FWizardPdv1';
-var
-  Form: TFWizard;
-begin
-  Form := TFWizard(WinManager.Add(TFWizard));
-  Form.LoadScheme(cFile);
-
-  if (not DirectoryExists(cDir)) then
-    ForceDirectories(cDir);
-
-  Form.LoadData(ConcatPaths([cDir, cFile + '_dat.json']));
-end;
-
-procedure TFMedFindPdv.BitBtnWizard2Click(Sender: TObject);
-var
-  Form: TFWizard;
-begin
-  Form := TFWizard(WinManager.Add(TFWizard));
-  Form.LoadScheme('FWizardPdv2');
 end;
 
 procedure TFMedFindPdv.FormCreate(Sender: TObject);

@@ -63,7 +63,6 @@ begin
     Result := fJObjLic.Arrays['licences'].Count;
 end;
 
-
 function TLicence.Request(aParam: TJSONObject): TJSONObject;
 var
   i: Integer;
@@ -180,7 +179,7 @@ begin
     try
       fJObjLic := TJSONObject(GetJSON(Decrypted));
     except on E: Exception do
-      Log.Print('x', 'Wrong file type');
+      Log.Print('x', Format('Не вірний формат файлу %s', [fFile]));
     end;
   end;
 end;

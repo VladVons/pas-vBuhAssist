@@ -1,43 +1,15 @@
 inherited FMedFindPdv: TFMedFindPdv
   Caption = 'Облік ПДВ'
   OnCreate = FormCreate
-  inherited PanelFrame: TPanel
-    inherited PanelComboBox: TPanel
-      object BitBtnWizard1: TBitBtn[16]
-        Left = 712
-        Height = 38
-        Top = 128
-        Width = 94
-        Caption = 'Wizard1'
-        TabOrder = 11
-        OnClick = BitBtnWizard1Click
-      end
-    end
+  object DataSourcePrev: TDataSource[7]
+    Left = 120
+    Top = 360
   end
-  object BitBtnWizard2: TBitBtn[2]
-    Left = 712
-    Height = 38
-    Top = 224
-    Width = 94
-    Caption = 'Wizard2'
-    TabOrder = 2
-    OnClick = BitBtnWizard2Click
+  object DataSourceCur: TDataSource[8]
+    Left = 48
+    Top = 360
   end
-  inherited frReport1: TfrReport[3]
-  end
-  inherited frDBDataSet1: TfrDBDataSet[4]
-  end
-  inherited FrPrintGrid1: TFrPrintGrid[5]
-  end
-  inherited SelectDirectoryDialog1: TSelectDirectoryDialog[6]
-  end
-  inherited PopupMenuActivation: TPopupMenu[7]
-  end
-  object DataSourcePrev: TDataSource[8]
-  end
-  object DataSourceCur: TDataSource[9]
-  end
-  object SQLQueryCur: TSQLQuery[10]
+  object SQLQueryCur: TSQLQuery[9]
     FieldDefs = <    
       item
         Name = 'EDRPOU'
@@ -158,15 +130,15 @@ inherited FMedFindPdv: TFMedFindPdv
       '        COALESCE(CARD.DOCNAME, FORM.NAME) AS FORM_NAME,'
       '        CAST(CARD.MODDATE AS DATE) AS MODDATE,'
       '        CARDSTATUS.NAME AS CARDSTATUS_NAME,'
-      '        RDSENDSTTSPR.NAME AS CARDSENDSTT_NAME'
+      '        RDSTTSPR.NAME AS CARDSENDSTT_NAME'
       '    FROM'
       '      CARD'
       '    LEFT JOIN FORM'
       '        ON FORM.CODE = CARD.FORM'
       '    LEFT JOIN CARDSTATUS'
       '        ON CARDSTATUS.CODE = CARD.STATUS'
-      '    LEFT JOIN RDSENDSTTSPR'
-      '        ON RDSENDSTTSPR.CODE = CARD.SENDSTT'
+      '    LEFT JOIN RDSTTSPR'
+      '        ON RDSTTSPR.CODE = CARD.SENDSTT'
       '    WHERE'
       '            (CARD.IDPARENT IS NULL)'
       '        AND (CARD.FORM > 0)'
@@ -354,6 +326,7 @@ inherited FMedFindPdv: TFMedFindPdv
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = True
       Required = False
+      Visible = False
       Size = 30
     end
     object SQLQueryCurMODDATE: TDateTimeField
@@ -376,10 +349,11 @@ inherited FMedFindPdv: TFMedFindPdv
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
       Required = False
+      Visible = False
       Size = 10
     end
     object SQLQueryCurCARDSENDSTT_NAME: TStringField
-      DisplayLabel = 'Стан-примітка'
+      DisplayLabel = 'Стан'
       DisplayWidth = 10
       FieldKind = fkData
       FieldName = 'CARDSENDSTT_NAME'
@@ -388,11 +362,10 @@ inherited FMedFindPdv: TFMedFindPdv
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
       Required = False
-      Visible = False
       Size = 50
     end
   end
-  object SQLQueryPrev: TSQLQuery[11]
+  object SQLQueryPrev: TSQLQuery[10]
     FieldDefs = <    
       item
         Name = 'EDRPOU'
@@ -583,7 +556,7 @@ inherited FMedFindPdv: TFMedFindPdv
       Size = 50
     end
   end
-  object SQLTransaction: TSQLTransaction[12]
+  object SQLTransaction: TSQLTransaction[11]
     Active = False
     Left = 48
     Top = 183

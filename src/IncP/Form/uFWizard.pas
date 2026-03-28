@@ -9,8 +9,9 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
-  ExtCtrls, Grids, ValEdit, fpjson, TypInfo, Variants, jsonparser, uSys,
-  uSysVcl, uHelper, uHelperVcl, uFBase, uWinManager, uGrid;
+  ExtCtrls, Grids, ValEdit, fpjson, TypInfo, Variants, jsonparser,
+  uFrStringGrid,
+  uSys, uSysVcl, uHelper, uHelperVcl, uFBase, uWinManager, uGrid;
 
 type
   { TFWizard }
@@ -25,7 +26,6 @@ type
     fFileData: string;
     procedure AddControls(aForm: TForm; aCtrls: TJSONArray; aJConf: TJSONObject);
     procedure SetCtrlProperty(aCtrl: TControl; const aName: string; aVal: variant);
-    procedure OnStringGridSelectCell(Sender: TObject; aCol, aRow: Integer; var CanSelect: Boolean);
   public
     procedure LoadScheme(const aName: string);
     procedure LoadData(const aFile: string);
@@ -42,14 +42,16 @@ begin
   fClassMap := TStringList.Create();
   fClassMap.CaseSensitive := False;
 
+  fClassMap.BeginUpdate();
   fClassMap.AddObject('TLabel', TObject(TLabel));
   fClassMap.AddObject('TLabeledEdit', TObject(TLabeledEdit));
   fClassMap.AddObject('TEdit', TObject(TEdit));
   fClassMap.AddObject('TComboBox', TObject(TComboBox));
   fClassMap.AddObject('TCheckBox', TObject(TCheckBox));
   fClassMap.AddObject('TMemo', TObject(TMemo));
-  fClassMap.AddObject('TStringGrid', TObject(TStringGrid));
   fClassMap.AddObject('TValueListEditor', TObject(TValueListEditor));
+  fClassMap.AddObject('TFrStringGrid', TObject(TFrStringGrid));
+  fClassMap.EndUpdate();
 end;
 
 procedure TFWizard.FormDestroy(Sender: TObject);
@@ -63,22 +65,6 @@ procedure TFWizard.SetCtrlProperty(aCtrl: TControl; const aName: string; aVal: v
 begin
   if (not aCtrl.SetProperty(aName, aVal)) then
     Log('e', Format('Помилка у %s.%s=%s', [aCtrl.ClassName(), aName, VarToStr(aVal)]));
-end;
-
-procedure TFWizard.OnStringGridSelectCell(Sender: TObject; aCol, aRow: Integer; var CanSelect: Boolean);
-var
-  OpenDialog: TOpenDialog;
-  StringGrid: TStringGrid;
-begin
-  if (aCol = 1) then // колонка "файл"
-  begin
-    OpenDialog := TOpenDialog.Create(Nil);
-    if (OpenDialog.Execute()) then
-    begin
-      StringGrid := Sender as TStringGrid;
-      StringGrid.Cells[aCol, aRow] := ExtractFileName(OpenDialog.FileName);
-    end;
-  end;
 end;
 
 procedure TFWizard.AddControls(aForm: TForm; aCtrls: TJSONArray; aJConf: TJSONObject);
@@ -142,7 +128,9 @@ begin
     end;
 
     if (CtrlClass = 'TStringGrid') then
-      StringGridHeadFromJson(TStringGrid(Ctrl), JObjCtrl);
+      TStringGridEx(Ctrl).HeadFromJson(JObjCtrl)
+    else if (CtrlClass = 'TFrStringGrid') then
+      TFrStringGrid(Ctrl).LoadHeadFromJson(JObjCtrl);
 
     BottomPad := JObjCtrl.Get('_bottompad', ConfBottomPad);
     if (Ctrl.Visible) and (BottomPad > 0) then
@@ -169,6 +157,7 @@ var
     Exit();
   end;
 
+  fWinManager.Visible(false);
   for i := 0 to JArrTab.Count - 1 do
   begin
     JObjTab := JArrTab.Objects[i];
@@ -204,6 +193,7 @@ var
     JObjConfDef.Free();
   end;
 
+  fWinManager.Visible(true);
   fWinManager.SetActivePage(0);
 end;
 
@@ -230,10 +220,10 @@ begin
       CtrlClass := Ctrl.ClassName();
       JObj := TJSONObject(JObjData.Find(CtrlName));
       if (JObj <> nil) then
-        if (CtrlClass = 'TStringGrid') then
-          StringGridDataFromJson(TStringGrid(Ctrl), JObj.Arrays['val'])
+        if (CtrlClass = 'TFrStringGrid') then
+          TFrStringGrid(Ctrl).LoadDataFromJson(JObj.Arrays['val'])
         else if (CtrlClass = 'TValueListEditor') then
-          ValueListFromJson(TValueListEditor(Ctrl), JObj.Arrays['val'])
+          ValueList_FromJson(TValueListEditor(Ctrl), JObj.Arrays['val'])
         else
           Ctrl.SetJProperty(JObj, JObj.Get('prop', ''), 'val');
     end;
@@ -266,13 +256,13 @@ begin
           JItem := TJSONObject.Create();
 
           CtrlClass := Ctrl.ClassName();
-          if (CtrlClass = 'TStringGrid') then
+          if (CtrlClass = 'TFrStringGrid') then
           begin
-            JArr := StringGridDataToJson(TStringGrid(Ctrl));
+            JArr := TFrStringGrid(Ctrl).LoadDataToJson();
             JItem.Add('val', JArr);
           end else if (CtrlClass = 'TValueListEditor') then
           begin
-            JArr := ValueListToJson(TValueListEditor(Ctrl));
+            JArr := ValueList_ToJson(TValueListEditor(Ctrl));
             JItem.Add('val', JArr);
           end else begin
             Prop := Ctrl.GetInputName();

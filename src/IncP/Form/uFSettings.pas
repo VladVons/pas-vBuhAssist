@@ -49,6 +49,8 @@ end;
 
 procedure TFSettings.FormCreate(Sender: TObject);
 begin
+  inherited;
+
   SetFont(self);
   StateStore.Load(self);
 

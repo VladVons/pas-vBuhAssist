@@ -1,0 +1,57 @@
+object FrStringGrid: TFrStringGrid
+  Left = 0
+  Height = 125
+  Top = 0
+  Width = 350
+  ClientHeight = 125
+  ClientWidth = 350
+  DesignTimePPI = 120
+  LCLVersion = '4.6.0.0'
+  ParentFont = False
+  TabOrder = 0
+  object StringGridEx: TStringGrid
+    Left = 0
+    Height = 93
+    Top = 32
+    Width = 350
+    Align = alClient
+    BorderStyle = bsNone
+    ColCount = 4
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
+    RowCount = 2
+    ScrollBars = ssBoth
+    TabOrder = 0
+  end
+  object ToolBar1: TToolBar
+    Left = 0
+    Top = 0
+    Width = 350
+    ButtonHeight = 28
+    ButtonWidth = 60
+    Images = DmCommon.ImageList1
+    ShowCaptions = True
+    TabOrder = 1
+    object ToolButtonAdd: TToolButton
+      Left = 1
+      Top = 2
+      Caption = 'Додати'
+      OnClick = ToolButtonAddClick
+    end
+    object ToolButtonDel: TToolButton
+      Left = 61
+      Top = 2
+      Caption = 'Видалити'
+      OnClick = ToolButtonDelClick
+    end
+    object ToolButtonFile: TToolButton
+      Left = 136
+      Top = 2
+      Caption = 'Файл'
+      OnClick = ToolButtonFileClick
+    end
+  end
+  object OpenDialog: TOpenDialog
+    Left = 252
+    Top = 25
+  end
+end
