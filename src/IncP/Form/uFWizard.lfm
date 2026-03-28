@@ -13,13 +13,49 @@ inherited FWizard: TFWizard
     Width = 801
     ClientWidth = 801
   end
-  object PageControl1: TPageControl[1]
+  object PageControl: TPageControl[1]
     Left = 0
-    Height = 269
-    Top = 48
+    Height = 237
+    Top = 80
     Width = 801
     Align = alClient
     ParentFont = False
     TabOrder = 1
+  end
+  object PanelNav: TPanel[2]
+    Left = 0
+    Height = 32
+    Top = 48
+    Width = 801
+    Align = alTop
+    BevelOuter = bvNone
+    TabOrder = 2
+  end
+  object BitBtnNext: TBitBtn[3]
+    Left = 112
+    Height = 32
+    Top = 40
+    Width = 94
+    Caption = 'Наступна'
+    TabOrder = 3
+    OnClick = BitBtnNextClick
+  end
+  object BitBtnPrev: TBitBtn[4]
+    Left = 8
+    Height = 32
+    Top = 40
+    Width = 94
+    Caption = 'Попередня'
+    TabOrder = 4
+    OnClick = BitBtnPrevClick
+  end
+  object BitBtnClose: TBitBtn[5]
+    Left = 216
+    Height = 32
+    Top = 40
+    Width = 168
+    Caption = 'Зберегти і закрити'
+    TabOrder = 5
+    OnClick = BitBtnCloseClick
   end
 end

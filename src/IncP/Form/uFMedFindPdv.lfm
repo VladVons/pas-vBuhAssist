@@ -129,13 +129,13 @@ inherited FMedFindPdv: TFMedFindPdv
       '        FORM.CHARCODE,'
       '        COALESCE(CARD.DOCNAME, FORM.NAME) AS FORM_NAME,'
       '        CAST(CARD.MODDATE AS DATE) AS MODDATE,'
-      '        CARDSTATUS.NAME AS CARDSTATUS_NAME,'
-      '        RDSTTSPR.NAME AS CARDSENDSTT_NAME'
+      '        CARDSTATUS.NAME || '' '' || CARD.STATUS AS CARDSTATUS_NAME,'
+      '        RDSTTSPR.NAME  || '' '' || CARD.SENDSTT AS CARDSENDSTT_NAME'
       '    FROM'
       '      CARD'
       '    LEFT JOIN FORM'
       '        ON FORM.CODE = CARD.FORM'
-      '    LEFT JOIN CARDSTATUS'
+      '    LEFT JOIN RDSTTSPR AS CARDSTATUS'
       '        ON CARDSTATUS.CODE = CARD.STATUS'
       '    LEFT JOIN RDSTTSPR'
       '        ON RDSTTSPR.CODE = CARD.SENDSTT'
@@ -349,7 +349,6 @@ inherited FMedFindPdv: TFMedFindPdv
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
       Required = False
-      Visible = False
       Size = 10
     end
     object SQLQueryCurCARDSENDSTT_NAME: TStringField

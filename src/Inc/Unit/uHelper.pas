@@ -62,6 +62,7 @@ type
   end;
 
   TJSONObjectHelper = type helper for TJSONObject
+    //procedure Set1Update(aSrc: TJSONObject);
     procedure Update(aSrc: TJSONObject);
   end;
 

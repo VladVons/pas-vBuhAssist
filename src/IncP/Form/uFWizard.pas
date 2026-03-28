@@ -9,14 +9,21 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
-  ExtCtrls, Grids, ValEdit, fpjson, TypInfo, Variants, jsonparser,
+  ExtCtrls, Grids, ValEdit, Buttons, fpjson, TypInfo, Variants, jsonparser,
   uFrStringGrid,
   uSys, uSysVcl, uHelper, uHelperVcl, uFBase, uWinManager, uGrid;
 
 type
   { TFWizard }
   TFWizard = class(TFBase)
-    PageControl1: TPageControl;
+    BitBtnNext: TBitBtn;
+    BitBtnClose: TBitBtn;
+    BitBtnPrev: TBitBtn;
+    PageControl: TPageControl;
+    PanelNav: TPanel;
+    procedure BitBtnCloseClick(Sender: TObject);
+    procedure BitBtnPrevClick(Sender: TObject);
+    procedure BitBtnNextClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
@@ -29,7 +36,8 @@ type
   public
     procedure LoadScheme(const aName: string);
     procedure LoadData(const aFile: string);
-    procedure SaveData();
+    procedure SaveForms();
+    procedure SaveForm(aIdx: integer);
   end;
 
 implementation
@@ -54,9 +62,24 @@ begin
   fClassMap.EndUpdate();
 end;
 
+procedure TFWizard.BitBtnPrevClick(Sender: TObject);
+begin
+  fWinManager.Next(-1);
+end;
+
+procedure TFWizard.BitBtnNextClick(Sender: TObject);
+begin
+  fWinManager.Next(1);
+end;
+
+procedure TFWizard.BitBtnCloseClick(Sender: TObject);
+begin
+  SaveForms();
+  fWinManager.CloseActive();
+end;
+
 procedure TFWizard.FormDestroy(Sender: TObject);
 begin
-  SaveData();
   FreeAndNil(fClassMap);
   inherited;
 end;
@@ -146,7 +169,7 @@ var
   Form: TFBase;
  begin
   FreeAndNil(fWinManager);
-  fWinManager := TWinManager.Create(PageControl1, Nil);
+  fWinManager := TWinManager.Create(PageControl, Nil);
 
   fJScheme := ResourceLoadJson(aName);
   JArrTab := TJSONArray(fJScheme.Find('tabs'));
@@ -231,7 +254,12 @@ begin
   JObjData.Free();
 end;
 
-procedure TFWizard.SaveData();
+procedure TFWizard.SaveForm(aIdx: integer);
+begin
+
+end;
+
+procedure TFWizard.SaveForms();
 var
   i, j: integer;
   Str, Prop, CtrlName, CtrlClass: string;
@@ -243,7 +271,11 @@ begin
   if (fFileData.IsEmpty()) then
     Exit();
 
-  JObjData := TJSONObject.Create();
+  if (fFileData.FileExists()) then
+    JObjData := TJSONObject(FileLoadJson(fFileData))
+  else
+    JObjData := TJSONObject.Create();
+
   try
     Forms := fWinManager.GetForms();
     for i := 0 to Length(Forms) - 1 do
@@ -272,7 +304,8 @@ begin
               Ctrl.GetJProperty(JItem, Prop, 'val');
             end;
           end;
-          JObjData.Add(CtrlName, JItem);
+          //JObjData.Add(CtrlName, JItem);
+          JObjData.Elements[CtrlName] := JItem;
         end;
       end;
 
