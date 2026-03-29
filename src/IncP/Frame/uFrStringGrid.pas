@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Grids, ComCtrls, fpjson,
   uDmCommon,
-  uGrid, uLog, uGhostScript, uSys, uSysVcl;
+  uExGrid, uLog, uGhostScript, uSys, uSysVcl;
 
 type
   { TFrStringGrid }

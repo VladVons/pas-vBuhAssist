@@ -5,9 +5,8 @@ unit uFTest;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Buttons,
-  uFBase, uFWizard,
-  uWinManager, uHelper;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Buttons, fpjson,
+  uFBase, uFWizard, uSysVcl, uWinManager, uHelper;
 
 type
 
@@ -19,12 +18,14 @@ type
     BitBtnWizard4: TBitBtn;
     BitBtnWizard5: TBitBtn;
     BitBtnWizard0: TBitBtn;
+    BitBtnWizardAll: TBitBtn;
     procedure BitBtnWizard0Click(Sender: TObject);
     procedure BitBtnWizard1Click(Sender: TObject);
     procedure BitBtnWizard2Click(Sender: TObject);
     procedure BitBtnWizard3Click(Sender: TObject);
     procedure BitBtnWizard4Click(Sender: TObject);
     procedure BitBtnWizard5Click(Sender: TObject);
+    procedure BitBtnWizardAllClick(Sender: TObject);
   private
     procedure Wizard(const aDir, aFile: string);
   public
@@ -80,6 +81,15 @@ procedure TFTest.BitBtnWizard5Click(Sender: TObject);
 begin
   Wizard('Data\12345', 'FWizardPdv5');
 end;
+
+procedure TFTest.BitBtnWizardAllClick(Sender: TObject);
+var
+  Form: TFWizard;
+begin
+  Form := TFWizard(WinManager.Add(TFWizard));
+  Form.Load('FWizardPdvs');
+end;
+
 
 end.
 

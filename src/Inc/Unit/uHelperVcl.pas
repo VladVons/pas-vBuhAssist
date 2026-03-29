@@ -9,7 +9,7 @@ unit uHelperVcl;
 interface
 
 uses
-  Classes, SysUtils, Controls, TypInfo, Variants, fpjson;
+  Classes, SysUtils, Controls, StdCtrls, TypInfo, Variants, fpjson;
 
 type
   TControlHelper = class helper for TControl
@@ -19,6 +19,12 @@ type
     procedure GetJProperty(aJObj: TJSONObject; const aProp: string; aKey: string = '');
     function SetProperty(const aName: string; aVal: variant): boolean;
     procedure SetJProperty(aJObj: TJSONObject; const aProp: string; aKey: string = '');
+  end;
+
+  TComboBoxHelper = class helper for TComboBox
+    procedure Add(aJObj: TJSONObject);
+    function GetJObj(): TJSONObject;
+    procedure ClearItems();
   end;
 
 implementation
@@ -121,6 +127,28 @@ begin
   end;
 end;
 
+//--- TComboBoxHelper 2026.03.29
+
+procedure TComboBoxHelper.Add(aJObj: TJSONObject);
+begin
+  Items.AddObject(aJObj.Get('text', ''), aJObj);
+end;
+
+function TComboBoxHelper.GetJObj(): TJSONObject;
+begin
+  if (ItemIndex < 0) then
+    Exit(nil);
+
+  Result := TJSONObject(Items.Objects[ItemIndex]);
+end;
+
+procedure TComboBoxHelper.ClearItems();
+var
+  i: Integer;
+begin
+  for i := 0 to Items.Count - 1 do
+    Items.Objects[i].Free();
+end;
 
 end.
 

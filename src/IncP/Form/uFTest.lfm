@@ -1,21 +1,21 @@
 inherited FTest: TFTest
   Left = 345
-  Height = 166
+  Height = 256
   Top = 32
-  Width = 469
+  Width = 549
   Caption = 'FTest'
-  ClientHeight = 166
-  ClientWidth = 469
+  ClientHeight = 256
+  ClientWidth = 549
   OnCreate = FormCreate
   inherited PanelTitle: TPanel
-    Width = 469
-    ClientWidth = 469
+    Width = 549
+    ClientWidth = 549
     TabOrder = 2
   end
   object BitBtnWizard0: TBitBtn[1]
-    Left = 8
+    Left = 448
     Height = 38
-    Top = 104
+    Top = 48
     Width = 76
     Caption = 'Wizard0'
     TabOrder = 6
@@ -65,5 +65,14 @@ inherited FTest: TFTest
     Caption = 'Wizard5'
     TabOrder = 5
     OnClick = BitBtnWizard5Click
+  end
+  object BitBtnWizardAll: TBitBtn[7]
+    Left = 8
+    Height = 38
+    Top = 104
+    Width = 156
+    Caption = 'Wizard All'
+    TabOrder = 7
+    OnClick = BitBtnWizardAllClick
   end
 end

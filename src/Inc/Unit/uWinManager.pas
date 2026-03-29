@@ -27,7 +27,8 @@ type
     function GetForms(): TFormArray;
     function FindTabIndex(aFormClass: TFormClass): integer;
     procedure SendMsg(aForm: TForm; const aData: TJSONObject);
-    procedure CloseActive();
+    function CloseActive(): integer;
+    procedure CloseAll();
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure SetActivePage(aIdx: integer);
     procedure Next(aStep: integer);
@@ -216,7 +217,24 @@ begin
     Add(aForms[i]);
 end;
 
-procedure TWinManager.CloseActive();
+procedure TWinManager.CloseAll();
+var
+  i: integer;
+  Tab: TTabSheet;
+  Form: TForm;
+begin
+  for i := fPageControl.PageCount - 1 downto 0 do
+  begin
+    Tab := fPageControl.Pages[i];
+    if (Tab.ControlCount > 0) and (Tab.Controls[0] is TForm) then
+    begin
+      Form := TForm(Tab.Controls[0]);
+      Form.Close();
+    end;
+  end;
+end;
+
+function TWinManager.CloseActive(): integer;
 var
   Tab: TTabSheet;
   Form: TForm;
@@ -230,6 +248,8 @@ begin
     Form := TForm(Tab.Controls[0]);
     Form.Close();
   end;
+
+  Result := fPageControl.PageCount;
 end;
 
 procedure TWinManager.FormClose(Sender: TObject; var CloseAction: TCloseAction);

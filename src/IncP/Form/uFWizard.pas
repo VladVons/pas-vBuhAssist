@@ -9,9 +9,9 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
-  ExtCtrls, Grids, ValEdit, Buttons, fpjson, TypInfo, Variants, jsonparser,
+  ExtCtrls, ValEdit, Buttons, fpjson, TypInfo, Variants, jsonparser,
   uFrStringGrid,
-  uSys, uSysVcl, uHelper, uHelperVcl, uFBase, uWinManager, uGrid;
+  uSys, uSysVcl, uHelper, uHelperVcl, uFBase, uWinManager, uExGrid;
 
 type
   { TFWizard }
@@ -19,11 +19,13 @@ type
     BitBtnNext: TBitBtn;
     BitBtnClose: TBitBtn;
     BitBtnPrev: TBitBtn;
+    ComboBoxWizards: TComboBox;
     PageControl: TPageControl;
     PanelNav: TPanel;
     procedure BitBtnCloseClick(Sender: TObject);
     procedure BitBtnPrevClick(Sender: TObject);
     procedure BitBtnNextClick(Sender: TObject);
+    procedure ComboBoxWizardsChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
@@ -31,6 +33,7 @@ type
     fClassMap: TStringList;
     fWinManager: TWinManager;
     fFileData: string;
+    procedure ComboBoxWizardsChange();
     procedure AddControls(aForm: TForm; aCtrls: TJSONArray; aJConf: TJSONObject);
     procedure SetCtrlProperty(aCtrl: TControl; const aName: string; aVal: variant);
     procedure LoadForm(aForm: TForm; aJObj: TJSONObject);
@@ -38,6 +41,7 @@ type
   public
     procedure LoadScheme(const aName: string);
     procedure LoadData(const aFile: string);
+    procedure Load(const aName: string);
     procedure SaveData();
   end;
 
@@ -63,6 +67,26 @@ begin
   fClassMap.EndUpdate();
 end;
 
+procedure TFWizard.ComboBoxWizardsChange();
+var
+  Str, Path: string;
+  JObj: TJSONObject;
+begin
+  JObj := ComboBoxWizards.GetJObj();
+  if (JObj = nil) then
+    Exit();
+
+  Str := JObj.Get('res', '');
+  LoadScheme(Str);
+  Path := ConcatPaths(['Data\12345', Str + '_dat.json']);
+  LoadData(Path);
+end;
+
+procedure TFWizard.ComboBoxWizardsChange(Sender: TObject);
+begin
+  ComboBoxWizardsChange();
+end;
+
 procedure TFWizard.BitBtnPrevClick(Sender: TObject);
 begin
   fWinManager.Next(-1);
@@ -74,14 +98,23 @@ begin
 end;
 
 procedure TFWizard.BitBtnCloseClick(Sender: TObject);
+var
+  Cnt: integer;
 begin
   SaveData();
-  fWinManager.CloseActive();
+  Cnt := fWinManager.CloseActive();
+  if (Cnt = 0) then
+  begin
+    if (ComboBoxWizards.ItemIndex < ComboBoxWizards.Items.Count - 1) then
+      ComboBoxWizards.ItemIndex := ComboBoxWizards.ItemIndex + 1;
+    ComboBoxWizardsChange();
+  end;
 end;
 
 procedure TFWizard.FormDestroy(Sender: TObject);
 begin
   FreeAndNil(fClassMap);
+  ComboBoxWizards.ClearItems();
   inherited;
 end;
 
@@ -168,7 +201,10 @@ var
   JArrTab, JArrCtrl: TJSONArray;
   JObjTab, JObjConf, JObjConfDef: TJSONObject;
   Form: TFBase;
- begin
+begin
+  if (fWinManager <> nil) then
+    fWinManager.CloseAll();
+
   FreeAndNil(fWinManager);
   fWinManager := TWinManager.Create(PageControl, Nil);
 
@@ -194,7 +230,6 @@ var
     Form.Name := Form.GetJName(JObjTab, i);
     Form.Caption := JObjTab.Get('caption', Format('caption %d', [i]));
     Form.Title := Form.Caption;
-
 
     JArrCtrl := TJSONArray(JObjTab.Find('controls'));
     if (JArrCtrl = nil) then
@@ -330,6 +365,33 @@ begin
     JObj.Free();
   end;
 end;
+
+procedure TFWizard.Load(const aName: string);
+var
+  i: integer;
+  ResName: string;
+  JObj, JObjRes, JObjLoad: TJSONObject;
+  JArr: TJSONArray;
+begin
+  JObjLoad := ResourceLoadJson(aName);
+  JArr := TJSONArray(JObjLoad.Find('items'));
+  for i := 0 to JArr.Count - 1 do
+  begin
+    ResName := JArr[i].AsString;
+    JObjRes := ResourceLoadJson(ResName);
+    JObj := TJSONObject.Create();
+    JObj.Add('text', JObjRes.Get('caption', ''));
+    JObj.Add('res', ResName);
+    ComboBoxWizards.Add(JObj);
+
+    JObjRes.Free();
+  end;
+
+  ComboBoxWizards.ItemIndex := 0;
+  ComboBoxWizards.Visible := True;
+  ComboBoxWizardsChange();
+end;
+
 
 end.
 

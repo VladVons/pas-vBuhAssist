@@ -1,7 +1,7 @@
 // Created: 2026.03.25
 // Author: Vladimir Vons <VladVons@gmail.com>
 
-unit uGrid;
+unit uExGrid;
 
 {$mode ObjFPC}{$H+}
 

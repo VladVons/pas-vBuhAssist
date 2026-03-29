@@ -12,3 +12,5 @@ Json_FWizardPdv2 RCDATA "Res/Json/FWizardPdv2.json"
 Json_FWizardPdv3 RCDATA "Res/Json/FWizardPdv3.json"
 Json_FWizardPdv4 RCDATA "Res/Json/FWizardPdv4.json"
 Json_FWizardPdv5 RCDATA "Res/Json/FWizardPdv5.json"
+
+Json_FWizardPdvs RCDATA "Res/Json/FWizardPdvs.json"
