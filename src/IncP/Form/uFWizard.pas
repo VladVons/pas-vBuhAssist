@@ -33,11 +33,12 @@ type
     fFileData: string;
     procedure AddControls(aForm: TForm; aCtrls: TJSONArray; aJConf: TJSONObject);
     procedure SetCtrlProperty(aCtrl: TControl; const aName: string; aVal: variant);
+    procedure LoadForm(aForm: TForm; aJObj: TJSONObject);
+    procedure SaveForm(aForm: TForm; aJObj: TJSONObject);
   public
     procedure LoadScheme(const aName: string);
     procedure LoadData(const aFile: string);
-    procedure SaveForms();
-    procedure SaveForm(aIdx: integer);
+    procedure SaveData();
   end;
 
 implementation
@@ -74,7 +75,7 @@ end;
 
 procedure TFWizard.BitBtnCloseClick(Sender: TObject);
 begin
-  SaveForms();
+  SaveData();
   fWinManager.CloseActive();
 end;
 
@@ -220,99 +221,113 @@ var
   fWinManager.SetActivePage(0);
 end;
 
+procedure TFWizard.LoadForm(aForm: TForm; aJObj: TJSONObject);
+var
+  i: integer;
+  CtrlName, CtrlClass: string;
+  Ctrl: TControl;
+  JObj: TJSONObject;
+begin
+  for i := 0 to aForm.ControlCount - 1 do
+  begin
+    Ctrl := aForm.Controls[i];
+    CtrlName := Format('%s.%s', [aForm.Name, Ctrl.Name]);
+    CtrlClass := Ctrl.ClassName();
+    JObj := TJSONObject(aJObj.Find(CtrlName));
+    if (JObj = nil) then
+      continue;
+
+    if (CtrlClass = 'TFrStringGrid') then
+      TFrStringGrid(Ctrl).LoadDataFromJson(JObj.Arrays['val'])
+    else if (CtrlClass = 'TValueListEditor') then
+      ValueList_FromJson(TValueListEditor(Ctrl), JObj.Arrays['val'])
+    else
+      Ctrl.SetJProperty(JObj, JObj.Get('prop', ''), 'val');
+  end;
+end;
+
 procedure TFWizard.LoadData(const aFile: string);
 var
-  i, j: integer;
-  CtrlName, CtrlClass: string;
-  JObj, JObjData: TJSONObject;
+  i: integer;
+  JObj: TJSONObject;
   Forms: TFormArray;
-  Ctrl: TControl;
 begin
   fFileData := aFile;
+
   if (aFile.FileExists()) then
-    JObjData := TJSONObject(FileLoadJson(aFile))
+    JObj := TJSONObject(FileLoadJson(aFile))
   else
-    JObjData := TJSONObject.Create();
+    JObj := TJSONObject.Create();
 
   Forms := fWinManager.GetForms();
   for i := 0 to Length(Forms) - 1 do
-    for j := 0 to Forms[i].ControlCount - 1 do
+    LoadForm(Forms[i], JObj);
+
+  JObj.Free();
+end;
+
+procedure TFWizard.SaveForm(aForm: TForm; aJObj: TJSONObject);
+var
+  i: integer;
+  CtrlName, CtrlClass, Prop: string;
+  Ctrl: TControl;
+  JItem: TJSONObject;
+  JArr: TJSONArray;
+begin
+  for i := 0 to aForm.ControlCount - 1 do
+  begin
+    Ctrl := aForm.Controls[i];
+    CtrlName := Format('%s.%s', [aForm.Name, Ctrl.Name]);
+    if (not CtrlName.EndsWith('_s')) then
+      continue;
+
+    JItem := TJSONObject.Create();
+    CtrlClass := Ctrl.ClassName();
+    if (CtrlClass = 'TFrStringGrid') then
     begin
-      Ctrl := Forms[i].Controls[j];
-      CtrlName := Format('%s.%s', [Forms[i].Name, Ctrl.Name]);
-      CtrlClass := Ctrl.ClassName();
-      JObj := TJSONObject(JObjData.Find(CtrlName));
-      if (JObj <> nil) then
-        if (CtrlClass = 'TFrStringGrid') then
-          TFrStringGrid(Ctrl).LoadDataFromJson(JObj.Arrays['val'])
-        else if (CtrlClass = 'TValueListEditor') then
-          ValueList_FromJson(TValueListEditor(Ctrl), JObj.Arrays['val'])
-        else
-          Ctrl.SetJProperty(JObj, JObj.Get('prop', ''), 'val');
+      JArr := TFrStringGrid(Ctrl).LoadDataToJson();
+      JItem.Add('val', JArr);
+    end else if (CtrlClass = 'TValueListEditor') then
+    begin
+      JArr := ValueList_ToJson(TValueListEditor(Ctrl));
+      JItem.Add('val', JArr);
+    end else begin
+      Prop := Ctrl.GetInputName();
+      if (not Prop.IsEmpty()) then
+      begin
+        JItem.Add('prop', Prop);
+        Ctrl.GetJProperty(JItem, Prop, 'val');
+      end;
     end;
 
-  JObjData.Free();
+    aJObj.Elements[CtrlName] := JItem;
+  end;
 end;
 
-procedure TFWizard.SaveForm(aIdx: integer);
-begin
-
-end;
-
-procedure TFWizard.SaveForms();
+procedure TFWizard.SaveData();
 var
-  i, j: integer;
-  Str, Prop, CtrlName, CtrlClass: string;
-  JObjData, JItem: TJSONObject;
-  JArr: TJSONArray;
+  i: integer;
+  Str: string;
+  JObj: TJSONObject;
   Forms: TFormArray;
-  Ctrl: TControl;
 begin
   if (fFileData.IsEmpty()) then
     Exit();
 
   if (fFileData.FileExists()) then
-    JObjData := TJSONObject(FileLoadJson(fFileData))
+    JObj := TJSONObject(FileLoadJson(fFileData))
   else
-    JObjData := TJSONObject.Create();
+    JObj := TJSONObject.Create();
 
   try
     Forms := fWinManager.GetForms();
     for i := 0 to Length(Forms) - 1 do
-      for j := 0 to Forms[i].ControlCount - 1 do
-      begin
-        Ctrl := Forms[i].Controls[j];
-        CtrlName := Format('%s.%s', [Forms[i].Name, Ctrl.Name]);
-        if (CtrlName.EndsWith('_s')) then
-        begin
-          JItem := TJSONObject.Create();
+      SaveForm(Forms[i], JObj);
 
-          CtrlClass := Ctrl.ClassName();
-          if (CtrlClass = 'TFrStringGrid') then
-          begin
-            JArr := TFrStringGrid(Ctrl).LoadDataToJson();
-            JItem.Add('val', JArr);
-          end else if (CtrlClass = 'TValueListEditor') then
-          begin
-            JArr := ValueList_ToJson(TValueListEditor(Ctrl));
-            JItem.Add('val', JArr);
-          end else begin
-            Prop := Ctrl.GetInputName();
-            if (not Prop.IsEmpty()) then
-            begin
-              JItem.Add('prop', Prop);
-              Ctrl.GetJProperty(JItem, Prop, 'val');
-            end;
-          end;
-          //JObjData.Add(CtrlName, JItem);
-          JObjData.Elements[CtrlName] := JItem;
-        end;
-      end;
-
-    Str := JObjData.FormatJSON();
+    Str := JObj.FormatJSON();
     Str.ToFile(fFileData);
   finally
-    JObjData.Free();
+    JObj.Free();
   end;
 end;
 
