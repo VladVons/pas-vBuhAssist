@@ -11,43 +11,66 @@ inherited FTest: TFTest
     Width = 821
     ClientWidth = 821
   end
-  object BitBtnWizard0: TBitBtn[1]
-    Left = 184
-    Height = 38
+  object Panel1: TPanel[1]
+    Left = 0
+    Height = 48
     Top = 48
-    Width = 76
-    Caption = 'Wizard0'
+    Width = 821
+    Align = alTop
+    ClientHeight = 48
+    ClientWidth = 821
     TabOrder = 1
-    OnClick = BitBtnWizard0Click
+    object BitBtnWizardAll: TBitBtn
+      Left = 8
+      Height = 38
+      Top = 0
+      Width = 156
+      Caption = 'Wizard All'
+      TabOrder = 0
+      OnClick = BitBtnWizardAllClick
+    end
+    object BitBtnTestXml: TBitBtn
+      Left = 176
+      Height = 38
+      Top = 0
+      Width = 94
+      Caption = 'TestXml'
+      TabOrder = 1
+      OnClick = BitBtnTestXmlClick
+    end
+    object BitBtnWizard0: TBitBtn
+      Left = 720
+      Height = 38
+      Top = 0
+      Width = 76
+      Caption = 'Wizard0'
+      TabOrder = 2
+      OnClick = BitBtnWizard0Click
+    end
   end
-  object BitBtnWizardAll: TBitBtn[2]
-    Left = 8
-    Height = 38
-    Top = 48
-    Width = 156
-    Caption = 'Wizard All'
-    TabOrder = 2
-    OnClick = BitBtnWizardAllClick
-  end
-  object BitBtnTestXml: TBitBtn[3]
-    Left = 8
-    Height = 38
-    Top = 112
-    Width = 94
-    Caption = 'TestXml'
-    TabOrder = 3
-    OnClick = BitBtnTestXmlClick
-  end
-  object Memo1: TMemo[4]
-    Left = 8
-    Height = 269
-    Top = 152
-    Width = 304
+  object Memo1: TMemo[2]
+    Left = 0
+    Height = 332
+    Top = 96
+    Width = 272
+    Align = alLeft
     Lines.Strings = (
       'DECLARBODY_HFILL=hello'
       'DECLARBODY_HNUM=привіт'
     )
     ScrollBars = ssAutoBoth
-    TabOrder = 4
+    TabOrder = 2
+  end
+  object Memo2: TMemo[3]
+    Left = 272
+    Height = 332
+    Top = 96
+    Width = 549
+    Align = alClient
+    Lines.Strings = (
+      'Memo2'
+    )
+    ScrollBars = ssAutoBoth
+    TabOrder = 3
   end
 end

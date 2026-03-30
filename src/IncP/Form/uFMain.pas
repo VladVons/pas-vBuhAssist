@@ -163,7 +163,7 @@ var
   Title, Body: string;
 begin
   Title := 'Ліцензійна угода користувача';
-  Body := ResourceLoadString('Text_UserAgreement');
+  Body := ResourceLoadString('UserAgreement', 'txt');
   Log.Print('i', Title);
   Result := (FMessageShow(Title, Body, aConfirm) = mrOK);
 end;

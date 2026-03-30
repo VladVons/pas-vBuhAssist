@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Buttons, StdCtrls,
-  fpjson, uFBase, uFWizard, uWinManager, uSysVcl, uHelper;
+  ExtCtrls, fpjson, uFBase, uFWizard, uWinManager, uSysVcl, uHelper;
 
 type
 
@@ -16,6 +16,8 @@ type
     BitBtnWizard0: TBitBtn;
     BitBtnWizardAll: TBitBtn;
     Memo1: TMemo;
+    Memo2: TMemo;
+    Panel1: TPanel;
     procedure BitBtnTestXmlClick(Sender: TObject);
     procedure BitBtnWizard0Click(Sender: TObject);
     procedure BitBtnWizardAllClick(Sender: TObject);
@@ -54,11 +56,15 @@ procedure TFTest.BitBtnTestXmlClick(Sender: TObject);
 const
   cName = 'J1360102';
 var
-  Str, StrXds: string;
+  Str, StrXds, Path: string;
 begin
-  StrXds := ResourceLoadString('Xml_' + cName);
-  Str := StrXds.Macros(Memo1.Lines);
-  Str.ToFile(ConcatPaths(['Data', cName + '.xml']));
+  StrXds := ResourceLoadString(cName, 'xml');
+  Str := StrXds.Macros(Memo1.Lines).DelEmptyLines();
+  Memo2.Text := Str;
+  //TStringList(Memo2.Lines).DelEmpty();
+  Path := ConcatPaths(['Data', cName + '.xml']);
+  Str.ToFile(Path);
+  Log('i', Path);
 end;
 
 procedure TFTest.BitBtnWizardAllClick(Sender: TObject);

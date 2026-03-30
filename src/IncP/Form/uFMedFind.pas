@@ -570,7 +570,7 @@ begin
 
     //ResourceLoadReport('Report_FMedCheckDocs1', frReport1);
     FrPrintGrid1.OnGetValue := @FrPrintGrid1GetValue;
-    FrPrintGrid1.Template := 'res\Report\CheckDocs2.lrf';
+    FrPrintGrid1.Template := 'res\lrf\CheckDocs2.lrf';
     if (not FileExists(FrPrintGrid1.Template)) then
     begin
       Log('e', 'Шаблон не існує ' + FrPrintGrid1.Template);

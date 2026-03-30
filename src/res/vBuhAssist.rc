@@ -1,19 +1,19 @@
-Report_CheckDocs1 RCDATA "Res/Report/CheckDocs1.lrf"
+lrf_CheckDocs1 RCDATA "res/lrf/CheckDocs1.lrf"
 
-Text_UserAgreement RCDATA "Res/Text/UserAgreement.txt"
+txt_UserAgreement RCDATA "res/txt/UserAgreement.txt"
 
-Json_FMedFindAkz  RCDATA "Res/Json/FMedFindAkz.json"
-Json_FMedFindPdv  RCDATA "Res/Json/FMedFindPdv.json"
-Json_FMedFindZvit RCDATA "Res/Json/FMedFindZvit.json"
+json_FMedFindAkz  RCDATA "res/json/FMedFindAkz.json"
+json_FMedFindPdv  RCDATA "res/json/FMedFindPdv.json"
+json_FMedFindZvit RCDATA "res/json/FMedFindZvit.json"
 
-Json_FWizardPdv0 RCDATA "Res/Json/FWizardPdv0.json"
-Json_FWizardPdv1 RCDATA "Res/Json/FWizardPdv1.json"
-Json_FWizardPdv2 RCDATA "Res/Json/FWizardPdv2.json"
-Json_FWizardPdv3 RCDATA "Res/Json/FWizardPdv3.json"
-Json_FWizardPdv4 RCDATA "Res/Json/FWizardPdv4.json"
-Json_FWizardPdv5 RCDATA "Res/Json/FWizardPdv5.json"
+json_FWizardPdv0 RCDATA "res/json/FWizardPdv0.json"
+json_FWizardPdv1 RCDATA "res/json/FWizardPdv1.json"
+json_FWizardPdv2 RCDATA "res/json/FWizardPdv2.json"
+json_FWizardPdv3 RCDATA "res/json/FWizardPdv3.json"
+json_FWizardPdv4 RCDATA "res/json/FWizardPdv4.json"
+json_FWizardPdv5 RCDATA "res/json/FWizardPdv5.json"
 
-Json_FWizardPdvs RCDATA "Res/Json/FWizardPdvs.json"
+json_FWizardPdvs RCDATA "res/json/FWizardPdvs.json"
 
-Xml_J1312603 RCDATA "Res/Xml/J1312603.xsd.xml"
-Xml_J1360102 RCDATA "Res/Xml/J1360102.xsd.xml"
+xml_J1312603 RCDATA "res/xml/J1312603.xml"
+xml_J1360102 RCDATA "res/xml/J1360102.xml"

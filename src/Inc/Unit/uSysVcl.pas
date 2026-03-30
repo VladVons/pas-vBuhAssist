@@ -13,11 +13,17 @@ uses
 
 procedure ResourceLoadReport(const aName: string; aReport: TfrReport);
 function ResourceLoadString(const aName: string; aEncoding: TEncoding = Nil): string;
+function ResourceLoadString(const aName, aExt: string; aEncoding: TEncoding = Nil): string;
 function ResourceLoadJson(const aName: string): TJSONObject;
 function LatinToUkr(const aStr: string): string;
 function RemoveChars(const aStr, aRemove: string): string;
 
 implementation
+
+function GetResPath(const aName, aExt: string): string;
+begin
+  Result := ConcatPaths(['res', aExt, aName + '.' + aExt]);
+end;
 
 procedure ResourceLoadReport(const aName: string; aReport: TfrReport);
 var
@@ -31,7 +37,7 @@ begin
   end;
 end;
 
-function ResourceLoadString(const aName: string; aEncoding: TEncoding = Nil): string;
+function ResourceLoadString(const aName: string; aEncoding: TEncoding): string;
 var
   RStream: TResourceStream;
   SStream: TStringStream;
@@ -51,16 +57,28 @@ begin
   end;
 end;
 
+function ResourceLoadString(const aName, aExt: string; aEncoding: TEncoding): string;
+var
+  Path: string;
+begin
+  Path := GetResPath(aName, aExt);
+  if (Path.FileExists()) then
+    Result := StrFromFile(Path)
+  else
+    Result := ResourceLoadString(aExt + '_' + aName, aEncoding);
+end;
+
 function ResourceLoadJson(const aName: string): TJSONObject;
+const
+  cExt = 'json';
 var
   Str, Path: string;
 begin
-  Path := ConcatPaths(['Res', 'Json', aName + '.json']);
+  Path := GetResPath(aName, cExt);
   if (Path.FileExists()) then
     Result := TJSONObject(FileLoadJson(Path))
   else begin
-    Path := 'Json_' + aName;
-    Str := ResourceLoadString(Path);
+    Str := ResourceLoadString(cExt + '_' + aName);
     Result := TJSONObject(GetJSON(Str.DelBOM()));
   end;
 end;

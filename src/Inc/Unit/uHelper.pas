@@ -20,6 +20,7 @@ type
     function Before(const aStr: string): string;
     function Between(const aStart, aEnd: string): string;
     function DelBOM(): string;
+    function DelEmptyLines(): string;
     function Left(aLen: integer; aDoCut: boolean = False): string;
     function Macros(const aNames, aValues: TStringArray): string;
     function Macros(aDict: TStrings): string;
@@ -190,6 +191,53 @@ begin
   end;
 
   SetLength(Result, Len);
+end;
+
+function TStringHelperEx.DelEmptyLines(): string;
+var
+  Src, Dest, LineStart: PChar;
+  OutLen: Integer;
+  HasNonSpace: Boolean;
+begin
+  if (Self = '') then
+    Exit(Self);
+
+  // Виділяємо буфер для вихідного рядка (не більше, ніж вхідний)
+  SetLength(Result, System.Length(Self));
+  Src := PChar(Self);
+  Dest := PChar(Result);
+  OutLen := 0;
+
+  while (Src^ <> #0) do
+  begin
+    LineStart := Src;
+
+    HasNonSpace := False;
+    while not (Src^ in [#0, #10, #13]) do
+    begin
+      if not (Src^ in [' ', #9]) then
+        HasNonSpace := True;
+      Inc(Src);
+    end;
+
+    // Копіюємо рядок, якщо він не пустий
+    if HasNonSpace then
+    begin
+      Move(LineStart^, Dest^, PtrUInt(Src - LineStart));
+      Inc(Dest, Src - LineStart);
+      Dest^ := #10; // додаємо LF
+      Inc(Dest);
+      Inc(OutLen, Src - LineStart + 1);
+    end;
+
+    // Пропускаємо CR/LF
+    if (Src^ = #13) then
+      Inc(Src);
+    if (Src^ = #10) then
+      Inc(Src);
+  end;
+
+  SetLength(Result, OutLen);
 end;
 
 function TStringHelperEx.Replaces(const aOld, aNew: TStringArray): string;
@@ -551,8 +599,6 @@ begin
 
   Result := Self;
 end;
-
-
 
 
 //--- TJSONObjectHelper
