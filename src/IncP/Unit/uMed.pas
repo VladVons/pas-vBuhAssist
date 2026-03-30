@@ -12,8 +12,6 @@ uses
   uSettings, uVarUtil, uHttp, uHelper;
 
 const
-  cPerTypeAll  = 500;
-  cChooseAll   = '- Всі';
   cBaseCodeLen = 6;
 
   cDbMonth     = 0;

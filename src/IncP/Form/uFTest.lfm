@@ -1,78 +1,53 @@
 inherited FTest: TFTest
   Left = 345
-  Height = 256
+  Height = 428
   Top = 32
-  Width = 549
+  Width = 821
   Caption = 'FTest'
-  ClientHeight = 256
-  ClientWidth = 549
+  ClientHeight = 428
+  ClientWidth = 821
   OnCreate = FormCreate
   inherited PanelTitle: TPanel
-    Width = 549
-    ClientWidth = 549
-    TabOrder = 2
+    Width = 821
+    ClientWidth = 821
   end
   object BitBtnWizard0: TBitBtn[1]
-    Left = 448
+    Left = 184
     Height = 38
     Top = 48
     Width = 76
     Caption = 'Wizard0'
-    TabOrder = 6
+    TabOrder = 1
     OnClick = BitBtnWizard0Click
   end
-  object BitBtnWizard1: TBitBtn[2]
+  object BitBtnWizardAll: TBitBtn[2]
     Left = 8
     Height = 38
     Top = 48
-    Width = 76
-    Caption = 'Wizard1'
-    TabOrder = 0
-    OnClick = BitBtnWizard1Click
-  end
-  object BitBtnWizard2: TBitBtn[3]
-    Left = 92
-    Height = 38
-    Top = 48
-    Width = 76
-    Caption = 'Wizard2'
-    TabOrder = 1
-    OnClick = BitBtnWizard2Click
-  end
-  object BitBtnWizard3: TBitBtn[4]
-    Left = 176
-    Height = 38
-    Top = 48
-    Width = 76
-    Caption = 'Wizard3'
-    TabOrder = 3
-    OnClick = BitBtnWizard3Click
-  end
-  object BitBtnWizard4: TBitBtn[5]
-    Left = 260
-    Height = 38
-    Top = 48
-    Width = 76
-    Caption = 'Wizard4'
-    TabOrder = 4
-    OnClick = BitBtnWizard4Click
-  end
-  object BitBtnWizard5: TBitBtn[6]
-    Left = 344
-    Height = 38
-    Top = 48
-    Width = 76
-    Caption = 'Wizard5'
-    TabOrder = 5
-    OnClick = BitBtnWizard5Click
-  end
-  object BitBtnWizardAll: TBitBtn[7]
-    Left = 8
-    Height = 38
-    Top = 104
     Width = 156
     Caption = 'Wizard All'
-    TabOrder = 7
+    TabOrder = 2
     OnClick = BitBtnWizardAllClick
+  end
+  object BitBtnTestXml: TBitBtn[3]
+    Left = 8
+    Height = 38
+    Top = 112
+    Width = 94
+    Caption = 'TestXml'
+    TabOrder = 3
+    OnClick = BitBtnTestXmlClick
+  end
+  object Memo1: TMemo[4]
+    Left = 8
+    Height = 269
+    Top = 152
+    Width = 304
+    Lines.Strings = (
+      'DECLARBODY_HFILL=hello'
+      'DECLARBODY_HNUM=привіт'
+    )
+    ScrollBars = ssAutoBoth
+    TabOrder = 4
   end
 end

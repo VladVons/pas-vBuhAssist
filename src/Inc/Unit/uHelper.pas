@@ -22,7 +22,7 @@ type
     function DelBOM(): string;
     function Left(aLen: integer; aDoCut: boolean = False): string;
     function Macros(const aNames, aValues: TStringArray): string;
-    function Macros(aDict: TStringList): string;
+    function Macros(aDict: TStrings): string;
     function PosEx(const aStr: string; aOfst: integer = 1): integer;
     function Right(aLen: Integer; aDoCut: boolean = False): string;
     function Replaces(const aOld, aNew: TStringArray): string;
@@ -216,7 +216,7 @@ begin
     Result := StringReplace(Result, '{{' + aNames[i] + '}}', aValues[i], [rfReplaceAll]);
 end;
 
-function TStringHelperEx.Macros(aDict: TStringList): string;
+function TStringHelperEx.Macros(aDict: TStrings): string;
 var
   i: integer;
 begin

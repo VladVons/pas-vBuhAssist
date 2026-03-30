@@ -14,3 +14,6 @@ Json_FWizardPdv4 RCDATA "Res/Json/FWizardPdv4.json"
 Json_FWizardPdv5 RCDATA "Res/Json/FWizardPdv5.json"
 
 Json_FWizardPdvs RCDATA "Res/Json/FWizardPdvs.json"
+
+Xml_J1312603 RCDATA "Res/Xml/J1312603.xsd.xml"
+Xml_J1360102 RCDATA "Res/Xml/J1360102.xsd.xml"

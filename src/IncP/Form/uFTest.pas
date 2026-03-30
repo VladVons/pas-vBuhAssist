@@ -5,26 +5,19 @@ unit uFTest;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Buttons, fpjson,
-  uFBase, uFWizard, uSysVcl, uWinManager, uHelper;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Buttons, StdCtrls,
+  fpjson, uFBase, uFWizard, uWinManager, uSysVcl, uHelper;
 
 type
 
   { TFTest }
   TFTest = class(TFBase)
-    BitBtnWizard1: TBitBtn;
-    BitBtnWizard2: TBitBtn;
-    BitBtnWizard3: TBitBtn;
-    BitBtnWizard4: TBitBtn;
-    BitBtnWizard5: TBitBtn;
+    BitBtnTestXml: TBitBtn;
     BitBtnWizard0: TBitBtn;
     BitBtnWizardAll: TBitBtn;
+    Memo1: TMemo;
+    procedure BitBtnTestXmlClick(Sender: TObject);
     procedure BitBtnWizard0Click(Sender: TObject);
-    procedure BitBtnWizard1Click(Sender: TObject);
-    procedure BitBtnWizard2Click(Sender: TObject);
-    procedure BitBtnWizard3Click(Sender: TObject);
-    procedure BitBtnWizard4Click(Sender: TObject);
-    procedure BitBtnWizard5Click(Sender: TObject);
     procedure BitBtnWizardAllClick(Sender: TObject);
   private
     procedure Wizard(const aDir, aFile: string);
@@ -57,29 +50,15 @@ begin
   Wizard('Data\12345', 'FWizardPdv0');
 end;
 
-procedure TFTest.BitBtnWizard1Click(Sender: TObject);
+procedure TFTest.BitBtnTestXmlClick(Sender: TObject);
+const
+  cName = 'J1360102';
+var
+  Str, StrXds: string;
 begin
-  Wizard('Data\12345', 'FWizardPdv1');
-end;
-
-procedure TFTest.BitBtnWizard2Click(Sender: TObject);
-begin
-  Wizard('Data\12345', 'FWizardPdv2');
-end;
-
-procedure TFTest.BitBtnWizard3Click(Sender: TObject);
-begin
-  Wizard('Data\12345', 'FWizardPdv3');
-end;
-
-procedure TFTest.BitBtnWizard4Click(Sender: TObject);
-begin
-  Wizard('Data\12345', 'FWizardPdv4');
-end;
-
-procedure TFTest.BitBtnWizard5Click(Sender: TObject);
-begin
-  Wizard('Data\12345', 'FWizardPdv5');
+  StrXds := ResourceLoadString('Xml_' + cName);
+  Str := StrXds.Macros(Memo1.Lines);
+  Str.ToFile(ConcatPaths(['Data', cName + '.xml']));
 end;
 
 procedure TFTest.BitBtnWizardAllClick(Sender: TObject);
@@ -89,7 +68,6 @@ begin
   Form := TFWizard(WinManager.Add(TFWizard));
   Form.Load('FWizardPdvs');
 end;
-
 
 end.
 

@@ -14,6 +14,7 @@ uses
 type
   { TFMedFindPdv }
   TFMedFindPdv = class(TFMedFind)
+    BitBtnUnlock: TBitBtn;
     DataSourceCur: TDataSource;
     DataSourcePrev: TDataSource;
     SQLQueryCur: TSQLQuery;
@@ -40,6 +41,7 @@ type
     SQLQueryPrevPERDATE: TDateField;
     SQLQueryPrevSHORTNAME: TStringField;
     SQLTransaction: TSQLTransaction;
+    procedure BitBtnUnlockClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure SQLQueryCurCalcFields(DataSet: TDataSet);
   protected
@@ -89,6 +91,14 @@ end;
 procedure TFMedFindPdv.SQLQueryCurCalcFields(DataSet: TDataSet);
 begin
   SQLQueryGridCurCalcFields(DataSet);
+end;
+
+procedure TFMedFindPdv.BitBtnUnlockClick(Sender: TObject);
+var
+  Form: TFWizard;
+begin
+  Form := TFWizard(WinManager.Add(TFWizard));
+  Form.Load('FWizardPdvs');
 end;
 
 procedure TFMedFindPdv.FormCreate(Sender: TObject);

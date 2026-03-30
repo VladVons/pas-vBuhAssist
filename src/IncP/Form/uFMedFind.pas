@@ -12,7 +12,7 @@ uses
   DBGrids, Dialogs, Menus, LR_Class, LR_DBSet, LR_PGrid, SQLDB, DB, Grids, fpjson,
   DateUtils, Math, StrUtils,
   uDmCommon, uFBase,
-  uConst, uMed, uSys, uSysVcl, uHelper, uVarUtil, uQuery, uProtectDbg, uProtectTimer,
+  uConst, uMed, uSys, uSysVcl, uHelper, uHelperVcl, uVarUtil, uQuery, uProtectDbg, uProtectTimer,
   uSettings, uStateStore, uLicence;
 
 type
@@ -44,60 +44,18 @@ begin
 
   Arr := (fJData.FindPath('Controls') as TJSONObject).Arrays['ComboBoxMonth'];
   SL := TStringList.Create().AddArray(Arr);
-  SetComboBoxAsObj(ComboBoxMonth, SL);
+  ComboBoxMonth.SetAsObj(SL);
   SL.Free();
 
   Arr := (fJData.FindPath('Controls') as TJSONObject).Arrays['ComboBoxDoc'];
   SL := TStringList.Create().AddArray(Arr);
-  SetComboBoxAsPair(ComboBoxDoc, SL);
+  ComboBoxDoc.SetAsPair(SL);
   SL.Free();
 
   Arr := (fJData.FindPath('Controls') as TJSONObject).Arrays['ComboBoxSendStatus'];
   SL := TStringList.Create().AddArray(Arr);
-  SetComboBoxAsObj(ComboBoxSendStatus, SL);
+  ComboBoxSendStatus.SetAsObj(SL);
   SL.Free();
-end;
-
-procedure TFMedFind.SetComboBox(aComboBox: TComboBox; aSL: TStringList);
-var
-  i: integer;
-begin
-  aComboBox.Clear();
-  aComboBox.Items.Add(cChooseAll);
-  for i := 0 to aSL.Count - 1 do
-    aComboBox.Items.Add(aSL.Names[i]);
-
-  aComboBox.ItemIndex := 0;
-end;
-
-procedure TFMedFind.SetComboBoxAsPair(aComboBox: TComboBox; aSL: TStringList);
-var
-  i: integer;
-begin
-  ComboBoxDoc.Clear();
-  ComboBoxDoc.Items.AddPair(cChooseAll, '');
-  for i := 0 to aSL.Count - 1 do
-    ComboBoxDoc.Items.Add(aSL[i]);
-
-  ComboBoxDoc.ItemIndex := 0;
-end;
-
-procedure TFMedFind.SetComboBoxAsObj(aComboBox: TComboBox; aSL: TStringList);
-var
-  i, Idx: integer;
-begin
-  with aComboBox.Items do
-  begin
-    Clear();
-    AddObject(cChooseAll, TObject(cPerTypeAll));
-    for i := 0 to aSL.Count - 1 do
-    begin
-      Idx := aSL.Names[i].ToInteger();
-      AddObject(aSL.ValueFromIndex[i], TObject(Idx));
-    end;
-  end;
-
-  aComboBox.ItemIndex := 0;
 end;
 
 procedure TFMedFind.SetComboBoxYear(aYear: Integer = 0);
@@ -435,7 +393,7 @@ begin
   IsNew := False;
   if (not MedIni.DirToFileApp(ComboBoxPath.Text).IsEmpty()) then
   begin
-    SetComboBox(ComboBoxFirm, fCodesLic);
+    ComboBoxFirm.SetAsStrings(fCodesLic);
     ComboBoxFirm.ItemIndex := 0;
     if (MedIni.AddPath(ComboBoxPath.Text)) then
     begin
@@ -574,7 +532,7 @@ begin
 
   Log('i', 'Завантаження ліцензій ...');
   fCodesLic := DmCommon.Licence_GetFromHttp(Name);
-  SetComboBox(ComboBoxFirm, fCodesLic);
+  ComboBoxFirm.SetAsStrings(fCodesLic);
   if (fCodesLic.Count = 0) then
     Log('i', 'Не знайдено ліцензій')
   else begin
@@ -691,9 +649,9 @@ begin
 
   Str1 := '12345678901234567890';
   //Str := Str.Between('23', '89');
-  //Str := Str.Replaces(['12', '7'], ['ab', '?']);
+  //Str2 := Str1.Replaces(['12', '7'], ['ab', '?']);
   //Str1 := 'the {{town}} is a capital of Great britian';
-  //Str2 := Str1.Macros(['town'], ['london']);
+  Str2 := Str1.Macros(['town'], ['london']);
   //Str2 := Str1.Filter('6', '9');
   //Str2 := Str1.Filter(['1'..'5'], True);
   //Str2 := Str1.Filter('1234');
@@ -728,7 +686,7 @@ begin
     Log('w', 'Файл ліцензій не знайдено');
 
   fCodesLic := Licence.GetFirmCodes(Name);
-  SetComboBox(ComboBoxFirm, fCodesLic);
+  ComboBoxFirm.SetAsStrings(fCodesLic);
 
   fDemoFields := TStringList.Create();
   fDemoFields.Add('CARDSTATUS_NAME');

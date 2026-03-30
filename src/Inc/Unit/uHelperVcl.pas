@@ -9,7 +9,8 @@ unit uHelperVcl;
 interface
 
 uses
-  Classes, SysUtils, Controls, StdCtrls, TypInfo, Variants, fpjson;
+  Classes, SysUtils, Controls, StdCtrls, TypInfo, Variants, fpjson,
+  uConst;
 
 type
   TControlHelper = class helper for TControl
@@ -29,6 +30,9 @@ type
     function HasPrev(): Boolean;
     function Last(): Boolean;
     procedure Next(aStep: integer);
+    procedure SetAsObj(aSL: TStringList);
+    procedure SetAsPair(aSL: TStringList);
+    procedure SetAsStrings(aSL: TStringList);
   end;
 
 implementation
@@ -188,6 +192,48 @@ var
 begin
   for i := 0 to Items.Count - 1 do
     Items.Objects[i].Free();
+end;
+
+procedure TComboBoxHelper.SetAsStrings(aSL: TStringList);
+var
+  i: integer;
+begin
+  Clear();
+  Items.Add(cChooseAll);
+  for i := 0 to aSL.Count - 1 do
+    Items.Add(aSL.Names[i]);
+
+  ItemIndex := 0;
+end;
+
+procedure TComboBoxHelper.SetAsPair(aSL: TStringList);
+var
+  i: integer;
+begin
+  Clear();
+  Items.AddPair(cChooseAll, '');
+  for i := 0 to aSL.Count - 1 do
+    Items.Add(aSL[i]);
+
+  ItemIndex := 0;
+end;
+
+procedure TComboBoxHelper.SetAsObj(aSL: TStringList);
+var
+  i, Idx: integer;
+begin
+  with Items do
+  begin
+    Clear();
+    AddObject(cChooseAll, TObject(cPerTypeAll));
+    for i := 0 to aSL.Count - 1 do
+    begin
+      Idx := aSL.Names[i].ToInteger();
+      AddObject(aSL.ValueFromIndex[i], TObject(Idx));
+    end;
+  end;
+
+  ItemIndex := 0;
 end;
 
 end.

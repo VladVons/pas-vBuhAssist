@@ -12,6 +12,8 @@ const
   cDirAddons             = 'addons';
   cHttpApi               = 'https://windows.cloud-server.com.ua/api';
   cMail                  = 'vBuhAssist@gmail.com';
+  cChooseAll             = '- Всі';
+  cPerTypeAll            = 500;
   cYearsBack             = 3;
   cLicenceRefrehDays     = 30;
   cDelayAnnonce          = 10*1000;
