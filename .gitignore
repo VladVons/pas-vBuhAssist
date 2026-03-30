@@ -9,6 +9,7 @@
 *.res
 *.json
 *.log
+*.pdf
 
 _lib*/
 backup
