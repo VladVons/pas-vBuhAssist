@@ -25,6 +25,9 @@ type
     procedure Add(aJObj: TJSONObject);
     function GetJObj(): TJSONObject;
     procedure ClearItems();
+    function HasNext(): Boolean;
+    function HasPrev(): Boolean;
+    procedure Next(aStep: integer);
   end;
 
 implementation
@@ -140,6 +143,37 @@ begin
     Exit(nil);
 
   Result := TJSONObject(Items.Objects[ItemIndex]);
+end;
+
+procedure TComboBoxHelper.Next(aStep: integer);
+var
+  Idx: Integer;
+begin
+  if (Items.Count = 0) then
+    Exit();
+
+  if (ItemIndex < 0) then
+    Idx := 0
+  else
+    Idx := ItemIndex;
+
+  Inc(Idx, aStep);
+  if (Idx < 0) then
+    Idx := 0
+  else if Idx >= Items.Count then
+    Idx := Items.Count - 1;
+
+  ItemIndex := Idx;
+end;
+
+function TComboBoxHelper.HasNext(): Boolean;
+begin
+  Result := (Items.Count > 0) and (ItemIndex < Items.Count - 1);
+end;
+
+function TComboBoxHelper.HasPrev(): Boolean;
+begin
+  Result := (Items.Count > 0) and (ItemIndex > 0);
 end;
 
 procedure TComboBoxHelper.ClearItems();

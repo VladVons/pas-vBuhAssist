@@ -104,16 +104,22 @@ begin
   SaveData();
   Cnt := fWinManager.CloseActive();
   if (Cnt = 0) then
-  begin
-    if (ComboBoxWizards.ItemIndex < ComboBoxWizards.Items.Count - 1) then
-      ComboBoxWizards.ItemIndex := ComboBoxWizards.ItemIndex + 1;
-    ComboBoxWizardsChange();
-  end;
+    if (ComboBoxWizards.HasNext()) then
+    begin
+      ComboBoxWizards.Next(1);
+      ComboBoxWizardsChange();
+    end else
+      Close();
 end;
 
 procedure TFWizard.FormDestroy(Sender: TObject);
 begin
+  if (fWinManager <> nil) then
+    fWinManager.CloseAll();
+  FreeAndNil(fWinManager);
+
   FreeAndNil(fClassMap);
+
   ComboBoxWizards.ClearItems();
   inherited;
 end;
@@ -204,8 +210,8 @@ var
 begin
   if (fWinManager <> nil) then
     fWinManager.CloseAll();
-
   FreeAndNil(fWinManager);
+
   fWinManager := TWinManager.Create(PageControl, Nil);
 
   fJScheme := ResourceLoadJson(aName);
@@ -216,6 +222,8 @@ begin
     FreeAndNil(fJScheme);
     Exit();
   end;
+
+  Title := fJScheme.Get('caption', '');
 
   fWinManager.Visible(false);
   for i := 0 to JArrTab.Count - 1 do
