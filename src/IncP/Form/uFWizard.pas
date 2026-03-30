@@ -208,13 +208,10 @@ var
   JObjTab, JObjConf, JObjConfDef: TJSONObject;
   Form: TFBase;
 begin
-  if (fWinManager <> nil) then
-    fWinManager.CloseAll();
-  FreeAndNil(fWinManager);
-
-  fWinManager := TWinManager.Create(PageControl, Nil);
-
   fJScheme := ResourceLoadJson(aName);
+  Title := fJScheme.Get('caption', '');
+  Log('i', Format('Помічник %s', [Title]));
+
   JArrTab := TJSONArray(fJScheme.Find('tabs'));
   if (JArrTab = nil) then
   begin
@@ -223,9 +220,13 @@ begin
     Exit();
   end;
 
-  Title := fJScheme.Get('caption', '');
+  if (fWinManager <> nil) then
+    fWinManager.CloseAll();
+  FreeAndNil(fWinManager);
 
+  fWinManager := TWinManager.Create(PageControl, Nil);
   fWinManager.Visible(false);
+
   for i := 0 to JArrTab.Count - 1 do
   begin
     JObjTab := JArrTab.Objects[i];
