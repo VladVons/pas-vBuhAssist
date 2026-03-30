@@ -30,7 +30,7 @@
   </DECLARHEAD>
   <DECLARBODY>
     <HFILL>hello</HFILL>
-    <HNUM>привіт</HNUM>
+    <HNUM>привіт1</HNUM>
     <HSTI>{{DECLARBODY_HSTI}}</HSTI>
     <HNAME>{{DECLARBODY_HNAME}}</HNAME>
     <HTIN>{{DECLARBODY_HTIN}}</HTIN>

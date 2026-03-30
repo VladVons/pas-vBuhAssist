@@ -65,6 +65,7 @@ type
   TJSONObjectHelper = type helper for TJSONObject
     //procedure Set1Update(aSrc: TJSONObject);
     procedure Update(aSrc: TJSONObject);
+    function GetKeys(): TStringList;
   end;
 
 implementation
@@ -199,12 +200,12 @@ var
   OutLen: Integer;
   HasNonSpace: Boolean;
 begin
-  if (Self = '') then
-    Exit(Self);
+  if (self = '') then
+    Exit(self);
 
   // Виділяємо буфер для вихідного рядка (не більше, ніж вхідний)
-  SetLength(Result, System.Length(Self));
-  Src := PChar(Self);
+  SetLength(Result, System.Length(self));
+  Src := PChar(self);
   Dest := PChar(Result);
   OutLen := 0;
 
@@ -221,7 +222,7 @@ begin
     end;
 
     // Копіюємо рядок, якщо він не пустий
-    if HasNonSpace then
+    if (HasNonSpace) then
     begin
       Move(LineStart^, Dest^, PtrUInt(Src - LineStart));
       Inc(Dest, Src - LineStart);
@@ -611,10 +612,19 @@ begin
   begin
     Key := aSrc.Names[i];
     if (self.IndexOfName(Key) <> -1) then
-      self.Delete(Key);
+      Delete(Key);
 
-    self.Add(Key, aSrc.Items[i].Clone());
+    Add(Key, aSrc.Items[i].Clone());
   end;
+end;
+
+function TJSONObjectHelper.GetKeys(): TStringList;
+var
+  i: Integer;
+begin
+  Result := TStringList.Create();
+  for i := 0 to Count - 1 do
+    Result.Add(Names[i]);
 end;
 
 end.

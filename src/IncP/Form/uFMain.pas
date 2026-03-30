@@ -218,7 +218,7 @@ end;
 procedure TFMain.FormsLoad();
 const
   cSect = 'Forms';
-  cAutoForm: TStringArray = ('TFMedFindZvit', 'TFMedFindAkz', 'TFMedFindPdv', 'TFSettings', 'FTest');
+  cAutoForm: TStringArray = ('TFMedFindZvit', 'TFMedFindAkz', 'TFMedFindPdv', 'TFSettings');
 var
   i: integer;
   SL: TStringList;
