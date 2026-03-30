@@ -3,7 +3,7 @@ rem git config --global user.email "vladvons@gmail.com"
 rem git config --global user.name "vladvons"
 
 rem git rm --cached vAppUpd.log
-git rm --cached src/*.pdf
+git rm --cached *.pdf
 rem git rm --cached -r junk
 
 git status
