@@ -104,12 +104,12 @@ begin
   SaveData();
   Cnt := fWinManager.CloseActive();
   if (Cnt = 0) then
-    if (ComboBoxWizards.HasNext()) then
-    begin
+    if (not ComboBoxWizards.HasNext()) then
+      Close()
+    else begin
       ComboBoxWizards.Next(1);
       ComboBoxWizardsChange();
-    end else
-      Close();
+    end;
 end;
 
 procedure TFWizard.FormDestroy(Sender: TObject);

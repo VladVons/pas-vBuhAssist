@@ -241,7 +241,7 @@ var
 begin
   Tab := fPageControl.ActivePage;
   if (Tab = nil) or (Tab.ControlCount = 0) then 
-    Exit();
+    Exit(0);
 
   if (Tab.Controls[0] is TForm) then
   begin

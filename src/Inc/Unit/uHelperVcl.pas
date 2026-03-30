@@ -27,6 +27,7 @@ type
     procedure ClearItems();
     function HasNext(): Boolean;
     function HasPrev(): Boolean;
+    function Last(): Boolean;
     procedure Next(aStep: integer);
   end;
 
@@ -164,6 +165,11 @@ begin
     Idx := Items.Count - 1;
 
   ItemIndex := Idx;
+end;
+
+function TComboBoxHelper.Last(): Boolean;
+begin
+  Result := (Items.Count > 0) and (ItemIndex >= 0) and (ItemIndex = Items.Count - 1);
 end;
 
 function TComboBoxHelper.HasNext(): Boolean;
