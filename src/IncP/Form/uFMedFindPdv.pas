@@ -8,18 +8,21 @@ unit uFMedFindPdv;
 interface
 
 uses
-  Classes, SysUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  Buttons, uDmCommon, uFMedFind, uFWizard, uMed, uWinManager;
+  Classes, SysUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ExtCtrls, Buttons, fpjson,
+  uDmCommon, uFMedFind, uFWizard, uMed, uWinManager, uHelper;
 
 type
   { TFMedFindPdv }
   TFMedFindPdv = class(TFMedFind)
     BitBtnUnlock: TBitBtn;
     DataSourceCur: TDataSource;
+    DataSourceOrg: TDataSource;
     DataSourcePrev: TDataSource;
+    DataSourceFJ: TDataSource;
     SQLQueryCur: TSQLQuery;
     SQLQueryCurCARDSENDSTT_NAME: TStringField;
     SQLQueryCurCARDSTATUS_NAME: TStringField;
+    SQLQueryCurCARD_CODE: TLongintField;
     SQLQueryCurCHARCODE: TStringField;
     SQLQueryCurDEPT: TStringField;
     SQLQueryCurEDRPOU: TStringField;
@@ -32,7 +35,20 @@ type
     SQLQueryCurPERTYPE: TIntegerField;
     SQLQueryCurSHORTNAME: TStringField;
     SQLQueryCurVAT: TStringField;
+    SQLQueryOrg: TSQLQuery;
+    SQLQueryFJA7_11: TCurrencyField;
+    SQLQueryFJFIRM_EDRPOU: TStringField;
+    SQLQueryFJFIRM_NAME: TStringField;
+    SQLQueryFJN10: TStringField;
+    SQLQueryFJN11: TDateField;
+    SQLQueryFJN2_1: TStringField;
+    SQLQueryFJN4: TStringField;
+    SQLQueryOrgHBTAXINSP_NAME: TStringField;
+    SQLQueryOrgLEADFIO: TStringField;
+    SQLQueryOrgLEADINDTAX: TStringField;
+    SQLQueryOrgTAXINSPNUM: TStringField;
     SQLQueryPrev: TSQLQuery;
+    SQLQueryFJ: TSQLQuery;
     SQLQueryPrevCARDSENDSTT_NAME: TStringField;
     SQLQueryPrevCARDSTATUS_NAME: TStringField;
     SQLQueryPrevCHARCODE: TStringField;
@@ -44,6 +60,9 @@ type
     procedure BitBtnUnlockClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure SQLQueryCurCalcFields(DataSet: TDataSet);
+  private
+    procedure QueryFjOpen(aQuery: TSQLQuery; aJObj: TJSONObject);
+    procedure QueryOrgOpen(aQuery: TSQLQuery; aJObj: TJSONObject);
   protected
     function  GetParentQueryCur(): TSQLQuery; override;
     function  GetParentQueryPrev(): TSQLQuery; override;
@@ -93,12 +112,70 @@ begin
   SQLQueryGridCurCalcFields(DataSet);
 end;
 
+procedure TFMedFindPdv.QueryFjOpen(aQuery: TSQLQuery; aJObj: TJSONObject);
+var
+  Code: integer;
+begin
+  Code := SQLQueryCur.FieldByName('CARD_CODE').AsInteger;
+  aQuery.ParamByName('_CARDCODE').AsInteger := Code;
+  aQuery.Open();
+
+  aJObj.Add('HNAME', aQuery.FieldByName('FIRM_NAME').AsString);
+  aJObj.Add('HTIN', aQuery.FieldByName('FIRM_EDRPOU').AsString);
+  aJObj.Add('TIN', aQuery.FieldByName('FIRM_EDRPOU').AsString);
+  //aJObj.Add('HBOS', aQuery.FieldByName('N10').AsString);
+
+  aJObj.Add('T1RXXXXG2D', aQuery.FieldByName('N11').AsString);
+  aJObj.Add('T1RXXXXG31', aQuery.FieldByName('N2_1').AsString);
+  aJObj.Add('T1RXXXXG6S', aQuery.FieldByName('N4').AsString);
+  aJObj.Add('T1RXXXXG7S', aQuery.FieldByName('FIRM_NAME').AsString);
+  aJObj.Add('T1RXXXXG8',  aQuery.FieldByName('A7_11').AsCurrency);
+
+  aQuery.Close();
+end;
+
+procedure TFMedFindPdv.QueryOrgOpen(aQuery: TSQLQuery; aJObj: TJSONObject);
+var
+  Code: string;
+begin
+  Code := SQLQueryCur.FieldByName('EDRPOU').AsString;
+  aQuery.ParamByName('_EDRPOU').AsString := Code;
+  aQuery.Open();
+
+  Code := aQuery.FieldByName('TAXINSPNUM').AsString;
+  aJObj.Add('C_STI_ORIG', Code);
+  aJObj.Add('HKSTI', Code);
+  aJObj.Add('C_REG', Code.Left(2));
+  aJObj.Add('C_RAJ', Code.Right(2));
+
+  aJObj.Add('HSTI', aQuery.FieldByName('HBTAXINSP_NAME').AsString);
+  aJObj.Add('HKBOS', aQuery.FieldByName('LEADINDTAX').AsString);
+  aJObj.Add('HBOS', aQuery.FieldByName('LEADFIO').AsString);
+
+  aQuery.Close();
+end;
+
 procedure TFMedFindPdv.BitBtnUnlockClick(Sender: TObject);
 var
   Form: TFWizard;
+  JObj: TJSONObject;
 begin
+  if (not SQLQueryCur.Active) then
+  begin
+    Log('e', 'Не відібрано значення');
+    Exit();
+  end;
+
+  JObj := TJSONObject.Create();
+  QueryFjOpen(SQLQueryFJ, JObj);
+  QueryOrgOpen(SQLQueryOrg, JObj);
+
   Form := TFWizard(WinManager.Add(TFWizard));
   Form.Load('FWizardPdvs');
+  Form.SaveXml('J1360102', JObj);
+  Form.SaveXml('J1312603', JObj);
+
+  JObj.Free();
 end;
 
 procedure TFMedFindPdv.FormCreate(Sender: TObject);
@@ -112,10 +189,14 @@ begin
   DataSourceCur.DataSet := SQLQueryCur;
   DbGridCur.DataSource := DataSourceCur;
 
-  SQLQueryPrev.Database := DmCommon.IBConnection;
-  SQLQueryPrev.Transaction := SQLTransaction;
-  DataSourcePrev.DataSet := SQLQueryPrev;
-  DbGridPrev.DataSource := DataSourcePrev;
+  //SQLQueryPrev.Database := DmCommon.IBConnection;
+  //SQLQueryPrev.Transaction := SQLTransaction;
+  //DataSourcePrev.DataSet := SQLQueryPrev;
+  //DbGridPrev.DataSource := DataSourcePrev;
+
+  //SQLQueryFJ.Database := DmCommon.IBConnection;
+  //SQLQueryFJ.Transaction := SQLTransaction;
+  //DataSourceFJ.DataSet := SQLQueryFJ;
 
   LoadJsonData();
 end;

@@ -64,6 +64,7 @@ type
     //procedure Set1Update(aSrc: TJSONObject);
     procedure Update(aSrc: TJSONObject);
     function GetKeys(): TStringList;
+    function GetNested(const Path: string; aDef: Variant): Variant;
   end;
 
 implementation
@@ -602,6 +603,45 @@ begin
   Result := TStringList.Create();
   for i := 0 to Count - 1 do
     Result.Add(Names[i]);
+end;
+
+function TJSONObjectHelper.GetNested(const Path: string; aDef: Variant): Variant;
+var
+  i: integer;
+  Parts: TStringArray;
+  JObjCur: TJSONObject;
+  JData: TJSONData;
+
+  function JsonToVariant(const aJData: TJSONData): Variant;
+  begin
+    Result := Nil;
+    if (aJData <> nil) then
+      case aJData.JSONType of
+        jtString:
+          Result := aJData.AsString;
+        jtNumber:
+          Result := aJData.AsInteger;
+        jtBoolean:
+          Result := aJData.AsBoolean;
+      end;
+  end;
+
+  begin
+  Result := aDef;
+
+  JObjCur := self;
+  Parts := Path.Split(['/']);
+
+  for i := 0 to High(Parts) - 1 do
+  begin
+    JData := JObjCur.Find(Parts[i]);
+    if (JData = nil) or not (JData is TJSONObject) then
+      Exit();
+    JObjCur := TJSONObject(JData);
+  end;
+
+  JData := JObjCur.Find(Parts[High(Parts)]);
+  Result := JsonToVariant(JData)
 end;
 
 end.

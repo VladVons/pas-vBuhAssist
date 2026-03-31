@@ -29,14 +29,14 @@ inherited FTest: TFTest
       TabOrder = 0
       OnClick = BitBtnWizardAllClick
     end
-    object BitBtnTestXml: TBitBtn
+    object BitBtnTestXml1: TBitBtn
       Left = 176
       Height = 38
       Top = 0
       Width = 94
-      Caption = 'TestXml'
+      Caption = 'TestXml 1'
       TabOrder = 1
-      OnClick = BitBtnTestXmlClick
+      OnClick = BitBtnTestXml1Click
     end
     object BitBtnWizard0: TBitBtn
       Left = 720
@@ -55,11 +55,11 @@ inherited FTest: TFTest
     Width = 272
     Align = alLeft
     Lines.Strings = (
-      'DECLARBODY_HFILL=hello'
-      'DECLARBODY_HNUM=привіт'
+      'CHANGE_HSTI=ГОЛОВНЕ УПРАВЛІННЯ ДПС У КИЇВСЬКІЙ ОБЛАСТІ,  БУЧАНСЬКА ДЕРЖАВНА ПОДАТКОВА ІНСПЕКЦІЯ'
     )
     ScrollBars = ssAutoBoth
     TabOrder = 2
+    WordWrap = False
   end
   object Memo2: TMemo[3]
     Left = 272
@@ -72,5 +72,14 @@ inherited FTest: TFTest
     )
     ScrollBars = ssAutoBoth
     TabOrder = 3
+  end
+  object BitBtnTestXml2: TBitBtn[4]
+    Left = 280
+    Height = 38
+    Top = 48
+    Width = 94
+    Caption = 'TestXml 2'
+    TabOrder = 4
+    OnClick = BitBtnTestXml2Click
   end
 end

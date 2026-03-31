@@ -9,9 +9,9 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
-  ExtCtrls, ValEdit, Buttons, fpjson, TypInfo, Variants, jsonparser,
+  ExtCtrls, ValEdit, Buttons, fpjson, TypInfo, Variants, jsonparser, LConvEncoding,
   uFrStringGrid,
-  uSys, uSysVcl, uHelper, uHelperVcl, uFBase, uWinManager, uExGrid;
+  uSys, uSysVcl, uVarUtil, uHelper, uHelperVcl, uFBase, uWinManager, uExGrid;
 
 type
   { TFWizard }
@@ -43,6 +43,7 @@ type
     procedure LoadData(const aFile: string);
     procedure Load(const aName: string);
     procedure SaveData();
+    procedure SaveXml(const aName: string; aJObj: TJSONObject);
   end;
 
 implementation
@@ -399,6 +400,21 @@ begin
   ComboBoxWizards.ItemIndex := 0;
   ComboBoxWizards.Visible := True;
   ComboBoxWizardsChange();
+end;
+
+procedure TFWizard.SaveXml(const aName: string; aJObj: TJSONObject);
+var
+  Str, StrXds, Path: string;
+  Macros: TMacros;
+begin
+  StrXds := ResourceLoadString(aName, 'xml');
+  Macros := TMacros.Create();
+  Str := Macros.Exec(StrXds, aJObj).DelEmptyLines();
+  Path := ConcatPaths(['Data', aName + '.xml']);
+  Str := UTF8ToCP1251(Str);
+  Str.ToFile(Path);
+  Log('i', Path);
+  Macros.Free();
 end;
 
 

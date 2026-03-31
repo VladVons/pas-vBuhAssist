@@ -17,15 +17,14 @@ inherited FMedFindPdv: TFMedFindPdv
     inherited PageControl: TPageControl
       Width = 919
       inherited TabSheetCur: TTabSheet
-        ClientWidth = 911
         inherited DbGridCur: TDBGrid
           Width = 911
         end
       end
       inherited TabSheetPrev: TTabSheet
-        ClientWidth = 911
         inherited DBGridPrev: TDBGrid
           Width = 911
+          DataSource = DataSourcePrev
         end
       end
     end
@@ -52,12 +51,13 @@ inherited FMedFindPdv: TFMedFindPdv
   inherited PopupMenuActivation: TPopupMenu[7]
   end
   object DataSourcePrev: TDataSource[8]
-    Left = 120
-    Top = 360
+    DataSet = SQLQueryPrev
+    Left = 104
+    Top = 336
   end
   object DataSourceCur: TDataSource[9]
     Left = 48
-    Top = 360
+    Top = 336
   end
   object SQLQueryCur: TSQLQuery[10]
     FieldDefs = <    
@@ -162,9 +162,11 @@ inherited FMedFindPdv: TFMedFindPdv
       '    END AS vat,'
       '    T2.PERTYPE,'
       '    T2.PERDATE,'
+      '    T2.CARD_CODE,'
       '    CAST(T2.PERDATE AS VARCHAR(10)) AS PERDATE_STR,'
       '    T2.CHARCODE,'
       '    T2.FORM_NAME,'
+      '    T2.CARDTABLES_TABNAME,'
       '    T2.CARDSENDSTT_NAME,'
       '    T2.MODDATE,'
       '    T2.CARDSTATUS_NAME'
@@ -172,19 +174,23 @@ inherited FMedFindPdv: TFMedFindPdv
       '    ORG'
       'LEFT JOIN ('
       '    SELECT'
+      '        CARD.CODE AS CARD_CODE,'
       '        CARD.EDRPOU AS CARD_EDRPOU,'
       '        CARD.IDORG,'
       '        CARD.PERDATE,'
       '        CARD.PERTYPE,'
-      '        FORM.CHARCODE,'
       '        COALESCE(CARD.DOCNAME, FORM.NAME) AS FORM_NAME,'
       '        CAST(CARD.MODDATE AS DATE) AS MODDATE,'
-      '        CARDSTATUS.NAME || '' '' || CARD.STATUS AS CARDSTATUS_NAME,'
-      '        RDSTTSPR.NAME  || '' '' || CARD.SENDSTT AS CARDSENDSTT_NAME'
+      '        FORM.CHARCODE,'
+      '        CARDTABLES.TABNAME AS CARDTABLES_TABNAME,'
+      '        CARDSTATUS.NAME AS CARDSTATUS_NAME,'
+      '        RDSTTSPR.NAME AS CARDSENDSTT_NAME'
       '    FROM'
       '      CARD'
       '    LEFT JOIN FORM'
       '        ON FORM.CODE = CARD.FORM'
+      '    LEFT JOIN CARDTABLES'
+      '        ON CARDTABLES.FORM = CARD.FORM'
       '    LEFT JOIN RDSTTSPR AS CARDSTATUS'
       '        ON CARDSTATUS.CODE = CARD.STATUS'
       '    LEFT JOIN RDSTTSPR'
@@ -246,11 +252,21 @@ inherited FMedFindPdv: TFMedFindPdv
     MacroCheck = True
     Left = 48
     Top = 264
+    object SQLQueryCurCARD_CODE: TLongintField
+      FieldKind = fkData
+      FieldName = 'CARD_CODE'
+      Index = 0
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Visible = False
+    end
     object SQLQueryCurEDRPOU: TStringField
       DisplayLabel = 'ЄДРПОУ'
       FieldKind = fkData
       FieldName = 'EDRPOU'
-      Index = 0
+      Index = 1
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -262,7 +278,7 @@ inherited FMedFindPdv: TFMedFindPdv
       DisplayWidth = 6
       FieldKind = fkData
       FieldName = 'DEPT'
-      Index = 1
+      Index = 2
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -274,7 +290,7 @@ inherited FMedFindPdv: TFMedFindPdv
       DisplayWidth = 20
       FieldKind = fkData
       FieldName = 'SHORTNAME'
-      Index = 2
+      Index = 3
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -286,7 +302,7 @@ inherited FMedFindPdv: TFMedFindPdv
       DisplayWidth = 10
       FieldKind = fkData
       FieldName = 'INDTAXNUM'
-      Index = 3
+      Index = 4
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -298,7 +314,7 @@ inherited FMedFindPdv: TFMedFindPdv
       DisplayWidth = 8
       FieldKind = fkData
       FieldName = 'VAT'
-      Index = 4
+      Index = 5
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -311,7 +327,7 @@ inherited FMedFindPdv: TFMedFindPdv
       DisplayWidth = 8
       FieldKind = fkData
       FieldName = 'PERTYPE'
-      Index = 5
+      Index = 6
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -323,7 +339,7 @@ inherited FMedFindPdv: TFMedFindPdv
       DisplayWidth = 10
       FieldKind = fkData
       FieldName = 'PERDATE'
-      Index = 6
+      Index = 7
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -335,7 +351,7 @@ inherited FMedFindPdv: TFMedFindPdv
       DisplayWidth = 10
       FieldKind = fkCalculated
       FieldName = 'PERDATE_STR'
-      Index = 7
+      Index = 8
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -347,7 +363,7 @@ inherited FMedFindPdv: TFMedFindPdv
       DisplayWidth = 10
       FieldKind = fkData
       FieldName = 'CHARCODE'
-      Index = 8
+      Index = 9
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -359,7 +375,7 @@ inherited FMedFindPdv: TFMedFindPdv
       DisplayWidth = 20
       FieldKind = fkData
       FieldName = 'FORM_NAME'
-      Index = 9
+      Index = 10
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -371,7 +387,7 @@ inherited FMedFindPdv: TFMedFindPdv
       DisplayWidth = 12
       FieldKind = fkCalculated
       FieldName = 'HZ'
-      Index = 10
+      Index = 11
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = True
@@ -384,7 +400,7 @@ inherited FMedFindPdv: TFMedFindPdv
       DisplayWidth = 10
       FieldKind = fkData
       FieldName = 'MODDATE'
-      Index = 11
+      Index = 12
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -394,7 +410,7 @@ inherited FMedFindPdv: TFMedFindPdv
       DisplayLabel = 'Стан'
       FieldKind = fkData
       FieldName = 'CARDSTATUS_NAME'
-      Index = 12
+      Index = 13
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -406,7 +422,7 @@ inherited FMedFindPdv: TFMedFindPdv
       DisplayWidth = 10
       FieldKind = fkData
       FieldName = 'CARDSENDSTT_NAME'
-      Index = 13
+      Index = 14
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -458,6 +474,8 @@ inherited FMedFindPdv: TFMedFindPdv
         Precision = -1
         Size = 30
       end>
+    Database = DmCommon.IBConnection
+    Transaction = DmCommon.SQLTransactionDm
     SQL.Strings = (
       'SELECT'
       '    ORG.EDRPOU,'
@@ -519,7 +537,7 @@ inherited FMedFindPdv: TFMedFindPdv
         ParamType = ptInput
       end>
     MacroCheck = True
-    Left = 120
+    Left = 104
     Top = 264
     object SQLQueryPrevEDRPOU: TStringField
       DisplayLabel = 'ЄДРПОУ'
@@ -609,5 +627,173 @@ inherited FMedFindPdv: TFMedFindPdv
     Active = False
     Left = 48
     Top = 183
+  end
+  object SQLQueryFJ: TSQLQuery[13]
+    FieldDefs = <>
+    Database = DmCommon.IBConnection
+    Transaction = DmCommon.SQLTransactionDm
+    SQL.Strings = (
+      'SELECT'
+      '  FIRM_EDRPOU,'
+      '  FIRM_NAME,'
+      '  N10,'
+      '  N11,'
+      '  N2_1,'
+      '  N4,'
+      '  A7_11'
+      'FROM'
+      '  FJ1201002_MAIN'
+      'WHERE'
+      '  CARDCODE = :_CARDCODE'
+      ''
+    )
+    Params = <    
+      item
+        DataType = ftUnknown
+        Name = '_CARDCODE'
+        ParamType = ptInput
+      end>
+    Macros = <>
+    MacroCheck = True
+    Left = 160
+    Top = 264
+    object SQLQueryFJFIRM_EDRPOU: TStringField
+      FieldKind = fkData
+      FieldName = 'FIRM_EDRPOU'
+      Index = 0
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+    object SQLQueryFJFIRM_NAME: TStringField
+      FieldKind = fkData
+      FieldName = 'FIRM_NAME'
+      Index = 1
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+    object SQLQueryFJN10: TStringField
+      FieldKind = fkData
+      FieldName = 'N10'
+      Index = 2
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+    object SQLQueryFJN11: TDateField
+      FieldKind = fkData
+      FieldName = 'N11'
+      Index = 3
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+    object SQLQueryFJN2_1: TStringField
+      FieldKind = fkData
+      FieldName = 'N2_1'
+      Index = 4
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+    object SQLQueryFJN4: TStringField
+      FieldKind = fkData
+      FieldName = 'N4'
+      Index = 5
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+    object SQLQueryFJA7_11: TCurrencyField
+      FieldKind = fkData
+      FieldName = 'A7_11'
+      Index = 6
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+  end
+  object DataSourceFJ: TDataSource[14]
+    DataSet = SQLQueryFJ
+    Left = 160
+    Top = 336
+  end
+  object SQLQueryOrg: TSQLQuery[15]
+    FieldDefs = <>
+    Database = DmCommon.IBConnection
+    Transaction = DmCommon.SQLTransactionDm
+    SQL.Strings = (
+      'SELECT'
+      '  ORG.TAXINSPNUM,'
+      '  ORG.LEADFIO,'
+      '  ORG.LEADINDTAX,'
+      '  HBTAXINSP.NAME AS HBTAXINSP_NAME'
+      'FROM'
+      '  ORG'
+      'LEFT JOIN HBTAXINSP'
+      '  ON HBTAXINSP.NUM = ORG.TAXINSPNUM'
+      'WHERE'
+      '  ORG.EDRPOU = :_EDRPOU'
+      ''
+    )
+    Params = <    
+      item
+        DataType = ftUnknown
+        Name = '_EDRPOU'
+        ParamType = ptInput
+      end>
+    Macros = <>
+    MacroCheck = True
+    Left = 216
+    Top = 264
+    object SQLQueryOrgTAXINSPNUM: TStringField
+      FieldKind = fkData
+      FieldName = 'TAXINSPNUM'
+      Index = 0
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+    object SQLQueryOrgLEADINDTAX: TStringField
+      FieldKind = fkData
+      FieldName = 'LEADINDTAX'
+      Index = 1
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+    object SQLQueryOrgLEADFIO: TStringField
+      FieldKind = fkData
+      FieldName = 'LEADFIO'
+      Index = 2
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+    object SQLQueryOrgHBTAXINSP_NAME: TStringField
+      FieldKind = fkData
+      FieldName = 'HBTAXINSP_NAME'
+      Index = 3
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+  end
+  object DataSourceOrg: TDataSource[16]
+    DataSet = SQLQueryOrg
+    Left = 216
+    Top = 336
   end
 end

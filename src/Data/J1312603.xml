@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <DECLAR xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="J1312603.XSD">
   <DECLARHEAD>
-    <TIN>{{TIN}}</TIN>
+    <TIN>39743065</TIN>
     <C_DOC>J13</C_DOC>
     <C_DOC_SUB>126</C_DOC_SUB>
     <C_DOC_VER>3</C_DOC_VER>
     <C_DOC_TYPE>0</C_DOC_TYPE>
     <C_DOC_CNT>5</C_DOC_CNT>
-    <C_REG>{{C_REG}}</C_REG>
-    <C_RAJ>{{C_RAJ}}</C_RAJ>
+    <C_REG>05</C_REG>
+    <C_RAJ>15</C_RAJ>
     <PERIOD_MONTH>{{MONTH}}</PERIOD_MONTH>
     <PERIOD_TYPE>1</PERIOD_TYPE>
     <PERIOD_YEAR>{{YEAR}}</PERIOD_YEAR>
-    <C_STI_ORIG>{{C_STI_ORIG}}</C_STI_ORIG>
+    <C_STI_ORIG>0515</C_STI_ORIG>
     <C_DOC_STAN>1</C_DOC_STAN>
     <LINKED_DOCS>
       <DOC NUM="1" TYPE="1">
@@ -31,24 +31,24 @@
   <DECLARBODY>
     <HDATE>{{HDATE}}</HDATE>
     <HNUM>{{HNUM}}</HNUM>
-    <HTIN>{{HTIN}}</HTIN>
-    <HNAME>{{HNAME}}</HNAME>
-    <HKSTI>{{HKSTI}}</HKSTI>
-    <HSTI>{{HSTI}}</HSTI>
-    <T1RXXXXG2D ROWNUM="1">{{T1RXXXXG2D}}</T1RXXXXG2D>
-    <T1RXXXXG31 ROWNUM="1">{{T1RXXXXG31}}</T1RXXXXG31>
+    <HTIN>39743065</HTIN>
+    <HNAME>ТОВ "ВЕСТТЕК"</HNAME>
+    <HKSTI>0515</HKSTI>
+    <HSTI>ГОЛОВНЕ УПРАВЛІННЯ ДПС У ДОНЕЦЬКІЙ ОБЛАСТІ,</HSTI>
+    <T1RXXXXG2D ROWNUM="1">16.10.2024</T1RXXXXG2D>
+    <T1RXXXXG31 ROWNUM="1">51</T1RXXXXG31>
     <T1RXXXXG32 ROWNUM="1" xsi:nil="true" />
     <T1RXXXXG4 ROWNUM="1" xsi:nil="true" />
     <T1RXXXXG5 ROWNUM="1">{{T1RXXXXG5}}</T1RXXXXG5>
-    <T1RXXXXG6S ROWNUM="1">{{T1RXXXXG6S}}</T1RXXXXG6S>
-    <T1RXXXXG7S ROWNUM="1">{{T1RXXXXG7S}}</T1RXXXXG7S>
-    <T1RXXXXG8 ROWNUM="1">{{T1RXXXXG8}}</T1RXXXXG8>
+    <T1RXXXXG6S ROWNUM="1">367805823058</T1RXXXXG6S>
+    <T1RXXXXG7S ROWNUM="1">ТОВ "ВЕСТТЕК"</T1RXXXXG7S>
+    <T1RXXXXG8 ROWNUM="1"></T1RXXXXG8>
     <T1RXXXXG9 ROWNUM="1" xsi:nil="true" />
     <R001G10>{{R001G10}}</R001G10>
     <R01G1S>{{R01G1S}}</R01G1S>
     <H01>{{H01}}</H01>
-    <HKBOS>{{HBOS}}</HKBOS>
-    <HBOS>{{HKBOS}}</HBOS>
+    <HKBOS>Любецький Віктор Володимирович</HKBOS>
+    <HBOS>2140302833</HBOS>
     <HFILL>{{HFILL}}</HFILL>
   </DECLARBODY>
 </DECLAR>

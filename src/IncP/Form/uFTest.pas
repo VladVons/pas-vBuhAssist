@@ -6,24 +6,27 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Buttons, StdCtrls,
-  ExtCtrls, fpjson,
+  ExtCtrls, fpjson, LConvEncoding,
   uFBase, uFWizard, uWinManager, uSysVcl, uVarUtil, uHelper;
 
 type
 
   { TFTest }
   TFTest = class(TFBase)
-    BitBtnTestXml: TBitBtn;
+    BitBtnTestXml1: TBitBtn;
+    BitBtnTestXml2: TBitBtn;
     BitBtnWizard0: TBitBtn;
     BitBtnWizardAll: TBitBtn;
     Memo1: TMemo;
     Memo2: TMemo;
     Panel1: TPanel;
-    procedure BitBtnTestXmlClick(Sender: TObject);
+    procedure BitBtnTestXml1Click(Sender: TObject);
+    procedure BitBtnTestXml2Click(Sender: TObject);
     procedure BitBtnWizard0Click(Sender: TObject);
     procedure BitBtnWizardAllClick(Sender: TObject);
   private
     procedure Wizard(const aDir, aFile: string);
+    procedure TestXml(const aName: string);
   public
   end;
 
@@ -53,24 +56,32 @@ begin
   Wizard('Data\12345', 'FWizardPdv0');
 end;
 
-procedure TFTest.BitBtnTestXmlClick(Sender: TObject);
-const
-  cName = 'J1360102';
+procedure TFTest.TestXml(const aName: string);
 var
   Str, StrXds, Path: string;
   Macros: TMacros;
 begin
-  StrXds := ResourceLoadString(cName, 'xml');
-
+  StrXds := ResourceLoadString(aName, 'xml');
   Macros := TMacros.Create();
-  Str := Macros.Exec(StrXds, Memo1.Lines).DelEmptyLines();
+  Str := Macros.Exec(StrXds, TStringList(Memo1.Lines)).DelEmptyLines();
   Memo2.Text := Str;
   Macros.Free();
 
   //TStringList(Memo2.Lines).DelEmpty();
-  Path := ConcatPaths(['Data', cName + '.xml']);
+  Path := ConcatPaths(['Data', aName + '.xml']);
+  Str := UTF8ToCP1251(Str);
   Str.ToFile(Path);
   Log('i', Path);
+end;
+
+procedure TFTest.BitBtnTestXml1Click(Sender: TObject);
+begin
+  TestXml('J1360102');
+end;
+
+procedure TFTest.BitBtnTestXml2Click(Sender: TObject);
+begin
+  TestXml('J1312603');
 end;
 
 procedure TFTest.BitBtnWizardAllClick(Sender: TObject);
