@@ -1,52 +1,35 @@
 object FAbout: TFAbout
   Left = 1384
-  Height = 296
+  Height = 370
   Top = 310
-  Width = 487
+  Width = 609
   BorderStyle = bsDialog
   Caption = 'Про програму'
-  ClientHeight = 296
-  ClientWidth = 487
+  ClientHeight = 370
+  ClientWidth = 609
+  DesignTimePPI = 120
   Position = poMainFormCenter
   LCLVersion = '4.6.0.0'
   OnCreate = FormCreate
   object PageControl1: TPageControl
     Left = 0
-    Height = 296
+    Height = 370
     Top = 0
-    Width = 487
+    Width = 609
     ActivePage = TabSheet2
     Align = alClient
     TabIndex = 0
     TabOrder = 0
     object TabSheet2: TTabSheet
       Caption = 'Про програму'
-      ClientHeight = 268
-      ClientWidth = 479
+      ClientHeight = 337
+      ClientWidth = 601
       object Memo1: TMemo
         Left = 0
-        Height = 268
+        Height = 337
         Top = 0
-        Width = 479
+        Width = 601
         Align = alClient
-        Lines.Strings = (
-          'Програма «Помічник бухгалтера» призначена для автоматизації роботи бухгалтерам та аудиторам.'
-          ''
-          'Програма формує зручний та зрозумілий документ по закриттю звітного періоду по суб''єктам господарювання.'
-          ''
-          'Для створення програми використовувались відкриті можливості інтеграції COM-об’єктів з відкритої документації до бухгалтерського програмного забезпечення.'
-          ''
-          'Програма не модифікує Ваше програмне забезпечення, не проводить будь-яких маніпуляцій з Вашим програмним забезпеченням, базами даних, структурами та/або вмістом бази даних.'
-          ''
-          'Програма не створює, не заповнює, не модифікує, не видаляє, не додає будь-яку інформацію, а також не отримує квитанцій та не відправляє звітів.'
-          ''
-          'Програма не опрацьовує та не передає будь-які персональні дані. Отримуючи код доступу до програми користувач погоджується з умовами використання.'
-          ''
-          'Вироблено в Україні.'
-          ''
-          'Побажання та пропозиції приймаємо на електронну пошту:'
-          '{Mail}'
-        )
         ReadOnly = True
         ScrollBars = ssAutoBoth
         TabOrder = 0
@@ -54,30 +37,30 @@ object FAbout: TFAbout
     end
     object TabSheet1: TTabSheet
       Caption = 'Версія'
-      ClientHeight = 268
-      ClientWidth = 479
+      ClientHeight = 337
+      ClientWidth = 601
       TabVisible = False
       object LabeledEditVer: TLabeledEdit
-        Left = 116
-        Height = 15
-        Top = 56
-        Width = 144
+        Left = 145
+        Height = 20
+        Top = 70
+        Width = 180
         BorderStyle = bsNone
-        EditLabel.Height = 15
-        EditLabel.Width = 93
+        EditLabel.Height = 20
+        EditLabel.Width = 119
         EditLabel.Caption = 'Версія програми'
         LabelPosition = lpLeft
         ReadOnly = True
         TabOrder = 0
       end
       object LabeledEdittIde: TLabeledEdit
-        Left = 116
-        Height = 15
-        Top = 104
-        Width = 144
+        Left = 145
+        Height = 20
+        Top = 130
+        Width = 180
         BorderStyle = bsNone
-        EditLabel.Height = 15
-        EditLabel.Width = 70
+        EditLabel.Height = 20
+        EditLabel.Width = 88
         EditLabel.Caption = 'Середовище'
         LabelPosition = lpLeft
         ReadOnly = True
@@ -85,13 +68,13 @@ object FAbout: TFAbout
         Visible = False
       end
       object LabeledEditFpc: TLabeledEdit
-        Left = 116
-        Height = 15
-        Top = 128
-        Width = 144
+        Left = 145
+        Height = 20
+        Top = 160
+        Width = 180
         BorderStyle = bsNone
-        EditLabel.Height = 15
-        EditLabel.Width = 65
+        EditLabel.Height = 20
+        EditLabel.Width = 82
         EditLabel.Caption = 'Компілятор'
         LabelPosition = lpLeft
         ReadOnly = True
@@ -99,13 +82,13 @@ object FAbout: TFAbout
         Visible = False
       end
       object LabeledEditDate: TLabeledEdit
-        Left = 116
-        Height = 15
-        Top = 80
-        Width = 144
+        Left = 145
+        Height = 20
+        Top = 100
+        Width = 180
         BorderStyle = bsNone
-        EditLabel.Height = 15
-        EditLabel.Width = 25
+        EditLabel.Height = 20
+        EditLabel.Width = 32
         EditLabel.Caption = 'Дата'
         LabelPosition = lpLeft
         ReadOnly = True
@@ -113,23 +96,23 @@ object FAbout: TFAbout
         Visible = False
       end
       object LabeledEditMail: TLabeledEdit
-        Left = 112
-        Height = 15
-        Top = 32
-        Width = 148
+        Left = 140
+        Height = 20
+        Top = 40
+        Width = 185
         BorderStyle = bsNone
-        EditLabel.Height = 15
-        EditLabel.Width = 38
+        EditLabel.Height = 20
+        EditLabel.Width = 46
         EditLabel.Caption = 'Пошта'
         LabelPosition = lpLeft
         ReadOnly = True
         TabOrder = 4
       end
       object Image1: TImage
-        Left = 304
-        Height = 136
-        Top = 32
-        Width = 138
+        Left = 380
+        Height = 170
+        Top = 40
+        Width = 172
         Picture.Data = {
           1754506F727461626C654E6574776F726B47726170686963285B000089504E47
           0D0A1A0A0000000D494844520000014A0000011A08030000004079EEC0000002

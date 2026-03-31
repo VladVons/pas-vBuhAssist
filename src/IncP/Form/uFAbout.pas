@@ -10,7 +10,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ComCtrls, ExtCtrls,
   LCLVersion,
-  uSys, uVarUtil, uConst;
+  uSys, uSysVcl, uVarUtil, uConst;
 
 type
   { TFAbout }
@@ -41,7 +41,8 @@ implementation
 
 procedure TFAbout.FormCreate(Sender: TObject);
 var
-  Macros: TStringList;
+  Str: string;
+  Macros: TMacros;
 begin
   LabeledEditVer.Text  := GetAppVer();
   LabeledEditDate.Text := {$I %DATE%};
@@ -49,9 +50,9 @@ begin
   LabeledEditFpc.Text  := Format('FPC %s', [{$I %FPCVERSION%}]);
   LabeledEditMail.Text := cMail;
 
-  Macros := TStringList.Create();
-  Macros.Values['Mail'] := cMail;
-  Memo1.Text := ReplMacros(Memo1.Text, Macros);
+  Str := ResourceLoadString('About', 'txt');
+  Macros := TMacros.Create();
+  Memo1.Text := Macros.Exec(Str, ['Mail'], [cMail]);
   Macros.Free();
 end;
 

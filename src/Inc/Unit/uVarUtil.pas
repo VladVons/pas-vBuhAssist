@@ -10,8 +10,18 @@ interface
 uses
   Classes, SysUtils, fpjson, Variants;
 
+type
+  TMacros = class
+  private
+    fPrefix, fSuffix: string;
+  public
+    constructor Create(const aPrefix: string = '{{'; const aSuffix: string = '}}');
+    function Exec(const aStr: string; const aNames, aValues: TStringArray): string;
+    function Exec(const aStr: string; aDict: TStrings): string;
+    function Exec(const aStr: string; aObj: TJSONObject): string;
+  end;
+
 function GetJsonNested(const aJObj: TJSONObject; const Path: string; aDef: Variant): Variant;
-function ReplMacros(const aText: string; aDict: TStringList): string;
 function Between(aVal, aMin, aMax: integer): boolean;
 function PrevPeriodDate(aPerType: char; aYear, aMonth: Integer): TDate;
 function IntToRoman10(aVal: Integer): String;
@@ -55,15 +65,6 @@ begin
     Result := aValTrue
   else
     Result := aValFalse;
-end;
-
-function ReplMacros(const aText: string; aDict: TStringList): string;
-var
-  i: integer;
-begin
-  Result := aText;
-  for i := 0 to aDict.Count - 1 do
-    Result := StringReplace(Result, '{' + aDict.Names[i] + '}', aDict.ValueFromIndex[i], [rfReplaceAll]);
 end;
 
 function GetJsonNested(const aJObj: TJSONObject; const Path: string; aDef: Variant): Variant;
@@ -126,6 +127,48 @@ begin
     10: Result := 'X';
   else
     Result := '';
+  end;
+end;
+
+//--- TMacros
+
+constructor TMacros.Create(const aPrefix: string = '{{'; const aSuffix: string = '}}');
+begin
+  fPrefix := aPrefix;
+  fSuffix := aSuffix;
+end;
+
+function TMacros.Exec(const aStr: string; const aNames, aValues: TStringArray): string;
+var
+  i: integer;
+begin
+  if (System.Length(aNames) <> System.Length(aValues)) then
+    raise Exception.Create('arrays length mismatch');
+
+  Result := aStr;
+  for i := 0 to System.Length(aNames) - 1do
+    Result := StringReplace(Result, '{{' + aNames[i] + '}}', aValues[i], [rfReplaceAll]);
+end;
+
+function TMacros.Exec(const aStr: string; aDict: TStrings): string;
+var
+  i: integer;
+begin
+  Result := aStr;
+  for i := 0 to aDict.Count - 1 do
+    Result := StringReplace(Result, '{{' + aDict.Names[i] + '}}', aDict.ValueFromIndex[i], [rfReplaceAll]);
+end;
+
+function TMacros.Exec(const aStr: string; aObj: TJSONObject): string;
+var
+  i: integer;
+  Str: string;
+begin
+  Result := aStr;
+  for i := 0 to aObj.Count - 1 do
+  begin
+    Str := aObj.Names[i];
+    Result := StringReplace(Result, '{{' + Str + '}}', aObj.Get(Str, ''), [rfReplaceAll]);
   end;
 end;
 

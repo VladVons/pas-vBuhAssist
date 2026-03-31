@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Buttons, StdCtrls,
-  ExtCtrls, fpjson, uFBase, uFWizard, uWinManager, uSysVcl, uHelper;
+  ExtCtrls, fpjson,
+  uFBase, uFWizard, uWinManager, uSysVcl, uVarUtil, uHelper;
 
 type
 
@@ -57,10 +58,15 @@ const
   cName = 'J1360102';
 var
   Str, StrXds, Path: string;
+  Macros: TMacros;
 begin
   StrXds := ResourceLoadString(cName, 'xml');
-  Str := StrXds.Macros(Memo1.Lines).DelEmptyLines();
+
+  Macros := TMacros.Create();
+  Str := Macros.Exec(StrXds, Memo1.Lines).DelEmptyLines();
   Memo2.Text := Str;
+  Macros.Free();
+
   //TStringList(Memo2.Lines).DelEmpty();
   Path := ConcatPaths(['Data', cName + '.xml']);
   Str.ToFile(Path);

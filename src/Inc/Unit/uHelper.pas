@@ -22,8 +22,6 @@ type
     function DelBOM(): string;
     function DelEmptyLines(): string;
     function Left(aLen: integer; aDoCut: boolean = False): string;
-    function Macros(const aNames, aValues: TStringArray): string;
-    function Macros(aDict: TStrings): string;
     function PosEx(const aStr: string; aOfst: integer = 1): integer;
     function Right(aLen: Integer; aDoCut: boolean = False): string;
     function Replaces(const aOld, aNew: TStringArray): string;
@@ -251,27 +249,6 @@ begin
   Result := self;
   for i := 0 to System.Length(aOld) - 1 do
     Result := StringReplace(Result, aOld[i], aNew[i], [rfReplaceAll]);
-end;
-
-function TStringHelperEx.Macros(const aNames, aValues: TStringArray): string;
-var
-  i: integer;
-begin
-  if (System.Length(aNames) <> System.Length(aValues)) then
-    raise Exception.Create('arrays length mismatch');
-
-  Result := self;
-  for i := 0 to System.Length(aNames) - 1do
-    Result := StringReplace(Result, '{{' + aNames[i] + '}}', aValues[i], [rfReplaceAll]);
-end;
-
-function TStringHelperEx.Macros(aDict: TStrings): string;
-var
-  i: integer;
-begin
-  Result := self;
-  for i := 0 to aDict.Count - 1 do
-    Result := StringReplace(Result, '{{' + aDict.Names[i] + '}}', aDict.ValueFromIndex[i], [rfReplaceAll]);
 end;
 
 //FilterSet(['A'..'Z', 'a'..'z'])

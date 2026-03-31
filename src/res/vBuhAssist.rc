@@ -1,6 +1,7 @@
 lrf_CheckDocs1 RCDATA "res/lrf/CheckDocs1.lrf"
 
 txt_UserAgreement RCDATA "res/txt/UserAgreement.txt"
+txt_About RCDATA "res/txt/About.txt"
 
 json_FMedFindAkz  RCDATA "res/json/FMedFindAkz.json"
 json_FMedFindPdv  RCDATA "res/json/FMedFindPdv.json"
