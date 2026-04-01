@@ -64,6 +64,7 @@ type
     //procedure Set1Update(aSrc: TJSONObject);
     procedure Update(aSrc: TJSONObject);
     function GetKeys(): TStringList;
+    function GetList(): TStringList;
     function GetNested(const Path: string; aDef: Variant): Variant;
   end;
 
@@ -603,6 +604,15 @@ begin
   Result := TStringList.Create();
   for i := 0 to Count - 1 do
     Result.Add(Names[i]);
+end;
+
+function TJSONObjectHelper.GetList(): TStringList;
+var
+  i: Integer;
+begin
+  Result := TStringList.Create();
+  for i := 0 to Count - 1 do
+    Result.Add(Names[i] + '=' + Items[i].AsString);
 end;
 
 function TJSONObjectHelper.GetNested(const Path: string; aDef: Variant): Variant;

@@ -1,0 +1,9 @@
+inherited FBaseScroll: TFBaseScroll
+  inherited PanelTitle: TPanel
+  end
+  object ScrollBox: TScrollBox[1]
+    HorzScrollBar.Page = 1
+    VertScrollBar.Page = 1
+    Align = alClient
+  end
+end

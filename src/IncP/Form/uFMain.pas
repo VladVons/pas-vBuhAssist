@@ -279,10 +279,13 @@ begin
 
   Caption := cAppName + ' ' + GetAppVer();
   //WindowState := wsMaximized;
+
+  StateStore.Load(self);
 end;
 
 procedure TFMain.FormDestroy(Sender: TObject);
 begin
+  StateStore.Save(self);
   Log.Print('i', 'Завершення роботи');
 end;
 

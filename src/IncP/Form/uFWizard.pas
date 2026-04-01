@@ -11,7 +11,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
   ExtCtrls, ValEdit, Buttons, fpjson, TypInfo, Variants, jsonparser, LConvEncoding,
   uFrStringGrid,
-  uSys, uSysVcl, uVarUtil, uHelper, uHelperVcl, uFBase, uWinManager, uExGrid;
+  uSys, uSysVcl, uVarUtil, uHelper, uHelperVcl, uFBase, uFBaseScroll, uWinManager, uExGrid;
 
 type
   { TFWizard }
@@ -34,17 +34,17 @@ type
     fWinManager: TWinManager;
     fFileData: string;
     procedure ComboBoxWizardsChange();
-    procedure AddControls(aForm: TForm; aCtrls: TJSONArray; aJConf: TJSONObject);
+    procedure AddControls(aForm: TScrollingWinControl; aCtrls: TJSONArray; aJConf: TJSONObject);
     procedure SetCtrlProperty(aCtrl: TControl; const aName: string; aVal: variant);
     procedure LoadForm(aForm: TForm; aJObj: TJSONObject);
     procedure SaveForm(aForm: TForm; aJObj: TJSONObject);
+    procedure SetData(aJObj: TJSONObject);
   public
     procedure LoadScheme(const aName: string);
     procedure LoadData(const aFile: string);
-    procedure Load(const aName: string);
+    procedure LoadAll(const aName: string; aJObj: TJSONObject);
     procedure SaveData();
     procedure SaveXml(const aName: string; aJObj: TJSONObject);
-    procedure SetData(aJObj: TJSONObject);
   end;
 
 implementation
@@ -140,7 +140,7 @@ begin
     Log('e', Format('Помилка у %s.%s=%s', [aCtrl.ClassName(), aName, VarToStr(aVal)]));
 end;
 
-procedure TFWizard.AddControls(aForm: TForm; aCtrls: TJSONArray; aJConf: TJSONObject);
+procedure TFWizard.AddControls(aForm: TScrollingWinControl; aCtrls: TJSONArray; aJConf: TJSONObject);
 var
   i, j, Idx, PosTop, PosLeft, BottomPad, ConfBottomPad: integer;
   Str, CtrlClass: string;
@@ -214,11 +214,23 @@ end;
 procedure TFWizard.LoadScheme(const aName: string);
 var
   i: integer;
+  Str: string;
   JArrTab, JArrCtrl: TJSONArray;
   JObjTab, JObjConf, JObjConfDef: TJSONObject;
-  Form: TFBase;
+  Form: TFBaseScroll;
+  Macros: TMacros;
 begin
-  fJScheme := ResourceLoadJson(aName);
+  PanelNav.Enabled := true;
+
+  Str := ResourceLoadString(aName, 'json');
+  if (fData <> nil) then
+  begin
+    Macros := TMacros.Create();
+    Str := Macros.Exec(Str, fData);
+    Macros.Free();
+  end;
+  fJScheme := TJSONObject(GetJSON(Str.DelBOM()));
+
   Title := fJScheme.Get('caption', '');
   Log('i', Format('Помічник %s', [Title]));
 
@@ -243,7 +255,7 @@ begin
     if (not JObjTab.Get('_enable', true)) then
       continue;
 
-    Form := TFBase.Create(Nil);
+    Form := TFBaseScroll.Create(Nil);
     fWinManager.Add(Form);
     Form.Parent.Caption := JObjTab.Get('title', Format('title %d', [i]));
     Form.Name := Form.GetJName(JObjTab, i);
@@ -267,7 +279,7 @@ begin
     if (JObjConf <> nil) then
       JObjConfDef.Update(JObjConf);
 
-    AddControls(Form, JArrCtrl, JObjConfDef);
+    AddControls(Form.ScrollBox, JArrCtrl, JObjConfDef);
     JObjConfDef.Free();
   end;
 
@@ -385,13 +397,15 @@ begin
   end;
 end;
 
-procedure TFWizard.Load(const aName: string);
+procedure TFWizard.LoadAll(const aName: string; aJObj: TJSONObject);
 var
   i: integer;
   ResName: string;
   JObj, JObjRes, JObjLoad: TJSONObject;
   JArr: TJSONArray;
 begin
+  SetData(aJObj);
+
   JObjLoad := ResourceLoadJson(aName);
   JArr := TJSONArray(JObjLoad.Find('items'));
   for i := 0 to JArr.Count - 1 do

@@ -19,7 +19,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="11"/>
       <RevisionNr Value="3"/>
-      <BuildNr Value="113"/>
+      <BuildNr Value="118"/>
       <StringTable ProductName="vBuhAssist"/>
     </VersionInfo>
     <BuildModes>
@@ -361,6 +361,13 @@
         <Filename Value="IncP/Form/uWizards.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FWizards"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Inc/Form/uFBaseScroll.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FBaseScroll"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>

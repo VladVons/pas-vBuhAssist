@@ -164,7 +164,7 @@ inherited FMedFindZvit: TFMedFindZvit
       '        %_COND_SENDSTT'
       ') T2'
       '    ON (T2.IDORG = ORG.CODE)'
-      '    AND (T2.CARD_EDRPOU = ORG.EDRPOU) -- protect EDRPOU lic'
+      '    AND (T2.CARD_EDRPOU = ORG.EDRPOU OR T2.CARD_EDRPOU IS NULL) -- protect EDRPOU lic'
       'WHERE'
       '   (ORG.DEPT IS NULL OR ORG.DEPT <> ''0'')'
       '    %_COND_ORG'

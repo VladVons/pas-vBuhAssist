@@ -10,6 +10,9 @@ inherited FTest: TFTest
   inherited PanelTitle: TPanel
     Width = 821
     ClientWidth = 821
+    inherited LabelTitle: TLabel
+      Width = 821
+    end
   end
   object Panel1: TPanel[1]
     Left = 0

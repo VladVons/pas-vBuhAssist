@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, SQLDB, DB, RegExpr,
-  uVarUtil, uType;
+  uVarUtil, uHelper, uType;
 
 function GetQueryField(aDataSource: TDataSource; aQuery: TSQLQuery; aField: string): TStringList;
 function ExpandSQL(aQuery: TSQLQuery): string;
@@ -76,6 +76,8 @@ begin
     sRepl := aQuery.Params[Sorted[i]].AsString;
     Result := StringReplace(Result, sFind, sRepl, [rfReplaceAll, rfIgnoreCase]);
   end;
+
+  Result := Result.DelEmptyLines();
 end;
 
 function FieldToStrings(aQuery: TSQLQuery; aField: string): TStringList;

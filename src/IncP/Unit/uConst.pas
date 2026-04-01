@@ -8,7 +8,8 @@ unit uConst;
 interface
 
 const
-  cAppName               = 'Бджілка - Помічник бухгалтера';
+  //cAppName               = 'Бджілка - Помічник бухгалтера';
+  cAppName: string       = 'Бджілка - Помічник бухгалтера';
   cDirAddons             = 'addons';
   cHttpApi               = 'https://windows.cloud-server.com.ua/api';
   cMail                  = 'vBuhAssist@gmail.com';

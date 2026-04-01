@@ -8,7 +8,7 @@ unit uStateStore;
 interface
 
 uses
-  Classes, SysUtils, TypInfo, IniFiles, StdCtrls, ExtCtrls, Controls, Spin, Graphics, DBGrids,
+  Classes, SysUtils, TypInfo, IniFiles, StdCtrls, ExtCtrls, Controls, ComCtrls, Spin, Graphics, DBGrids,
   uSettings;
 
 type
@@ -115,6 +115,8 @@ begin
      TCheckBox(aCtrl).Checked := boolean(aIni.ReadInteger(aForm.Name, aCtrl.Name + '_Checked', 0))
   else if (aCtrl is TSpinEdit) then
      TSpinEdit(aCtrl).Value := aIni.ReadInteger(aForm.Name, aCtrl.Name + '_Value', 0)
+  else if (aCtrl is TPageControl) then
+     TPageControl(aCtrl).ActivePageIndex := aIni.ReadInteger(aForm.Name, aCtrl.Name + '_PageIndex', 0)
   else if (aCtrl is TDBGrid) then
     LoadGrid(aForm.Name, TDBGrid(aCtrl), aIni);
 end;
@@ -129,6 +131,8 @@ begin
     aIni.WriteInteger(aForm.Name, aCtrl.Name + '_Checked', Ord(TCheckBox(aCtrl).Checked))
   else if (aCtrl is TSpinEdit) then
     aIni.WriteInteger(aForm.Name, aCtrl.Name + '_Value', TSpinEdit(aCtrl).Value)
+  else if (aCtrl is TPageControl) then
+    aIni.WriteInteger(aForm.Name, aCtrl.Name + '_PageIndex', TPageControl(aCtrl).ActivePageIndex)
   else if (aCtrl is TDBGrid) then
     SaveGrid(aForm.Name, TDBGrid(aCtrl), aIni);
 end;

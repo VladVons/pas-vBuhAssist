@@ -6,6 +6,9 @@ inherited FMedFindPdv: TFMedFindPdv
   inherited PanelTitle: TPanel
     Width = 921
     ClientWidth = 921
+    inherited LabelTitle: TLabel
+      Width = 921
+    end
   end
   inherited PanelFrame: TPanel
     Width = 921
@@ -17,11 +20,13 @@ inherited FMedFindPdv: TFMedFindPdv
     inherited PageControl: TPageControl
       Width = 919
       inherited TabSheetCur: TTabSheet
+        ClientWidth = 911
         inherited DbGridCur: TDBGrid
           Width = 911
         end
       end
       inherited TabSheetPrev: TTabSheet
+        ClientWidth = 911
         inherited DBGridPrev: TDBGrid
           Width = 911
           DataSource = DataSourcePrev
@@ -674,6 +679,7 @@ inherited FMedFindPdv: TFMedFindPdv
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
       Required = False
+      Size = 100
     end
     object SQLQueryFJN10: TStringField
       FieldKind = fkData
@@ -789,6 +795,7 @@ inherited FMedFindPdv: TFMedFindPdv
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
       Required = False
+      Size = 100
     end
   end
   object DataSourceOrg: TDataSource[16]

@@ -89,7 +89,7 @@ var
   Form: TFWizard;
 begin
   Form := TFWizard(WinManager.Add(TFWizard));
-  Form.Load('FWizardPdvs');
+  Form.LoadAll('FWizardPdvs', nil);
 end;
 
 end.

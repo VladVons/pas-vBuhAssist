@@ -1,10 +1,10 @@
 inherited FWizard: TFWizard
   Left = 382
-  Height = 317
+  Height = 336
   Top = 32
   Width = 801
   Caption = 'FWizard'
-  ClientHeight = 317
+  ClientHeight = 336
   ClientWidth = 801
   Visible = True
   OnCreate = FormCreate
@@ -12,10 +12,13 @@ inherited FWizard: TFWizard
   inherited PanelTitle: TPanel
     Width = 801
     ClientWidth = 801
+    inherited LabelTitle: TLabel
+      Width = 801
+    end
   end
   object PageControl: TPageControl[1]
     Left = 0
-    Height = 229
+    Height = 248
     Top = 88
     Width = 801
     Align = alClient
@@ -31,6 +34,7 @@ inherited FWizard: TFWizard
     BevelOuter = bvNone
     ClientHeight = 40
     ClientWidth = 801
+    Enabled = False
     TabOrder = 2
     object ComboBoxWizards: TComboBox
       Left = 392
@@ -45,32 +49,32 @@ inherited FWizard: TFWizard
       Visible = False
       OnChange = ComboBoxWizardsChange
     end
-  end
-  object BitBtnNext: TBitBtn[3]
-    Left = 112
-    Height = 32
-    Top = 48
-    Width = 94
-    Caption = 'Наступна'
-    TabOrder = 3
-    OnClick = BitBtnNextClick
-  end
-  object BitBtnPrev: TBitBtn[4]
-    Left = 8
-    Height = 32
-    Top = 48
-    Width = 94
-    Caption = 'Попередня'
-    TabOrder = 4
-    OnClick = BitBtnPrevClick
-  end
-  object BitBtnClose: TBitBtn[5]
-    Left = 216
-    Height = 32
-    Top = 48
-    Width = 168
-    Caption = 'Зберегти і закрити'
-    TabOrder = 5
-    OnClick = BitBtnCloseClick
+    object BitBtnNext: TBitBtn
+      Left = 112
+      Height = 32
+      Top = 0
+      Width = 94
+      Caption = 'Наступна'
+      TabOrder = 3
+      OnClick = BitBtnNextClick
+    end
+    object BitBtnPrev: TBitBtn
+      Left = 8
+      Height = 32
+      Top = 0
+      Width = 94
+      Caption = 'Попередня'
+      TabOrder = 1
+      OnClick = BitBtnPrevClick
+    end
+    object BitBtnClose: TBitBtn
+      Left = 216
+      Height = 32
+      Top = 0
+      Width = 168
+      Caption = 'Зберегти і закрити'
+      TabOrder = 2
+      OnClick = BitBtnCloseClick
+    end
   end
 end

@@ -8,8 +8,8 @@ unit uFMedFindPdv;
 interface
 
 uses
-  Classes, SysUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ExtCtrls, Buttons, fpjson,
-  uDmCommon, uFMedFind, uFWizard, uMed, uWinManager, uHelper;
+  Classes, SysUtils, DateUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ExtCtrls, Buttons, fpjson, Math,
+  uDmCommon, uFMedFind, uFWizard, uMed, uWinManager, uHelper, uConst, uSys, uQuery;
 
 type
   { TFMedFindPdv }
@@ -115,6 +115,7 @@ end;
 procedure TFMedFindPdv.QueryFjOpen(aQuery: TSQLQuery; aJObj: TJSONObject);
 var
   Code: integer;
+  Dbl: Double;
 begin
   Code := SQLQueryCur.FieldByName('CARD_CODE').AsInteger;
   aQuery.ParamByName('_CARDCODE').AsInteger := Code;
@@ -129,8 +130,10 @@ begin
   aJObj.Add('T1RXXXXG31', aQuery.FieldByName('N2_1').AsString);
   aJObj.Add('T1RXXXXG6S', aQuery.FieldByName('N4').AsString);
   aJObj.Add('T1RXXXXG7S', aQuery.FieldByName('FIRM_NAME').AsString);
-  aJObj.Add('T1RXXXXG8',  aQuery.FieldByName('A7_11').AsCurrency);
+  Dbl := RoundTo(aQuery.FieldByName('A7_11').AsFloat, -2);
+  aJObj.Add('T1RXXXXG8', FormatFloat('0.00', Dbl));
 
+  Log('i', ExpandSQL(aQuery));
   aQuery.Close();
 end;
 
@@ -152,13 +155,16 @@ begin
   aJObj.Add('HKBOS', aQuery.FieldByName('LEADINDTAX').AsString);
   aJObj.Add('HBOS', aQuery.FieldByName('LEADFIO').AsString);
 
+  Log('i', ExpandSQL(aQuery));
   aQuery.Close();
 end;
 
 procedure TFMedFindPdv.BitBtnUnlockClick(Sender: TObject);
 var
+  Str: string;
   Form: TFWizard;
   JObj: TJSONObject;
+  SL: TStringList;
 begin
   if (not SQLQueryCur.Active) then
   begin
@@ -170,9 +176,20 @@ begin
   QueryFjOpen(SQLQueryFJ, JObj);
   QueryOrgOpen(SQLQueryOrg, JObj);
 
+  JObj.Add('DATE', FormatDateTime('dd.mm.yyyy', Date()));
+  JObj.Add('YEAR', YearOf(Date()));
+  JObj.Add('MONTH', MonthOf(Date()));
+  JObj.Add('MONTHU', GetMonthNameUa(MonthOf(Date())));
+  JObj.Add('DAY', DayOf(Date()));
+  JObj.Add('APP_NAME', cAppName);
+
+  SL := JObj.GetList();
+  Str := SL.GetJoin(LineEnding);
+  JObj.Add('VARS', Str);
+  SL.Free();
+
   Form := TFWizard(WinManager.Add(TFWizard));
-  Form.Load('FWizardPdvs');
-  Form.SetData(JObj);
+  Form.LoadAll('FWizardPdvs', JObj);
   //Form.SaveXml('J1360102', JObj);
   //Form.SaveXml('J1312603', JObj);
 

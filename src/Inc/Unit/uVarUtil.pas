@@ -14,7 +14,7 @@ type
   TMacros = class
   private
     fPrefix, fSuffix: string;
-    function Concat(const aName: string): string;
+    function Replace(const aStr, aFind, aRepl: string): string;
   public
     constructor Create(const aPrefix: string = '{{'; const aSuffix: string = '}}');
     function Exec(const aStr: string; const aNames, aValues: TStringArray): string;
@@ -98,9 +98,12 @@ begin
   fSuffix := aSuffix;
 end;
 
-function TMacros.Concat(const aName: string): string;
+function TMacros.Replace(const aStr, aFind, aRepl: string): string;
 begin
-  Result := fPrefix + aName + fSuffix;
+  if (aRepl.IsEmpty()) then
+    Result := aStr
+  else
+    Result := StringReplace(aStr, fPrefix + aFind + fSuffix, aRepl, [rfReplaceAll]);
 end;
 
 function TMacros.Exec(const aStr: string; const aNames, aValues: TStringArray): string;
@@ -112,7 +115,7 @@ begin
 
   Result := aStr;
   for i := 0 to System.Length(aNames) - 1do
-    Result := StringReplace(Result, Concat(aNames[i]), aValues[i], [rfReplaceAll]);
+    Result := Replace(Result, aNames[i], aValues[i]);
 end;
 
 function TMacros.Exec(const aStr: string; aDict: TStringList): string;
@@ -121,19 +124,20 @@ var
 begin
   Result := aStr;
   for i := 0 to aDict.Count - 1 do
-    Result := StringReplace(Result, Concat(aDict.Names[i]), aDict.ValueFromIndex[i], [rfReplaceAll]);
+    Result := Replace(Result, aDict.Names[i], aDict.ValueFromIndex[i]);
 end;
 
 function TMacros.Exec(const aStr: string; aObj: TJSONObject): string;
 var
   i: integer;
-  Str: string;
+  Find, Repl: string;
 begin
   Result := aStr;
   for i := 0 to aObj.Count - 1 do
   begin
-    Str := aObj.Names[i];
-    Result := StringReplace(Result, Concat(Str), aObj.Get(Str, ''), [rfReplaceAll]);
+    Find := aObj.Names[i];
+    Repl := string(aObj.Get(Find, '')).Replace('"', '`');
+    Result := Replace(Result, Find, Repl);
   end;
 end;
 

@@ -4,7 +4,7 @@ program vAppUpd;
 
 uses
   Classes, SysUtils, CustApp, opensslsockets, URIParser, fpjson,  jsonparser, Process, fphttpclient,
-  uSys,  uHttp, uArchive, uVarUtil, uProtect;
+  uSys, uHttp, uArchive, uVarUtil, uProtect, uHelper;
 
   type
   { TAppUpd }
@@ -135,9 +135,9 @@ begin
   Param := TStringList.Create();
   Param.Add('-L');
   Param.Add('-o');
-  Param.Add(QuotedFile(Result));
+  Param.Add(Result.FileQuoted());
   Param.Add(aUrl);
-  Process := ExecProcess(cCurl, Param, True);
+  Process := ExecProcess(cCurl, Param);
 
   if (Process.ExitStatus <> 0) then
   begin
@@ -199,7 +199,7 @@ begin
       Quit(1, 'File not exists ' + Str);
 
     Log(Format('Run applacation %s', [Str]));
-    ExecProcess(Str, nil, False);
+    ExecProcess(Str);
   end;
 
   Log('Exit update');
