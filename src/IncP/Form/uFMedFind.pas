@@ -56,6 +56,9 @@ begin
   SL := TStringList.Create().AddArray(Arr);
   ComboBoxSendStatus.SetAsObj(SL);
   SL.Free();
+
+  StateStore.Load(self);
+  StateStore.ComboBoxSetIndex([ComboBoxYear, ComboBoxMonth, ComboBoxDoc, ComboBoxFirm]);
 end;
 
 procedure TFMedFind.SetComboBoxYear(aYear: Integer = 0);
@@ -698,8 +701,8 @@ begin
 
   InitEmptyGrid(GetParentQueryCur());
 
-  StateStore.Load(self);
-  StateStore.ComboBoxSetIndex([ComboBoxYear, ComboBoxMonth, ComboBoxDoc, ComboBoxFirm]);
+  //StateStore.Load(self);
+  //StateStore.ComboBoxSetIndex([ComboBoxYear, ComboBoxMonth, ComboBoxDoc, ComboBoxFirm]);
 
   fColorYelow := RGBToColor(255, 255, 153);
   StateStore.SetCtrlColor(self, fColorYelow, 'edit');

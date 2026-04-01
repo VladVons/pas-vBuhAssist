@@ -172,10 +172,11 @@ begin
 
   Form := TFWizard(WinManager.Add(TFWizard));
   Form.Load('FWizardPdvs');
-  Form.SaveXml('J1360102', JObj);
-  Form.SaveXml('J1312603', JObj);
+  Form.SetData(JObj);
+  //Form.SaveXml('J1360102', JObj);
+  //Form.SaveXml('J1312603', JObj);
 
-  JObj.Free();
+  //JObj.Free();
 end;
 
 procedure TFMedFindPdv.FormCreate(Sender: TObject);

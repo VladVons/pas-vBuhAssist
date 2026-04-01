@@ -29,7 +29,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
-    fJScheme: TJSONObject;
+    fJScheme, fData: TJSONObject;
     fClassMap: TStringList;
     fWinManager: TWinManager;
     fFileData: string;
@@ -44,6 +44,7 @@ type
     procedure Load(const aName: string);
     procedure SaveData();
     procedure SaveXml(const aName: string; aJObj: TJSONObject);
+    procedure SetData(aJObj: TJSONObject);
   end;
 
 implementation
@@ -66,6 +67,13 @@ begin
   fClassMap.AddObject('TValueListEditor', TObject(TValueListEditor));
   fClassMap.AddObject('TFrStringGrid', TObject(TFrStringGrid));
   fClassMap.EndUpdate();
+end;
+
+procedure TFWizard.SetData(aJObj: TJSONObject);
+begin
+  FreeAndNil(fData);
+  //fData := TJSONObject(aJObj.Clone());
+  fData := aJObj;
 end;
 
 procedure TFWizard.ComboBoxWizardsChange();
@@ -120,6 +128,7 @@ begin
   FreeAndNil(fWinManager);
 
   FreeAndNil(fClassMap);
+  FreeAndNil(fData);
 
   ComboBoxWizards.ClearItems();
   inherited;
@@ -400,6 +409,8 @@ begin
   ComboBoxWizards.ItemIndex := 0;
   ComboBoxWizards.Visible := True;
   ComboBoxWizardsChange();
+
+  JObjLoad.Free();
 end;
 
 procedure TFWizard.SaveXml(const aName: string; aJObj: TJSONObject);

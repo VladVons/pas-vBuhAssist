@@ -9,7 +9,8 @@ interface
 
 uses
   Classes, SysUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  ActnList, StdCtrls, fpjson, uFMedFind, uMed, uHelper, uDmCommon;
+  ActnList, StdCtrls, fpjson,
+  uFMedFind, uMed, uHelper, uDmCommon;
 
 type
   { TFMedFindZvit }
