@@ -133,7 +133,7 @@ begin
   Dbl := RoundTo(aQuery.FieldByName('A7_11').AsFloat, -2);
   aJObj.Add('T1RXXXXG8', FormatFloat('0.00', Dbl));
 
-  Log('i', ExpandSQL(aQuery));
+  //Log('i', ExpandSQL(aQuery));
   aQuery.Close();
 end;
 
@@ -155,7 +155,7 @@ begin
   aJObj.Add('HKBOS', aQuery.FieldByName('LEADINDTAX').AsString);
   aJObj.Add('HBOS', aQuery.FieldByName('LEADFIO').AsString);
 
-  Log('i', ExpandSQL(aQuery));
+  //Log('i', ExpandSQL(aQuery));
   aQuery.Close();
 end;
 

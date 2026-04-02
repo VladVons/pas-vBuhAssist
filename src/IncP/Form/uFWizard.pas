@@ -293,10 +293,13 @@ var
   CtrlName, CtrlClass: string;
   Ctrl: TControl;
   JObj: TJSONObject;
+  Form: TScrollingWinControl;
 begin
-  for i := 0 to aForm.ControlCount - 1 do
+  Form := TFBaseScroll(aForm).ScrollBox;
+
+  for i := 0 to Form.ControlCount - 1 do
   begin
-    Ctrl := aForm.Controls[i];
+    Ctrl := Form.Controls[i];
     CtrlName := Format('%s.%s', [aForm.Name, Ctrl.Name]);
     CtrlClass := Ctrl.ClassName();
     JObj := TJSONObject(aJObj.Find(CtrlName));
@@ -339,10 +342,13 @@ var
   Ctrl: TControl;
   JItem: TJSONObject;
   JArr: TJSONArray;
+  Form: TScrollingWinControl;
 begin
-  for i := 0 to aForm.ControlCount - 1 do
+  Form := TFBaseScroll(aForm).ScrollBox;
+
+  for i := 0 to Form.ControlCount - 1 do
   begin
-    Ctrl := aForm.Controls[i];
+    Ctrl := Form.Controls[i];
     CtrlName := Format('%s.%s', [aForm.Name, Ctrl.Name]);
     if (not CtrlName.EndsWith('_s')) then
       continue;

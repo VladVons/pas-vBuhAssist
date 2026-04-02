@@ -8,17 +8,27 @@ unit uExGrid;
 interface
 
 uses
-  Classes, SysUtils, fpjson, Grids, ValEdit, contnrs;
+  Classes, SysUtils, Grids, Controls, StdCtrls, Dialogs, ValEdit, contnrs, fpjson;
 
 type
+ TOnOpenFileDialog = function (const aFile: string): string of object;
 
-TStringGridEx = class(TStringGrid)
+ TStringGridEx = class(TStringGrid)
  private
    fColMap: TFPHashObjectList;
+   fComboBox: TComboBox;
+   fOpenDialog: TOpenDialog;
+
    function GetCol(const aField: string): Integer;
    function GetCell(const aField: string; aRow: Integer): string;
+   function GetType(aCol: integer): string;
    procedure SetCell(const aField: string; aRow: Integer; const aValue: string);
+   procedure DoComboBoxEditingDone(aSender: TObject);
+   procedure DoSelectEditor(Sender: TObject; aCol,  aRow: Integer; var aEditor: TWinControl);
+   procedure DoDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; State: TGridDrawState);
+   procedure DoMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
  public
+   OnOpenFileDialog: TOnOpenFileDialog;
    constructor Create(aOwner: TComponent); override;
    destructor Destroy(); override;
 
@@ -48,17 +58,30 @@ begin
   Result.RowCount := aStringGrid.RowCount;
 end;
 
-
 constructor TStringGridEx.Create(aOwner: TComponent);
 begin
   //inherited.Create(aOwner); //ToDo
   inherited;
   fColMap := TFPHashObjectList.Create(False);
+
+  Options := Options + [goEditing];
+  OnSelectEditor := @DoSelectEditor;
+  OnDrawCell := @DoDrawCell;
+  OnMouseDown := @DoMouseDown;
+
+  fComboBox := TComboBox.Create(self);
+  fComboBox.ReadOnly := True;
+  fComboBox.OnEditingDone := @DoComboBoxEditingDone;
+
+  fOpenDialog := TOpenDialog.Create(self);
+  fOpenDialog.Filter := 'Files (*.pdf;*.jpg;*.jpeg)|*.pdf;*.jpg;*.jpeg';
 end;
 
 destructor TStringGridEx.Destroy();
 begin
-  FColMap.Free();
+  FreeAndNil(FColMap);
+  FreeAndNil(fComboBox);
+  FreeAndNil(fOpenDialog);
   inherited;
 end;
 
@@ -169,18 +192,18 @@ end;
 procedure TStringGridEx.HeadFromJson(aJObj: TJSONObject);
 var
   i: integer;
-  Fields: TJSONArray;
+  JFields: TJSONArray;
   JObj: TJSONObject;
 begin
   Options := Options + [goEditing];
   //aCtrl.OnSelectCell := @OnStringGridSelectCell;
 
-  Fields := aJObj.Arrays['fields'];
-  ColCount := Fields.Count;
+  JFields := aJObj.Arrays['fields'];
+  ColCount := JFields.Count;
   FixedCols := 0;
-  for i := 0 to Fields.Count - 1 do
+  for i := 0 to JFields.Count - 1 do
   begin
-    JObj := Fields.Objects[i];
+    JObj := JFields.Objects[i];
     Cells[i, 0] := JObj.Get('caption', '');
     ColWidths[i] := JObj.Get('width', 100);
     Objects[i, 0] := JObj;
@@ -200,6 +223,74 @@ begin
     Rows[i].Assign(Rows[i + 1]);
 
   RowCount := RowCount - 1;
+end;
+
+function TStringGridEx.GetType(aCol: integer): string;
+var
+  JObj: TJSONObject;
+begin
+  JObj := TJSONObject(Objects[aCol, 0]);
+  if (JObj = nil) then
+    Result := ''
+  else
+    Result := JObj.Get('type', '');
+end;
+
+procedure TStringGridEx.DoComboBoxEditingDone(aSender: TObject);
+begin
+  Cells[Col, Row] := TComboBox(aSender).Text;
+end;
+
+procedure TStringGridEx.DoSelectEditor(Sender: TObject; aCol,  aRow: Integer; var aEditor: TWinControl);
+var
+  Typ: string;
+  i: integer;
+  JArr: TJSONArray;
+  JObj: TJSONObject;
+begin
+  Typ := GetType(aCol);
+  if (Typ.IsEmpty()) then
+    Exit();
+
+  JObj := TJSONObject(Objects[aCol, 0]);
+  if (Typ = 'list') then
+  begin
+    fComboBox.Items.Clear();
+    fComboBox.Parent := self;
+    fComboBox.BoundsRect := CellRect(aCol, aRow);
+    fComboBox.Text := Cells[aCol, aRow];
+    aEditor := fComboBox;
+
+    JArr := JObj.Arrays['items'];
+    for i := 0 to JArr.Count - 1 do
+      fComboBox.Items.Add(JArr[i].AsString);
+  end;
+end;
+
+procedure TStringGridEx.DoDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; State: TGridDrawState);
+begin
+  if (aRow = 0) then
+    Exit();
+
+  if (GetType(aCol) = 'file') then
+    Canvas.TextOut(aRect.Right - 20, aRect.Top + 2, ' *** ');
+end;
+
+procedure TStringGridEx.DoMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+  ACol, ARow: Longint;
+  CRect: TRect;
+begin
+  MouseToCell(X, Y, ACol, ARow);
+
+  if (ARow > 0) and (GetType(ACol) = 'file') then
+  begin
+    CRect := CellRect(ACol, ARow);
+    if (X >= CRect.Right - 20) then  // клік саме на кнопці
+      if (fOpenDialog.Execute()) then
+        if (Assigned(OnOpenFileDialog)) then
+          Cells[ACol, ARow] := OnOpenFileDialog(fOpenDialog.FileName);
+  end;
 end;
 
 //---

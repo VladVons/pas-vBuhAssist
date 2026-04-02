@@ -5,24 +5,20 @@ unit uFrStringGrid;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Grids, ComCtrls, fpjson,
-  uDmCommon,
-  uExGrid, uLog, uGhostScript, uSys, uSysVcl;
+  Classes, SysUtils, Forms, Controls, Graphics, Grids, ComCtrls,
+  fpjson, uExGrid, uLog, uGhostScript, uSys, uSysVcl;
 
 type
   { TFrStringGrid }
    TFrStringGrid = class(TFrame)
     StringGridEx: TStringGridEx;
-    OpenDialog: TOpenDialog;
     ToolBar1: TToolBar;
     ToolButtonAdd: TToolButton;
     ToolButtonDel: TToolButton;
-    ToolButtonFile: TToolButton;
     procedure ToolButtonAddClick(Sender: TObject);
     procedure ToolButtonDelClick(Sender: TObject);
-    procedure ToolButtonFileClick(Sender: TObject);
   private
-    fFileCol: integer;
+    function DoOpenFileDialog(const aFile: string): string;
   public
     constructor Create(aOwner: TComponent); override;
     procedure LoadHeadFromJson(aJObj: TJSONObject);
@@ -42,6 +38,7 @@ begin
   SGEx := StringGrid_Clone(StringGridEx, self);
   StringGridEx.Free();
   StringGridEx := SGEx;
+  StringGridEx.OnOpenFileDialog := @DoOpenFileDialog;
 end;
 
 procedure TFrStringGrid.ToolButtonAddClick(Sender: TObject);
@@ -56,24 +53,15 @@ begin
   StringGridEx.DelRow(StringGridEx.Row);
 end;
 
-procedure TFrStringGrid.ToolButtonFileClick(Sender: TObject);
+function TFrStringGrid.DoOpenFileDialog(const aFile: string): string;
 const
   cDirData = 'Data';
 var
   Ratio: double;
   FileOutSize: integer;
-  Dir, Ext, FileIn, FileName, FileOut: string;
+  Dir, Ext, FileName, FileOut: string;
 begin
-  if (fFileCol = -1) or (StringGridEx.RowCount <= 1) then
-    Exit();
-
-  OpenDialog.Filter := 'Files (*.pdf;*.jpg;*.jpeg)|*.pdf;*.jpg;*.jpeg';
-  //OpenDialog.Filter := 'Files (*.pdf;*.jpg;*.jpeg;*.bmp)|*.pdf;*.jpg;*.jpeg;*.bmp';
-  if (not OpenDialog.Execute()) then
-    Exit();
-
-  FileIn := OpenDialog.FileName;
-  FileName := ChangeFileExt(ExtractFileName(FileIn), '');
+  FileName := ChangeFileExt(ExtractFileName(aFile), '');
   FileName := LatinToUkr(FileName);
   FileName := RemoveChars(FileName, '!@#$%^&_-+{},');
 
@@ -83,26 +71,24 @@ begin
 
   Log.Print('i', Format('Конвертація %s ...', [FileName]));
   FileOut := ConcatPaths([Dir, FileName + '.pdf']);
-  Ext := LowerCase(ExtractFileExt(FileIn));
+  Ext := LowerCase(ExtractFileExt(aFile));
   if (Ext = '.pdf') then
-    GS_OptimizePdf(FileIn, FileOut)
+    GS_OptimizePdf(aFile, FileOut)
   else if (Ext = '.jpg') then
-    GS_JpgToPdf(FileIn, FileOut)
+    GS_JpgToPdf(aFile, FileOut)
   else if (Ext = '.bmp') then
-    GS_BmpToPdf(FileIn, FileOut);
+    GS_BmpToPdf(aFile, FileOut);
 
   FileOutSize := FileGetSize(FileOut);
-  Ratio := (1 - (FileOutSize / FileGetSize(FileIn))) * 100;
-  Log.Print('i', Format('%s %dkb (%.0f%%)', [FileIn, Round(FileOutSize / 1000), Ratio]));
+  Ratio := (1 - (FileOutSize / FileGetSize(aFile))) * 100;
+  Log.Print('i', Format('%s %dkb (%.0f%%)', [aFile, Round(FileOutSize / 1000), Ratio]));
 
-  StringGridEx.Cells[fFileCol, StringGridEx.Row] := FileOut;
+  Result := aFile;
 end;
 
 procedure TFrStringGrid.LoadHeadFromJson(aJObj: TJSONObject);
 begin
   StringGridEx.HeadFromJson(aJObj);
-  fFileCol := StringGridEx.FindCol('type', 'file');
-  ToolButtonFile.Enabled := (fFileCol <> -1);
 end;
 
 procedure TFrStringGrid.LoadDataFromJson(aJArr: TJSONArray);
