@@ -101,12 +101,12 @@ begin
   SQLQueryCur.Database := DmCommon.IBConnection;
   SQLQueryCur.Transaction := SQLTransaction;
   DataSourceCur.DataSet := SQLQueryCur;
-  DbGridCur.DataSource := DataSourceCur;
+  DbGrid1.DataSource := DataSourceCur;
 
   SQLQueryPrev.Database := DmCommon.IBConnection;
   SQLQueryPrev.Transaction := SQLTransaction;
   DataSourcePrev.DataSet := SQLQueryPrev;
-  DbGridPrev.DataSource := DataSourcePrev;
+  DbGrid2.DataSource := DataSourcePrev;
 
   LoadJsonData();
 end;

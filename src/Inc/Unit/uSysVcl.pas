@@ -8,7 +8,7 @@ unit uSysVcl;
 interface
 
 uses
-  Classes, Windows, SysUtils, LR_Class, LazUTF8, fpjson, jsonparser,
+  Classes, Windows, SysUtils, Forms, Controls, LR_Class, LazUTF8, fpjson, jsonparser,
   uSys, uHelper;
 
 procedure ResourceLoadReport(const aName: string; aReport: TfrReport);
@@ -17,6 +17,7 @@ function ResourceLoadString(const aName, aExt: string; aEncoding: TEncoding = Ni
 function ResourceLoadJson(const aName: string): TJSONObject;
 function LatinToUkr(const aStr: string): string;
 function RemoveChars(const aStr, aRemove: string): string;
+procedure Working(aState: boolean);
 
 implementation
 
@@ -125,6 +126,14 @@ begin
     if (Pos(Str, aRemove) = 0) then
       Result := Result + Str;
   end;
+end;
+
+procedure Working(aState: boolean);
+begin
+  if (aState) then
+    Screen.Cursor := crHourGlass
+  else
+    Screen.Cursor := crDefault;
 end;
 
 end.

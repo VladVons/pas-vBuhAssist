@@ -70,6 +70,7 @@ begin
     ForceDirectories(Dir);
 
   Log.Print('i', Format('Конвертація %s ...', [FileName]));
+  Working(True);
   FileOut := ConcatPaths([Dir, FileName + '.pdf']);
   Ext := LowerCase(ExtractFileExt(aFile));
   if (Ext = '.pdf') then
@@ -81,6 +82,7 @@ begin
 
   FileOutSize := FileGetSize(FileOut);
   Ratio := (1 - (FileOutSize / FileGetSize(aFile))) * 100;
+  Working(False);
   Log.Print('i', Format('%s %dkb (%.0f%%)', [aFile, Round(FileOutSize / 1000), Ratio]));
 
   Result := aFile;

@@ -8,6 +8,9 @@ inherited FMedFind: TFMedFind
   inherited PanelTitle: TPanel
     Width = 845
     ClientWidth = 845
+    inherited LabelTitle: TLabel
+      Width = 845
+    end
   end
   object PanelFrame: TPanel[1]
     Left = 0
@@ -196,7 +199,7 @@ inherited FMedFind: TFMedFind
         Caption = 'Всі'
         ClientHeight = 155
         ClientWidth = 835
-        object DbGridCur: TDBGrid
+        object DbGrid1: TDBGrid
           Left = 0
           Height = 155
           Top = 0
@@ -207,9 +210,9 @@ inherited FMedFind: TFMedFind
           Options = [dgTitles, dgIndicator, dgColumnResize, dgColumnMove, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
           ReadOnly = True
           TabOrder = 0
-          OnColumnSized = DbGridCurColumnSized
+          OnColumnSized = DbGrid1ColumnSized
           OnDrawColumnCell = DbGridDrawColumnCell
-          OnTitleClick = DbGridCurTitleClick
+          OnTitleClick = DbGrid1TitleClick
         end
       end
       object TabSheetPrev: TTabSheet
@@ -217,7 +220,7 @@ inherited FMedFind: TFMedFind
         ClientHeight = 155
         ClientWidth = 835
         TabVisible = False
-        object DBGridPrev: TDBGrid
+        object DBGrid2: TDBGrid
           Left = 0
           Height = 155
           Top = 0
@@ -247,7 +250,6 @@ inherited FMedFind: TFMedFind
     Top = 314
   end
   object FrPrintGrid1: TFrPrintGrid[4]
-    DBGrid = DbGridCur
     Orientation = poLandscape
     Caption = 'Grid'
     PrinterIndex = -1

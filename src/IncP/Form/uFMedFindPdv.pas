@@ -205,18 +205,19 @@ begin
   SQLQueryCur.Database := DmCommon.IBConnection;
   SQLQueryCur.Transaction := SQLTransaction;
   DataSourceCur.DataSet := SQLQueryCur;
-  DbGridCur.DataSource := DataSourceCur;
+  DbGrid1.DataSource := DataSourceCur;
 
   //SQLQueryPrev.Database := DmCommon.IBConnection;
   //SQLQueryPrev.Transaction := SQLTransaction;
   //DataSourcePrev.DataSet := SQLQueryPrev;
-  //DbGridPrev.DataSource := DataSourcePrev;
+  //DBGrid2.DataSource := DataSourcePrev;
 
   //SQLQueryFJ.Database := DmCommon.IBConnection;
   //SQLQueryFJ.Transaction := SQLTransaction;
   //DataSourceFJ.DataSet := SQLQueryFJ;
 
   LoadJsonData();
+  BitBtnUnlock.Enabled := 'res\json\FMedFindPdv.json'.FileExists();
 end;
 
 

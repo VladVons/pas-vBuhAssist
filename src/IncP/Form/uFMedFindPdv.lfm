@@ -21,13 +21,13 @@ inherited FMedFindPdv: TFMedFindPdv
       Width = 919
       inherited TabSheetCur: TTabSheet
         ClientWidth = 911
-        inherited DbGridCur: TDBGrid
+        inherited DbGrid1: TDBGrid
           Width = 911
         end
       end
       inherited TabSheetPrev: TTabSheet
         ClientWidth = 911
-        inherited DBGridPrev: TDBGrid
+        inherited DBGrid2: TDBGrid
           Width = 911
           DataSource = DataSourcePrev
         end
@@ -171,7 +171,7 @@ inherited FMedFindPdv: TFMedFindPdv
       '    CAST(T2.PERDATE AS VARCHAR(10)) AS PERDATE_STR,'
       '    T2.CHARCODE,'
       '    T2.FORM_NAME,'
-      '    T2.CARDTABLES_TABNAME,'
+      '    --T2.CARDTABLES_TABNAME,'
       '    T2.CARDSENDSTT_NAME,'
       '    T2.MODDATE,'
       '    T2.CARDSTATUS_NAME'
@@ -187,15 +187,15 @@ inherited FMedFindPdv: TFMedFindPdv
       '        COALESCE(CARD.DOCNAME, FORM.NAME) AS FORM_NAME,'
       '        CAST(CARD.MODDATE AS DATE) AS MODDATE,'
       '        FORM.CHARCODE,'
-      '        CARDTABLES.TABNAME AS CARDTABLES_TABNAME,'
+      '        --CARDTABLES.TABNAME AS CARDTABLES_TABNAME,'
       '        CARDSTATUS.NAME AS CARDSTATUS_NAME,'
       '        RDSTTSPR.NAME AS CARDSENDSTT_NAME'
       '    FROM'
       '      CARD'
       '    LEFT JOIN FORM'
       '        ON FORM.CODE = CARD.FORM'
-      '    LEFT JOIN CARDTABLES'
-      '        ON CARDTABLES.FORM = CARD.FORM'
+      '    --LEFT JOIN CARDTABLES'
+      '    --    ON CARDTABLES.FORM = CARD.FORM'
       '    LEFT JOIN RDSTTSPR AS CARDSTATUS'
       '        ON CARDSTATUS.CODE = CARD.STATUS'
       '    LEFT JOIN RDSTTSPR'

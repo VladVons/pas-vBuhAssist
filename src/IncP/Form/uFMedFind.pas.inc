@@ -15,8 +15,8 @@
     ComboBoxPath: TComboBox;
     ComboBoxSendStatus: TComboBox;
     ComboBoxYear: TComboBox;
-    DbGridCur: TDBGrid;
-    DBGridPrev: TDBGrid;
+    DbGrid1: TDBGrid;
+    DBGrid2: TDBGrid;
     frDBDataSet1: TfrDBDataSet;
     FrPrintGrid1: TFrPrintGrid;
     frReport1: TfrReport;
@@ -42,8 +42,8 @@
     procedure ButtonPathClick(Sender: TObject);
     procedure ComboBoxPathEditingDone(Sender: TObject);
     procedure ComboBoxYearDropDown(Sender: TObject);
-    procedure DbGridCurColumnSized(Sender: TObject);
-    procedure DbGridCurTitleClick(Column: TColumn);
+    procedure DbGrid1ColumnSized(Sender: TObject);
+    procedure DbGrid1TitleClick(Column: TColumn);
     procedure DbGridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: integer; Column: TColumn; State: TGridDrawState);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);

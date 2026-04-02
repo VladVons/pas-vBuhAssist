@@ -19,7 +19,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="11"/>
       <RevisionNr Value="3"/>
-      <BuildNr Value="119"/>
+      <BuildNr Value="120"/>
       <StringTable ProductName="vBuhAssist"/>
     </VersionInfo>
     <BuildModes>

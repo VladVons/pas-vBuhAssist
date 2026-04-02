@@ -273,7 +273,7 @@ begin
     Exit();
 
   if (GetType(aCol) = 'file') then
-    Canvas.TextOut(aRect.Right - 20, aRect.Top + 2, ' *** ');
+    Canvas.TextOut(aRect.Right - 25, aRect.Top + 4, '***');
 end;
 
 procedure TStringGridEx.DoMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
@@ -282,11 +282,13 @@ var
   CRect: TRect;
 begin
   MouseToCell(X, Y, ACol, ARow);
+  if (ARow = 0) then
+    Exit();
 
-  if (ARow > 0) and (GetType(ACol) = 'file') then
+  if (GetType(ACol) = 'file') then
   begin
     CRect := CellRect(ACol, ARow);
-    if (X >= CRect.Right - 20) then  // клік саме на кнопці
+    if (X >= CRect.Right - 25) then  // клік саме на кнопці
       if (fOpenDialog.Execute()) then
         if (Assigned(OnOpenFileDialog)) then
           Cells[ACol, ARow] := OnOpenFileDialog(fOpenDialog.FileName);

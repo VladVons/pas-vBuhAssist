@@ -148,7 +148,7 @@ var
 begin
   aQuery.Close();
 
-  DbGridPrev.Columns.Clear();
+  DBGrid2.Columns.Clear();
 
   aQuery.ParamByName('_EDRPOU').Value := aCode;
 
@@ -182,11 +182,12 @@ var
   Str, Macro, MacroPerType, MacroPerDate, Code: string;
   SL: TStringList;
 begin
+  Working(True);
   GetParentTransaction().Rollback();  //refresh
   aQuery.Close();
 
-  DbGridCur.Columns.Clear();
-  DbGridCur.Visible := True;
+  DbGrid1.Columns.Clear();
+  DbGrid1.Visible := True;
 
   Year := integer(ComboBoxYear.Items.Objects[ComboBoxYear.ItemIndex]);
   if (Year = -1) then
@@ -260,16 +261,17 @@ begin
     SL.Free();
 
     Str := IntToStr(Records);
-    DBGridPrev.Visible := True;
+    DBGrid2.Visible := True;
   end else begin
     Str := '?';
-    DBGridPrev.Visible := False;
+    DBGrid2.Visible := False;
   end;
 
   TabSheetCur.Caption := Format('%s (%d)', [fCurCaption, aQuery.RecordCount]) ;
   TabSheetPrev.Caption := Format('%s (%s)', [fPrevCaption, Str]) ;
 
   Result := aQuery.RecordCount;
+  Working(False);
 end;
 
 procedure TFMedFind.SQLQueryGridCurCalcFields(DataSet: TDataSet);
@@ -339,7 +341,7 @@ begin
   if (not IsDeveloper()) then
     Sleep(Delay + Random(Delay));
 
-  StateStore.LoadGrid(Name, DbGridCur);
+  StateStore.LoadGrid(Name, DbGrid1);
   Log('i', Format('Відібрано записів %d', [Records]));
 end;
 
@@ -431,9 +433,9 @@ begin
     ComboBoxYear.ItemIndex := ComboBoxYear.Items.Count - 2;
 end;
 
-procedure TFMedFind.DbGridCurColumnSized(Sender: TObject);
+procedure TFMedFind.DbGrid1ColumnSized(Sender: TObject);
 begin
-  StateStore.SaveGrid(Name, DbGridCur);
+  StateStore.SaveGrid(Name, DbGrid1);
 end;
 
 procedure TFMedFind.DbGridDrawColumnCell(Sender: TObject;
@@ -463,7 +465,7 @@ var
   end;
 end;
 
-procedure TFMedFind.DbGridCurTitleClick(Column: TColumn);
+procedure TFMedFind.DbGrid1TitleClick(Column: TColumn);
 var
   Field: string;
 begin
@@ -480,7 +482,7 @@ begin
   end;
 
   QueryCurOpen(GetParentQueryCur(), GetParentQueryPrev());
-  DbGridCur.Invalidate();
+  DbGrid1.Invalidate();
 end;
 
 function TFMedFind.IsDemo(aCode: string; aField: TField): boolean;
@@ -558,9 +560,13 @@ end;
 
 procedure TFMedFind.BitBtnPrintClick(Sender: TObject);
 var
+  Idx: integer;
+  DBGrid: TDBGrid;
   PropGuard: TPropGuard;
 begin
-  if (GetParentQueryCur().RecordCount = 0) then
+  Idx := PageControl.ActivePageIndex + 1;
+  DBGrid := TDBGrid(FindComponent(Format('DbGrid%d', [Idx])));
+  if (DBGrid.DataSource.DataSet.RecordCount = 0) then
   begin
     Log('i', 'Немає даних для друку');
     Exit();
@@ -568,24 +574,16 @@ begin
 
   PropGuard := TPropGuard.Create(GetParentHideFiealds(), 'Visible', False);
   try
-    //FrPrintGrid1.Caption := Format('%s -- Період: %s %s року--Звіт: %s)',
-    //  [cAppName, ComboBoxMonth.Text, ComboBoxYear.Text, ComboBoxDoc.Text]);
-
-    //ResourceLoadReport('Report_FMedCheckDocs1', frReport1);
     FrPrintGrid1.OnGetValue := @FrPrintGrid1GetValue;
-    FrPrintGrid1.Template := 'res\lrf\CheckDocs2.lrf';
+    FrPrintGrid1.Template := Format('res\lrf\CheckDocs%d.lrf', [Idx]);
     if (not FileExists(FrPrintGrid1.Template)) then
     begin
       Log('e', 'Шаблон не існує ' + FrPrintGrid1.Template);
       Exit();
     end;
 
+    FrPrintGrid1.DBGrid := DbGrid;
     FrPrintGrid1.PreviewReport();
-
-    //ResourceLoadReport('Report_FMedCheckDocs1', frReport1);
-    //frReport1.LoadFromFile('Res\Report\FMedCheckDocs1.lrf');
-    //if (frReport1.PrepareReport()) then
-    //  frReport1.ShowReport();
   finally
     PropGuard.Free();
   end;
@@ -613,12 +611,12 @@ procedure TFMedFind.InitEmptyGrid(aQuery: TSQLQuery);
 var
   i: integer;
 begin
-  DbGridCur.Columns.Clear();
+  DbGrid1.Columns.Clear();
 
   // Add cloumn visualisation in empty Grid
   for i := 0 to aQuery.Fields.Count - 1 do
     if (aQuery.Fields[i].Visible) then
-      with DbGridCur.Columns.Add do
+      with DbGrid1.Columns.Add do
         FieldName := aQuery.Fields[i].DisplayLabel;
 end;
 
