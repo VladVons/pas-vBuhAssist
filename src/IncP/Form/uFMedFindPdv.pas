@@ -191,7 +191,7 @@ begin
   Form := TFWizard(WinManager.Add(TFWizard));
   Form.LoadAll('FWizardPdvs', JObj);
 
-  //JObj.Free();
+  JObj.Free();
 end;
 
 procedure TFMedFindPdv.FormCreate(Sender: TObject);

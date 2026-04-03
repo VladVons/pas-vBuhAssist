@@ -19,7 +19,7 @@ type
   TWizardUser = class(TPersistent)
     procedure OnClick_FWizardPdv5_Save(Sender: TObject);
   private
-    fWizard: TFWizard;
+    fParent: TFWizard;
     procedure SaveXml(const aName: string);
   public
     constructor Create(aParent: TFWizard);
@@ -85,11 +85,24 @@ begin
   fWizardUser := TWizardUser.Create(self);
 end;
 
+procedure TFWizard.FormDestroy(Sender: TObject);
+begin
+  if (fWinManager <> nil) then
+    fWinManager.CloseAll();
+  FreeAndNil(fWinManager);
+
+  FreeAndNil(fClassMap);
+  FreeAndNil(fData);
+  FreeAndNil(fWizardUser);
+
+  ComboBoxWizards.ClearItems();
+  inherited;
+end;
+
 procedure TFWizard.SetData(aJObj: TJSONObject);
 begin
-  //FreeAndNil(fData);
-  fData := aJObj;
-  //fData := TJSONObject(aJObj.Clone());
+  FreeAndNil(fData);
+  fData := TJSONObject(aJObj.Clone());
 end;
 
 function TFWizard.GetData(): TJSONObject;
@@ -142,21 +155,6 @@ begin
       ComboBoxWizards.Next(1);
       ComboBoxWizardsChange();
     end;
-end;
-
-procedure TFWizard.FormDestroy(Sender: TObject);
-begin
-  if (fWinManager <> nil) then
-    fWinManager.CloseAll();
-  FreeAndNil(fWinManager);
-
-  FreeAndNil(fClassMap);
-  FreeAndNil(fData);
-  FreeAndNil(fWizardUser);
-
-
-  ComboBoxWizards.ClearItems();
-  inherited;
 end;
 
 procedure TFWizard.SetEventByName(aComponent: TComponent; const aEventName, aHandlerName: string);
@@ -490,18 +488,16 @@ end;
 constructor TWizardUser.Create(aParent: TFWizard);
 begin
   inherited Create();
-  fWizard := aParent;
+  fParent := aParent;
 end;
 
 procedure TWizardUser.SaveXml(const aName: string);
 var
-  i: integer;
   Str, StrXds, Path: string;
   Macros: TMacros;
   JObj: TJSONObject;
 begin
-  JObj := fWizard.GetData();
-  i := JObj.Count;
+  JObj := fParent.GetData();
 
   Macros := TMacros.Create();
   try
