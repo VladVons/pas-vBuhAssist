@@ -190,8 +190,6 @@ begin
 
   Form := TFWizard(WinManager.Add(TFWizard));
   Form.LoadAll('FWizardPdvs', JObj);
-  //Form.SaveXml('J1360102', JObj);
-  //Form.SaveXml('J1312603', JObj);
 
   //JObj.Free();
 end;

@@ -11,9 +11,20 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
   ExtCtrls, ValEdit, Buttons, fpjson, TypInfo, Variants, jsonparser, LConvEncoding,
   uFrStringGrid,
-  uSys, uSysVcl, uVarUtil, uHelper, uHelperVcl, uFBase, uFBaseScroll, uWinManager, uExGrid;
+  uSys, uSysVcl, uVarUtil, uHelper, uHelperVcl, uFBase, uFBaseScroll, uWinManager, uExGrid, uLog;
 
 type
+  TFWizard = class;
+
+  TWizardUser = class(TPersistent)
+    procedure OnClick_FWizardPdv5_Save(Sender: TObject);
+  private
+    fWizard: TFWizard;
+    procedure SaveXml(const aName: string);
+  public
+    constructor Create(aParent: TFWizard);
+  end;
+
   { TFWizard }
   TFWizard = class(TFBase)
     BitBtnNext: TBitBtn;
@@ -32,19 +43,21 @@ type
     fJScheme, fData: TJSONObject;
     fClassMap: TStringList;
     fWinManager: TWinManager;
+    fWizardUser: TWizardUser;
     fFileData: string;
-    procedure ComboBoxWizardsChange();
     procedure AddControls(aForm: TScrollingWinControl; aCtrls: TJSONArray; aJConf: TJSONObject);
-    procedure SetCtrlProperty(aCtrl: TControl; const aName: string; aVal: variant);
+    procedure ComboBoxWizardsChange();
     procedure LoadForm(aForm: TForm; aJObj: TJSONObject);
     procedure SaveForm(aForm: TForm; aJObj: TJSONObject);
+    procedure SetCtrlProperty(aCtrl: TControl; const aName: string; aVal: variant);
     procedure SetData(aJObj: TJSONObject);
+    procedure SetEventByName(aComponent: TComponent; const aEventName, aHandlerName: string);
   public
+    function  GetData(): TJSONObject;
     procedure LoadScheme(const aName: string);
     procedure LoadData(const aFile: string);
     procedure LoadAll(const aName: string; aJObj: TJSONObject);
     procedure SaveData();
-    procedure SaveXml(const aName: string; aJObj: TJSONObject);
   end;
 
 implementation
@@ -64,16 +77,26 @@ begin
   fClassMap.AddObject('TComboBox', TObject(TComboBox));
   fClassMap.AddObject('TCheckBox', TObject(TCheckBox));
   fClassMap.AddObject('TMemo', TObject(TMemo));
+  fClassMap.AddObject('TButton', TObject(TButton));
   fClassMap.AddObject('TValueListEditor', TObject(TValueListEditor));
   fClassMap.AddObject('TFrStringGrid', TObject(TFrStringGrid));
   fClassMap.EndUpdate();
+
+  fWizardUser := TWizardUser.Create(self);
 end;
 
 procedure TFWizard.SetData(aJObj: TJSONObject);
 begin
-  FreeAndNil(fData);
-  //fData := TJSONObject(aJObj.Clone());
+  //FreeAndNil(fData);
   fData := aJObj;
+  //fData := TJSONObject(aJObj.Clone());
+end;
+
+function TFWizard.GetData(): TJSONObject;
+begin
+  if (not Assigned(fData)) then
+    Log('i', 'fData is nil');
+  Result := fData;
 end;
 
 procedure TFWizard.ComboBoxWizardsChange();
@@ -129,9 +152,34 @@ begin
 
   FreeAndNil(fClassMap);
   FreeAndNil(fData);
+  FreeAndNil(fWizardUser);
+
 
   ComboBoxWizards.ClearItems();
   inherited;
+end;
+
+procedure TFWizard.SetEventByName(aComponent: TComponent; const aEventName, aHandlerName: string);
+var
+  PropInfo: PPropInfo;
+  Method: TMethod;
+begin
+  PropInfo := GetPropInfo(aComponent.ClassInfo, aEventName);
+  if (PropInfo = nil) then
+  begin
+    Log('e', Format('_event `%s` не знайдено в `%s`', [aEventName, aComponent.ClassName]));
+    Exit();
+  end;
+
+  Method.Code := fWizardUser.MethodAddress(aHandlerName);
+  if (Method.Code = nil) then
+  begin
+    Log('e', Format('Обробник  `%s` не знайдено в `%s`', [aHandlerName, fWizardUser.ClassName()]));
+    Exit();
+  end;
+
+  Method.Data := fWizardUser;
+  SetMethodProp(aComponent, PropInfo, Method);
 end;
 
 procedure TFWizard.SetCtrlProperty(aCtrl: TControl; const aName: string; aVal: variant);
@@ -144,7 +192,7 @@ procedure TFWizard.AddControls(aForm: TScrollingWinControl; aCtrls: TJSONArray; 
 var
   i, j, Idx, PosTop, PosLeft, BottomPad, ConfBottomPad: integer;
   Str, CtrlClass: string;
-  JObjCtrl: TJSONObject;
+  JObjCtrl, JObjEvent: TJSONObject;
   Ctrl: TControl;
   CClass: TComponentClass;
 begin
@@ -162,7 +210,7 @@ begin
     Idx := fClassMap.IndexOf(CtrlClass);
     if (Idx = -1) then
     begin
-      Log('e', Format('Не відомий тип %s', [CtrlClass]));
+      Log('e', Format('Не відомий _class %s', [CtrlClass]));
       continue;
     end;
 
@@ -179,6 +227,11 @@ begin
     Ctrl.Top := PosTop;
     Ctrl.Left := Ctrl.Left + PosLeft;
     Ctrl.Parent := aForm;
+
+    JObjEvent := TJSONObject(JObjCtrl.Find('_event'));
+    if (JObjEvent <> nil) then
+      for j := 0 to JObjEvent.Count - 1 do
+        SetEventByName(Ctrl, JObjEvent.Names[j], JObjEvent.Items[j].AsString);
 
     for j := 0 to JObjCtrl.Count - 1 do
     begin
@@ -433,21 +486,41 @@ begin
   JObjLoad.Free();
 end;
 
-procedure TFWizard.SaveXml(const aName: string; aJObj: TJSONObject);
-var
-  Str, StrXds, Path: string;
-  Macros: TMacros;
+//---
+constructor TWizardUser.Create(aParent: TFWizard);
 begin
-  StrXds := ResourceLoadString(aName, 'xml');
-  Macros := TMacros.Create();
-  Str := Macros.Exec(StrXds, aJObj).DelEmptyLines();
-  Path := ConcatPaths(['Data', aName + '.xml']);
-  Str := UTF8ToCP1251(Str);
-  Str.ToFile(Path);
-  Log('i', Path);
-  Macros.Free();
+  inherited Create();
+  fWizard := aParent;
 end;
 
+procedure TWizardUser.SaveXml(const aName: string);
+var
+  i: integer;
+  Str, StrXds, Path: string;
+  Macros: TMacros;
+  JObj: TJSONObject;
+begin
+  JObj := fWizard.GetData();
+  i := JObj.Count;
+
+  Macros := TMacros.Create();
+  try
+    StrXds := ResourceLoadString(aName, 'xml');
+    Str := Macros.Exec(StrXds, JObj).DelEmptyLines();
+    Path := ConcatPaths(['Data', aName + '.xml']);
+    Str := UTF8ToCP1251(Str);
+    Str.ToFile(Path);
+    Log.Print('i', Path);
+  finally
+    Macros.Free();
+  end;
+end;
+
+procedure TWizardUser.OnClick_FWizardPdv5_Save(Sender: TObject);
+begin
+  SaveXml('J1360102');
+  SaveXml('J1312603');
+end;
 
 end.
 

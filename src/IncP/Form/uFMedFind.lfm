@@ -251,6 +251,9 @@ inherited FMedFind: TFMedFind
   end
   object FrPrintGrid1: TFrPrintGrid[4]
     Orientation = poLandscape
+    Font.CharSet = ANSI_CHARSET
+    TitleFont.CharSet = ANSI_CHARSET
+    TitleFont.Style = [fsBold]
     Caption = 'Grid'
     PrinterIndex = -1
     ShowCaption = True

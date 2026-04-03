@@ -8,7 +8,7 @@ unit uSysVcl;
 interface
 
 uses
-  Classes, Windows, SysUtils, Forms, Controls, LR_Class, LazUTF8, fpjson, jsonparser,
+  Classes, Windows, SysUtils, Forms, Controls, TypInfo, LR_Class, LazUTF8, fpjson, jsonparser,
   uSys, uHelper;
 
 procedure ResourceLoadReport(const aName: string; aReport: TfrReport);

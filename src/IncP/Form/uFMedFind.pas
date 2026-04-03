@@ -656,7 +656,6 @@ begin
   //Str2 := Str1.Filter(['1'..'5'], True);
   //Str2 := Str1.Filter('1234');
 
-
   SetFont(self);
   ProtectTimer.TimingStart();
 
