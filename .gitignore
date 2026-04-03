@@ -12,6 +12,8 @@
 *.pdf
 
 _lib*/
-backup
-junk
+backup/
+junk/
+Data/
+
 
