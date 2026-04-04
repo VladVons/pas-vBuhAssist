@@ -18,6 +18,7 @@ type
     function Replace(const aStr, aFind, aRepl: string): string;
   public
     constructor Create(const aPrefix: string = '{{'; const aSuffix: string = '}}');
+    function GetList(const aStr: string): TStringList;
     function Exec(const aStr: string; const aNames, aValues: TStringArray): string;
     function Exec(const aStr: string; aDict: TStringList): string;
     function Exec(const aStr: string; aObj: TJSONObject): string;
@@ -145,6 +146,23 @@ begin
     Find := aObj.Names[i];
     Repl := aObj.GetAsString(Find, '').Replace('"', '`');
     Result := Replace(Result, Find, Repl);
+  end;
+end;
+
+function TMacros.GetList(const aStr: string): TStringList;
+var
+  re: TRegExpr;
+begin
+  Result := TStringList.Create();
+  re := TRegExpr.Create();
+  try
+    re.Expression := Format('%s([a-zA-Z0-9_]+)%s',[fPrefix.EscapeRegExp(), fSuffix.EscapeRegExp()]);
+    if (re.Exec(aStr)) then
+      repeat
+        Result.Add(re.Match[1]);
+      until not re.ExecNext();
+  finally
+    re.Free();
   end;
 end;
 

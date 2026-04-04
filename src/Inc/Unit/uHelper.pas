@@ -21,6 +21,7 @@ type
     function Between(const aStart, aEnd: string): string;
     function DelBOM(): string;
     function DelEmptyLines(): string;
+    function EscapeRegExp(): string;
     function Left(aLen: integer; aDoCut: boolean = False): string;
     function PosEx(const aStr: string; aOfst: integer = 1): integer;
     function Right(aLen: Integer; aDoCut: boolean = False): string;
@@ -349,6 +350,21 @@ begin
   else
     Result := self;
 end;
+
+function TStringHelperEx.EscapeRegExp(): string;
+const
+  SpecialChars = '\^$.|?*+()[]{}';
+var
+  i: Integer;
+begin
+  Result := '';
+  for i := 1 to System.Length(self) do
+    if Pos(self[i], SpecialChars) > 0 then
+      Result := Result + '\' + self[i]
+    else
+      Result := Result + self[i];
+end;
+
 
 // --- TStringListHelper
 function TStringListHelper.AddArray(const aArr: TStringArray): TStringList;

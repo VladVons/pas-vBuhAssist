@@ -8,7 +8,7 @@ unit uFMedFindPdv;
 interface
 
 uses
-  Classes, SysUtils, DateUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ExtCtrls, Buttons, fpjson, Math,
+  Classes, SysUtils, DateUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ExtCtrls, Buttons, fpjson, Math, base64,
   uDmCommon, uFMedFind, uFWizard, uMed, uWinManager, uHelper, uConst, uSys, uQuery;
 
 type
@@ -155,6 +155,19 @@ begin
   aJObj.Add('HKBOS', aQuery.FieldByName('LEADINDTAX').AsString);
   aJObj.Add('HBOS', aQuery.FieldByName('LEADFIO').AsString);
 
+  // ToDo
+  aJObj.Add('H01', '1');
+  aJObj.Add('FILLDOC', '01.01.2026');
+  aJObj.Add('NAMEDOC', '123');
+  aJObj.Add('NUMDOC', '333');
+  aJObj.Add('R001G10', 1);
+  aJObj.Add('R01G1B', EncodeStringBase64('Hello Base64'));
+  aJObj.Add('HNUM_1', 1);
+  aJObj.Add('HNUM_2', 1);
+  aJObj.Add('R01G1S_1', 'пояснення');
+  aJObj.Add('R01G1S_2', 'рахунок');
+  aJObj.Add('T1RXXXXG5', '999');
+
   //Log('i', ExpandSQL(aQuery));
   aQuery.Close();
 end;
@@ -176,16 +189,18 @@ begin
   QueryFjOpen(SQLQueryFJ, JObj);
   QueryOrgOpen(SQLQueryOrg, JObj);
 
-  JObj.Add('DATE', FormatDateTime('dd.mm.yyyy', Date()));
-  JObj.Add('YEAR', YearOf(Date()));
-  JObj.Add('MONTH', MonthOf(Date()));
-  JObj.Add('MONTHU', GetMonthNameUa(MonthOf(Date())));
-  JObj.Add('DAY', DayOf(Date()));
-  JObj.Add('APP_NAME', cAppName);
+  Str := FormatDateTime('dd.mm.yyyy', Date());
+  JObj.Add('_DATE', Str);
+  JObj.Add('_DATE_WD', Str.Replace('.',''));
+  JObj.Add('_YEAR', YearOf(Date()));
+  JObj.Add('_MONTH', MonthOf(Date()));
+  JObj.Add('_MONTH_U', GetMonthNameUa(MonthOf(Date())));
+  JObj.Add('_DAY', DayOf(Date()));
+  JObj.Add('_APP_NAME', cAppName);
 
   SL := JObj.GetList();
   Str := SL.GetJoin(LineEnding);
-  JObj.Add('VARS', Str);
+  JObj.Add('_VARS', Str);
   SL.Free();
 
   Form := TFWizard(WinManager.Add(TFWizard));
