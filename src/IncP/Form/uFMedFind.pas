@@ -15,6 +15,8 @@ uses
   uConst, uMed, uSys, uSysVcl, uHelper, uHelperVcl, uVarUtil, uQuery, uProtectDbg, uProtectTimer,
   uSettings, uStateStore, uLicence;
 
+const
+    cHintPrev = 'Пропоновані звіти формуються тільки по ЄДРПОУ та періоду';
 type
   { TFMedFind }
   {$I uFMedFind.pas.inc}
@@ -549,12 +551,18 @@ begin
 end;
 
 procedure TFMedFind.PageControlChange(Sender: TObject);
+var
+  HintPrev: boolean;
 begin
-  if (PageControl.ActivePage.Name = 'TabSheetPrev') and (ComboBoxFirm.Text = cChooseAll) then
+  HintPrev := (PageControl.ActivePage.Name = 'TabSheetPrev') and (ComboBoxFirm.Text = cChooseAll);
+  TabSheetPrev.ShowHint := HintPrev;
+  if (HintPrev) then
   begin
-    Log('i', 'Пропоновані звіти формуються тільки по ЄДРПОУ та періоду');
     if (ComboBoxFirm.CanFocus) then
         ComboBoxFirm.SetFocus();
+
+    TabSheetPrev.Hint := cHintPrev;
+    Log('i', cHintPrev);
   end;
 end;
 
