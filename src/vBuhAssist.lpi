@@ -365,7 +365,7 @@
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="IncP/Unit/uWizard.pas"/>
+        <Filename Value="IncP/Unit/uWizardUser.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
     </Units>

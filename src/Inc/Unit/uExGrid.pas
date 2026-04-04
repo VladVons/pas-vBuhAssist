@@ -18,6 +18,7 @@ type
    fColMap: TFPHashObjectList;
    fComboBox: TComboBox;
    fOpenDialog: TOpenDialog;
+   fMaxRows: integer;
 
    function GetCol(const aField: string): Integer;
    function GetCell(const aField: string; aRow: Integer): string;
@@ -34,6 +35,7 @@ type
 
    function DataToJson(): TJSONArray;
    procedure DataFromJson(aJArr: TJSONArray);
+   function GetMaxRows(): integer;
    procedure HeadFromJson(aJObj: TJSONObject);
    procedure DelRow(aIdx: Integer);
    function FindCol(const aType, aName: string): Integer;
@@ -83,6 +85,11 @@ begin
   FreeAndNil(fComboBox);
   FreeAndNil(fOpenDialog);
   inherited;
+end;
+
+function TStringGridEx.GetMaxRows(): integer;
+begin
+  Result := fMaxRows;
 end;
 
 function TStringGridEx.GetCol(const aField: string): Integer;
@@ -197,6 +204,8 @@ var
 begin
   Options := Options + [goEditing];
   //aCtrl.OnSelectCell := @OnStringGridSelectCell;
+
+  fMaxRows := aJObj.Get('_maxrows', -1);
 
   JFields := aJObj.Arrays['fields'];
   ColCount := JFields.Count;

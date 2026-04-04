@@ -42,7 +42,13 @@ begin
 end;
 
 procedure TFrStringGrid.ToolButtonAddClick(Sender: TObject);
+var
+  MaxRows: integer;
 begin
+  MaxRows := StringGridEx.GetMaxRows();
+  if (MaxRows = -1) or (MaxRows < StringGridEx.RowCount) then
+    Exit();
+
   if (not StringGridEx.IsRowEmpty(StringGridEx.RowCount - 1)) then
     StringGridEx.RowCount := StringGridEx.RowCount + 1;
   StringGridEx.Row := StringGridEx.RowCount;

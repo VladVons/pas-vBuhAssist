@@ -9,22 +9,11 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
-  ExtCtrls, ValEdit, Buttons, fpjson, TypInfo, Variants, jsonparser, LConvEncoding,
+  ExtCtrls, ValEdit, Buttons, fpjson, TypInfo, Variants, jsonparser,
   uFrStringGrid,
-  uSys, uSysVcl, uVarUtil, uHelper, uHelperVcl, uFBase, uFBaseScroll, uWinManager, uExGrid, uLog;
+  uSys, uSysVcl, uVarUtil, uHelper, uHelperVcl, uFBase, uFBaseScroll, uWinManager, uExGrid;
 
 type
-  TFWizard = class;
-
-  TWizardUser = class(TPersistent)
-    procedure OnClick_FWizardPdv5_Save(Sender: TObject);
-  private
-    fParent: TFWizard;
-    procedure SaveXml(const aName: string);
-  public
-    constructor Create(aParent: TFWizard);
-  end;
-
   { TFWizard }
   TFWizard = class(TFBase)
     BitBtnNext: TBitBtn;
@@ -40,20 +29,21 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
-    fJScheme, fData: TJSONObject;
+    fJScheme, fDataExt: TJSONObject;
     fClassMap: TStringList;
     fWinManager: TWinManager;
-    fWizardUser: TWizardUser;
+    fWizardUser: TPersistent;
     fFileData: string;
     procedure AddControls(aForm: TScrollingWinControl; aCtrls: TJSONArray; aJConf: TJSONObject);
     procedure ComboBoxWizardsChange();
     procedure LoadForm(aForm: TForm; aJObj: TJSONObject);
-    procedure SaveForm(aForm: TForm; aJObj: TJSONObject);
+    procedure GetFormData(aJObj: TJSONObject; aForm: TForm);
+    procedure GetFormsData(aJObj: TJSONObject);
     procedure SetCtrlProperty(aCtrl: TControl; const aName: string; aVal: variant);
     procedure SetData(aJObj: TJSONObject);
     procedure SetEventByName(aComponent: TComponent; const aEventName, aHandlerName: string);
   public
-    function  GetData(): TJSONObject;
+    function  GetDataExt(): TJSONObject;
     procedure LoadScheme(const aName: string);
     procedure LoadData(const aFile: string);
     procedure LoadAll(const aName: string; aJObj: TJSONObject);
@@ -62,6 +52,8 @@ type
 
 implementation
 {$R *.lfm}
+
+uses uWizardUser;
 
 procedure TFWizard.FormCreate(Sender: TObject);
 begin
@@ -92,24 +84,23 @@ begin
   FreeAndNil(fWinManager);
 
   FreeAndNil(fClassMap);
-  FreeAndNil(fData);
+  FreeAndNil(fDataExt);
   FreeAndNil(fWizardUser);
 
   ComboBoxWizards.ClearItems();
+
   inherited;
 end;
 
 procedure TFWizard.SetData(aJObj: TJSONObject);
 begin
-  FreeAndNil(fData);
-  fData := TJSONObject(aJObj.Clone());
+  FreeAndNil(fDataExt);
+  fDataExt := TJSONObject(aJObj.Clone());
 end;
 
-function TFWizard.GetData(): TJSONObject;
+function TFWizard.GetDataExt(): TJSONObject;
 begin
-  if (not Assigned(fData)) then
-    Log('i', 'fData is nil');
-  Result := fData;
+  Result := fDataExt;
 end;
 
 procedure TFWizard.ComboBoxWizardsChange();
@@ -274,10 +265,10 @@ begin
   PanelNav.Enabled := true;
 
   Str := ResourceLoadString(aName, 'json');
-  if (fData <> nil) then
+  if (fDataExt <> nil) then
   begin
     Macros := TMacros.Create();
-    Str := Macros.Exec(Str, fData);
+    Str := Macros.Exec(Str, fDataExt);
     Macros.Free();
   end;
   fJScheme := TJSONObject(GetJSON(Str.DelBOM()));
@@ -324,7 +315,8 @@ begin
     JObjConfDef.Add('_toppad', 0);
     JObjConfDef.Add('_bottompad', 5);
     JObjConfDef.Add('_left', 5);
-    JObjConfDef.Add('_top', PanelTitle.Top + PanelTitle.Height + 15);
+    //JObjConfDef.Add('_top', PanelTitle.Top + PanelTitle.Height + 15);
+    JObjConfDef.Add('_top', 5);
 
     JObjConf := TJSONObject(JObjTab.Find('conf'));
     if (JObjConf <> nil) then
@@ -386,7 +378,7 @@ begin
   JObj.Free();
 end;
 
-procedure TFWizard.SaveForm(aForm: TForm; aJObj: TJSONObject);
+procedure TFWizard.GetFormData(aJObj: TJSONObject; aForm: TForm);
 var
   i: integer;
   CtrlName, CtrlClass, Prop: string;
@@ -427,12 +419,20 @@ begin
   end;
 end;
 
-procedure TFWizard.SaveData();
+procedure TFWizard.GetFormsData(aJObj: TJSONObject);
 var
   i: integer;
+  Forms: TFormArray;
+begin
+  Forms := fWinManager.GetForms();
+  for i := 0 to Length(Forms) - 1 do
+    GetFormData(aJObj, Forms[i]);
+end;
+
+procedure TFWizard.SaveData();
+var
   Str: string;
   JObj: TJSONObject;
-  Forms: TFormArray;
 begin
   if (fFileData.IsEmpty()) then
     Exit();
@@ -443,10 +443,7 @@ begin
     JObj := TJSONObject.Create();
 
   try
-    Forms := fWinManager.GetForms();
-    for i := 0 to Length(Forms) - 1 do
-      SaveForm(Forms[i], JObj);
-
+    GetFormsData(JObj);
     Str := JObj.FormatJSON();
     Str.ToFile(fFileData);
   finally
@@ -469,6 +466,7 @@ begin
   begin
     ResName := JArr[i].AsString;
     JObjRes := ResourceLoadJson(ResName);
+
     JObj := TJSONObject.Create();
     JObj.Add('text', JObjRes.Get('caption', ''));
     JObj.Add('res', ResName);
@@ -482,40 +480,6 @@ begin
   ComboBoxWizardsChange();
 
   JObjLoad.Free();
-end;
-
-//---
-constructor TWizardUser.Create(aParent: TFWizard);
-begin
-  inherited Create();
-  fParent := aParent;
-end;
-
-procedure TWizardUser.SaveXml(const aName: string);
-var
-  Str, StrXds, Path: string;
-  Macros: TMacros;
-  JObj: TJSONObject;
-begin
-  JObj := fParent.GetData();
-
-  Macros := TMacros.Create();
-  try
-    StrXds := ResourceLoadString(aName, 'xml');
-    Str := Macros.Exec(StrXds, JObj).DelEmptyLines();
-    Path := ConcatPaths(['Data', aName + '.xml']);
-    Str := UTF8ToCP1251(Str);
-    Str.ToFile(Path);
-    Log.Print('i', Path);
-  finally
-    Macros.Free();
-  end;
-end;
-
-procedure TWizardUser.OnClick_FWizardPdv5_Save(Sender: TObject);
-begin
-  SaveXml('J1360102');
-  SaveXml('J1312603');
 end;
 
 end.

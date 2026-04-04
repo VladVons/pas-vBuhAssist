@@ -27,7 +27,8 @@ function PrevPeriodDate(aPerType: char; aYear, aMonth: Integer): TDate;
 function IntToRoman10(aVal: Integer): String;
 procedure Swap(var aA, aB: Integer); inline;
 
-generic function IIF<T>(aCond: boolean; const aValTrue, aValFalse: T): T; inline;
+generic function gIIF<T>(aCond: boolean; const aValTrue, aValFalse: T): T; inline;
+function IIF(aCond: boolean; const aValTrue, aValFalse: string): string; inline;
 
 
 implementation
@@ -59,12 +60,17 @@ begin
   Result := IncMonth(EncodeDate(aYear, aMonth, 1), -Shift);
 end;
 
-generic function IIF<T>(aCond: boolean; const aValTrue, aValFalse: T): T; inline;
+generic function gIIF<T>(aCond: boolean; const aValTrue, aValFalse: T): T; inline;
 begin
   if (aCond) then
     Result := aValTrue
   else
     Result := aValFalse;
+end;
+
+function IIF(aCond: boolean; const aValTrue, aValFalse: string): string; inline;
+begin
+  Result := specialize gIIF<string>(aCond, aValTrue, aValFalse);
 end;
 
 function Between(aVal, aMin, aMax: integer): boolean;

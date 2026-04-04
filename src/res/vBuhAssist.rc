@@ -16,5 +16,5 @@ json_FWizardPdv5 RCDATA "res/json/FWizardPdv5.json"
 
 json_FWizardPdvs RCDATA "res/json/FWizardPdvs.json"
 
-xml_J1312603 RCDATA "res/xml/J1312603.xml"
-xml_J1360102 RCDATA "res/xml/J1360102.xml"
+xml_1312603 RCDATA "res/xml/1312603.xml"
+xml_1360102 RCDATA "res/xml/1360102.xml"
