@@ -66,6 +66,7 @@ type
     function GetKeys(): TStringList;
     function GetList(): TStringList;
     function GetNested(const Path: string; aDef: Variant): Variant;
+    function GetAsString(const aKey, aDef: string): string;
   end;
 
 implementation
@@ -652,6 +653,17 @@ var
 
   JData := JObjCur.Find(Parts[High(Parts)]);
   Result := JsonToVariant(JData)
+end;
+
+function TJSONObjectHelper.GetAsString(const aKey, aDef: string): string;
+var
+  JObj: TJSONData;
+begin
+  JObj := Find(aKey);
+  if (JObj = nil) then
+    Result := aDef
+  else
+    Result := JObj.AsString;
 end;
 
 end.

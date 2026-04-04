@@ -19,12 +19,16 @@ inherited FMedFindPdv: TFMedFindPdv
     end
     inherited PageControl: TPageControl
       Width = 919
+      ActivePage = TabSheetPrev
+      TabIndex = 1
       inherited TabSheetCur: TTabSheet
+        ClientWidth = 911
         inherited DbGrid1: TDBGrid
           Width = 911
         end
       end
       inherited TabSheetPrev: TTabSheet
+        ClientWidth = 911
         inherited DBGrid2: TDBGrid
           Width = 911
           DataSource = DataSourcePrev
@@ -642,6 +646,7 @@ inherited FMedFindPdv: TFMedFindPdv
       '  N10,'
       '  N11,'
       '  N2_1,'
+      '  N3,'
       '  N4,'
       '  A7_11'
       'FROM'
@@ -679,19 +684,10 @@ inherited FMedFindPdv: TFMedFindPdv
       Required = False
       Size = 100
     end
-    object SQLQueryFJN10: TStringField
+    object SQLQueryFJA7_11: TCurrencyField
       FieldKind = fkData
-      FieldName = 'N10'
+      FieldName = 'A7_11'
       Index = 2
-      LookupCache = False
-      ProviderFlags = [pfInUpdate, pfInWhere]
-      ReadOnly = False
-      Required = False
-    end
-    object SQLQueryFJN11: TDateField
-      FieldKind = fkData
-      FieldName = 'N11'
-      Index = 3
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -700,6 +696,15 @@ inherited FMedFindPdv: TFMedFindPdv
     object SQLQueryFJN2_1: TStringField
       FieldKind = fkData
       FieldName = 'N2_1'
+      Index = 3
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+    object SQLQueryFJN3: TStringField
+      FieldKind = fkData
+      FieldName = 'N3'
       Index = 4
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
@@ -715,10 +720,19 @@ inherited FMedFindPdv: TFMedFindPdv
       ReadOnly = False
       Required = False
     end
-    object SQLQueryFJA7_11: TCurrencyField
+    object SQLQueryFJN10: TStringField
       FieldKind = fkData
-      FieldName = 'A7_11'
+      FieldName = 'N10'
       Index = 6
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+    object SQLQueryFJN11: TDateField
+      FieldKind = fkData
+      FieldName = 'N11'
+      Index = 7
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False

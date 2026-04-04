@@ -8,7 +8,8 @@ unit uVarUtil;
 interface
 
 uses
-  Classes, SysUtils, fpjson, Variants;
+  Classes, SysUtils, fpjson, Variants,
+  uHelper;
 
 type
   TMacros = class
@@ -142,7 +143,7 @@ begin
   for i := 0 to aObj.Count - 1 do
   begin
     Find := aObj.Names[i];
-    Repl := string(aObj.Get(Find, '')).Replace('"', '`');
+    Repl := aObj.GetAsString(Find, '').Replace('"', '`');
     Result := Replace(Result, Find, Repl);
   end;
 end;

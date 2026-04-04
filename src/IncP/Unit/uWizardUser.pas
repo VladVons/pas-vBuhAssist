@@ -51,6 +51,7 @@ begin
     aName,
     aJObj.Get('HKSTI', '')
   ]);
+  FileName := FileName.Replace('_', '');
   Path := ConcatPaths(['Data', FileName + '.XML']);
 
   StrXds.ToFile(Path);

@@ -35,6 +35,7 @@ type
     SQLQueryCurPERTYPE: TIntegerField;
     SQLQueryCurSHORTNAME: TStringField;
     SQLQueryCurVAT: TStringField;
+    SQLQueryFJN3: TStringField;
     SQLQueryOrg: TSQLQuery;
     SQLQueryFJA7_11: TCurrencyField;
     SQLQueryFJFIRM_EDRPOU: TStringField;
@@ -124,8 +125,7 @@ begin
   aJObj.Add('HNAME', aQuery.FieldByName('FIRM_NAME').AsString);
   aJObj.Add('HTIN', aQuery.FieldByName('FIRM_EDRPOU').AsString);
   aJObj.Add('TIN', aQuery.FieldByName('FIRM_EDRPOU').AsString);
-  //aJObj.Add('HBOS', aQuery.FieldByName('N10').AsString);
-
+  aJObj.Add('N3', aQuery.FieldByName('N3').AsString);
   aJObj.Add('T1RXXXXG2D', aQuery.FieldByName('N11').AsString);
   aJObj.Add('T1RXXXXG31', aQuery.FieldByName('N2_1').AsString);
   aJObj.Add('T1RXXXXG6S', aQuery.FieldByName('N4').AsString);
