@@ -1,0 +1,24 @@
+﻿procedure Test();
+var
+  Db: TDbList;
+  Rec: TDbRec;
+  JObj: TJSONObject;
+  Str: string;
+begin
+  JObj := TJSONObject.Create();
+  JObj.Add('head', TJSONArray.Create(['name', 'age']));
+  JObj.Add('data', TJSONArray.Create());
+  Db := TDbList.Create(JObj);
+  try
+    Rec := Db.RecAdd();
+    Rec.SetField('name', 'Alice');
+    Rec['age'] := TJSONIntegerNumber.Create(25);
+
+    for Rec in Db do
+      Str := Format('%s, %s, %d', [Rec['name'].AsString, ' - ', Rec['age'].AsInteger]);
+    Str := Db.ExportStr();
+  finally
+    Db.Free();
+    JObj.Free();
+  end;
+end;

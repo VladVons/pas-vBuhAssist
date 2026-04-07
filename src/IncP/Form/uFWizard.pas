@@ -380,7 +380,7 @@ begin
       continue;
 
     if (CtrlClass = 'TFrStringGrid') then
-      TFrStringGrid(Ctrl).LoadDataFromJson(JObj.Arrays['val'])
+      TFrStringGrid(Ctrl).Import(JObj.Objects['val'])
     else if (CtrlClass = 'TValueListEditor') then
       ValueList_FromJson(TValueListEditor(Ctrl), JObj.Arrays['val'])
     else
@@ -440,7 +440,7 @@ var
   i: integer;
   CtrlName, CtrlClass, Prop: string;
   Ctrl: TControl;
-  JItem: TJSONObject;
+  JObj, JItem: TJSONObject;
   JArr: TJSONArray;
   Form: TScrollingWinControl;
 begin
@@ -457,8 +457,8 @@ begin
     CtrlClass := Ctrl.ClassName();
     if (CtrlClass = 'TFrStringGrid') then
     begin
-      JArr := TFrStringGrid(Ctrl).LoadDataToJson();
-      JItem.Add('val', JArr);
+      JObj := TFrStringGrid(Ctrl).Export();
+      JItem.Add('val', JObj);
     end else if (CtrlClass = 'TValueListEditor') then
     begin
       JArr := ValueList_ToJson(TValueListEditor(Ctrl));

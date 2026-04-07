@@ -368,6 +368,10 @@
         <Filename Value="IncP/Unit/uWizardUser.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
+      <Unit>
+        <Filename Value="Inc/Unit/uDbList.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

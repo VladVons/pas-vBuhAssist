@@ -8,7 +8,8 @@ unit uExGrid;
 interface
 
 uses
-  Classes, SysUtils, Grids, Controls, StdCtrls, Dialogs, ValEdit, contnrs, fpjson;
+  Classes, SysUtils, Grids, Controls, StdCtrls, Dialogs, ValEdit, contnrs, fpjson,
+  uDbList;
 
 type
  TOnOpenFileDialog = function (const aFile: string): string of object;
@@ -33,8 +34,9 @@ type
    constructor Create(aOwner: TComponent); override;
    destructor Destroy(); override;
 
-   function DataToJson(): TJSONArray;
-   procedure DataFromJson(aJArr: TJSONArray);
+   function Export(): TJSONObject;
+   function ExportAsDbList(): TDbList;
+   procedure Import(aJObj: TJSONObject);
    function GetMaxRows(): integer;
    procedure LoadHeadFromJson(aJObj: TJSONObject);
    procedure DelRow(aIdx: Integer);
@@ -149,15 +151,15 @@ begin
   Result := True;
 end;
 
-function TStringGridEx.DataToJson(): TJSONArray;
+function TStringGridEx.Export(): TJSONObject;
 var
   i, j: Integer;
   Str: string;
-  JArr: TJSONArray;
+  JArr, JArrRows: TJSONArray;
+  JObj: TJSONObject;
   HasData: boolean;
 begin
-  Result := TJSONArray.Create();
-
+  JArrRows := TJSONArray.Create();
   for i := FixedRows to RowCount - 1 do
   begin
     JArr := TJSONArray.Create();
@@ -171,28 +173,49 @@ begin
     end;
 
     if (HasData) then
-      Result.Add(JArr)
+      JArrRows.Add(JArr)
     else
       JArr.Free();
   end;
+
+  JArr := TJSONArray.Create();
+  for i := 0 to ColCount - 1 do
+  begin
+    JObj := TJSONObject(Objects[i, 0]);
+    JArr.Add(JObj.Get('name', ''));
+  end;
+
+  Result := TJSONObject.Create();
+  Result.Add('head', JArr);
+  Result.Add('data', JArrRows);
 end;
 
-procedure TStringGridEx.DataFromJson(aJArr: TJSONArray);
+function TStringGridEx.ExportAsDbList(): TDbList;
+var
+  JObj: TJSONObject;
+begin
+  JObj := Export();
+  Result := TDbList.Create(JObj);
+  JObj.Free();
+end;
+
+procedure TStringGridEx.Import(aJObj: TJSONObject);
 var
   i, j: Integer;
-  RowArr: TJSONArray;
+  JArr, JArrRow: TJSONArray;
 begin
-  if (aJArr = nil) or (aJArr.Count = 0) then
+  JArr := aJObj.Arrays['data'];
+  if (JArr = nil) or (JArr.Count = 0) then
     Exit();
 
-  ColCount := TJSONArray(aJArr[0]).Count;
-  RowCount := aJArr.Count + FixedRows;
+  ColCount := TJSONArray(JArr[0]).Count;
+  RowCount := JArr.Count + FixedRows;
 
-  for i := 0 to aJArr.Count - 1 do
+  for i := 0 to JArr.Count - 1 do
   begin
-    RowArr := TJSONArray(aJArr[i]);
-    for j := 0 to RowArr.Count - 1 do
-      Cells[j, i + FixedRows] := RowArr.Strings[j];
+    JArrRow := TJSONArray(JArr[i]);
+    for j := 0 to JArrRow.Count - 1 do
+      Cells[j, i + FixedRows] := JArrRow.Strings[j];
   end;
 end;
 

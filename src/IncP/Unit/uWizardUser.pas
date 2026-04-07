@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, fpjson, LConvEncoding, base64,
-  uFWizard, uVarUtil, uSysVcl, uHelper, uLog, uSys;
+  uFWizard, uVarUtil, uSysVcl, uHelper, uLog, uSys, uDbList;
 
 type
   TWizardUser = class(TPersistent)
@@ -14,7 +14,7 @@ type
     procedure OnClick_FWizardPdv5_Save(Sender: TObject);
   private
     fParent: TFWizard;
-    procedure SaveXml(const aName: string; aJObjMed, aJObjWiz: TJSONObject; aIdx: integer);
+    procedure SaveXml(const aName: string; aJObjMed, aJObjWiz: TJSONObject);
   public
     constructor Create(aParent: TFWizard);
   end;
@@ -27,12 +27,13 @@ begin
   fParent := aParent;
 end;
 
-procedure TWizardUser.SaveXml(const aName: string; aJObjMed, aJObjWiz: TJSONObject; aIdx: integer);
+procedure TWizardUser.SaveXml(const aName: string; aJObjMed, aJObjWiz: TJSONObject);
 var
   Str, StrXds, Path, FileName, No, FJ: string;
   Macros: TMacros;
   SL: TStringList;
-  JArr1, JArr2: TJSONArray;
+  JObj: TJSONObject;
+  DbL: TDbList;
 begin
   FJ := IIF(Length(aJObjMed.Get('TIN', '')) = 8, 'J', 'F');
   No := '1000000009';
@@ -48,15 +49,16 @@ begin
     aJObjMed.Get('HKSTI', '')
   ]);
   FileName := FileName.Replace('_', '') + '.XML';
-  aJObjMed.SetKey(Format('FILENAME_%d', [aIdx]), FileName);
+  aJObjMed.SetKey('FILENAME', FileName);
 
-  JArr1 := TJSONArray(aJObjWiz.Find('w1s1.grid1_s'));
-  if (JArr1 <> nil) and (JArr1.Count > 0) then
+  JObj := TJSONObject(aJObjWiz.Find('w1s1.grid1_s'));
+  if (JObj  <> nil)then
   begin
-    JArr2 := JArr1.Items[0] as TJSONArray;
-    Str := JArr2.Strings[2];
+    DbL := TDbList.Create(JObj);
+    Str := DbL.Rec['doc_name'].AsString;
     Str := StrFromFile(Str);
     aJObjMed.SetKey('R01G1B', EncodeStringBase64(Str));
+    DbL.Free();
   end;
 
   Macros := TMacros.Create();
@@ -85,8 +87,8 @@ begin
   JObjDb := TJSONObject(fParent.GetDataExt().Clone());
   JObjWiz := fParent.GetDataInt();
 
-  SaveXml('1360102', JObjDb, JObjWiz, 1);
-  SaveXml('1312603', JObjDb, JObjWiz, 2);
+  SaveXml('1360102', JObjDb, JObjWiz);
+  SaveXml('1312603', JObjDb, JObjWiz);
 
   JObjDb.Free();
 end;

@@ -5,8 +5,8 @@ unit uFrStringGrid;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Grids, ComCtrls,
-  fpjson, uExGrid, uLog, uGhostScript, uSys, uSysVcl;
+  Classes, SysUtils, Forms, Controls, Graphics, Grids, ComCtrls, fpjson,
+  uExGrid, uLog, uGhostScript, uSys, uSysVcl, uDbList;
 
 type
   { TFrStringGrid }
@@ -23,8 +23,8 @@ type
   public
     constructor Create(aOwner: TComponent); override;
     procedure LoadHeadFromJson(aJObj: TJSONObject; aParent: TForm);
-    procedure LoadDataFromJson(aJArr: TJSONArray);
-    function LoadDataToJson(): TJSONArray;
+    procedure Import(aJObj: TJSONObject);
+    function Export(): TJSONObject;
   end;
 
 implementation
@@ -102,14 +102,14 @@ begin
   StringGridEx.LoadHeadFromJson(aJObj);
 end;
 
-procedure TFrStringGrid.LoadDataFromJson(aJArr: TJSONArray);
+procedure TFrStringGrid.Import(aJObj: TJSONObject);
 begin
-  StringGridEx.DataFromJson(aJArr);
+  StringGridEx.Import(aJObj);
 end;
 
-function TFrStringGrid.LoadDataToJson(): TJSONArray;
+function TFrStringGrid.Export(): TJSONObject;
 begin
-  Result := StringGridEx.DataToJson();
+  Result := StringGridEx.Export();
 end;
 
 end.
