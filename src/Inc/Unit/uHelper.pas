@@ -68,7 +68,11 @@ type
     function GetList(): TStringList;
     function GetNested(const Path: string; aDef: Variant): Variant;
     function GetAsString(const aKey, aDef: string): string;
+    procedure SetKey(const aKey: string; aJData: TJSONData);
+    procedure SetKey(const aKey: string; aStr: string);
+    procedure SetKey(const aKey: string; aInt: integer);
   end;
+
 
 implementation
 
@@ -630,6 +634,21 @@ begin
   Result := TStringList.Create();
   for i := 0 to Count - 1 do
     Result.Add(Names[i] + '=' + Items[i].AsString);
+end;
+
+procedure TJSONObjectHelper.SetKey(const aKey: string; aJData: TJSONData);
+begin
+  Elements[aKey] := aJData;
+end;
+
+procedure TJSONObjectHelper.SetKey(const aKey: string; aStr: string);
+begin
+  Strings[aKey] := aStr;
+end;
+
+procedure TJSONObjectHelper.SetKey(const aKey: string; aInt: integer);
+begin
+  Integers[aKey] := aInt;
 end;
 
 function TJSONObjectHelper.GetNested(const Path: string; aDef: Variant): Variant;

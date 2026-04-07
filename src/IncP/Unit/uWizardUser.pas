@@ -5,8 +5,8 @@ unit uWizardUser;
 interface
 
 uses
-  Classes, SysUtils, fpjson, LConvEncoding,
-  uFWizard, uVarUtil, uSysVcl, uHelper, uLog;
+  Classes, SysUtils, fpjson, LConvEncoding, base64,
+  uFWizard, uVarUtil, uSysVcl, uHelper, uLog, uSys;
 
 type
   TWizardUser = class(TPersistent)
@@ -14,7 +14,7 @@ type
     procedure OnClick_FWizardPdv5_Save(Sender: TObject);
   private
     fParent: TFWizard;
-    procedure SaveXml(const aName: string; aJObj: TJSONObject; aIdx: integer);
+    procedure SaveXml(const aName: string; aJObjMed, aJObjWiz: TJSONObject; aIdx: integer);
   public
     constructor Create(aParent: TFWizard);
   end;
@@ -27,32 +27,42 @@ begin
   fParent := aParent;
 end;
 
-procedure TWizardUser.SaveXml(const aName: string; aJObj: TJSONObject; aIdx: integer);
+procedure TWizardUser.SaveXml(const aName: string; aJObjMed, aJObjWiz: TJSONObject; aIdx: integer);
 var
-  StrXds, Path, FileName, No, FJ: string;
+  Str, StrXds, Path, FileName, No, FJ: string;
   Macros: TMacros;
   SL: TStringList;
+  JArr1, JArr2: TJSONArray;
 begin
-  FJ := IIF(Length(aJObj.Get('TIN', '')) = 8, 'J', 'F');
+  FJ := IIF(Length(aJObjMed.Get('TIN', '')) = 8, 'J', 'F');
   No := '1000000009';
   FileName := Format('%s_00_%s_%s_%d%.2d%d_%s%s_%s', [
-    aJObj.Get('HKSTI', ''),
-    aJObj.Get('TIN', ''),
+    aJObjMed.Get('HKSTI', ''),
+    aJObjMed.Get('TIN', ''),
     No,
-    aJObj.Get('DAY', 0),
-    aJObj.Get('MONTH', 0),
-    aJObj.Get('YEAR', 0),
+    aJObjMed.Get('DAY', 0),
+    aJObjMed.Get('MONTH', 0),
+    aJObjMed.Get('YEAR', 0),
     FJ,
     aName,
-    aJObj.Get('HKSTI', '')
+    aJObjMed.Get('HKSTI', '')
   ]);
   FileName := FileName.Replace('_', '') + '.XML';
-  aJObj.Add(Format('FILENAME_%d', [aIdx]), FileName);
+  aJObjMed.SetKey(Format('FILENAME_%d', [aIdx]), FileName);
+
+  JArr1 := TJSONArray(aJObjWiz.Find('w1s1.grid1_s'));
+  if (JArr1 <> nil) and (JArr1.Count > 0) then
+  begin
+    JArr2 := JArr1.Items[0] as TJSONArray;
+    Str := JArr2.Strings[2];
+    Str := StrFromFile(Str);
+    aJObjMed.SetKey('R01G1B', EncodeStringBase64(Str));
+  end;
 
   Macros := TMacros.Create();
   try
     StrXds := ResourceLoadString(aName, 'xml');
-    StrXds := Macros.Exec(StrXds, aJObj).DelEmptyLines();
+    StrXds := Macros.Exec(StrXds, aJObjMed).DelEmptyLines();
     StrXds := UTF8ToCP1251(StrXds);
 
     SL := Macros.GetList(StrXds);
@@ -70,11 +80,15 @@ end;
 
 procedure TWizardUser.OnClick_FWizardPdv5_Save(Sender: TObject);
 var
-  JObjDb: TJSONObject;
+  JObjDb, JObjWiz: TJSONObject;
 begin
-  JObjDb := fParent.GetDataExt();
-  SaveXml('1360102', JObjDb, 1);
-  SaveXml('1312603', JObjDb, 2);
+  JObjDb := TJSONObject(fParent.GetDataExt().Clone());
+  JObjWiz := fParent.GetDataInt();
+
+  SaveXml('1360102', JObjDb, JObjWiz, 1);
+  SaveXml('1312603', JObjDb, JObjWiz, 2);
+
+  JObjDb.Free();
 end;
 
 

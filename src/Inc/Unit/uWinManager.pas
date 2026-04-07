@@ -310,7 +310,7 @@ end;
 
 constructor TOneInstance.Create();
 begin
-  fUniqName := 'qwerty12345';
+  fUniqName := 'qwerty2345';
 end;
 
 procedure TOneInstance.Register(aHandle: HANDLE);

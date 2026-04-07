@@ -16,15 +16,15 @@ uses
 type
   { TFWizard }
   TFWizard = class(TFBase)
-    BitBtnNext: TBitBtn;
     BitBtnClose: TBitBtn;
+    BitBtnNext: TBitBtn;
     BitBtnPrev: TBitBtn;
     ComboBoxWizards: TComboBox;
     PageControl: TPageControl;
     PanelNav: TPanel;
     procedure BitBtnCloseClick(Sender: TObject);
-    procedure BitBtnPrevClick(Sender: TObject);
     procedure BitBtnNextClick(Sender: TObject);
+    procedure BitBtnPrevClick(Sender: TObject);
     procedure ComboBoxWizardsChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -32,28 +32,31 @@ type
     fJScheme, fDataExt: TJSONObject;
     fClassMap: TStringList;
     fWinManager: TWinManager;
-    fWizardUser: TPersistent;
-    fFileData: string;
+    fHelper: TPersistent;
+    fFileData, fDirData: string;
     procedure AddControls(aForm: TScrollingWinControl; aCtrls: TJSONArray; aJConf: TJSONObject);
     procedure ComboBoxWizardsChange();
-    procedure LoadForm(aForm: TForm; aJObj: TJSONObject);
+    procedure GetVal(const aFile: string; aJObj: TJSONObject);
     procedure GetFormData(aJObj: TJSONObject; aForm: TForm);
     procedure GetFormsData(aJObj: TJSONObject);
+    procedure LoadForm(aForm: TForm; aJObj: TJSONObject);
+    procedure SaveData();
     procedure SetCtrlProperty(aCtrl: TControl; const aName: string; aVal: variant);
     procedure SetData(aJObj: TJSONObject);
     procedure SetEventByName(aComponent: TComponent; const aEventName, aHandlerName: string);
   public
     function  GetDataExt(): TJSONObject;
-    procedure LoadScheme(const aName: string);
-    procedure LoadData(const aFile: string);
-    procedure LoadAll(const aName: string; aJObj: TJSONObject);
-    procedure SaveData();
+    function  GetDataInt(): TJSONObject;
+    function  GetDir(): string;
+    function  GetVal(const aFile: string): TJSONObject;
+    procedure Load(const aName, aDir: string; aJObj: TJSONObject);
+    procedure LoadFormData(const aFile: string);
+    procedure LoadFormScheme(const aName: string);
+    procedure SetHelper(aHelper: TPersistent);
   end;
 
 implementation
 {$R *.lfm}
-
-uses uWizardUser;
 
 procedure TFWizard.FormCreate(Sender: TObject);
 begin
@@ -73,8 +76,6 @@ begin
   fClassMap.AddObject('TValueListEditor', TObject(TValueListEditor));
   fClassMap.AddObject('TFrStringGrid', TObject(TFrStringGrid));
   fClassMap.EndUpdate();
-
-  fWizardUser := TWizardUser.Create(self);
 end;
 
 procedure TFWizard.FormDestroy(Sender: TObject);
@@ -85,11 +86,22 @@ begin
 
   FreeAndNil(fClassMap);
   FreeAndNil(fDataExt);
-  FreeAndNil(fWizardUser);
+  FreeAndNil(fHelper);
 
   ComboBoxWizards.ClearItems();
 
   inherited;
+end;
+
+function TFWizard.GetDir(): string;
+begin
+  Result := fDirData;
+end;
+
+procedure TFWizard.SetHelper(aHelper: TPersistent);
+begin
+  FreeAndNil(fHelper);
+  fHelper := aHelper;
 end;
 
 procedure TFWizard.SetData(aJObj: TJSONObject);
@@ -103,6 +115,18 @@ begin
   Result := fDataExt;
 end;
 
+function TFWizard.GetDataInt(): TJSONObject;
+var
+  i: integer;
+  SL: TStringList;
+begin
+  Result := TJSONObject.Create();
+  SL := GetDirFiles(fDirData, '*.json');
+  for i := 0 to SL.Count - 1 do
+    GetVal(SL[i], Result);
+  SL.Free();
+end;
+
 procedure TFWizard.ComboBoxWizardsChange();
 var
   Str, Path: string;
@@ -113,9 +137,9 @@ begin
     Exit();
 
   Str := JObj.Get('res', '');
-  LoadScheme(Str);
-  Path := ConcatPaths(['Data\12345', Str + '_dat.json']);
-  LoadData(Path);
+  LoadFormScheme(Str);
+  Path := ConcatPaths([fDirData, Str + '.json']);
+  LoadFormData(Path);
 end;
 
 procedure TFWizard.ComboBoxWizardsChange(Sender: TObject);
@@ -153,6 +177,12 @@ var
   PropInfo: PPropInfo;
   Method: TMethod;
 begin
+  if (fHelper = nil) then
+  begin
+    Log('i', 'Не ініціалізовано Helper');
+    Exit();
+  end;
+
   PropInfo := GetPropInfo(aComponent.ClassInfo, aEventName);
   if (PropInfo = nil) then
   begin
@@ -160,14 +190,14 @@ begin
     Exit();
   end;
 
-  Method.Code := fWizardUser.MethodAddress(aHandlerName);
+  Method.Code := fHelper.MethodAddress(aHandlerName);
   if (Method.Code = nil) then
   begin
-    Log('e', Format('Обробник  `%s` не знайдено в `%s`', [aHandlerName, fWizardUser.ClassName()]));
+    Log('e', Format('Обробник  `%s` не знайдено в `%s`', [aHandlerName, fHelper.ClassName()]));
     Exit();
   end;
 
-  Method.Data := fWizardUser;
+  Method.Data := fHelper;
   SetMethodProp(aComponent, PropInfo, Method);
 end;
 
@@ -243,9 +273,9 @@ begin
     end;
 
     if (CtrlClass = 'TStringGrid') then
-      TStringGridEx(Ctrl).HeadFromJson(JObjCtrl)
+      TStringGridEx(Ctrl).LoadHeadFromJson(JObjCtrl)
     else if (CtrlClass = 'TFrStringGrid') then
-      TFrStringGrid(Ctrl).LoadHeadFromJson(JObjCtrl);
+      TFrStringGrid(Ctrl).LoadHeadFromJson(JObjCtrl, self);
 
     BottomPad := JObjCtrl.Get('_bottompad', ConfBottomPad);
     if (Ctrl.Visible) and (BottomPad > 0) then
@@ -253,7 +283,7 @@ begin
   end;
 end;
 
-procedure TFWizard.LoadScheme(const aName: string);
+procedure TFWizard.LoadFormScheme(const aName: string);
 var
   i: integer;
   Str: string;
@@ -358,7 +388,34 @@ begin
   end;
 end;
 
-procedure TFWizard.LoadData(const aFile: string);
+procedure TFWizard.GetVal(const aFile: string; aJObj: TJSONObject);
+var
+  i: integer;
+  Key: string;
+  JObj: TJSONObject;
+  JData: TJSONData;
+begin
+  JObj := TJSONObject(FileLoadJson(aFile));
+  try
+    for i := 0 to JObj.Count - 1 do
+    begin
+      Key := JObj.Names[i];
+      JData := JObj.Objects[Key].Find('val');
+      if (JData <> nil) then
+        aJObj.SetKey(Key, JData.Clone());
+    end;
+  finally
+    JObj.Free();
+  end;
+end;
+
+function TFWizard.GetVal(const aFile: string): TJSONObject;
+begin
+  Result := TJSONObject.Create();
+  GetVal(aFile, Result);
+end;
+
+procedure TFWizard.LoadFormData(const aFile: string);
 var
   i: integer;
   JObj: TJSONObject;
@@ -406,6 +463,10 @@ begin
     begin
       JArr := ValueList_ToJson(TValueListEditor(Ctrl));
       JItem.Add('val', JArr);
+    end else if (CtrlClass = 'TMemo') then
+    begin
+      JArr := TStringList(TMemo(Ctrl).Lines).GetJson();
+      JItem.Add('val', JArr);
     end else begin
       Prop := Ctrl.GetInputName();
       if (not Prop.IsEmpty()) then
@@ -451,14 +512,19 @@ begin
   end;
 end;
 
-procedure TFWizard.LoadAll(const aName: string; aJObj: TJSONObject);
+procedure TFWizard.Load(const aName, aDir: string; aJObj: TJSONObject);
 var
   i: integer;
   ResName: string;
   JObj, JObjRes, JObjLoad: TJSONObject;
   JArr: TJSONArray;
 begin
+  Working(True);
   SetData(aJObj);
+
+  if (not DirectoryExists(aDir)) then
+    ForceDirectories(aDir);
+  fDirData := aDir;
 
   JObjLoad := ResourceLoadJson(aName);
   JArr := TJSONArray(JObjLoad.Find('items'));
@@ -480,6 +546,7 @@ begin
   ComboBoxWizardsChange();
 
   JObjLoad.Free();
+  Working(False);
 end;
 
 end.

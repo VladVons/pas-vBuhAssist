@@ -36,7 +36,7 @@ type
    function DataToJson(): TJSONArray;
    procedure DataFromJson(aJArr: TJSONArray);
    function GetMaxRows(): integer;
-   procedure HeadFromJson(aJObj: TJSONObject);
+   procedure LoadHeadFromJson(aJObj: TJSONObject);
    procedure DelRow(aIdx: Integer);
    function FindCol(const aType, aName: string): Integer;
    function IsRowEmpty(aRow: Integer): Boolean;
@@ -196,7 +196,7 @@ begin
   end;
 end;
 
-procedure TStringGridEx.HeadFromJson(aJObj: TJSONObject);
+procedure TStringGridEx.LoadHeadFromJson(aJObj: TJSONObject);
 var
   i: integer;
   JFields: TJSONArray;

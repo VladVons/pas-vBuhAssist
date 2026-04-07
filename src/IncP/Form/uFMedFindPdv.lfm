@@ -3,6 +3,34 @@ inherited FMedFindPdv: TFMedFindPdv
   Caption = 'Облік ПДВ'
   ClientWidth = 921
   OnCreate = FormCreate
+  inherited PanelTitle: TPanel
+    Width = 921
+    ClientWidth = 921
+    inherited LabelTitle: TLabel
+      Width = 921
+    end
+  end
+  inherited PanelFrame: TPanel
+    Width = 921
+    ClientWidth = 921
+    inherited PanelComboBox: TPanel
+      Width = 919
+      ClientWidth = 919
+    end
+    inherited PageControl: TPageControl
+      Width = 919
+      inherited TabSheetCur: TTabSheet
+        inherited DbGrid1: TDBGrid
+          Width = 911
+        end
+      end
+      inherited TabSheetPrev: TTabSheet
+        inherited DBGrid2: TDBGrid
+          Width = 911
+        end
+      end
+    end
+  end
   object BitBtnUnlock: TBitBtn[2]
     Left = 704
     Height = 38
@@ -13,6 +41,16 @@ inherited FMedFindPdv: TFMedFindPdv
     ImageIndex = 0
     TabOrder = 2
     OnClick = BitBtnUnlockClick
+  end
+  inherited frReport1: TfrReport[3]
+  end
+  inherited frDBDataSet1: TfrDBDataSet[4]
+  end
+  inherited FrPrintGrid1: TFrPrintGrid[5]
+  end
+  inherited SelectDirectoryDialog1: TSelectDirectoryDialog[6]
+  end
+  inherited PopupMenuActivation: TPopupMenu[7]
   end
   object DataSourcePrev: TDataSource[8]
     DataSet = SQLQueryPrev
@@ -605,7 +643,8 @@ inherited FMedFindPdv: TFMedFindPdv
       '  N2_1,'
       '  N3,'
       '  N4,'
-      '  A7_11'
+      '  A7_11,'
+      '  EDR_POK'
       'FROM'
       '  FJ1201002_MAIN'
       'WHERE'
@@ -695,6 +734,15 @@ inherited FMedFindPdv: TFMedFindPdv
       ReadOnly = False
       Required = False
     end
+    object SQLQueryFJEDR_POK: TStringField
+      FieldKind = fkData
+      FieldName = 'EDR_POK'
+      Index = 8
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
   end
   object DataSourceFJ: TDataSource[14]
     DataSet = SQLQueryFJ
@@ -707,6 +755,7 @@ inherited FMedFindPdv: TFMedFindPdv
     Transaction = DmCommon.SQLTransactionDm
     SQL.Strings = (
       'SELECT'
+      '  ORG.EDRPOU,'
       '  ORG.TAXINSPNUM,'
       '  ORG.LEADFIO,'
       '  ORG.LEADINDTAX,'
@@ -729,10 +778,19 @@ inherited FMedFindPdv: TFMedFindPdv
     MacroCheck = True
     Left = 216
     Top = 264
+    object SQLQueryOrgEDRPOU: TStringField
+      FieldKind = fkData
+      FieldName = 'EDRPOU'
+      Index = 0
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
     object SQLQueryOrgTAXINSPNUM: TStringField
       FieldKind = fkData
       FieldName = 'TAXINSPNUM'
-      Index = 0
+      Index = 1
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -741,7 +799,7 @@ inherited FMedFindPdv: TFMedFindPdv
     object SQLQueryOrgLEADINDTAX: TStringField
       FieldKind = fkData
       FieldName = 'LEADINDTAX'
-      Index = 1
+      Index = 2
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -750,7 +808,7 @@ inherited FMedFindPdv: TFMedFindPdv
     object SQLQueryOrgLEADFIO: TStringField
       FieldKind = fkData
       FieldName = 'LEADFIO'
-      Index = 2
+      Index = 3
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -759,7 +817,7 @@ inherited FMedFindPdv: TFMedFindPdv
     object SQLQueryOrgHBTAXINSP_NAME: TStringField
       FieldKind = fkData
       FieldName = 'HBTAXINSP_NAME'
-      Index = 3
+      Index = 4
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False

@@ -8,8 +8,11 @@ unit uFMedFindPdv;
 interface
 
 uses
-  Classes, SysUtils, DateUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ExtCtrls, Buttons, fpjson, Math, base64,
-  uDmCommon, uFMedFind, uFWizard, uMed, uWinManager, uHelper, uConst, uSys, uQuery;
+  Classes, SysUtils, DateUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ExtCtrls, Buttons, fpjson, Math,
+  uDmCommon, uFMedFind, uFWizard, uWizardUser, uMed, uWinManager, uHelper, uConst, uSys, uQuery;
+
+const
+  cDirData = 'Data\12345';
 
 type
   { TFMedFindPdv }
@@ -35,6 +38,7 @@ type
     SQLQueryCurPERTYPE: TIntegerField;
     SQLQueryCurSHORTNAME: TStringField;
     SQLQueryCurVAT: TStringField;
+    SQLQueryFJEDR_POK: TStringField;
     SQLQueryFJN3: TStringField;
     SQLQueryOrg: TSQLQuery;
     SQLQueryFJA7_11: TCurrencyField;
@@ -44,6 +48,7 @@ type
     SQLQueryFJN11: TDateField;
     SQLQueryFJN2_1: TStringField;
     SQLQueryFJN4: TStringField;
+    SQLQueryOrgEDRPOU: TStringField;
     SQLQueryOrgHBTAXINSP_NAME: TStringField;
     SQLQueryOrgLEADFIO: TStringField;
     SQLQueryOrgLEADINDTAX: TStringField;
@@ -133,6 +138,8 @@ begin
   Dbl := RoundTo(aQuery.FieldByName('A7_11').AsFloat, -2);
   aJObj.Add('T1RXXXXG8', FormatFloat('0.00', Dbl));
 
+  aJObj.Add('EDR_POK', aQuery.FieldByName('EDR_POK').AsString);
+
   //Log('i', ExpandSQL(aQuery));
   aQuery.Close();
 end;
@@ -161,7 +168,7 @@ begin
   aJObj.Add('NAMEDOC', '123');
   aJObj.Add('NUMDOC', '333');
   aJObj.Add('R001G10', 1);
-  aJObj.Add('R01G1B', EncodeStringBase64('Hello Base64'));
+  //aJObj.Add('R01G1B', EncodeStringBase64('Hello Base64'));
   aJObj.Add('HNUM_1', 1);
   aJObj.Add('HNUM_2', 1);
   aJObj.Add('R01G1S_1', 'пояснення');
@@ -203,8 +210,10 @@ begin
   JObj.Add('_VARS', Str);
   SL.Free();
 
+  Str := ConcatPaths(['Data', JObj.Get('HTIN', ''), JObj.Get('EDR_POK', '')]);
   Form := TFWizard(WinManager.Add(TFWizard));
-  Form.LoadAll('FWizardPdvs', JObj);
+  Form.SetHelper(TWizardUser.Create(Form));
+  Form.Load('FWizardPdvs', Str, JObj);
 
   JObj.Free();
 end;

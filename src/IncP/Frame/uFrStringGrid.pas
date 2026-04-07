@@ -18,16 +18,19 @@ type
     procedure ToolButtonAddClick(Sender: TObject);
     procedure ToolButtonDelClick(Sender: TObject);
   private
+    fParent: TForm;
     function DoOpenFileDialog(const aFile: string): string;
   public
     constructor Create(aOwner: TComponent); override;
-    procedure LoadHeadFromJson(aJObj: TJSONObject);
+    procedure LoadHeadFromJson(aJObj: TJSONObject; aParent: TForm);
     procedure LoadDataFromJson(aJArr: TJSONArray);
     function LoadDataToJson(): TJSONArray;
   end;
 
 implementation
 {$R *.lfm}
+uses
+  uFWizard;
 
 constructor TFrStringGrid.Create(aOwner: TComponent);
 var
@@ -60,23 +63,22 @@ begin
 end;
 
 function TFrStringGrid.DoOpenFileDialog(const aFile: string): string;
-const
-  cDirData = 'Data';
 var
   Ratio: double;
   FileOutSize: integer;
-  Dir, Ext, FileName, FileOut: string;
-begin
+  Dir, DirApp, Ext, FileName, FileOut: string;
+  begin
   FileName := ChangeFileExt(ExtractFileName(aFile), '');
   FileName := LatinToUkr(FileName);
   FileName := RemoveChars(FileName, '!@#$%^&_-+{},');
 
-  Dir := ConcatPaths([ExtractFilePath(ParamStr(0)), cDirData]);
+  DirApp := GetAppDir();
+  Dir := ConcatPaths([DirApp, TFWizard(fParent).GetDir()]);
   if (not DirectoryExists(Dir)) then
     ForceDirectories(Dir);
 
-  Log.Print('i', Format('Конвертація %s ...', [FileName]));
   Working(True);
+  Log.Print('i', Format('Конвертація %s ...', [FileName]));
   FileOut := ConcatPaths([Dir, FileName + '.pdf']);
   Ext := LowerCase(ExtractFileExt(aFile));
   if (Ext = '.pdf') then
@@ -88,15 +90,16 @@ begin
 
   FileOutSize := FileGetSize(FileOut);
   Ratio := (1 - (FileOutSize / FileGetSize(aFile))) * 100;
-  Working(False);
   Log.Print('i', Format('%s %dkb (%.0f%%)', [aFile, Round(FileOutSize / 1000), Ratio]));
+  Working(False);
 
-  Result := aFile;
+  Result := FileOut.Replace(DirApp, '');
 end;
 
-procedure TFrStringGrid.LoadHeadFromJson(aJObj: TJSONObject);
+procedure TFrStringGrid.LoadHeadFromJson(aJObj: TJSONObject; aParent: TForm);
 begin
-  StringGridEx.HeadFromJson(aJObj);
+  fParent := aParent;
+  StringGridEx.LoadHeadFromJson(aJObj);
 end;
 
 procedure TFrStringGrid.LoadDataFromJson(aJArr: TJSONArray);
@@ -110,4 +113,5 @@ begin
 end;
 
 end.
+
 

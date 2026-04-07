@@ -7,10 +7,12 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Buttons, StdCtrls,
   ExtCtrls, fpjson, LConvEncoding,
-  uFBase, uFWizard, uWinManager, uSysVcl, uVarUtil, uHelper;
+  uFBase, uFWizard, uWizardUser, uWinManager, uSysVcl, uVarUtil, uHelper;
+
+const
+  cDirData = 'Data\D12345';
 
 type
-
   { TFTest }
   TFTest = class(TFBase)
     BitBtnTestXml1: TBitBtn;
@@ -45,15 +47,17 @@ begin
     ForceDirectories(aDir);
 
   Form := TFWizard(WinManager.Add(TFWizard));
-  Form.LoadScheme(aFile);
+  Form.SetHelper(TWizardUser.Create(Form));
+  Form.LoadFormScheme(aFile);
 
-  Path := ConcatPaths([aDir, aFile + '_dat.json']);
-  Form.LoadData(Path);
+  Path := ConcatPaths([aDir, aFile + '.json']);
+  Form.LoadFormData(Path);
+  Form.GetDataInt();
 end;
 
 procedure TFTest.BitBtnWizard0Click(Sender: TObject);
 begin
-  Wizard('Data\12345', 'FWizardPdv0');
+  //Wizard(cDirData, 'FWizardPdv1');
 end;
 
 procedure TFTest.TestXml(const aName: string);
@@ -89,7 +93,7 @@ var
   Form: TFWizard;
 begin
   Form := TFWizard(WinManager.Add(TFWizard));
-  Form.LoadAll('FWizardPdvs', nil);
+  Form.Load('FWizardPdvs', cDirData, nil);
 end;
 
 end.
