@@ -14,7 +14,9 @@ type
     procedure OnClick_FWizardPdv5_Save(Sender: TObject);
   private
     fParent: TFWizard;
-    procedure SaveXml(const aName: string; aJObjMed, aJObjWiz: TJSONObject);
+    procedure D1(aJObjMed, aJObjWiz: TJSONObject);
+    procedure D2(aJObjMed, aJObjWiz: TJSONObject);
+    procedure SaveXml(const aName: string; aJObjMed, aJObjWiz: TJSONObject; aIdx: integer);
   public
     constructor Create(aParent: TFWizard);
   end;
@@ -27,60 +29,14 @@ begin
   fParent := aParent;
 end;
 
-procedure TWizardUser.SaveXml(const aName: string; aJObjMed, aJObjWiz: TJSONObject);
-const
-  cGrid1 = 'w1s1.grid1_s';
-  cMemo4 = 'w4s1.memo1_s';
+procedure TWizardUser.SaveXml(const aName: string; aJObjMed, aJObjWiz: TJSONObject; aIdx: integer);
 var
-  Str, StrXds, Path, FileName, No, FJ: string;
+  StrXds, Path, FileName, No, FJ: string;
   Macros: TMacros;
   SL: TStringList;
-  JObj: TJSONObject;
-  JArr: TJSONArray;
-  DbL: TDbList;
 begin
-  JObj := TJSONObject(aJObjWiz.Find(cGrid1));
-  if (JObj = nil) then
-  begin
-    Log.Print('i', 'Не визначено ' + cGrid1);
-    Exit();
-  end;
-
-  DbL := TDbList.Create(JObj);
-  if (DbL.GetSize() = 0) then
-  begin
-    DbL.Free();
-    Log.Print('e', 'Не заповнена таблиця ' + cGrid1);
-    Exit();
-  end;
-
-  if (aName = '1360102') then
-  begin
-    Str := string('_').JoinNonEmpty([
-      DbL.Rec['doc_type'].AsString,
-      DbL.Rec['firm'].AsString,
-      DbL.Rec['doc_number'].AsString,
-      string(DbL.Rec['doc_date'].AsString).Replace('.', '')
-    ]);
-    aJObjMed.SetKey('R01G1S_2', Str + '.xml');
-
-    Str := DbL.Rec['doc_name'].AsString;
-    Str := StrFromFile(Str);
-    aJObjMed.SetKey('R01G1B', EncodeStringBase64(Str));
-  end else if (aName = '1312603') then
-  begin
-    JArr := TJSONArray(aJObjWiz.Find(cMemo4));
-    if (JArr <> nil) then
-    begin
-      SL := TStringList.Create();
-      aJObjMed.SetKey('R01G1S_1', SL.AddArray(JArr).Text);
-      SL.Free();
-    end;
-  end;
-  DbL.Free();
-
   FJ := IIF(Length(aJObjMed.Get('TIN', '')) = 8, 'J', 'F');
-  No := '1000000009';
+  No := Format('100000000%d', [aIdx]);
   FileName := Format('%s_00_%s_%s%s_%s_%d%.2d%d_%s', [
     aJObjMed.Get('HKSTI', ''),
     aJObjMed.Get('TIN', ''),
@@ -114,17 +70,70 @@ begin
   Log.Print('i', Path);
 end;
 
+procedure TWizardUser.D2(aJObjMed, aJObjWiz: TJSONObject);
+var
+  i: integer;
+  Str, Key: string;
+  JObj: TJSONObject;
+  DBL: TDbList;
+begin
+  for i := 0 to aJObjWiz.Count - 1 do
+  begin
+    Key := aJObjWiz.Names[i];
+    if (Key.PosEx('_d2_') > 0) then
+    begin
+      JObj := TJSONObject(aJObjWiz.Items[i]);
+      DBL := TDbList.Create(JObj);
+      if (DBL.Count > 0) then
+      begin
+        Str := string(' ').JoinNonEmpty([
+          DbL.Rec['doc_type'].AsString,
+          DbL.Rec['firm'].AsString,
+          DbL.Rec['doc_number'].AsString,
+          string(DbL.Rec['doc_date'].AsString).Replace('.', '')
+        ]);
+        aJObjMed.SetKey('R01G1S_2', Str + '.pdf');
+
+        Str := DbL.Rec['doc_name'].AsString;
+        Str := StrFromFile(Str);
+        aJObjMed.SetKey('R01G1B', EncodeStringBase64(Str));
+
+        SaveXml('1360102', aJObjMed, JObj, i);
+      end;
+      DBL.Free();
+    end;
+  end;
+end;
+
+procedure TWizardUser.D1(aJObjMed, aJObjWiz: TJSONObject);
+const
+  cMemo4 = 'w4s1.memo1_s';
+var
+  JArr: TJSONArray;
+  SL: TStringList;
+begin
+  JArr := TJSONArray(aJObjWiz.Find(cMemo4));
+  if (JArr <> nil) then
+  begin
+    SL := TStringList.Create();
+    aJObjMed.SetKey('R01G1S_1', SL.AddArray(JArr).Text);
+    SL.Free();
+  end;
+
+  SaveXml('1312603', aJObjMed, aJObjWiz, 1);
+end;
+
 procedure TWizardUser.OnClick_FWizardPdv5_Save(Sender: TObject);
 var
-  JObjDb, JObjWiz: TJSONObject;
+  JObjMed, JObjWiz: TJSONObject;
 begin
-  JObjDb := TJSONObject(fParent.GetDataExt().Clone());
+  JObjMed := TJSONObject(fParent.GetDataExt().Clone());
   JObjWiz := fParent.GetDataInt();
 
-  SaveXml('1360102', JObjDb, JObjWiz);
-  SaveXml('1312603', JObjDb, JObjWiz);
+  D1(JObjMed, JObjWiz);
+  D2(JObjMed, JObjWiz);
 
-  JObjDb.Free();
+  JObjMed.Free();
 end;
 
 

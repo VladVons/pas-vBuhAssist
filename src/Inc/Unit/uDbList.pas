@@ -55,12 +55,12 @@ type
     fRecNo: Integer;
 
     procedure SetRecNo(aNo: Integer);
+    function GetCount(): Integer;
   public
     constructor Create(aJHead, aJData: TJSONArray);
     constructor Create(aJObj: TJSONObject);
     destructor Destroy(); override;
 
-    function GetSize(): Integer;
     function Import(aJObj: TJSONObject): TDbList;
     function Export(): TJSONObject;
     function ExportStr(): string;
@@ -70,6 +70,7 @@ type
 
     property Rec: TDbRec read fRec;
     property RecNo: Integer read fRecNo write SetRecNo;
+    property Count: Integer read GetCount;
   end;
 
 implementation
@@ -144,7 +145,7 @@ end;
 function TDbListEnum.MoveNext(): Boolean;
 begin
   Inc(fIndex);
-  Result := fIndex < fList.GetSize;
+  Result := fIndex < fList.Count;
   if (Result) then
     fList.SetRecNo(fIndex);
 end;
@@ -223,7 +224,7 @@ begin
   end;
 end;
 
-function TDbList.GetSize(): Integer;
+function TDbList.GetCount(): Integer;
 begin
   Result := fJData.Count;
 end;

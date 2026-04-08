@@ -7,12 +7,12 @@ json_FMedFindAkz  RCDATA "res/json/FMedFindAkz.json"
 json_FMedFindPdv  RCDATA "res/json/FMedFindPdv.json"
 json_FMedFindZvit RCDATA "res/json/FMedFindZvit.json"
 
-json_FWizardPdv0 RCDATA "res/json/FWizardPdv0.json"
-json_FWizardPdv1 RCDATA "res/json/FWizardPdv1.json"
-json_FWizardPdv2 RCDATA "res/json/FWizardPdv2.json"
-json_FWizardPdv3 RCDATA "res/json/FWizardPdv3.json"
-json_FWizardPdv4 RCDATA "res/json/FWizardPdv4.json"
-json_FWizardPdv5 RCDATA "res/json/FWizardPdv5.json"
+json_FWizardPdv00 RCDATA "res/json/FWizardPdv00.json"
+json_FWizardPdv10 RCDATA "res/json/FWizardPdv10.json"
+json_FWizardPdv20 RCDATA "res/json/FWizardPdv20.json"
+json_FWizardPdv30 RCDATA "res/json/FWizardPdv30.json"
+json_FWizardPdv40 RCDATA "res/json/FWizardPdv40.json"
+json_FWizardPdv50 RCDATA "res/json/FWizardPdv50.json"
 
 json_FWizardPdvs RCDATA "res/json/FWizardPdvs.json"
 
