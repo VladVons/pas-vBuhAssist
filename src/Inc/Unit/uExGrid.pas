@@ -29,6 +29,7 @@ type
    procedure DoSelectEditor(Sender: TObject; aCol,  aRow: Integer; var aEditor: TWinControl);
    procedure DoDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; State: TGridDrawState);
    procedure DoMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+   procedure DoHeaderSized(Sender: TObject;  IsColumn: Boolean; Index: Integer);
  public
    OnOpenFileDialog: TOnOpenFileDialog;
    constructor Create(aOwner: TComponent); override;
@@ -40,6 +41,7 @@ type
    function GetMaxRows(): integer;
    procedure LoadHeadFromJson(aJObj: TJSONObject);
    procedure DelRow(aIdx: Integer);
+   procedure RowFill();
    function FindCol(const aType, aName: string): Integer;
    function IsRowEmpty(aRow: Integer): Boolean;
    property CellsN[const aField: string; aRow: Integer]: string read GetCell write SetCell;
@@ -72,6 +74,7 @@ begin
   OnSelectEditor := @DoSelectEditor;
   OnDrawCell := @DoDrawCell;
   OnMouseDown := @DoMouseDown;
+  OnHeaderSized := @DoHeaderSized;
 
   fComboBox := TComboBox.Create(self);
   fComboBox.ReadOnly := True;
@@ -123,6 +126,24 @@ begin
   Idx := GetCol(aField);
   if (Idx >= 0) and (aRow >= 0) and (aRow < RowCount) then
     Cells[Idx, aRow] := aValue;
+end;
+
+procedure TStringGridEx.RowFill();
+var
+  i: Integer;
+  Str: string;
+  JObj: TJSONObject;
+begin
+  for i := 0 to ColCount - 1 do
+  begin
+    JObj := TJSONObject(Objects[i, 0]);
+    if (JObj <> Nil) then
+    begin
+      Str := JObj.Get('_default', '');
+      if (not Str.IsEmpty()) then
+        Cells[i, Row] := Str;
+    end;
+  end;
 end;
 
 function TStringGridEx.FindCol(const aType, aName: string): Integer;
@@ -271,6 +292,12 @@ end;
 procedure TStringGridEx.DoComboBoxEditingDone(aSender: TObject);
 begin
   Cells[Col, Row] := TComboBox(aSender).Text;
+end;
+
+procedure TStringGridEx.DoHeaderSized(Sender: TObject;  IsColumn: Boolean; Index: Integer);
+begin
+  if (IsColumn and (GetType(Index) = 'list')) then
+    fComboBox.BoundsRect := CellRect(Index, Row);
 end;
 
 procedure TStringGridEx.DoSelectEditor(Sender: TObject; aCol,  aRow: Integer; var aEditor: TWinControl);

@@ -76,6 +76,7 @@ var
   Str, Key: string;
   JObj: TJSONObject;
   DBL: TDbList;
+  Rec: TDbRec;
 begin
   for i := 0 to aJObjWiz.Count - 1 do
   begin
@@ -84,7 +85,7 @@ begin
     begin
       JObj := TJSONObject(aJObjWiz.Items[i]);
       DBL := TDbList.Create(JObj);
-      if (DBL.Count > 0) then
+      for Rec in DBL do
       begin
         Str := string(' ').JoinNonEmpty([
           DbL.Rec['doc_type'].AsString,

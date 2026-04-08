@@ -8,6 +8,7 @@ json_FMedFindPdv  RCDATA "res/json/FMedFindPdv.json"
 json_FMedFindZvit RCDATA "res/json/FMedFindZvit.json"
 
 json_FWizardPdv00 RCDATA "res/json/FWizardPdv00.json"
+json_FWizardPdv09 RCDATA "res/json/FWizardPdv09.json"
 json_FWizardPdv10 RCDATA "res/json/FWizardPdv10.json"
 json_FWizardPdv20 RCDATA "res/json/FWizardPdv20.json"
 json_FWizardPdv30 RCDATA "res/json/FWizardPdv30.json"

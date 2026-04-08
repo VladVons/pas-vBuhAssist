@@ -66,7 +66,7 @@ type
     function ExportStr(): string;
     function RecAdd(): TDbRec;
     function RecPop(aNo: Integer = -1): TDbRec;
-    function GetEnumerator: TDbListEnum;
+    function GetEnumerator(): TDbListEnum;
 
     property Rec: TDbRec read fRec;
     property RecNo: Integer read fRecNo write SetRecNo;
@@ -145,7 +145,7 @@ end;
 function TDbListEnum.MoveNext(): Boolean;
 begin
   Inc(fIndex);
-  Result := fIndex < fList.Count;
+  Result := (fIndex < fList.Count);
   if (Result) then
     fList.SetRecNo(fIndex);
 end;

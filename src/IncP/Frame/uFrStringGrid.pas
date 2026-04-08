@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Grids, ComCtrls, fpjson,
-  uExGrid, uLog, uGhostScript, uSys, uSysVcl, uDbList;
+  uExGrid, uLog, uGhostScript, uSys, uSysVcl;
 
 type
   { TFrStringGrid }
@@ -49,12 +49,14 @@ var
   MaxRows: integer;
 begin
   MaxRows := StringGridEx.GetMaxRows();
-  if (MaxRows = -1) or (MaxRows < StringGridEx.RowCount) then
+  if (MaxRows <> -1) and (MaxRows < StringGridEx.RowCount) then
     Exit();
 
   if (not StringGridEx.IsRowEmpty(StringGridEx.RowCount - 1)) then
     StringGridEx.RowCount := StringGridEx.RowCount + 1;
+
   StringGridEx.Row := StringGridEx.RowCount;
+  StringGridEx.RowFill();
 end;
 
 procedure TFrStringGrid.ToolButtonDelClick(Sender: TObject);
