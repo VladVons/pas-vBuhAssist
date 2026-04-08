@@ -12,11 +12,20 @@ uses
   uHelper;
 
 type
+   TMacrosMask = record
+    Prefix: string;
+    Suffix: string;
+  end;
+
+  TOnMacro = function (const aStr, aFind, aReplace: string; const fMMask: TMacrosMask): string of object;
+
   TMacros = class
   private
-    fPrefix, fSuffix: string;
+    fMMask: TMacrosMask;
     function Replace(const aStr, aFind, aRepl: string): string;
+    function ReplaceDef(const aStr, aFind, aRepl: string): string;
   public
+    OnMacro: TOnMacro;
     constructor Create(const aPrefix: string = '{{'; const aSuffix: string = '}}');
     function GetList(const aStr: string): TStringList;
     function Exec(const aStr: string; const aNames, aValues: TStringArray): string;
@@ -83,16 +92,16 @@ end;
 function IntToRoman10(aVal: Integer): String;
 begin
   case aVal of
-    1:  Result := 'I';
-    2:  Result := 'II';
-    3:  Result := 'III';
-    4:  Result := 'IV';
-    5:  Result := 'V';
-    6:  Result := 'VI';
-    7:  Result := 'VII';
-    8:  Result := 'VIII';
-    9:  Result := 'IX';
-    10: Result := 'X';
+    1: Result := 'I';
+    2: Result := 'II';
+    3: Result := 'III';
+    4: Result := 'IV';
+    5: Result := 'V';
+    6: Result := 'VI';
+    7: Result := 'VII';
+    8: Result := 'VIII';
+    9: Result := 'IX';
+   10: Result := 'X';
   else
     Result := '';
   end;
@@ -102,16 +111,24 @@ end;
 
 constructor TMacros.Create(const aPrefix: string = '{{'; const aSuffix: string = '}}');
 begin
-  fPrefix := aPrefix;
-  fSuffix := aSuffix;
+  fMMask.Prefix := aPrefix;
+  fMMask.Suffix := aSuffix;
 end;
 
-function TMacros.Replace(const aStr, aFind, aRepl: string): string;
+function TMacros.ReplaceDef(const aStr, aFind, aRepl: string): string;
 begin
   if (aRepl.IsEmpty()) then
     Result := aStr
   else
-    Result := StringReplace(aStr, fPrefix + aFind + fSuffix, aRepl, [rfReplaceAll]);
+    Result := StringReplace(aStr, fMMask.Prefix + aFind + fMMask.Suffix, aRepl, [rfReplaceAll]);
+end;
+
+function TMacros.Replace(const aStr, aFind, aRepl: string): string;
+begin
+  if (Assigned(OnMacro)) then
+    Result := OnMacro(aStr, aFind, aRepl, fMMask)
+  else
+    Result := ReplaceDef(aStr, aFind, aRepl);
 end;
 
 function TMacros.Exec(const aStr: string; const aNames, aValues: TStringArray): string;
@@ -156,7 +173,7 @@ begin
   Result := TStringList.Create();
   re := TRegExpr.Create();
   try
-    re.Expression := Format('%s([a-zA-Z0-9_]+)%s',[fPrefix.EscapeRegExp(), fSuffix.EscapeRegExp()]);
+    re.Expression := Format('%s([a-zA-Z0-9_]+)%s',[fMMask.Prefix.EscapeRegExp(), fMMask.Suffix.EscapeRegExp()]);
     if (re.Exec(aStr)) then
       repeat
         Result.Add(re.Match[1]);

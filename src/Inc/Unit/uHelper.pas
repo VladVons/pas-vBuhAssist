@@ -22,6 +22,7 @@ type
     function DelBOM(): string;
     function DelEmptyLines(): string;
     function EscapeRegExp(): string;
+    function JoinNonEmpty(const aArr : TStringArray): string;
     function Left(aLen: integer; aDoCut: boolean = False): string;
     function PosEx(const aStr: string; aOfst: integer = 1): integer;
     function Right(aLen: Integer; aDoCut: boolean = False): string;
@@ -48,6 +49,7 @@ type
     function Formated(const aFormat: string): TStringList;
     function GetArray(): TStringArray;
     function GetJoin(const aDelim: string): string;
+    function GetJoinNonEmpty(const aDelim: string): string;
     function GetJson(): TJSONArray;
     function GetLast(aIdx: integer = 0): string;
     function IndexOfObject(aObj: TObject): Integer;
@@ -135,6 +137,23 @@ begin
     Exit('');
 
   Result := System.Copy(Self, Pos1, Pos2 - Pos1);
+end;
+
+function TStringHelperEx.JoinNonEmpty(const aArr: TStringArray): string;
+var
+  i: Integer;
+begin
+  Result := '';
+  for i := 0 to System.Length(aArr) - 1 do
+  begin
+    if (aArr[i].Trim() = '') then
+      continue;
+
+    if (Result <> '') then
+      Result := Result + self;
+
+    Result := Result + aArr[i];
+  end;
 end;
 
 function TStringHelperEx.Right(aLen: Integer; aDoCut: boolean = False): string;
@@ -537,6 +556,23 @@ begin
   Result := Self[0];
   for i := 1 to Count - 1 do
     Result := Result + aDelim + Self[i];
+end;
+
+function TStringListHelper.GetJoinNonEmpty(const aDelim: string): string;
+var
+  i: Integer;
+begin
+  Result := '';
+  for i := 0 to Count - 1 do
+  begin
+    if (Trim(Self[i]) = '') then
+      Continue;
+
+    if (Result <> '') then
+      Result := Result + aDelim;
+
+    Result := Result + Self[i];
+  end;
 end;
 
 function TStringListHelper.GetArray(): TStringArray;

@@ -22,7 +22,7 @@
         <C_DOC_TYPE>0</C_DOC_TYPE>
         <C_DOC_CNT>5</C_DOC_CNT>
         <C_DOC_STAN>1</C_DOC_STAN>
-        <FILENAME>{{FILENAME_1}}</FILENAME>
+        <FILENAME>{{FILENAME}}</FILENAME>
       </DOC>
     </LINKED_DOCS>
     <D_FILL>{{_DATE_WD}}</D_FILL>

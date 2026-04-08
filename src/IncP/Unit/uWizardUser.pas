@@ -28,38 +28,72 @@ begin
 end;
 
 procedure TWizardUser.SaveXml(const aName: string; aJObjMed, aJObjWiz: TJSONObject);
+const
+  cGrid1 = 'w1s1.grid1_s';
+  cMemo4 = 'w4s1.memo1_s';
 var
   Str, StrXds, Path, FileName, No, FJ: string;
   Macros: TMacros;
   SL: TStringList;
   JObj: TJSONObject;
+  JArr: TJSONArray;
   DbL: TDbList;
 begin
+  JObj := TJSONObject(aJObjWiz.Find(cGrid1));
+  if (JObj = nil) then
+  begin
+    Log.Print('i', 'Не визначено ' + cGrid1);
+    Exit();
+  end;
+
+  DbL := TDbList.Create(JObj);
+  if (DbL.GetSize() = 0) then
+  begin
+    DbL.Free();
+    Log.Print('e', 'Не заповнена таблиця ' + cGrid1);
+    Exit();
+  end;
+
+  if (aName = '1360102') then
+  begin
+    Str := string('_').JoinNonEmpty([
+      DbL.Rec['doc_type'].AsString,
+      DbL.Rec['firm'].AsString,
+      DbL.Rec['doc_number'].AsString,
+      string(DbL.Rec['doc_date'].AsString).Replace('.', '')
+    ]);
+    aJObjMed.SetKey('R01G1S_2', Str + '.xml');
+
+    Str := DbL.Rec['doc_name'].AsString;
+    Str := StrFromFile(Str);
+    aJObjMed.SetKey('R01G1B', EncodeStringBase64(Str));
+  end else if (aName = '1312603') then
+  begin
+    JArr := TJSONArray(aJObjWiz.Find(cMemo4));
+    if (JArr <> nil) then
+    begin
+      SL := TStringList.Create();
+      aJObjMed.SetKey('R01G1S_1', SL.AddArray(JArr).Text);
+      SL.Free();
+    end;
+  end;
+  DbL.Free();
+
   FJ := IIF(Length(aJObjMed.Get('TIN', '')) = 8, 'J', 'F');
   No := '1000000009';
-  FileName := Format('%s_00_%s_%s_%d%.2d%d_%s%s_%s', [
+  FileName := Format('%s_00_%s_%s%s_%s_%d%.2d%d_%s', [
     aJObjMed.Get('HKSTI', ''),
     aJObjMed.Get('TIN', ''),
-    No,
-    aJObjMed.Get('DAY', 0),
-    aJObjMed.Get('MONTH', 0),
-    aJObjMed.Get('YEAR', 0),
     FJ,
     aName,
+    No,
+    aJObjMed.Get('_DAY', 0),
+    aJObjMed.Get('_MONTH', 0),
+    aJObjMed.Get('_YEAR', 0),
     aJObjMed.Get('HKSTI', '')
   ]);
   FileName := FileName.Replace('_', '') + '.XML';
   aJObjMed.SetKey('FILENAME', FileName);
-
-  JObj := TJSONObject(aJObjWiz.Find('w1s1.grid1_s'));
-  if (JObj  <> nil)then
-  begin
-    DbL := TDbList.Create(JObj);
-    Str := DbL.Rec['doc_name'].AsString;
-    Str := StrFromFile(Str);
-    aJObjMed.SetKey('R01G1B', EncodeStringBase64(Str));
-    DbL.Free();
-  end;
 
   Macros := TMacros.Create();
   try

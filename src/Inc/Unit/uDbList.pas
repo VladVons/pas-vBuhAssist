@@ -26,6 +26,7 @@ type
     procedure SetField(const aName: string; const aVal: string);
     procedure SetField(const aName: string; const aVal: Integer);
     procedure SetField(const aName: string; aVal: TJSONData);
+
     property Data: TJSONArray read fData write fData;
     property Fields[const aName: string]: TJSONData read GetFieldByName write SetFieldByName; default;
   end;
@@ -39,8 +40,9 @@ type
     fIndex: Integer;
   public
     constructor Create(aList: TDbList);
-    function MoveNext: Boolean;
-    function GetCurrent: TDbRec;
+
+    function MoveNext(): Boolean;
+    function GetCurrent(): TDbRec;
     property Current: TDbRec read GetCurrent;
   end;
 
@@ -56,7 +58,7 @@ type
   public
     constructor Create(aJHead, aJData: TJSONArray);
     constructor Create(aJObj: TJSONObject);
-    destructor Destroy; override;
+    destructor Destroy(); override;
 
     function GetSize(): Integer;
     function Import(aJObj: TJSONObject): TDbList;
@@ -196,7 +198,7 @@ begin
   fRecNo := 0;
 end;
 
-destructor TDbList.Destroy;
+destructor TDbList.Destroy();
 begin
   FreeAndNil(fJHead);
   FreeAndNil(fJData);
@@ -232,7 +234,7 @@ begin
   FreeAndNil(fJData);
 
   Create(aJObj);
-  Result := Self;
+  Result := self;
 end;
 
 function TDbList.Export(): TJSONObject;
@@ -288,7 +290,7 @@ begin
   Result := TDbRec.Create(Row, fJHead);
 end;
 
-function TDbList.GetEnumerator: TDbListEnum;
+function TDbList.GetEnumerator(): TDbListEnum;
 begin
   Result := TDbListEnum.Create(Self);
 end;
