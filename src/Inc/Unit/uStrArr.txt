@@ -1,0 +1,22 @@
+﻿procedure Test();
+var
+  Str, Str2: string;
+  SA: TStrArr;
+begin
+  SA := TStrArr.Create();
+  try
+    SA.Add('one');
+    SA.Add('two');
+    SA.Add('three');
+    SA.Add('four');
+    SA.Add('five');
+    SA.Add('six');
+    SA.Add('seven');
+    SA.Sort();
+    SA.Shuffle();
+    for Str in SA do
+       Str2 := Str;
+  finally
+    SA.Free();
+  end;
+end;

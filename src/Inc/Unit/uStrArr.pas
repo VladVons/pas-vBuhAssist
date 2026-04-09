@@ -129,6 +129,7 @@ begin
     QuickSort(0, High(fData));
 end;
 
+// QuickSort Hoare
 procedure TStrArr.QuickSort(aL, aR: Integer);
 var
   i, j: Integer;
@@ -153,10 +154,10 @@ begin
     end;
   until (i > j);
 
-  if aL < j then
+  if (aL < j) then
     QuickSort(aL, j);
 
-  if i < aR then
+  if (i < aR) then
     QuickSort(i, aR);
 end;
 
@@ -208,33 +209,6 @@ function TStrArrEnumerator.GetCurrent: string;
 begin
   Result := fList[fIndex];
 end;
-
-// --- Example
-//procedure Test();
-//var
-//  Str, Str2: string;
-//  SA: TStrArr;
-//begin
-//  SA := TStrArr.Create();
-//  try
-//    SA.Add('one');
-//    SA.Add('two');
-//    SA.Add('three');
-//    SA.Add('four');
-//    SA.Add('five');
-//    SA.Add('six');
-//    SA.Add('seven');
-//    SA.Sort();
-//    SA.Shuffle();
-//    for Str in SA do
-//       Str2 := Str;
-//  finally
-//    SA.Free();
-//  end;
-//end;
-//
-//begin
-//  Test();
 
 end.
 
