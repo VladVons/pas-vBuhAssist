@@ -1,3 +1,6 @@
+// Created: 2026.04.05
+// Author: Vladimir Vons <VladVons@gmail.com>
+
 unit uWizardUser;
 
 {$mode ObjFPC}{$H+}
@@ -145,7 +148,7 @@ const
   cMemoName = 'memo1_s';
 var
   i: integer;
-  Find, Repl: string;
+  Find: string;
   JObj, JObjWiz: TJSONObject;
   JArr: TJSONArray;
   Memo: TMemo;
