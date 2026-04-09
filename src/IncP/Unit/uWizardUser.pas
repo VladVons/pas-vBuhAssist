@@ -5,15 +5,18 @@ unit uWizardUser;
 interface
 
 uses
-  Classes, SysUtils, fpjson, LConvEncoding, base64,
-  uFWizard, uVarUtil, uSysVcl, uHelper, uLog, uSys, uDbList;
+  Classes, SysUtils, Controls, StdCtrls, fpjson, LConvEncoding, base64,
+  uFWizard, uVarUtil, uMacros, uSysVcl, uHelper, uLog, uSys, uDbList;
 
 type
   TWizardUser = class(TPersistent)
   published
     procedure OnClick_FWizardPdv5_Save(Sender: TObject);
+    procedure OnShow_FWizardPdv40_1(Sender: TObject);
+    function AsGrid(aJObj: TJSONObject; const aFields: TStringArray): TStringList;
   private
     fParent: TFWizard;
+    procedure PageControlChange(Sender: TObject);
     procedure D1(aJObjMed, aJObjWiz: TJSONObject);
     procedure D2(aJObjMed, aJObjWiz: TJSONObject);
     procedure SaveXml(const aName: string; aJObjMed, aJObjWiz: TJSONObject; aIdx: integer);
@@ -27,6 +30,11 @@ constructor TWizardUser.Create(aParent: TFWizard);
 begin
   inherited Create();
   fParent := aParent;
+  //fParent.PageControl.OnChange := @PageControlChange;
+end;
+
+procedure TWizardUser.PageControlChange(Sender: TObject);
+begin
 end;
 
 procedure TWizardUser.SaveXml(const aName: string; aJObjMed, aJObjWiz: TJSONObject; aIdx: integer);
@@ -54,11 +62,10 @@ begin
   Macros := TMacros.Create();
   try
     StrXds := ResourceLoadString(aName, 'xml');
-    StrXds := Macros.Exec(StrXds, aJObjMed).DelEmptyLines();
+    Macros.Load(StrXds);
+    StrXds := Macros.Parse(aJObjMed).DelEmptyLines();
     StrXds := UTF8ToCP1251(StrXds);
-
-    SL := Macros.GetList(StrXds);
-    if (SL.Count > 0) then
+    if (Macros.Items.Count > 0) then
       Log.Print('i', Format('Не заповнено макроси %d: %s', [SL.Count, SL.CommaText]));
     SL.Free();
   finally
@@ -122,6 +129,56 @@ begin
   end;
 
   SaveXml('1312603', aJObjMed, aJObjWiz, 1);
+end;
+
+function TWizardUser.AsGrid(aJObj: TJSONObject; const aFields: TStringArray): TStringList;
+var
+  DBL: TDbList;
+begin
+  DBL := TDbList.Create(aJObj);
+  Result := DBL.Print(aFields);
+  DBL.Free();
+end;
+
+procedure TWizardUser.OnShow_FWizardPdv40_1(Sender: TObject);
+const
+  cMemoName = 'memo1_s';
+var
+  i: integer;
+  Find, Repl: string;
+  JObj, JObjWiz: TJSONObject;
+  JArr: TJSONArray;
+  Memo: TMemo;
+  Macros: TMacros;
+  SL, SLPrint: TStringList;
+begin
+  Memo := TMemo(fParent.FindCtrl(cMemoName));
+  if (Memo = nil) then
+  begin
+    Log.Print('e', Format('Компонент `%s` не знайдено', ['memo1_s']));
+    Exit();
+  end;
+
+  JObjWiz := fParent.GetDataInt();
+
+  JObj := fParent.FindSchemeItem(cMemoName);
+  JArr := JObj.Arrays['lines'];
+  Macros := TMacros.Create('{%', '%}');
+  Macros.Load(Memo.Text);
+  for i := 0 to Macros.Items.Count - 1 do
+  begin
+    Find := Macros.Items[i];
+    SL := TStringList.Create().Split(Find, '|');
+    if (SL[0] = 'ctrl') and (SL.Count >= 3) then
+      if (SL[1] = 'grid') then
+      begin
+        SLPrint := AsGrid(JObjWiz.Objects[SL[2]], SL[3].Split(','));
+        Memo.Text := Macros.Parse([Find], [SLPrint.Text]);
+        SLPrint.Free();
+      end;
+    SL.Free();
+  end;
+  Macros.Free();
 end;
 
 procedure TWizardUser.OnClick_FWizardPdv5_Save(Sender: TObject);

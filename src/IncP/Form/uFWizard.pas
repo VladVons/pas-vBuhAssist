@@ -11,7 +11,7 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
   ExtCtrls, ValEdit, Buttons, fpjson, TypInfo, Variants, jsonparser,
   uFrStringGrid,
-  uSys, uSysVcl, uVarUtil, uHelper, uHelperVcl, uFBase, uFBaseScroll, uWinManager, uExGrid;
+  uSys, uSysVcl, uVarUtil, uMacros, uHelper, uHelperVcl, uFBase, uFBaseScroll, uWinManager, uExGrid;
 
 type
   { TFWizard }
@@ -49,6 +49,8 @@ type
     function  GetDataInt(): TJSONObject;
     function  GetDir(): string;
     function  GetVal(const aFile: string): TJSONObject;
+    function  FindCtrl(const aName: string): TComponent;
+    function  FindSchemeItem(const aName: string): TJSONObject;
     procedure Load(const aName, aDir: string; aJObj: TJSONObject);
     procedure LoadFormData(const aFile: string);
     procedure LoadFormScheme(const aName: string);
@@ -113,6 +115,39 @@ end;
 function TFWizard.GetDataExt(): TJSONObject;
 begin
   Result := fDataExt;
+end;
+
+function TFWizard.FindSchemeItem(const aName: string): TJSONObject;
+var
+  i, j: integer;
+  JArr, JArrTab: TJSONArray;
+  JObj, JObjTab: TJSONObject;
+begin
+  JArrTab := fJScheme.Arrays['tabs'];
+  for i := 0 to JArrTab.Count - 1 do
+  begin
+    JObjTab := JArrTab.Objects[i];
+    if (JObjTab.Get('_enable', true)) then
+    begin
+      JArr := JObjTab.Arrays['controls'];
+      for j := 0 to JArr.Count - 1 do
+      begin
+        JObj := JArr.Objects[j];
+        if (JObj.Get('_enable', true)) and (JObj.Get('name', '') = aName) then
+          Exit(JObj);
+      end;
+    end;
+  end;
+
+  Result := nil;
+end;
+
+function TFWizard.FindCtrl(const aName: string): TComponent;
+var
+  Form: TForm;
+begin
+  Form := fWinManager.GetActiveForm();
+  Result := TFBaseScroll(Form).ScrollBox.FindComponent(aName);
 end;
 
 function TFWizard.GetDataInt(): TJSONObject;
@@ -285,10 +320,10 @@ end;
 
 procedure TFWizard.LoadFormScheme(const aName: string);
 var
-  i: integer;
+  i, j: integer;
   Str: string;
   JArrTab, JArrCtrl: TJSONArray;
-  JObjTab, JObjConf, JObjConfDef: TJSONObject;
+  JObjTab, JObjConf, JObjConfDef, JObjEvent: TJSONObject;
   Form: TFBaseScroll;
   Macros: TMacros;
 begin
@@ -298,7 +333,8 @@ begin
   if (fDataExt <> nil) then
   begin
     Macros := TMacros.Create();
-    Str := Macros.Exec(Str, fDataExt);
+    Macros.Load(Str);
+    Str := Macros.Parse(fDataExt);
     Macros.Free();
   end;
   fJScheme := TJSONObject(GetJSON(Str.DelBOM()));
@@ -333,6 +369,11 @@ begin
     Form.Name := Form.GetJName(JObjTab, i);
     Form.Caption := JObjTab.Get('caption', Format('caption %d', [i]));
     Form.Title := Form.Caption;
+
+    JObjEvent := TJSONObject(JObjTab.Find('_event'));
+    if (JObjEvent <> nil) then
+      for j := 0 to JObjEvent.Count - 1 do
+        SetEventByName(Form.Parent, JObjEvent.Names[j], JObjEvent.Items[j].AsString);
 
     JArrCtrl := TJSONArray(JObjTab.Find('controls'));
     if (JArrCtrl = nil) then

@@ -21,9 +21,10 @@ type
     procedure PageControlMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: integer);
   public
     constructor Create(aPageControl: TPageControl; aPopupMenu: TPopupMenu);
-    procedure Add(aForm: TForm);
+    function Add(aForm: TForm): TTabSheet;
     function Add(aFormClass: TFormClass): TForm;
     procedure Adds(aForms: array of TFormClass);
+    function GetActiveForm(): TForm;
     function GetForms(): TFormArray;
     function FindTabIndex(aFormClass: TFormClass): integer;
     procedure SendMsg(aForm: TForm; const aData: TJSONObject);
@@ -174,7 +175,7 @@ begin
   end;
 end;
 
-procedure TWinManager.Add(aForm: TForm);
+function TWinManager.Add(aForm: TForm): TTabSheet;
 var
   Tab: TTabSheet;
 begin
@@ -191,6 +192,13 @@ begin
   Tab.Caption := aForm.Caption;
   Tab.Tag := integer(aForm);
   fPageControl.ActivePage := Tab;
+
+  Result := Tab;
+end;
+
+function TWinManager.GetActiveForm(): TForm;
+begin
+  Result := TForm(fPageControl.ActivePage.Tag);
 end;
 
 function TWinManager.Add(aFormClass: TFormClass): TForm;
@@ -205,7 +213,7 @@ begin
   end else begin
     // Вкладка вже існує — робимо її активною
     fPageControl.ActivePage := fPageControl.Pages[TabIndex];
-    Result := TForm(fPageControl.ActivePage.Tag);
+    Result := GetActiveForm();
   end;
 end;
 

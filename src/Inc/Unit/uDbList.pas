@@ -8,7 +8,8 @@ unit uDbList;
 interface
 
 uses
-  Classes, SysUtils, fpjson;
+  Classes, SysUtils, fpjson,
+  uHelper;
 
 type
   TDbRec = class
@@ -64,6 +65,7 @@ type
     function Import(aJObj: TJSONObject): TDbList;
     function Export(): TJSONObject;
     function ExportStr(): string;
+    function Print(const aFields: TStringArray): TStringList;
     function RecAdd(): TDbRec;
     function RecPop(aNo: Integer = -1): TDbRec;
     function GetEnumerator(): TDbListEnum;
@@ -261,6 +263,29 @@ begin
     Result := JObj.AsJSON;
   finally
     JObj.Free();
+  end;
+end;
+
+function TDbList.Print(const aFields: TStringArray): TStringList;
+var
+  i: integer;
+  Str: string;
+  DbRec: TDbRec;
+  SL: TStringList;
+begin
+  if (Length(aFields) = 0) then
+    SL := fJHead.GetKeys()
+  else
+    SL := TStringList.Create().AddArray(aFields);
+
+  Result := TStringList.Create();
+  for DbRec in self do
+  begin
+    Str := '';
+    for i := 0 to SL.Count - 1 do
+      //Str := Str + Format('%s: %s ', [SL[i], DbRec[SL[i]].AsString]);
+      Str := Str + DbRec[SL[i]].AsString + ' ';
+    Result.Add(Str);
   end;
 end;
 

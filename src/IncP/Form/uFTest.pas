@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Buttons, StdCtrls,
   ExtCtrls, fpjson, LConvEncoding,
-  uFBase, uFWizard, uWizardUser, uWinManager, uSysVcl, uVarUtil, uHelper;
+  uFBase, uFWizard, uWizardUser, uWinManager, uSysVcl, uMacros, uHelper;
 
 const
   cDirData = 'Data\D12345';
@@ -67,7 +67,8 @@ var
 begin
   StrXds := ResourceLoadString(aName, 'xml');
   Macros := TMacros.Create();
-  Str := Macros.Exec(StrXds, TStringList(Memo1.Lines)).DelEmptyLines();
+  Macros.Load(StrXds);
+  Str := Macros.Parse(TStringList(Memo1.Lines)).DelEmptyLines();
   Memo2.Text := Str;
   Macros.Free();
 

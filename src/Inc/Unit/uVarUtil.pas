@@ -11,28 +11,6 @@ uses
   Classes, SysUtils, fpjson, Variants,
   uHelper;
 
-type
-   TMacrosMask = record
-    Prefix: string;
-    Suffix: string;
-  end;
-
-  TOnMacro = function (const aStr, aFind, aReplace: string; const fMMask: TMacrosMask): string of object;
-
-  TMacros = class
-  private
-    fMMask: TMacrosMask;
-    function Replace(const aStr, aFind, aRepl: string): string;
-    function ReplaceDef(const aStr, aFind, aRepl: string): string;
-  public
-    OnMacro: TOnMacro;
-    constructor Create(const aPrefix: string = '{{'; const aSuffix: string = '}}');
-    function GetList(const aStr: string): TStringList;
-    function Exec(const aStr: string; const aNames, aValues: TStringArray): string;
-    function Exec(const aStr: string; aDict: TStringList): string;
-    function Exec(const aStr: string; aObj: TJSONObject): string;
-  end;
-
 function Between(aVal, aMin, aMax: integer): boolean;
 function PrevPeriodDate(aPerType: char; aYear, aMonth: Integer): TDate;
 function IntToRoman10(aVal: Integer): String;
@@ -43,8 +21,6 @@ function IIF(aCond: boolean; const aValTrue, aValFalse: string): string; inline;
 
 
 implementation
-
-uses RegExpr;
 
 procedure Swap(var aA, aB: Integer);
 var
@@ -107,81 +83,4 @@ begin
   end;
 end;
 
-//--- TMacros
-
-constructor TMacros.Create(const aPrefix: string = '{{'; const aSuffix: string = '}}');
-begin
-  fMMask.Prefix := aPrefix;
-  fMMask.Suffix := aSuffix;
-end;
-
-function TMacros.ReplaceDef(const aStr, aFind, aRepl: string): string;
-begin
-  if (aRepl.IsEmpty()) then
-    Result := aStr
-  else
-    Result := StringReplace(aStr, fMMask.Prefix + aFind + fMMask.Suffix, aRepl, [rfReplaceAll]);
-end;
-
-function TMacros.Replace(const aStr, aFind, aRepl: string): string;
-begin
-  if (Assigned(OnMacro)) then
-    Result := OnMacro(aStr, aFind, aRepl, fMMask)
-  else
-    Result := ReplaceDef(aStr, aFind, aRepl);
-end;
-
-function TMacros.Exec(const aStr: string; const aNames, aValues: TStringArray): string;
-var
-  i: integer;
-begin
-  if (System.Length(aNames) <> System.Length(aValues)) then
-    raise Exception.Create('arrays length mismatch');
-
-  Result := aStr;
-  for i := 0 to System.Length(aNames) - 1do
-    Result := Replace(Result, aNames[i], aValues[i]);
-end;
-
-function TMacros.Exec(const aStr: string; aDict: TStringList): string;
-var
-  i: integer;
-begin
-  Result := aStr;
-  for i := 0 to aDict.Count - 1 do
-    Result := Replace(Result, aDict.Names[i], aDict.ValueFromIndex[i]);
-end;
-
-function TMacros.Exec(const aStr: string; aObj: TJSONObject): string;
-var
-  i: integer;
-  Find, Repl: string;
-begin
-  Result := aStr;
-  for i := 0 to aObj.Count - 1 do
-  begin
-    Find := aObj.Names[i];
-    Repl := aObj.GetAsString(Find, '').Replace('"', '`');
-    Result := Replace(Result, Find, Repl);
-  end;
-end;
-
-function TMacros.GetList(const aStr: string): TStringList;
-var
-  re: TRegExpr;
-begin
-  Result := TStringList.Create();
-  re := TRegExpr.Create();
-  try
-    re.Expression := Format('%s([a-zA-Z0-9_]+)%s',[fMMask.Prefix.EscapeRegExp(), fMMask.Suffix.EscapeRegExp()]);
-    if (re.Exec(aStr)) then
-      repeat
-        Result.Add(re.Match[1]);
-      until not re.ExecNext();
-  finally
-    re.Free();
-  end;
-end;
-
 end.
-

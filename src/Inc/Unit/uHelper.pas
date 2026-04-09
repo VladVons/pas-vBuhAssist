@@ -60,6 +60,7 @@ type
     function Quoted(): TStringList;
     function Quoted(const aChar: char): TStringList;
     function Replace(const aFind, aRep: string): TStringList;
+    function Split(const aStr, aDelim: string): TStringList;
     function Uniq(): TStringList;
   end;
 
@@ -491,6 +492,19 @@ begin
     Result := Self[aIdx]
   else
     Result := '';
+end;
+
+function TStringListHelper.Split(const aStr, aDelim: string): TStringList;
+var
+  i: integer;
+  Parts: TStringArray;
+begin
+  Clear();
+  Parts := aStr.Split(aDelim);
+  for i := 0 to Length(Parts) - 1 do
+    Add(Parts[i]);
+
+  Result := self;
 end;
 
 function TStringListHelper.Uniq(): TStringList;

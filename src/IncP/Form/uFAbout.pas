@@ -10,7 +10,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ComCtrls, ExtCtrls,
   LCLVersion,
-  uSys, uSysVcl, uVarUtil, uConst;
+  uSys, uSysVcl, uVarUtil, uMacros, uConst;
 
 type
   { TFAbout }
@@ -52,7 +52,8 @@ begin
 
   Str := ResourceLoadString('About', 'txt');
   Macros := TMacros.Create();
-  Memo1.Text := Macros.Exec(Str, ['Mail'], [cMail]);
+  Macros.Load(Str);
+  Memo1.Text := Macros.Parse(['Mail'], [cMail]);
   Macros.Free();
 end;
 
