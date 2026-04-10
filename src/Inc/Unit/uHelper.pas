@@ -44,6 +44,7 @@ type
     function AddExtDelim(const aSL: TStringList; const aDelim: string = '-'): TStringList;
     function AddExtDelim(const aStr: string; const aDelim: string = '-'): TStringList;
     function AddNames(const aSL: TStrings): TStringList;
+    function AddWrapped(const aStr: string; aMaxLen: Integer): TStringList;
     function DelArray(const aArr : TStringArray): TStringList;
     function DelEmpty(): TStringList;
     function Formated(const aFormat: string): TStringList;
@@ -434,6 +435,35 @@ var
 begin
   for i := 0 to aSL.Count - 1 do
       self.Add(aSL.Names[i]);
+
+  Result := self;
+end;
+
+function TStringListHelper.AddWrapped(const aStr: string; aMaxLen: Integer): TStringList;
+var
+  Start, Cut: Integer;
+begin
+  Start := 1;
+
+  while (Start <= Length(aStr)) do
+  begin
+    if (Length(aStr) - Start + 1 <= aMaxLen) then
+    begin
+      Add(Copy(aStr, Start, aMaxLen));
+      Break;
+    end;
+
+    Cut := Start + aMaxLen - 1;
+
+    while (Cut > start) and (aStr[cut] <> ' ') do
+      Dec(Cut);
+
+    if (Cut = Start) then
+      Cut := Start + aMaxLen - 1;
+
+    Add(Trim(Copy(aStr, Start, Cut - Start + 1)));
+    Start := Cut + 1;
+  end;
 
   Result := self;
 end;

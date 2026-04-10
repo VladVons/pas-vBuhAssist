@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, fpjson,
-  uHelper;
+  uHelper, uVarUtil;
 
 type
   TDbRec = class
@@ -65,7 +65,7 @@ type
     function Import(aJObj: TJSONObject): TDbList;
     function Export(): TJSONObject;
     function ExportStr(): string;
-    function Print(const aFields: TStringArray): TStringList;
+    function Print(const aFields, aCaptions: TStringArray): TStringList;
     function RecAdd(): TDbRec;
     function RecPop(aNo: Integer = -1): TDbRec;
     function GetEnumerator(): TDbListEnum;
@@ -266,10 +266,10 @@ begin
   end;
 end;
 
-function TDbList.Print(const aFields: TStringArray): TStringList;
+function TDbList.Print(const aFields, aCaptions: TStringArray): TStringList;
 var
   i: integer;
-  Str: string;
+  Str, Caption: string;
   DbRec: TDbRec;
   SL: TStringList;
 begin
@@ -283,8 +283,10 @@ begin
   begin
     Str := '';
     for i := 0 to SL.Count - 1 do
-      //Str := Str + Format('%s: %s ', [SL[i], DbRec[SL[i]].AsString]);
-      Str := Str + DbRec[SL[i]].AsString + ' ';
+    begin
+      Caption := IIF(Length(aCaptions) = 0, SL[i], aCaptions[i]);
+      Str := Str + Format('%s: %s, ', [Caption, DbRec[SL[i]].AsString]);
+    end;
     Result.Add(Str);
   end;
 end;

@@ -1,31 +1,32 @@
 object FrStringGrid: TFrStringGrid
   Left = 0
-  Height = 125
+  Height = 137
   Top = 0
-  Width = 373
-  ClientHeight = 125
-  ClientWidth = 373
+  Width = 435
+  ClientHeight = 137
+  ClientWidth = 435
   DesignTimePPI = 120
   LCLVersion = '4.6.0.0'
   ParentFont = False
   TabOrder = 0
   object StringGridEx: TStringGrid
     Left = 0
-    Height = 93
+    Height = 105
     Top = 32
-    Width = 373
+    Width = 435
     Align = alClient
     BorderStyle = bsNone
     ColCount = 4
+    FixedCols = 0
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goEditing, goSmoothScroll]
-    RowCount = 2
+    RowCount = 1
     ScrollBars = ssBoth
     TabOrder = 0
   end
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 373
+    Width = 435
     ButtonHeight = 28
     ButtonWidth = 60
     Images = DmCommon.ImageList1

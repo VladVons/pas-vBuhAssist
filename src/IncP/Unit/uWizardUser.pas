@@ -8,7 +8,7 @@ unit uWizardUser;
 interface
 
 uses
-  Classes, SysUtils, Controls, StdCtrls, fpjson, LConvEncoding, base64,
+  Classes, SysUtils, Controls, StdCtrls, fpjson, LConvEncoding, base64, fppdf,
   uFWizard, uVarUtil, uMacros, uSysVcl, uHelper, uLog, uSys, uDbList;
 
 type
@@ -16,7 +16,8 @@ type
   published
     procedure OnClick_FWizardPdv5_Save(Sender: TObject);
     procedure OnShow_FWizardPdv40_1(Sender: TObject);
-    function AsGrid(aJObj: TJSONObject; const aFields: TStringArray): TStringList;
+    function AsGrid(aJObj: TJSONObject; const aParam: TStringList): TStringList;
+    procedure StringListToPDF(aLines: TStringList; const aFileName: string);
   private
     fParent: TFWizard;
     procedure PageControlChange(Sender: TObject);
@@ -69,7 +70,7 @@ begin
     StrXds := Macros.Parse(aJObjMed).DelEmptyLines();
     StrXds := UTF8ToCP1251(StrXds);
     if (Macros.Items.Count > 0) then
-      Log.Print('i', Format('Не заповнено макроси %d: %s', [SL.Count, SL.CommaText]));
+      Log.Print('i', Format('Не заповнено макроси %d: %s', [Macros.Items.Count, SL.CommaText]));
     SL.Free();
   finally
     Macros.Free();
@@ -132,56 +133,7 @@ begin
   end;
 
   SaveXml('1312603', aJObjMed, aJObjWiz, 1);
-end;
-
-function TWizardUser.AsGrid(aJObj: TJSONObject; const aFields: TStringArray): TStringList;
-var
-  DBL: TDbList;
-begin
-  DBL := TDbList.Create(aJObj);
-  Result := DBL.Print(aFields);
-  DBL.Free();
-end;
-
-procedure TWizardUser.OnShow_FWizardPdv40_1(Sender: TObject);
-const
-  cMemoName = 'memo1_s';
-var
-  i: integer;
-  Find: string;
-  JObj, JObjWiz: TJSONObject;
-  JArr: TJSONArray;
-  Memo: TMemo;
-  Macros: TMacros;
-  SL, SLPrint: TStringList;
-begin
-  Memo := TMemo(fParent.FindCtrl(cMemoName));
-  if (Memo = nil) then
-  begin
-    Log.Print('e', Format('Компонент `%s` не знайдено', ['memo1_s']));
-    Exit();
-  end;
-
-  JObjWiz := fParent.GetDataInt();
-
-  JObj := fParent.FindSchemeItem(cMemoName);
-  JArr := JObj.Arrays['lines'];
-  Macros := TMacros.Create('{%', '%}');
-  Macros.Load(Memo.Text);
-  for i := 0 to Macros.Items.Count - 1 do
-  begin
-    Find := Macros.Items[i];
-    SL := TStringList.Create().Split(Find, '|');
-    if (SL[0] = 'ctrl') and (SL.Count >= 3) then
-      if (SL[1] = 'grid') then
-      begin
-        SLPrint := AsGrid(JObjWiz.Objects[SL[2]], SL[3].Split(','));
-        Memo.Text := Macros.Parse([Find], [SLPrint.Text]);
-        SLPrint.Free();
-      end;
-    SL.Free();
-  end;
-  Macros.Free();
+  //StringListToPDF(TStringList(Memo.Lines), 'aFileName.pdf');
 end;
 
 procedure TWizardUser.OnClick_FWizardPdv5_Save(Sender: TObject);
@@ -197,6 +149,62 @@ begin
   JObjMed.Free();
 end;
 
+procedure TWizardUser.StringListToPDF(aLines: TStringList; const aFileName: string);
+begin
+end;
+
+function TWizardUser.AsGrid(aJObj: TJSONObject; const aParam: TStringList): TStringList;
+var
+  DBL: TDbList;
+  JObj: TJSONObject;
+begin
+  JObj := aJObj.Objects[aParam[2]];
+  DBL := TDbList.Create(JObj);
+  Result := DBL.Print(aParam[3].Split(','), aParam[4].Split(','));
+  DBL.Free();
+end;
+
+procedure TWizardUser.OnShow_FWizardPdv40_1(Sender: TObject);
+const
+  cMemoName = 'memo2';
+var
+  i: integer;
+  Find: string;
+  JObj, JObjWiz: TJSONObject;
+  Memo: TMemo;
+  Macros: TMacros;
+  SL, SLScheme, SLPrint: TStringList;
+begin
+  Memo := TMemo(fParent.FindCtrl(cMemoName));
+  if (Memo = nil) then
+  begin
+    Log.Print('e', Format('Компонент `%s` не знайдено', ['memo1_s']));
+    Exit();
+  end;
+
+  JObjWiz := fParent.GetDataInt();
+
+  JObj := fParent.FindSchemeItem(cMemoName);
+  SLScheme := TStringList.Create().AddArray(JObj.Arrays['lines']);
+
+  Macros := TMacros.Create('{%', '%}');
+  Macros.Load(SLScheme.Text);
+  for i := 0 to Macros.Items.Count - 1 do
+  begin
+    Find := Macros.Items[i];
+    SL := TStringList.Create().Split(Find, '|');
+    if (SL[0] = 'ctrl') and (SL.Count >= 3) then
+      if (SL[1] = 'grid') then
+      begin
+        SLPrint := AsGrid(JObjWiz, SL);
+        Memo.Text := Macros.Parse([Find], [SLPrint.Text]);
+        SLPrint.Free();
+      end;
+    SL.Free();
+  end;
+  SLScheme.Free();
+  Macros.Free();
+end;
 
 end.
 

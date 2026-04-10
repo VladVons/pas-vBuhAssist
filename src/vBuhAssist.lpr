@@ -14,7 +14,7 @@ uses
   {$ENDIF}
   opensslsockets,
   Interfaces, // this includes the LCL widgetset
-  Forms, uFMain, uWinManager, uDmCommon, uStrArr,
+  Forms, uFMain, uWinManager, uDmCommon,
   uExceptionHandler;
 
 {$R *.res}
