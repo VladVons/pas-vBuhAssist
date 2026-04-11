@@ -93,8 +93,8 @@ procedure TFTest.BitBtnWizardAllClick(Sender: TObject);
 var
   Form: TFWizard;
 begin
-  Form := TFWizard(WinManager.Add(TFWizard));
-  Form.Load('FWizardPdvs', cDirData, nil);
+  //Form := TFWizard(WinManager.Add(TFWizard));
+  //Form.Load('FWizardPdvs', cDirData, nil);
 end;
 
 end.

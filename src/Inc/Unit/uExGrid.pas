@@ -8,15 +8,16 @@ unit uExGrid;
 interface
 
 uses
-  Classes, SysUtils, Grids, Controls, StdCtrls, Dialogs, ValEdit, contnrs, fpjson,
+  Classes, SysUtils, Grids, Controls, StdCtrls, Dialogs, ValEdit, contnrs, fpjson, fgl,
   uDbList;
 
 type
+ TStringIntMap = specialize TFPGMap<string, Integer>;
  TOnOpenFileDialog = function (const aFile: string): string of object;
 
  TStringGridEx = class(TStringGrid)
  private
-   fColMap: TFPHashObjectList;
+   fColMap: TStringIntMap;
    fComboBox: TComboBox;
    fOpenDialog: TOpenDialog;
    fMaxRows: integer;
@@ -30,6 +31,7 @@ type
    procedure DoDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; State: TGridDrawState);
    procedure DoMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
    procedure DoHeaderSized(Sender: TObject;  IsColumn: Boolean; Index: Integer);
+   procedure ImportInternal(aJObj: TJSONObject; aStart: integer);
  public
    OnOpenFileDialog: TOnOpenFileDialog;
    constructor Create(aOwner: TComponent); override;
@@ -38,6 +40,7 @@ type
    function Export(): TJSONObject;
    function ExportAsDbList(): TDbList;
    procedure Import(aJObj: TJSONObject);
+   procedure ImportAdd(aJObj: TJSONObject);
    function GetMaxRows(): integer;
    procedure LoadHeadFromJson(aJObj: TJSONObject);
    procedure DelRow(aIdx: Integer);
@@ -68,7 +71,8 @@ constructor TStringGridEx.Create(aOwner: TComponent);
 begin
   //inherited.Create(aOwner); //ToDo
   inherited;
-  fColMap := TFPHashObjectList.Create(False);
+  fColMap := TStringIntMap.Create();
+  fColMap.Sorted := True;
 
   Options := Options + [goEditing];
   OnSelectEditor := @DoSelectEditor;
@@ -98,14 +102,10 @@ begin
 end;
 
 function TStringGridEx.GetCol(const aField: string): Integer;
-var
-  Obj: TObject;
 begin
-  Obj := FColMap.Find(aField);
-  if (Obj <> Nil) then
-    Result := Integer(Obj)
-  else
-    Result := -1;
+  Result := fColMap.IndexOf(aField);
+  if (Result <> -1) then
+    Result := fColMap.Data[Result];
 end;
 
 function TStringGridEx.GetCell(const aField: string; aRow: Integer): string;
@@ -220,31 +220,51 @@ begin
   JObj.Free();
 end;
 
-procedure TStringGridEx.Import(aJObj: TJSONObject);
+procedure TStringGridEx.ImportInternal(aJObj: TJSONObject; aStart: integer);
 var
-  i, j: Integer;
-  JArr, JArrRow: TJSONArray;
+  i: integer;
+  Field: string;
+  Fields: TStringArray;
+  DBL: TDbList;
+  DbRec: TDbRec;
 begin
-  JArr := aJObj.Arrays['data'];
-  if (JArr = nil) or (JArr.Count = 0) then
+  if (aJObj = nil) then
     Exit();
 
-  ColCount := TJSONArray(JArr[0]).Count;
-  RowCount := JArr.Count + FixedRows;
+  DBL := TDbList.Create(aJObj);
+  try
+    if (DBL.Count = 0) then
+      Exit();
 
-  for i := 0 to JArr.Count - 1 do
-  begin
-    JArrRow := TJSONArray(JArr[i]);
-    for j := 0 to JArrRow.Count - 1 do
-      Cells[j, i + FixedRows] := JArrRow.Strings[j];
+    RowCount := aStart + FixedRows + DBL.Count;
+    Fields := DBL.Rec.GetFields();
+    for DbRec in DBL do
+      for i := 0 to Length(Fields) -1 do
+      begin
+        Field := Fields[i];
+        CellsN[Field, aStart + FixedRows + DBL.RecNo] := DbRec.Fields[Field].AsString;
+      end;
+  finally
+    DBL.Free();
   end;
+end;
+
+procedure TStringGridEx.Import(aJObj: TJSONObject);
+begin
+  ImportInternal(aJObj, 0);
+end;
+
+procedure TStringGridEx.ImportAdd(aJObj: TJSONObject);
+begin
+  ImportInternal(aJObj, RowCount);
 end;
 
 procedure TStringGridEx.LoadHeadFromJson(aJObj: TJSONObject);
 var
   i: integer;
-  JFields: TJSONArray;
+  Field: string;
   JObj: TJSONObject;
+  JFields: TJSONArray;
 begin
   Options := Options + [goEditing];
   //aCtrl.OnSelectCell := @OnStringGridSelectCell;
@@ -260,8 +280,12 @@ begin
     Cells[i, 0] := JObj.Get('caption', '');
     ColWidths[i] := JObj.Get('width', 100);
     Objects[i, 0] := JObj;
-    fColMap.Add(JObj.Get('name', ''), TObject(PtrInt(i)));
+    Field := JObj.Get('name', '');
+    fColMap.Add(Field, i);
   end;
+
+  JObj := TJSONObject(aJObj.Find('_data'));
+  Import(JObj);
 end;
 
 procedure TStringGridEx.DelRow(aIdx: Integer);

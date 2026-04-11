@@ -20,11 +20,13 @@ inherited FMedFindPdv: TFMedFindPdv
     inherited PageControl: TPageControl
       Width = 919
       inherited TabSheetCur: TTabSheet
+        ClientWidth = 911
         inherited DbGrid1: TDBGrid
           Width = 911
         end
       end
       inherited TabSheetPrev: TTabSheet
+        ClientWidth = 911
         inherited DBGrid2: TDBGrid
           Width = 911
         end
@@ -829,5 +831,9 @@ inherited FMedFindPdv: TFMedFindPdv
     DataSet = SQLQueryOrg
     Left = 216
     Top = 336
+  end
+  object PopupMenuWizards: TPopupMenu[17]
+    Left = 768
+    Top = 168
   end
 end

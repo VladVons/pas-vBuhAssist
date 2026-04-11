@@ -37,11 +37,11 @@ inherited FWizard: TFWizard
     Enabled = False
     TabOrder = 2
     object ComboBoxWizards: TComboBox
-      Left = 392
+      Left = 0
       Height = 28
       Top = 0
-      Width = 409
-      Align = alRight
+      Width = 305
+      Align = alLeft
       ItemHeight = 20
       ReadOnly = True
       TabOrder = 0
@@ -50,27 +50,27 @@ inherited FWizard: TFWizard
       OnChange = ComboBoxWizardsChange
     end
     object BitBtnNext: TBitBtn
-      Left = 112
+      Left = 432
       Height = 32
-      Top = 0
+      Top = -4
       Width = 94
       Caption = 'Наступна'
       TabOrder = 3
       OnClick = BitBtnNextClick
     end
     object BitBtnPrev: TBitBtn
-      Left = 8
+      Left = 328
       Height = 32
-      Top = 0
+      Top = -4
       Width = 94
       Caption = 'Попередня'
       TabOrder = 1
       OnClick = BitBtnPrevClick
     end
     object BitBtnClose: TBitBtn
-      Left = 216
+      Left = 536
       Height = 32
-      Top = 0
+      Top = -4
       Width = 168
       Caption = 'Зберегти і закрити'
       TabOrder = 2

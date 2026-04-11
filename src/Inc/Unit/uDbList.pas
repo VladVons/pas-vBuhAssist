@@ -270,6 +270,7 @@ function TDbList.Print(const aFields, aCaptions: TStringArray): TStringList;
 var
   i: integer;
   Str, Caption: string;
+  IsCaption: boolean;
   DbRec: TDbRec;
   SL: TStringList;
 begin
@@ -278,16 +279,17 @@ begin
   else
     SL := TStringList.Create().AddArray(aFields);
 
+  IsCaption := (Length(aCaptions) = 0);
   Result := TStringList.Create();
   for DbRec in self do
   begin
     Str := '';
     for i := 0 to SL.Count - 1 do
     begin
-      Caption := IIF(Length(aCaptions) = 0, SL[i], aCaptions[i]);
+      Caption := IIF(IsCaption, aCaptions[i], SL[i]);
       Str := Str + Format('%s: %s, ', [Caption, DbRec[SL[i]].AsString]);
     end;
-    Result.Add(Str);
+    Result.Add(Str.TrimExt([',', ' ']));
   end;
 end;
 

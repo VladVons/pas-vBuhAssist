@@ -8,11 +8,13 @@ unit uFMedFindPdv;
 interface
 
 uses
-  Classes, SysUtils, DateUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ExtCtrls, Buttons, fpjson, Math,
-  uDmCommon, uFMedFind, uFWizard, uWizardUser, uMed, uWinManager, uHelper, uConst, uSys, uQuery;
+  Classes, SysUtils, DateUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs,
+  ExtCtrls, Buttons, Menus, fpjson, Math, uDmCommon, uFMedFind, uFWizard,
+  uWizardUser, uMed, uWinManager, uHelper, uConst, uSys, uSysVcl, uQuery;
 
 const
   cDirData = 'Data\12345';
+  cWizardMain = 'FWizard';
 
 type
   { TFMedFindPdv }
@@ -22,6 +24,7 @@ type
     DataSourceOrg: TDataSource;
     DataSourcePrev: TDataSource;
     DataSourceFJ: TDataSource;
+    PopupMenuWizards: TPopupMenu;
     SQLQueryCur: TSQLQuery;
     SQLQueryCurCARDSENDSTT_NAME: TStringField;
     SQLQueryCurCARDSTATUS_NAME: TStringField;
@@ -63,12 +66,15 @@ type
     SQLQueryPrevPERDATE: TDateField;
     SQLQueryPrevSHORTNAME: TStringField;
     SQLTransaction: TSQLTransaction;
-    procedure BitBtnUnlockClick(Sender: TObject);
+    procedure BitBtnUnlockClick(aSender: TBitBtn);
     procedure FormCreate(Sender: TObject);
     procedure SQLQueryCurCalcFields(DataSet: TDataSet);
   private
     procedure QueryFjOpen(aQuery: TSQLQuery; aJObj: TJSONObject);
     procedure QueryOrgOpen(aQuery: TSQLQuery; aJObj: TJSONObject);
+    procedure InitPopupWizard();
+    procedure OnPopupMenuWizardsClick(aSender: TObject);
+    procedure RunWizard(aIdx: integer);
   protected
     function  GetParentQueryCur(): TSQLQuery; override;
     function  GetParentQueryPrev(): TSQLQuery; override;
@@ -179,11 +185,12 @@ begin
   aQuery.Close();
 end;
 
-procedure TFMedFindPdv.BitBtnUnlockClick(Sender: TObject);
+procedure TFMedFindPdv.RunWizard(aIdx: integer);
 var
   Str: string;
   Form: TFWizard;
-  JObj: TJSONObject;
+  JObjMed, JObjWiz: TJSONObject;
+  JArr: TJSONArray;
   SL: TStringList;
 begin
   if (not SQLQueryCur.Active) then
@@ -192,30 +199,72 @@ begin
     Exit();
   end;
 
-  JObj := TJSONObject.Create();
-  QueryFjOpen(SQLQueryFJ, JObj);
-  QueryOrgOpen(SQLQueryOrg, JObj);
+  JObjMed := TJSONObject.Create();
+  QueryFjOpen(SQLQueryFJ, JObjMed);
+  QueryOrgOpen(SQLQueryOrg, JObjMed);
 
   Str := FormatDateTime('dd.mm.yyyy', Date());
-  JObj.Add('_DATE', Str);
-  JObj.Add('_DATE_WD', Str.Replace('.',''));
-  JObj.Add('_YEAR', YearOf(Date()));
-  JObj.Add('_MONTH', MonthOf(Date()));
-  JObj.Add('_MONTH_U', GetMonthNameUa(MonthOf(Date())));
-  JObj.Add('_DAY', DayOf(Date()));
-  JObj.Add('_APP_NAME', cAppName);
+  JObjMed.Add('_DATE', Str);
+  JObjMed.Add('_DATE_WD', Str.Replace('.',''));
+  JObjMed.Add('_YEAR', YearOf(Date()));
+  JObjMed.Add('_MONTH', MonthOf(Date()));
+  JObjMed.Add('_MONTH_U', GetMonthNameUa(MonthOf(Date())));
+  JObjMed.Add('_DAY', DayOf(Date()));
+  JObjMed.Add('_APP_NAME', cAppName);
 
-  SL := JObj.GetList();
+  SL := JObjMed.GetList();
   Str := SL.GetJoin(LineEnding);
-  JObj.Add('_VARS', Str);
+  JObjMed.Add('_VARS', Str);
   SL.Free();
 
-  Str := ConcatPaths(['Data', JObj.Get('HTIN', ''), JObj.Get('EDR_POK', '')]);
+  JArr := TJSONArray(ResourceLoadJson(cWizardMain));
+
+  Str := ConcatPaths(['Data', JObjMed.Get('HTIN', ''), JObjMed.Get('EDR_POK', '')]);
   Form := TFWizard(WinManager.Add(TFWizard));
   Form.SetHelper(TWizardUser.Create(Form));
-  Form.Load('FWizardPdvs', Str, JObj);
+  Form.Load(Str, JArr.Objects[aIdx], JObjMed);
 
-  JObj.Free();
+  JArr.Free();
+  JObjMed.Free();
+end;
+
+procedure TFMedFindPdv.InitPopupWizard();
+var
+  i: integer;
+  JObj: TJSONObject;
+  JArr: TJSONArray;
+  Item: TMenuItem;
+begin
+  JArr := TJSONArray(ResourceLoadJson(cWizardMain));
+  try
+    for i := 0 to JArr.Count - 1 do
+    begin
+      JObj := JArr.Objects[i];
+      if (not JObj.Get('_enable', True)) then
+        continue;
+
+      Item := TMenuItem.Create(PopupMenuWizards);
+      Item.Tag := i;
+      Item.Caption := JObj.Get('caption', '');
+      Item.OnClick := @OnPopupMenuWizardsClick;
+      PopupMenuWizards.Items.Add(Item);
+    end;
+  finally
+    JArr.Free();
+  end;
+end;
+
+procedure TFMedFindPdv.BitBtnUnlockClick(aSender: TBitBtn);
+var
+  P: TPoint;
+begin
+  P := aSender.ClientToScreen(Point(0, aSender.Height));
+  PopupMenuWizards.PopUp(P.X, P.Y);
+end;
+
+procedure TFMedFindPdv.OnPopupMenuWizardsClick(aSender: TObject);
+begin
+  RunWizard(TMenuItem(aSender).Tag);
 end;
 
 procedure TFMedFindPdv.FormCreate(Sender: TObject);
@@ -239,6 +288,7 @@ begin
   //DataSourceFJ.DataSet := SQLQueryFJ;
 
   LoadJsonData();
+  InitPopupWizard();
   BitBtnUnlock.Enabled := 'res\json\FMedFindPdv.json'.FileExists();
 end;
 

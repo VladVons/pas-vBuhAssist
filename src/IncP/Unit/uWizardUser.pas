@@ -15,15 +15,17 @@ type
   TWizardUser = class(TPersistent)
   published
     procedure OnClick_FWizardPdv5_Save(Sender: TObject);
-    procedure OnShow_FWizardPdv40_1(Sender: TObject);
-    function AsGrid(aJObj: TJSONObject; const aParam: TStringList): TStringList;
-    procedure StringListToPDF(aLines: TStringList; const aFileName: string);
+    procedure OnShow_w30s10(Sender: TObject);
+    procedure OnShow_w40s20(Sender: TObject);
   private
     fParent: TFWizard;
     procedure PageControlChange(Sender: TObject);
     procedure D1(aJObjMed, aJObjWiz: TJSONObject);
     procedure D2(aJObjMed, aJObjWiz: TJSONObject);
     procedure SaveXml(const aName: string; aJObjMed, aJObjWiz: TJSONObject; aIdx: integer);
+    function AsGrid(aJObj: TJSONObject; const aParam: TStringList): TStringList;
+    procedure StringListToPDF(aLines: TStringList; const aFileName: string);
+    procedure ParseMemo(const aName: string);
   public
     constructor Create(aParent: TFWizard);
   end;
@@ -160,32 +162,35 @@ var
 begin
   JObj := aJObj.Objects[aParam[2]];
   DBL := TDbList.Create(JObj);
-  Result := DBL.Print(aParam[3].Split(','), aParam[4].Split(','));
+  if (DBL.Count = 0) then
+    Result := TStringList.Create().AddArray(['---'])
+  else
+    Result := DBL.Print(aParam[3].Split(','), aParam[4].Split(','));
   DBL.Free();
 end;
 
-procedure TWizardUser.OnShow_FWizardPdv40_1(Sender: TObject);
-const
-  cMemoName = 'memo2';
+procedure TWizardUser.ParseMemo(const aName: string);
 var
   i: integer;
   Find: string;
-  JObj, JObjWiz: TJSONObject;
+  JObj, JObjWiz, JObjRepl: TJSONObject;
   Memo: TMemo;
   Macros: TMacros;
   SL, SLScheme, SLPrint: TStringList;
 begin
-  Memo := TMemo(fParent.FindCtrl(cMemoName));
+  Memo := TMemo(fParent.FindCtrl(aName));
   if (Memo = nil) then
   begin
-    Log.Print('e', Format('Компонент `%s` не знайдено', ['memo1_s']));
+    Log.Print('e', Format('Компонент `%s` не знайдено', [aName]));
     Exit();
   end;
 
   JObjWiz := fParent.GetDataInt();
 
-  JObj := fParent.FindSchemeItem(cMemoName);
+  JObj := fParent.FindSchemeItem(aName);
   SLScheme := TStringList.Create().AddArray(JObj.Arrays['lines']);
+
+  JObjRepl := TJSONObject.Create();
 
   Macros := TMacros.Create('{%', '%}');
   Macros.Load(SLScheme.Text);
@@ -197,13 +202,26 @@ begin
       if (SL[1] = 'grid') then
       begin
         SLPrint := AsGrid(JObjWiz, SL);
-        Memo.Text := Macros.Parse([Find], [SLPrint.Text]);
+        JObjRepl.SetKey(Find, SLPrint.Text);
         SLPrint.Free();
       end;
     SL.Free();
   end;
+  Memo.Text := Macros.Parse(JObjRepl);
+
+  JObjRepl.Free();
   SLScheme.Free();
   Macros.Free();
+end;
+
+procedure TWizardUser.OnShow_w30s10(Sender: TObject);
+begin
+  ParseMemo('memo1');
+end;
+
+procedure TWizardUser.OnShow_w40s20(Sender: TObject);
+begin
+  ParseMemo('memo2');
 end;
 
 end.

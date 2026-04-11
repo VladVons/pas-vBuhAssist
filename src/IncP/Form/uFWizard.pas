@@ -51,7 +51,7 @@ type
     function  GetVal(const aFile: string): TJSONObject;
     function  FindCtrl(const aName: string): TComponent;
     function  FindSchemeItem(const aName: string): TJSONObject;
-    procedure Load(const aName, aDir: string; aJObj: TJSONObject);
+    procedure Load(const aDir: string; aJObjWiz, aJObjMed: TJSONObject);
     procedure LoadFormData(const aFile: string);
     procedure LoadFormScheme(const aName: string);
     procedure SetHelper(aHelper: TPersistent);
@@ -326,6 +326,7 @@ var
   JObjTab, JObjConf, JObjConfDef, JObjEvent: TJSONObject;
   Form: TFBaseScroll;
   Macros: TMacros;
+  TabSheet: TTabSheet;
 begin
   PanelNav.Enabled := true;
 
@@ -399,6 +400,14 @@ begin
 
   fWinManager.Visible(true);
   fWinManager.SetActivePage(0);
+
+  // Force OnShow event for one page only
+  if (fWinManager.GetPageCount() = 1) then
+  begin
+    TabSheet := fWinManager.GetPage(0);
+    TabSheet.Hide();
+    TabSheet.Show();
+  end;
 end;
 
 procedure TFWizard.LoadForm(aForm: TForm; aJObj: TJSONObject);
@@ -553,26 +562,25 @@ begin
   end;
 end;
 
-procedure TFWizard.Load(const aName, aDir: string; aJObj: TJSONObject);
+procedure TFWizard.Load(const aDir: string; aJObjWiz, aJObjMed: TJSONObject);
 var
   i: integer;
   ResName: string;
-  JObj, JObjRes, JObjLoad: TJSONObject;
+  JObj, JObjRes: TJSONObject;
   JArr: TJSONArray;
 begin
   Working(True);
-  SetData(aJObj);
+  SetData(aJObjMed);
 
   if (not DirectoryExists(aDir)) then
     ForceDirectories(aDir);
   fDirData := aDir;
 
-  JObjLoad := ResourceLoadJson(aName);
-  JArr := TJSONArray(JObjLoad.Find('items'));
+  JArr := TJSONArray(aJObjWiz.Find('items'));
   for i := 0 to JArr.Count - 1 do
   begin
     ResName := JArr[i].AsString;
-    JObjRes := ResourceLoadJson(ResName);
+    JObjRes := TJSONObject(ResourceLoadJson(ResName));
 
     JObj := TJSONObject.Create();
     JObj.Add('text', JObjRes.Get('caption', ''));
@@ -586,7 +594,6 @@ begin
   ComboBoxWizards.Visible := True;
   ComboBoxWizardsChange();
 
-  JObjLoad.Free();
   Working(False);
 end;
 

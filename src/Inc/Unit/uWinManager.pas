@@ -26,6 +26,8 @@ type
     procedure Adds(aForms: array of TFormClass);
     function GetActiveForm(): TForm;
     function GetForms(): TFormArray;
+    function GetPageCount(): integer;
+    function GetPage(aIdx: integer): TTabSheet;
     function FindTabIndex(aFormClass: TFormClass): integer;
     procedure SendMsg(aForm: TForm; const aData: TJSONObject);
     function CloseActive(): integer;
@@ -138,6 +140,16 @@ begin
     Form := TForm(fPageControl.Pages[i].Tag);
     Result[i] := Form;
   end;
+end;
+
+function TWinManager.GetPageCount(): integer;
+begin
+  Result := fPageControl.PageCount;
+end;
+
+function TWinManager.GetPage(aIdx: integer): TTabSheet;
+begin
+  Result := fPageControl.Pages[aIdx];
 end;
 
 function TWinManager.FindTabIndex(aFormClass: TFormClass): integer;

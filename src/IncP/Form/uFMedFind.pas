@@ -42,7 +42,7 @@ var
   SL: TStringList;
   Arr: TJSONArray;
 begin
-  fJData := ResourceLoadJson(Name);
+  fJData := TJSONObject(ResourceLoadJson(Name));
 
   Arr := (fJData.FindPath('Controls') as TJSONObject).Arrays['ComboBoxMonth'];
   SL := TStringList.Create().AddArray(Arr);

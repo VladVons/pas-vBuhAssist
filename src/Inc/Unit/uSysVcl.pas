@@ -14,7 +14,7 @@ uses
 procedure ResourceLoadReport(const aName: string; aReport: TfrReport);
 function ResourceLoadString(const aName: string; aEncoding: TEncoding = Nil): string;
 function ResourceLoadString(const aName, aExt: string; aEncoding: TEncoding = Nil): string;
-function ResourceLoadJson(const aName: string): TJSONObject;
+function ResourceLoadJson(const aName: string): TJSONData;
 function LatinToUkr(const aStr: string): string;
 function RemoveChars(const aStr, aRemove: string): string;
 procedure Working(aState: boolean);
@@ -69,7 +69,7 @@ begin
     Result := ResourceLoadString(aExt + '_' + aName, aEncoding);
 end;
 
-function ResourceLoadJson(const aName: string): TJSONObject;
+function ResourceLoadJson(const aName: string): TJSONData;
 const
   cExt = 'json';
 var
@@ -77,10 +77,10 @@ var
 begin
   Path := GetResPath(aName, cExt);
   if (Path.FileExists()) then
-    Result := TJSONObject(FileLoadJson(Path))
+    Result := FileLoadJson(Path)
   else begin
     Str := ResourceLoadString(cExt + '_' + aName);
-    Result := TJSONObject(GetJSON(Str.DelBOM()));
+    Result := GetJSON(Str.DelBOM());
   end;
 end;
 
