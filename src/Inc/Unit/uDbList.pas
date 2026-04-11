@@ -279,7 +279,7 @@ begin
   else
     SL := TStringList.Create().AddArray(aFields);
 
-  IsCaption := (Length(aCaptions) = 0);
+  IsCaption := (Length(aCaptions) > 0);
   Result := TStringList.Create();
   for DbRec in self do
   begin

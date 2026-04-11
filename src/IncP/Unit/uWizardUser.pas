@@ -14,14 +14,15 @@ uses
 type
   TWizardUser = class(TPersistent)
   published
-    procedure OnClick_FWizardPdv5_Save(Sender: TObject);
-    procedure OnShow_w30s10(Sender: TObject);
-    procedure OnShow_w40s20(Sender: TObject);
+    procedure OnClick_g01w50s20_save(Sender: TObject);
+    procedure OnShow_memo1(Sender: TObject);
+    procedure OnShow_memo1_S(Sender: TObject);
+    procedure OnShow_memo2(Sender: TObject);
   private
     fParent: TFWizard;
     procedure PageControlChange(Sender: TObject);
     procedure D1(aJObjMed, aJObjWiz: TJSONObject);
-    procedure D2(aJObjMed, aJObjWiz: TJSONObject);
+    function D2(aJObjMed, aJObjWiz: TJSONObject): integer;
     procedure SaveXml(const aName: string; aJObjMed, aJObjWiz: TJSONObject; aIdx: integer);
     function AsGrid(aJObj: TJSONObject; const aParam: TStringList): TStringList;
     procedure StringListToPDF(aLines: TStringList; const aFileName: string);
@@ -47,7 +48,6 @@ procedure TWizardUser.SaveXml(const aName: string; aJObjMed, aJObjWiz: TJSONObje
 var
   StrXds, Path, FileName, No, FJ: string;
   Macros: TMacros;
-  SL: TStringList;
 begin
   FJ := IIF(Length(aJObjMed.Get('TIN', '')) = 8, 'J', 'F');
   No := Format('100000000%d', [aIdx]);
@@ -72,8 +72,7 @@ begin
     StrXds := Macros.Parse(aJObjMed).DelEmptyLines();
     StrXds := UTF8ToCP1251(StrXds);
     if (Macros.Items.Count > 0) then
-      Log.Print('i', Format('Не заповнено макроси %d: %s', [Macros.Items.Count, SL.CommaText]));
-    SL.Free();
+      Log.Print('i', Format('Не заповнено макроси %d: %s', [Macros.Items.Count, Macros.Items.CommaText]));
   finally
     Macros.Free();
   end;
@@ -83,14 +82,20 @@ begin
   Log.Print('i', Path);
 end;
 
-procedure TWizardUser.D2(aJObjMed, aJObjWiz: TJSONObject);
+function TWizardUser.D2(aJObjMed, aJObjWiz: TJSONObject): integer;
+const
+  cDoc = '1360102';
 var
   i: integer;
   Str, Key: string;
   JObj: TJSONObject;
   DBL: TDbList;
   Rec: TDbRec;
+  SLFiles: TStringList;
 begin
+  SLFiles := TStringList.Create();
+  SLFiles.CaseSensitive := False;
+
   for i := 0 to aJObjWiz.Count - 1 do
   begin
     Key := aJObjWiz.Names[i];
@@ -109,24 +114,39 @@ begin
         aJObjMed.SetKey('R01G1S_2', Str + '.pdf');
 
         Str := DbL.Rec['doc_name'].AsString;
-        Str := StrFromFile(Str);
-        aJObjMed.SetKey('R01G1B', EncodeStringBase64(Str));
+        if (Str.IsEmpty()) then
+          Log.Print('e', Format('Не визначено `doc_name` для `%s`', [cDoc]))
+        else if (Str.FileExists()) then
+        begin
+          if (SLFiles.IndexOf(Str) <> -1) then
+            Log.Print('e', Format('Файл вже існує `%s`', [Str]))
+          else
+            SLFiles.Add(Str);
+          aJObjMed.SetKey('HNUM_2', SLFiles.Count);
 
-        SaveXml('1360102', aJObjMed, JObj, i);
+          Str := StrFromFile(Str);
+          aJObjMed.SetKey('R01G1B', EncodeStringBase64(Str));
+        end else
+          Log.Print('e', Format('Не знайдено файл `%s`', [Str]));
+
+        SaveXml(cDoc, aJObjMed, JObj, i);
       end;
       DBL.Free();
     end;
   end;
+
+  Result := SLFiles.Count;
 end;
 
 procedure TWizardUser.D1(aJObjMed, aJObjWiz: TJSONObject);
 const
-  cMemo4 = 'w4s1.memo1_s';
+  cDoc = '1312603';
+  cMemo = 'g01w40s10.memo1_S';
 var
   JArr: TJSONArray;
   SL: TStringList;
 begin
-  JArr := TJSONArray(aJObjWiz.Find(cMemo4));
+  JArr := TJSONArray(aJObjWiz.Find(cMemo));
   if (JArr <> nil) then
   begin
     SL := TStringList.Create();
@@ -134,19 +154,22 @@ begin
     SL.Free();
   end;
 
-  SaveXml('1312603', aJObjMed, aJObjWiz, 1);
+  SaveXml(cDoc, aJObjMed, aJObjWiz, 1);
   //StringListToPDF(TStringList(Memo.Lines), 'aFileName.pdf');
 end;
 
-procedure TWizardUser.OnClick_FWizardPdv5_Save(Sender: TObject);
+procedure TWizardUser.OnClick_g01w50s20_save(Sender: TObject);
 var
+  Cnt: integer;
   JObjMed, JObjWiz: TJSONObject;
 begin
   JObjMed := TJSONObject(fParent.GetDataExt().Clone());
   JObjWiz := fParent.GetDataInt();
 
+  Cnt := D2(JObjMed, JObjWiz);
+
+  JObjMed.SetKey('R001G10', Cnt);
   D1(JObjMed, JObjWiz);
-  D2(JObjMed, JObjWiz);
 
   JObjMed.Free();
 end;
@@ -160,7 +183,10 @@ var
   DBL: TDbList;
   JObj: TJSONObject;
 begin
-  JObj := aJObj.Objects[aParam[2]];
+  JObj := TJSONObject(aJObj.Find(aParam[2]));
+  if (JObj = nil) then
+    Exit(TStringList.Create().AddArray(['---']));
+
   DBL := TDbList.Create(JObj);
   if (DBL.Count = 0) then
     Result := TStringList.Create().AddArray(['---'])
@@ -214,12 +240,17 @@ begin
   Macros.Free();
 end;
 
-procedure TWizardUser.OnShow_w30s10(Sender: TObject);
+procedure TWizardUser.OnShow_memo1(Sender: TObject);
 begin
   ParseMemo('memo1');
 end;
 
-procedure TWizardUser.OnShow_w40s20(Sender: TObject);
+procedure TWizardUser.OnShow_memo1_S(Sender: TObject);
+begin
+  ParseMemo('memo1_S');
+end;
+
+procedure TWizardUser.OnShow_memo2(Sender: TObject);
 begin
   ParseMemo('memo2');
 end;

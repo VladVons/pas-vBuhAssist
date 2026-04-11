@@ -10,6 +10,7 @@ interface
 const
   //cAppName               = 'Бджілка - Помічник бухгалтера';
   cAppName: string       = 'Бджілка - Помічник бухгалтера';
+  cCheckDevFile: string  = 'res\json\FMedFindPdv.json';
   cDirAddons             = 'addons';
   cHttpApi               = 'https://windows.cloud-server.com.ua/api';
   cMail                  = 'vBuhAssist@gmail.com';

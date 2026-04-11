@@ -289,7 +289,7 @@ begin
 
   LoadJsonData();
   InitPopupWizard();
-  BitBtnUnlock.Enabled := 'res\json\FMedFindPdv.json'.FileExists();
+  BitBtnUnlock.Enabled := cCheckDevFile.FileExists();
 end;
 
 

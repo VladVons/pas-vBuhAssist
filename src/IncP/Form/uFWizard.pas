@@ -11,7 +11,11 @@ uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
   ExtCtrls, ValEdit, Buttons, fpjson, TypInfo, Variants, jsonparser,
   uFrStringGrid,
-  uSys, uSysVcl, uVarUtil, uMacros, uHelper, uHelperVcl, uFBase, uFBaseScroll, uWinManager, uExGrid;
+  uSys, uSysVcl, uMacros, uHelper, uHelperVcl, uFBase, uFBaseScroll, uWinManager, uExGrid;
+
+const
+  cMarkSaveLoad = '_s';
+  cMarkSave = '_S';
 
 type
   { TFWizard }
@@ -424,6 +428,9 @@ begin
   begin
     Ctrl := Form.Controls[i];
     CtrlName := Format('%s.%s', [aForm.Name, Ctrl.Name]);
+    if (not CtrlName.EndsWith(cMarkSaveLoad)) then
+      continue;
+
     CtrlClass := Ctrl.ClassName();
     JObj := TJSONObject(aJObj.Find(CtrlName));
     if (JObj = nil) then
@@ -500,7 +507,7 @@ begin
   begin
     Ctrl := Form.Controls[i];
     CtrlName := Format('%s.%s', [aForm.Name, Ctrl.Name]);
-    if (not CtrlName.EndsWith('_s')) then
+    if (not CtrlName.EndsWith(cMarkSaveLoad)) and (not CtrlName.EndsWith(cMarkSave)) then
       continue;
 
     JItem := TJSONObject.Create();

@@ -40,7 +40,7 @@ inherited FWizard: TFWizard
       Left = 0
       Height = 28
       Top = 0
-      Width = 305
+      Width = 409
       Align = alLeft
       ItemHeight = 20
       ReadOnly = True
@@ -50,7 +50,7 @@ inherited FWizard: TFWizard
       OnChange = ComboBoxWizardsChange
     end
     object BitBtnNext: TBitBtn
-      Left = 432
+      Left = 520
       Height = 32
       Top = -4
       Width = 94
@@ -59,7 +59,7 @@ inherited FWizard: TFWizard
       OnClick = BitBtnNextClick
     end
     object BitBtnPrev: TBitBtn
-      Left = 328
+      Left = 416
       Height = 32
       Top = -4
       Width = 94
@@ -68,7 +68,7 @@ inherited FWizard: TFWizard
       OnClick = BitBtnPrevClick
     end
     object BitBtnClose: TBitBtn
-      Left = 536
+      Left = 624
       Height = 32
       Top = -4
       Width = 168

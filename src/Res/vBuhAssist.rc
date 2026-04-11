@@ -15,7 +15,6 @@ json_g01w20 RCDATA "res/json/g01w20.json"
 json_g01w30 RCDATA "res/json/g01w30.json"
 json_g01w40 RCDATA "res/json/g01w40.json"
 json_g01w50 RCDATA "res/json/g01w50.json"
-json_g01w60 RCDATA "res/json/g01w60.json"
 
 xml_1312603 RCDATA "res/xml/1312603.xml"
 xml_1360102 RCDATA "res/xml/1360102.xml"
