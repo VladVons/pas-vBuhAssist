@@ -22,8 +22,10 @@ type
     function DelBOM(): string;
     function DelEmptyLines(): string;
     function EscapeRegExp(): string;
+    function EndsWithAny(const aArr: TStringArray): boolean;
     function JoinNonEmpty(const aArr : TStringArray): string;
     function Left(aLen: integer; aDoCut: boolean = False): string;
+    function Middle(const aStart, aCount: integer): string;
     function PosEx(const aStr: string; aOfst: integer = 1): integer;
     function Right(aLen: Integer; aDoCut: boolean = False): string;
     function Replaces(const aOld, aNew: TStringArray): string;
@@ -99,6 +101,15 @@ begin
   else
     Result := System.Copy(self, 1, aLen);
 end;
+
+function TStringHelperEx.Middle(const aStart, aCount: integer): string;
+begin
+  if (aCount = 0) or (aStart > System.Length(self)) then
+    Result := ''
+  else
+    Result := System.Copy(self, aStart, aCount);
+end;
+
 
 function TStringHelperEx.PosEx(const aStr: string; aOfst: integer = 1): integer;
 begin
@@ -374,6 +385,16 @@ begin
     Result := '"' + self + '"'
   else
     Result := self;
+end;
+
+Function TStringHelperEx.EndsWithAny(const aArr: TStringArray): boolean;
+var
+  i: integer;
+begin
+  for i := 0 to System.Length(aArr) do
+    if (EndsWith(aArr[i])) then
+      Exit(True);
+  Result := False;
 end;
 
 function TStringHelperEx.EscapeRegExp(): string;

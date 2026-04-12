@@ -81,6 +81,7 @@ begin
   fClassMap.AddObject('TButton', TObject(TButton));
   fClassMap.AddObject('TValueListEditor', TObject(TValueListEditor));
   fClassMap.AddObject('TFrStringGrid', TObject(TFrStringGrid));
+  fClassMap.AddObject('TImage', TObject(TImage));
   fClassMap.EndUpdate();
 end;
 
@@ -314,7 +315,12 @@ begin
     if (CtrlClass = 'TStringGrid') then
       TStringGridEx(Ctrl).LoadHeadFromJson(JObjCtrl)
     else if (CtrlClass = 'TFrStringGrid') then
-      TFrStringGrid(Ctrl).LoadHeadFromJson(JObjCtrl, self);
+      TFrStringGrid(Ctrl).LoadHeadFromJson(JObjCtrl, self)
+    else if (CtrlClass = 'TImage') then
+    begin
+      Str := JObjCtrl.Get('_file', '');
+      TImage(Ctrl).Picture.LoadFromFile(Str);
+    end;
 
     BottomPad := JObjCtrl.Get('_bottompad', ConfBottomPad);
     if (Ctrl.Visible) and (BottomPad > 0) then
@@ -507,7 +513,7 @@ begin
   begin
     Ctrl := Form.Controls[i];
     CtrlName := Format('%s.%s', [aForm.Name, Ctrl.Name]);
-    if (not CtrlName.EndsWith(cMarkSaveLoad)) and (not CtrlName.EndsWith(cMarkSave)) then
+    if (not CtrlName.EndsWithAny([cMarkSaveLoad, cMarkSave])) then
       continue;
 
     JItem := TJSONObject.Create();

@@ -30,7 +30,6 @@ inherited FTest: TFTest
       Width = 156
       Caption = 'Wizard All'
       TabOrder = 0
-      OnClick = BitBtnWizardAllClick
     end
     object BitBtnTestXml1: TBitBtn
       Left = 176
@@ -39,7 +38,6 @@ inherited FTest: TFTest
       Width = 94
       Caption = 'TestXml 1'
       TabOrder = 1
-      OnClick = BitBtnTestXml1Click
     end
     object BitBtnWizard0: TBitBtn
       Left = 720
@@ -51,38 +49,18 @@ inherited FTest: TFTest
       OnClick = BitBtnWizard0Click
     end
   end
-  object Memo1: TMemo[2]
-    Left = 0
-    Height = 332
-    Top = 96
-    Width = 272
-    Align = alLeft
-    Lines.Strings = (
-      'CHANGE_HSTI=ГОЛОВНЕ УПРАВЛІННЯ ДПС У КИЇВСЬКІЙ ОБЛАСТІ,  БУЧАНСЬКА ДЕРЖАВНА ПОДАТКОВА ІНСПЕКЦІЯ'
-    )
-    ScrollBars = ssAutoBoth
-    TabOrder = 2
-    WordWrap = False
-  end
-  object Memo2: TMemo[3]
-    Left = 272
-    Height = 332
-    Top = 96
-    Width = 549
-    Align = alClient
-    Lines.Strings = (
-      'Memo2'
-    )
-    ScrollBars = ssAutoBoth
-    TabOrder = 3
-  end
-  object BitBtnTestXml2: TBitBtn[4]
+  object BitBtnTestXml2: TBitBtn[2]
     Left = 280
     Height = 38
     Top = 48
     Width = 94
     Caption = 'TestXml 2'
-    TabOrder = 4
-    OnClick = BitBtnTestXml2Click
+    TabOrder = 2
+  end
+  object Image1: TImage[3]
+    Left = 24
+    Height = 113
+    Top = 112
+    Width = 113
   end
 end
