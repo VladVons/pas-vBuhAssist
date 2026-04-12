@@ -8,7 +8,7 @@ unit uFMedFindPdv;
 interface
 
 uses
-  Classes, SysUtils, DateUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs,
+  Classes, SysUtils, DateUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ComCtrls,
   ExtCtrls, Buttons, Menus, fpjson, Math, uDmCommon, uFMedFind, uFWizard,
   uWizardUser, uMed, uWinManager, uHelper, uConst, uSys, uSysVcl, uQuery;
 
@@ -189,9 +189,10 @@ procedure TFMedFindPdv.RunWizard(aIdx: integer);
 var
   Str: string;
   Form: TFWizard;
-  JObjMed, JObjWiz: TJSONObject;
+  JObj, JObjMed: TJSONObject;
   JArr: TJSONArray;
   SL: TStringList;
+  TabSheet: TTabSheet;
 begin
   if (not SQLQueryCur.Active) then
   begin
@@ -218,11 +219,15 @@ begin
   SL.Free();
 
   JArr := TJSONArray(ResourceLoadJson(cWizardMain));
+  JObj := JArr.Objects[aIdx];
 
   Str := ConcatPaths(['Data', JObjMed.Get('HTIN', ''), JObjMed.Get('EDR_POK', '')]);
   Form := TFWizard(WinManager.Add(TFWizard));
   Form.SetHelper(TWizardUser.Create(Form));
-  Form.Load(Str, JArr.Objects[aIdx], JObjMed);
+  Form.Load(Str, JObj, JObjMed);
+
+  TabSheet := WinManager.GetPage(-1);
+  TabSheet.Caption := JObj.Get('caption', '');
 
   JArr.Free();
   JObjMed.Free();

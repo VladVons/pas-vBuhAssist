@@ -2,25 +2,25 @@ inherited FWizard: TFWizard
   Left = 382
   Height = 336
   Top = 32
-  Width = 801
+  Width = 854
   Caption = 'FWizard'
   ClientHeight = 336
-  ClientWidth = 801
+  ClientWidth = 854
   Visible = True
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   inherited PanelTitle: TPanel
-    Width = 801
-    ClientWidth = 801
+    Width = 854
+    ClientWidth = 854
     inherited LabelTitle: TLabel
-      Width = 801
+      Width = 854
     end
   end
   object PageControl: TPageControl[1]
     Left = 0
     Height = 248
     Top = 88
-    Width = 801
+    Width = 854
     Align = alClient
     ParentFont = False
     TabOrder = 1
@@ -29,18 +29,18 @@ inherited FWizard: TFWizard
     Left = 0
     Height = 40
     Top = 48
-    Width = 801
+    Width = 854
     Align = alTop
     BevelOuter = bvNone
     ClientHeight = 40
-    ClientWidth = 801
+    ClientWidth = 854
     Enabled = False
     TabOrder = 2
     object ComboBoxWizards: TComboBox
       Left = 0
       Height = 28
       Top = 0
-      Width = 409
+      Width = 472
       Align = alLeft
       ItemHeight = 20
       ReadOnly = True
@@ -50,27 +50,27 @@ inherited FWizard: TFWizard
       OnChange = ComboBoxWizardsChange
     end
     object BitBtnNext: TBitBtn
-      Left = 520
+      Left = 582
       Height = 32
-      Top = -4
+      Top = 0
       Width = 94
       Caption = 'Наступна'
       TabOrder = 3
       OnClick = BitBtnNextClick
     end
     object BitBtnPrev: TBitBtn
-      Left = 416
+      Left = 478
       Height = 32
-      Top = -4
+      Top = 0
       Width = 94
       Caption = 'Попередня'
       TabOrder = 1
       OnClick = BitBtnPrevClick
     end
     object BitBtnClose: TBitBtn
-      Left = 624
+      Left = 686
       Height = 32
-      Top = -4
+      Top = 0
       Width = 168
       Caption = 'Зберегти і закрити'
       TabOrder = 2

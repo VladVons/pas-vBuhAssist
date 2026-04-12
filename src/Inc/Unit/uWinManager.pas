@@ -149,7 +149,10 @@ end;
 
 function TWinManager.GetPage(aIdx: integer): TTabSheet;
 begin
-  Result := fPageControl.Pages[aIdx];
+  if (aIdx = -1) then
+    Result := fPageControl.ActivePage
+  else
+    Result := fPageControl.Pages[aIdx];
 end;
 
 function TWinManager.FindTabIndex(aFormClass: TFormClass): integer;
