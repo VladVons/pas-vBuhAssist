@@ -387,11 +387,11 @@ begin
     Result := self;
 end;
 
-Function TStringHelperEx.EndsWithAny(const aArr: TStringArray): boolean;
+function TStringHelperEx.EndsWithAny(const aArr: TStringArray): boolean;
 var
   i: integer;
 begin
-  for i := 0 to System.Length(aArr) do
+  for i := 0 to System.Length(aArr) - 1 do
     if (EndsWith(aArr[i])) then
       Exit(True);
   Result := False;

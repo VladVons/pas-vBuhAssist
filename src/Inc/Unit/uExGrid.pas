@@ -24,14 +24,15 @@ type
 
    function GetCol(const aField: string): Integer;
    function GetCell(const aField: string; aRow: Integer): string;
-   function GetType(aCol: integer): string;
+   function GetColInfo(aCol: integer; const aProp: string): string;
    procedure SetCell(const aField: string; aRow: Integer; const aValue: string);
    procedure DoComboBoxEditingDone(aSender: TObject);
-   procedure DoSelectEditor(Sender: TObject; aCol,  aRow: Integer; var aEditor: TWinControl);
-   procedure DoDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; State: TGridDrawState);
-   procedure DoMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-   procedure DoHeaderSized(Sender: TObject;  IsColumn: Boolean; Index: Integer);
-   procedure ImportInternal(aJObj: TJSONObject; aStart: integer);
+   procedure DoSelectEditor(aSender: TObject; aCol,  aRow: Integer; var aEditor: TWinControl);
+   procedure DoDrawCell(aSender: TObject; aCol, aRow: Integer; aRect: TRect; State: TGridDrawState);
+   procedure DoMouseDown(aSender: TObject; aButton: TMouseButton; aShift: TShiftState; aX, aY: Integer);
+   procedure DoHeaderSized(aSender: TObject;  aIsColumn: Boolean; aIndex: Integer);
+   procedure DoSelectCell(aSender: TObject; aCol, aRow: Integer; var aCanSelect: Boolean);
+procedure ImportInternal(aJObj: TJSONObject; aStart: integer);
  public
    OnOpenFileDialog: TOnOpenFileDialog;
    constructor Create(aOwner: TComponent); override;
@@ -42,9 +43,13 @@ type
    procedure Import(aJObj: TJSONObject);
    procedure ImportAdd(aJObj: TJSONObject);
    function GetMaxRows(): integer;
+   function GetColType(aCol: integer): string;
+   function GetColName(aCol: integer): string;
    procedure LoadHeadFromJson(aJObj: TJSONObject);
    procedure DelRow(aIdx: Integer);
    procedure RowFill();
+   function TableCheck(): TPoint;
+   function RowCheck(aRow: integer): integer;
    function FindCol(const aType, aName: string): Integer;
    function IsRowEmpty(aRow: Integer): Boolean;
    property CellsN[const aField: string; aRow: Integer]: string read GetCell write SetCell;
@@ -79,6 +84,7 @@ begin
   OnDrawCell := @DoDrawCell;
   OnMouseDown := @DoMouseDown;
   OnHeaderSized := @DoHeaderSized;
+  //OnSelectCell := @DoSelectCell;
 
   fComboBox := TComboBox.Create(self);
   fComboBox.ReadOnly := True;
@@ -94,6 +100,27 @@ begin
   FreeAndNil(fComboBox);
   FreeAndNil(fOpenDialog);
   inherited;
+end;
+
+function TStringGridEx.GetColInfo(aCol: integer; const aProp: string): string;
+var
+  JObj: TJSONObject;
+begin
+  JObj := TJSONObject(Objects[aCol, 0]);
+  if (JObj = nil) then
+    Result := ''
+  else
+    Result := JObj.Get(aProp, '');
+end;
+
+function TStringGridEx.GetColName(aCol: integer): string;
+begin
+  Result := GetColInfo(aCol, 'name');
+end;
+
+function TStringGridEx.GetColType(aCol: integer): string;
+begin
+  Result := GetColInfo(aCol, 'type');
 end;
 
 function TStringGridEx.GetMaxRows(): integer;
@@ -144,6 +171,42 @@ begin
         Cells[i, Row] := Str;
     end;
   end;
+end;
+
+function TStringGridEx.TableCheck(): TPoint;
+var
+  i, ColErr: Integer;
+begin
+  for i := 1 to RowCount - 1 do
+  begin
+    ColErr := RowCheck(i);
+    if (ColErr <> -1) then
+    begin
+      Result.X := ColErr;
+      Result.Y := i;
+      Exit();
+    end;
+  end;
+
+  Result.X := -1;
+  Result.Y := -1;
+end;
+
+
+function TStringGridEx.RowCheck(aRow: integer): integer;
+var
+  i: Integer;
+  JObj: TJSONObject;
+begin
+  for i := 0 to ColCount - 1 do
+  begin
+    JObj := TJSONObject(Objects[i, 0]);
+    if (JObj <> Nil) and (JObj.Get('required', false)) then
+      if (Cells[i, aRow].IsEmpty()) then
+        Exit(i);
+  end;
+
+  Result := -1;
 end;
 
 function TStringGridEx.FindCol(const aType, aName: string): Integer;
@@ -302,36 +365,38 @@ begin
   RowCount := RowCount - 1;
 end;
 
-function TStringGridEx.GetType(aCol: integer): string;
-var
-  JObj: TJSONObject;
-begin
-  JObj := TJSONObject(Objects[aCol, 0]);
-  if (JObj = nil) then
-    Result := ''
-  else
-    Result := JObj.Get('type', '');
-end;
-
 procedure TStringGridEx.DoComboBoxEditingDone(aSender: TObject);
 begin
   Cells[Col, Row] := TComboBox(aSender).Text;
 end;
 
-procedure TStringGridEx.DoHeaderSized(Sender: TObject;  IsColumn: Boolean; Index: Integer);
+procedure TStringGridEx.DoHeaderSized(aSender: TObject;  aIsColumn: Boolean; aIndex: Integer);
 begin
-  if (IsColumn and (GetType(Index) = 'list')) then
-    fComboBox.BoundsRect := CellRect(Index, Row);
+  if (aIsColumn and (GetColType(aIndex) = 'list')) then
+    fComboBox.BoundsRect := CellRect(aIndex, Row);
 end;
 
-procedure TStringGridEx.DoSelectEditor(Sender: TObject; aCol,  aRow: Integer; var aEditor: TWinControl);
+procedure TStringGridEx.DoSelectCell(aSender: TObject; aCol, aRow: Integer; var aCanSelect: Boolean);
+var
+  ErrCol: Integer;
+begin
+  ErrCol := RowCheck(Row);
+  if (ErrCol <> -1) then
+  begin
+    //CanSelect := False;
+    Col := ErrCol;
+    SetFocus();
+  end;
+end;
+
+procedure TStringGridEx.DoSelectEditor(aSender: TObject; aCol,  aRow: Integer; var aEditor: TWinControl);
 var
   Typ: string;
   i: integer;
   JArr: TJSONArray;
   JObj: TJSONObject;
 begin
-  Typ := GetType(aCol);
+  Typ := GetColTYpe(aCol);
   if (Typ.IsEmpty()) then
     Exit();
 
@@ -350,28 +415,28 @@ begin
   end;
 end;
 
-procedure TStringGridEx.DoDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; State: TGridDrawState);
+procedure TStringGridEx.DoDrawCell(aSender: TObject; aCol, aRow: Integer; aRect: TRect; State: TGridDrawState);
 begin
   if (aRow = 0) then
     Exit();
 
-  if (GetType(aCol) = 'file') then
+  if (GetColType(aCol) = 'file') then
     Canvas.TextOut(aRect.Right - 25, aRect.Top + 4, '***');
 end;
 
-procedure TStringGridEx.DoMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TStringGridEx.DoMouseDown(aSender: TObject; aButton: TMouseButton; aShift: TShiftState; aX, aY: Integer);
 var
   ACol, ARow: Longint;
   CRect: TRect;
 begin
-  MouseToCell(X, Y, ACol, ARow);
+  MouseToCell(aX, aY, aCol, aRow);
   if (ARow = 0) then
     Exit();
 
-  if (GetType(ACol) = 'file') then
+  if (GetColType(ACol) = 'file') then
   begin
     CRect := CellRect(ACol, ARow);
-    if (X >= CRect.Right - 25) then  // клік саме на кнопці
+    if (aX >= CRect.Right - 25) then  // клік саме на кнопці
       if (fOpenDialog.Execute()) then
         if (Assigned(OnOpenFileDialog)) then
           Cells[ACol, ARow] := OnOpenFileDialog(fOpenDialog.FileName);

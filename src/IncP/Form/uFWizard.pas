@@ -41,7 +41,7 @@ type
     procedure AddControls(aForm: TScrollingWinControl; aCtrls: TJSONArray; aJConf: TJSONObject);
     procedure ComboBoxWizardsChange();
     procedure GetVal(const aFile: string; aJObj: TJSONObject);
-    procedure GetFormData(aJObj: TJSONObject; aForm: TForm);
+    function GetFormData(aJObj: TJSONObject; aForm: TForm): boolean;
     procedure GetFormsData(aJObj: TJSONObject);
     procedure LoadForm(aForm: TForm; aJObj: TJSONObject);
     procedure SaveData();
@@ -498,7 +498,7 @@ begin
   JObj.Free();
 end;
 
-procedure TFWizard.GetFormData(aJObj: TJSONObject; aForm: TForm);
+function TFWizard.GetFormData(aJObj: TJSONObject; aForm: TForm): boolean;
 var
   i: integer;
   CtrlName, CtrlClass, Prop: string;
@@ -520,6 +520,10 @@ begin
     CtrlClass := Ctrl.ClassName();
     if (CtrlClass = 'TFrStringGrid') then
     begin
+      Result := TFrStringGrid(Ctrl).TableCheck();
+      if (not Result) then
+        Exit();
+
       JObj := TFrStringGrid(Ctrl).Export();
       JItem.Add('val', JObj);
     end else if (CtrlClass = 'TValueListEditor') then
@@ -541,6 +545,8 @@ begin
 
     aJObj.Elements[CtrlName] := JItem;
   end;
+
+  Result := True;
 end;
 
 procedure TFWizard.GetFormsData(aJObj: TJSONObject);
