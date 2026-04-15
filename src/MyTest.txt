@@ -1,0 +1,10 @@
+Pink 
+  Floyd {{town|upper}}
+
+Hello {{age}}
+{% if age > 18 and gender = 1 %}
+Adult
+{% else %}
+Child
+{% endif %}
+Bye

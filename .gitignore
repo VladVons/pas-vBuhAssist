@@ -12,6 +12,7 @@
 *.pdf
 
 _lib*/
+src/lib/
 backup/
 junk/
 Data/
