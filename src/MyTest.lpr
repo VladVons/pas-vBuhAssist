@@ -25,22 +25,24 @@ var
   AST: TList;
   Ctx: TContext;
   OutS, Tpl: string;
+  Eng: TMiniJinja;
 begin
-  Ctx := TContext.Create;
-
+  Ctx := TContext.Create();
   Ctx.Load(
-    '{"age":20, "gender":1, "town": "london"}'
+    '{"age": 20, "gender": 1, "location": {"town": "london"}}'
   );
 
   Tpl := StrFromFile('MyTest.txt');
 
-  AST := TMiniJinja.Parse(Tpl);
-  OutS := TMiniJinja.Render(AST, Ctx);
-
+  Eng := TMiniJinja.Create();
+  Eng.Parse(Tpl);
+  OutS := Eng.Render(Ctx);
   WriteLn(OutS);
 
-  AST.Free();
+  Eng.Free();
   Ctx.Free();
+
+  Terminate();
 end;
 
 constructor TMyTest.Create(TheOwner: TComponent);

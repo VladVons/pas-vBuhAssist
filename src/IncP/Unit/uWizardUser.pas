@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, Controls, StdCtrls, fpjson, LConvEncoding, base64, fppdf,
-  uFWizard, uVarUtil, uMacros, uSysVcl, uHelper, uLog, uSys, uDbList;
+  uFWizard, uVarUtil, uMacros, uTpl, uSysVcl, uHelper, uLog, uSys, uDbList;
 
 type
   TWizardUser = class(TPersistent)

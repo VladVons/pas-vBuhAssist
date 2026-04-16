@@ -1,5 +1,5 @@
 Pink 
-  Floyd {{town|upper}}
+  Floyd {{location.town|upper}}
 
 Hello {{age}}
 {% if age > 18 and gender = 1 %}

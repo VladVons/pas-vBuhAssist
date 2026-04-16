@@ -1,4 +1,7 @@
-﻿unit uTpl;
+﻿// Created: 2026.04.15
+// Author: Vladimir Vons <VladVons@gmail.com>
+
+unit uTpl;
 
 {$mode objfpc}{$H+}
 
@@ -8,348 +11,511 @@ uses
   Classes, SysUtils, fpjson, jsonparser;
 
 type
+  TNodeKind = (nkText, nkIf, nkVar);
 
-  TMiniJinja = class
-  private
-    //class function PosEx(const SubStr, S: string; Offset: Integer): Integer; static;
-    //class function TrimTag(const aStr: string): string; static;
-    //
-    //class function EvalExpr(E: PExpr; Ctx: TContext): Variant; static;
-    //class function ParseExpr(const S: string): PExpr; static;
-    //class procedure FreeExpr(E: PExpr); static;
-    //
-    //class function EvalCond(const Cond: string; Ctx: TContext): Boolean; static;
-    //
-    class function ParseBlock(const S: string; var i: Integer; Stop1, Stop2: string; out StopFound: string): TList; static;
-    class function RenderList(L: TList; Ctx: TContext): string; static;
+  TNode = class
   public
-    class function Parse(const aStr: string): TList; static;
-    class function Render(AST: TList; Ctx: TContext): string; static;
+    Kind: TNodeKind;
+    Text: string;
+    Cond: string;
+    VarName: string;
+    TruePart: TList;
+    FalsePart: TList;
+
+    constructor Create(aKind: TNodeKind);
+    destructor Destroy(); override;
   end;
 
+// ================= JSON CONTEXT =================
+  TContext = class
+  private
+    fRoot: TJSONData;
+  public
+    constructor Create();
+    destructor Destroy(); override;
+
+    function GetVar(const aPath: string): TJSONData;
+    procedure Load(const aJStr: string);
+    procedure Load(const aData: TJSONData);
+  end;
+
+// ================= MINI ENGINE =================
+  TMiniJinja = class
+  private
+    fAST: TList;
+    function RenderRecurs(aList: TList; aCtx: TContext): string;
+    procedure FreeNodeList(aList: TList);
+
+    class function PosEx(const SubStr, S: string; Offset: Integer): Integer; static;
+    class function TrimTag(const aStr: string): string; static;
+    class function EvalCond(const Cond: string; Ctx: TContext): Boolean; static;
+    class function ParseRecurs(const aStr: string; var aI: Integer; aStop1, aStop2: string; out aStopFound: string): TList; static;
+    class function Filters(const aValue: string; aParts: TStringArray): string;
+  public
+    destructor Destroy(); override;
+    procedure Parse(const aStr: string);
+    function Render(aCtx: TContext): string;
+  end;
 
 implementation
-                                             qwe
-// ================= NODE =================  3
+
+// ================= NODE =================
 constructor TNode.Create(aKind: TNodeKind);
 begin
   Kind := aKind;
-  TruePart := TList.Create;
-  FalsePart := TList.Create;
+  TruePart := TList.Create();
+  FalsePart := TList.Create();
 end;
 
-destructor TNode.Destroy;
-var i: Integer;
+destructor TNode.Destroy();
+var
+  i: Integer;
 begin
-  for i := 0 to TruePart.Count - 1 do TObject(TruePart[i]).Free;
-  for i := 0 to FalsePart.Count - 1 do TObject(FalsePart[i]).Free;
-  TruePart.Free;
-  FalsePart.Free;
+  for i := 0 to TruePart.Count - 1 do
+    TObject(TruePart[i]).Free();
+
+  for i := 0 to FalsePart.Count - 1 do
+    TObject(FalsePart[i]).Free();
+
+  TruePart.Free();
+  FalsePart.Free();
   inherited;
 end;
 
 // ================= CONTEXT =================
 constructor TContext.Create;
 begin
-  FRoot := TJSONObject.Create;
+  fRoot := TJSONObject.Create();
 end;
 
-destructor TContext.Destroy;
+destructor TContext.Destroy();
 begin
-  FreeObject(FRoot);
+  FreeAndNil(fRoot);
   inherited;
 end;
 
 procedure TContext.Load(const aData: TJSONData);
 begin
-  FreeObject(FRoot);
-  FRoot := aData;
+  FreeAndNil(fRoot);
+  fRoot := aData;
 end;
 
-procedure TContext.LoadJSON(const aJSON: string);
+procedure TContext.Load(const aJStr: string);
 begin
-  Load(GetJSON(aJSON));
-end;
-
-function TContext.GetByPath(const aPath: string): TJSONData;
-var parts: TStringArray; i: Integer; cur: TJSONData;
-begin                                   231212312
-  Result := nil;
-  if FRoot = nil then Exit;                      23
-                                                   2
-  parts := aPath.Split(['.']);                      51
-  cur := FRoot;                                       25
-                                                        12
-  for i := 0 to High(parts) do
-  begin
-    if (cur = nil) or (cur.JSONType <> jtObject) then Exit;
-    cur := TJSONObject(cur).Find(parts[i]);
-  end;
-
-  Result := cur;
+  Load(GetJSON(aJStr));
 end;
 
 function TContext.GetVar(const aPath: string): TJSONData;
-begin
-  Result := GetByPath(aPath);
-end;
-
-// =====================================================
-// =============== EXPRESSION AST ENGINE ===============
-// =====================================================
-
-class function TMiniJinja.ParseExpr(const S: string): PExpr;
 var
-  tokens: TStringList;
   i: Integer;
-
-  function NewNode(k: TExprKind; const v: string = ''): PExpr;
-  begin
-    New(Result);
-    Result^.Kind := k;
-    Result^.Value := v;
-    Result^.Left := nil;
-    Result^.Right := nil;
-  end;
-
-  function Peek: string;
-  begin
-    if i <= tokens.Count-1 then Result := tokens[i] else Result := '';
-  end;
-
-  function Next: string;
-  begin
-    Result := Peek;
-    Inc(i);
-  end;
-
-  function ParseAtom: PExpr; forward;
-  function ParseNot: PExpr; forward;
-  function ParseCmp: PExpr; forward;
-  function ParseAnd: PExpr; forward;
-  function ParseOr: PExpr; forward;
-
-  function ParseAtom: PExpr;
-  var v: string;
-  begin
-    v := Next;
-
-    if v = '(' then
-    begin
-      Result := ParseOr;
-      if Peek = ')' then Next;
-      Exit;
-    end;
-
-    if TryStrToFloat(v, Result) then Exit(NewNode(exNumber, v));
-    if (v = 'true') or (v = 'false') then Exit(NewNode(exBool, v));
-
-    Result := NewNode(exVar, v);
-  end;
-
-  function ParseNot: PExpr;
-  begin
-    if Peek = 'not' then
-    begin
-      Next;
-      Result := NewNode(exNot);
-      Result^.Left := ParseNot;
-      Exit;
-    end;
-    Result := ParseAtom;
-  end;
-
-  function ParseCmp: PExpr;
-  var n: PExpr; op: string;
-  begin
-    n := ParseNot;
-
-    op := Peek;
-    if (op = '=') or (op = '!=') or (op = '>') or (op = '<') or (op = '>=') or (op = '<=') then
-    begin
-      Next;
-      Result := NewNode(
-        TExprKind(Ord(exEq) + Ord(op='!=') + Ord(op='>')*2 + Ord(op='<')*3 + Ord(op='>=')*4 + Ord(op='<=')*5)
-      );
-      Result^.Left := n;
-      Result^.Right := ParseNot;
-      Exit;
-    end;
-
-    Result := n;
-  end;
-
-  function ParseAnd: PExpr;
-  var n: PExpr;
-  begin
-    n := ParseCmp;
-    while Peek = 'and' do
-    begin
-      Next;
-      with NewNode(exAnd) do
-      begin
-        Left := n;
-        Right := ParseCmp;
-        n := Result;
-      end;
-    end;
-    Result := n;
-  end;
-
-  function ParseOr: PExpr;
-  var n: PExpr;
-  begin
-    n := ParseAnd;
-    while Peek = 'or' do
-    begin
-      Next;
-      with NewNode(exOr) do
-      begin
-        Left := n;
-        Right := ParseAnd;
-        n := Result;
-      end;
-    end;
-    Result := n;
-  end;
-
-  procedure Tokenize;
-  var s, buf: string; c: Char; j: Integer;
-  begin
-    tokens := TStringList.Create;
-    s := LowerCase(S);
-    buf := '';
-
-    for j := 1 to Length(s) do
-    begin
-      c := s[j];
-
-      if c in ['(', ')'] then
-      begin
-        if buf <> '' then begin tokens.Add(buf); buf := ''; end;
-        tokens.Add(c);
-      end
-      else if c = ' ' then
-      begin
-        if buf <> '' then begin tokens.Add(buf); buf := ''; end;
-      end
-      else buf := buf + c;
-    end;
-
-    if buf <> '' then tokens.Add(buf);
-  end;
-
+  Parts: TStringArray;
 begin
-  Tokenize;
-  i := 0;
-  Result := ParseOr;
-  tokens.Free;
+  Result := fRoot;
+
+  Parts := aPath.Split(['.']);
+  for i := 0 to High(parts) do
+  begin
+    if (Result = nil) or (Result.JSONType <> jtObject) then
+      Exit();
+
+    Result := TJSONObject(Result).Find(Parts[i]);
+  end;
 end;
 
-// ================= EVAL AST =================
-class function TMiniJinja.EvalExpr(E: PExpr; Ctx: TContext): Variant;
+// ================= ENGINE =================
+destructor TMiniJinja.Destroy();
+begin
+  FreeNodeList(fAST);
+  inherited;
+end;
+
+procedure TMiniJinja.FreeNodeList(aList: TList);
 var
-  L, R: Variant;
-  v: TJSONData;
-
+  i: Integer;
 begin
-  if E = nil then Exit(False);
+  if (aList = nil) then
+    Exit();
 
-  case E^.Kind of
+  for i := 0 to aList.Count - 1 do
+    TObject(aList[i]).Free();
 
-    exNumber: Exit(StrToFloatDef(E^.Value, 0));
-
-    exBool: Exit(E^.Value = 'true');
-
-    exVar:
-      begin
-        v := Ctx.GetVar(E^.Value);
-        if v = nil then Exit(Null);
-        Exit(v.AsString);
-      end;
-
-    exNot:
-      Exit(not Boolean(EvalExpr(E^.Left, Ctx)));
-
-    exAnd:
-      Exit(Boolean(EvalExpr(E^.Left, Ctx)) and Boolean(EvalExpr(E^.Right, Ctx)));
-
-    exOr:
-      Exit(Boolean(EvalExpr(E^.Left, Ctx)) or Boolean(EvalExpr(E^.Right, Ctx)));
-
-    exEq: Exit(EvalExpr(E^.Left, Ctx) = EvalExpr(E^.Right, Ctx));
-    exNe: Exit(EvalExpr(E^.Left, Ctx) <> EvalExpr(E^.Right, Ctx));
-    exGt: Exit(EvalExpr(E^.Left, Ctx) > EvalExpr(E^.Right, Ctx));
-    exLt: Exit(EvalExpr(E^.Left, Ctx) < EvalExpr(E^.Right, Ctx));
-    exGe: Exit(EvalExpr(E^.Left, Ctx) >= EvalExpr(E^.Right, Ctx));
-    exLe: Exit(EvalExpr(E^.Left, Ctx) <= EvalExpr(E^.Right, Ctx));
-
-  end;
-
-  Result := False;
+  aList.Free();
 end;
 
-class function TMiniJinja.EvalCond(const Cond: string; Ctx: TContext): Boolean;
-var e: PExpr;
+function TMiniJinja.Render(aCtx: TContext): string;
 begin
-  e := ParseExpr(Cond);
-  Result := Boolean(EvalExpr(e, Ctx));
-  FreeExpr(e);
+  Result := RenderRecurs(fAST, aCtx);
 end;
 
-class procedure TMiniJinja.FreeExpr(E: PExpr);
-begin
-  if E = nil then Exit;
-  FreeExpr(E^.Left);
-  FreeExpr(E^.Right);
-  Dispose(E);
-end;
-
-// ================= TEMPLATE ENGINE (без змін логіки) =================
 class function TMiniJinja.PosEx(const SubStr, S: string; Offset: Integer): Integer;
 begin
   Result := Pos(SubStr, Copy(S, Offset, MaxInt));
-  if Result > 0 then Result := Result + Offset - 1;
+  if (Result > 0) then
+    Result := Result + Offset - 1;
 end;
 
 class function TMiniJinja.TrimTag(const aStr: string): string;
-var L: Integer;
+var
+  Len: Integer;
 begin
-  L := Length(aStr);
-  if (L >= 4) and (aStr[1] = '{') then
+  Len := Length(aStr);
+
+  if (Len >= 4) and (aStr[1] = '{') and (aStr[Len] = '}') then
   begin
-    if (aStr[2] = '%') then
-      Exit(Trim(Copy(aStr, 3, L-4)));
+    if (aStr[2] = '%') and (aStr[Len - 1] = '%') then
+      Exit(Trim(Copy(aStr, 3, Len - 4)));
+
+    if (aStr[2] = '{') and (aStr[Len - 1] = '}') then
+      Exit(Trim(Copy(aStr, 3, Len - 4)));
   end;
+
   Result := Trim(aStr);
 end;
 
-// ===== PARSER / RENDER (залишив як у тебе концепт) =====
-// (не дублюю щоб не роздувати — логіка та сама)
+// ================= CONDITION (JSON AWARE SIMPLE) =================
+class function TMiniJinja.EvalCond(const Cond: string; Ctx: TContext): Boolean;
 
-class function TMiniJinja.Parse(const aStr: string): TList;
-var i: Integer; dummy: string;
+var
+  tokens: array of string;
+  i: Integer;
+
+  function Peek(): string;
+  begin
+    if (i <= High(tokens)) then
+      Result := tokens[i]
+    else
+      Result := '';
+  end;
+
+  function Next(): string;
+  begin
+    Result := Peek();
+    Inc(i);
+  end;
+
+  function ToBool(const v: string): Boolean;
+  begin
+    Result := StrToIntDef(v, 0) <> 0;
+  end;
+
+  function ToNum(const v: string): Double;
+  begin
+    Result := StrToFloatDef(v, 0);
+  end;
+
+  function EvalOr(): Boolean; forward;
+  function EvalAnd(): Boolean; forward;
+  function EvalAtom(): Boolean; forward;
+
+  function EvalAtom(): Boolean;
+  var
+    a, b, op: string;
+    va, vb: TJSONData;
+    na, nb: Double;
+  begin
+    a := Next();
+
+    if (a = 'not' )then
+      Exit(not EvalAtom());
+
+    if (a = '(') then
+    begin
+      Result := EvalOr;
+      if Peek = ')' then
+        Next();
+      Exit();
+    end;
+
+    va := Ctx.GetVar(a);
+
+    if (Peek = '') or (Peek = 'and') or (Peek = 'or') or (Peek = ')') then
+    begin
+      if (va = nil) then
+        Exit(False);
+      Exit(ToBool(va.AsString));
+    end;
+
+    op := Next();
+    b := Next();
+
+    if (va = nil) then
+      Exit(False);
+
+    // Literal
+    vb := Ctx.GetVar(b);
+    if (vb = nil) then
+    begin
+      if (TryStrToFloat(b, nb)) then
+      begin
+        na := va.AsFloat;
+        case op of
+          '>':  Exit(na > nb);
+          '<':  Exit(na < nb);
+          '=':  Exit(na = nb);
+          '>=': Exit(na >= nb);
+          '<=': Exit(na <= nb);
+          '<>': Exit(na <> nb);
+        end;
+      end else
+        Exit(False);
+    end;
+
+    // JSON
+    if (va.JSONType = jtNumber) and (vb.JSONType = jtNumber) then
+    begin
+      na := va.AsFloat;
+      nb := vb.AsFloat;
+
+      case op of
+        '>':  Result := (na > nb);
+        '<':  Result := (na < nb);
+        '=':  Result := (na = nb);
+        '>=': Result := (na >= nb);
+        '<=': Result := (na <= nb);
+        '<>': Result := (na <> nb);
+      else
+        Result := False;
+      end;
+      Exit();
+    end;
+
+    // String
+    case op of
+      '=':  Result := (va.AsString = vb.AsString);
+      '<>': Result := (va.AsString <> vb.AsString);
+    else
+      Result := False;
+    end;
+  end;
+
+  function EvalAnd(): Boolean;
+  begin
+    Result := EvalAtom();
+    while (Peek = 'and') do
+    begin
+      Next();
+      Result := (Result and EvalAtom());
+    end;
+  end;
+
+  function EvalOr(): Boolean;
+  begin
+    Result := EvalAnd();
+    while (Peek = 'or') do
+    begin
+      Next();
+      Result := (Result or EvalAnd());
+    end;
+  end;
+
+  procedure Tokenize();
+  var
+    s, buf: string;
+    j: Integer;
+    c: Char;
+  begin
+    s := LowerCase(Trim(Cond));
+    SetLength(tokens, 0);
+    buf := '';
+
+    j := 1;
+    while (j <= Length(s)) do
+    begin
+      c := s[j];
+
+      if (c in ['(', ')']) then
+      begin
+        if buf <> '' then
+        begin
+          SetLength(tokens, Length(tokens)+1);
+          tokens[High(tokens)] := buf;
+          buf := '';
+        end;
+
+        SetLength(tokens, Length(tokens)+1);
+        tokens[High(tokens)] := c;
+
+        Inc(j);
+        Continue;
+      end;
+
+      if (c = ' ') then
+      begin
+        if (buf <> '') then
+        begin
+          SetLength(tokens, Length(tokens)+1);
+          tokens[High(tokens)] := buf;
+          buf := '';
+        end;
+
+        Inc(j);
+        Continue;
+      end;
+
+      buf := buf + c;
+      Inc(j);
+    end;
+
+    if (buf <> '') then
+    begin
+      SetLength(tokens, Length(tokens)+1);
+      tokens[High(tokens)] := buf;
+    end;
+  end;
+
 begin
-  i := 1;
-  Result := ParseBlock(aStr, i, '', 'endif', dummy);
+  Tokenize();
+  i := 0;
+  Result := EvalOr();
 end;
 
-class function TMiniJinja.Render(AST: TList; Ctx: TContext): string;
+// ================= PARSER =================
+class function TMiniJinja.ParseRecurs(const aStr: string; var aI: Integer; aStop1, aStop2: string; out aStopFound: string): TList;
+var
+  List: TList;
+  node, ifNode: TNode;
+  text, tag: string;
+  tagEnd: Integer;
+
 begin
-  Result := RenderList(AST, Ctx);
+  List := TList.Create();
+  aStopFound := '';
+
+  while (aI <= Length(aStr)) do
+  begin
+    if Copy(aStr, aI, 2) = '{{' then
+    begin
+      tagEnd := PosEx('}}', aStr, aI);
+
+      node := TNode.Create(nkVar);
+      node.VarName := Trim(Copy(aStr, aI + 2, tagEnd - aI - 2));
+
+      List.Add(node);
+      aI := tagEnd + 2;
+      Continue;
+    end;
+
+    if Copy(aStr, aI, 2) = '{%' then
+    begin
+      tagEnd := PosEx('%}', aStr, aI);
+      tag := TrimTag(Copy(aStr, aI, tagEnd - aI + 2));
+
+      if (tag = aStop1) or (tag = aStop2) then
+      begin
+        aStopFound := tag;
+        aI := tagEnd + 2;
+        Exit(List);
+      end;
+
+      if Pos('if', tag) = 1 then
+      begin
+        ifNode := TNode.Create(nkIf);
+        ifNode.Cond := Trim(Copy(tag, 3, MaxInt));
+
+        aI := tagEnd + 2;
+
+        ifNode.TruePart.Free();
+        ifNode.TruePart := ParseRecurs(aStr, aI, 'else', 'endif', aStopFound);
+
+        if (aStopFound = 'else') then
+        begin
+          ifNode.FalsePart.Free();
+          ifNode.FalsePart := ParseRecurs(aStr, aI, '', 'endif', aStopFound);
+        end;
+
+        List.Add(ifNode);
+        Continue;
+      end;
+
+      aI := tagEnd + 2;
+      Continue;
+    end;
+
+    // TEXT
+    tagEnd := PosEx('{', aSTr, aI);
+    if tagEnd = 0 then
+      tagEnd := Length(aStr) + 1;
+
+    text := Copy(aStr, aI, tagEnd - aI);
+    if text <> '' then
+    begin
+      node := TNode.Create(nkText);
+      node.Text := text;
+      List.Add(node);
+    end;
+
+    aI := tagEnd;
+  end;
+
+  Result := List;
 end;
 
-class function TMiniJinja.ParseBlock(const S: string; var i: Integer; Stop1, Stop2: string; out StopFound: string): TList;
+procedure TMiniJinja.Parse(const aStr: string);
+var
+  iDummy: Integer;
+  sDummy: string;
 begin
-  Result := TList.Create;
-  // (твоя логіка без змін)
-  StopFound := '';
+  FreeAndNil(fAST);
+
+  iDummy := 1;
+  fAST := ParseRecurs(aStr, iDummy, '', 'endif', sDummy);
 end;
 
-class function TMiniJinja.RenderList(L: TList; Ctx: TContext): string;
+// ================= RENDER =================
+class function TMiniJinja.Filters(const aValue: string; aParts: TStringArray): string;
+var
+  i: Integer;
+begin
+  Result := aValue;
+
+  // parts[0] = ім'я змінної
+  for i := 1 to High(aParts) do
+  begin
+    case Trim(LowerCase(aParts[i])) of
+      'upper':
+        Result := UpperCase(Result);
+
+      'trim':
+        Result := Trim(Result);
+    end;
+  end;
+end;
+
+function TMiniJinja.RenderRecurs(aList: TList; aCtx: TContext): string;
+var
+  i: Integer;
+  VarName: string;
+  Parts: TStringArray;
+  Node: TNode;
+  JData: TJSONData;
 begin
   Result := '';
-  // (твоя логіка без змін)
+
+  for i := 0 to aList.Count - 1 do
+  begin
+    Node := TNode(aList[i]);
+    case Node.Kind of
+      nkText:
+        Result := Result + Node.Text;
+
+      nkVar:
+      begin
+        Parts := Node.VarName.Split(['|']);
+        VarName := Trim(parts[0]);
+        JData := aCtx.GetVar(VarName);
+        if (JData = nil) then
+          Result := Result + '{{' + Node.VarName + '}}'
+        else
+          Result := Result + Filters(JData.AsString, Parts);
+      end;
+
+      nkIf:
+        if EvalCond(Node.Cond, aCtx) then
+          Result := Result + RenderRecurs(Node.TruePart, aCtx)
+        else
+          Result := Result + RenderRecurs(Node.FalsePart, aCtx);
+    end;
+  end;
 end;
 
 end.
