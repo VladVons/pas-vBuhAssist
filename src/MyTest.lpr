@@ -22,24 +22,23 @@ type
 
 procedure TMyTest.DoRun();
 var
-  AST: TList;
   Ctx: TContext;
-  OutS, Tpl: string;
-  Eng: TMiniJinja;
+  OutS, Str: string;
+  Tpl: TTpl;
 begin
   Ctx := TContext.Create();
   Ctx.Load(
     '{"age": 20, "gender": 1, "location": {"town": "london"}}'
   );
 
-  Tpl := StrFromFile('MyTest.txt');
+  Str := StrFromFile('MyTest.txt');
 
-  Eng := TMiniJinja.Create();
-  Eng.Parse(Tpl);
-  OutS := Eng.Render(Ctx);
+  Tpl := TTpl.Create();
+  Tpl.Parse(Str);
+  OutS := Tpl.Render(Ctx);
   WriteLn(OutS);
 
-  Eng.Free();
+  Tpl.Free();
   Ctx.Free();
 
   Terminate();

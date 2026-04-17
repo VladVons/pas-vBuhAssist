@@ -12,19 +12,28 @@ uses
   uFWizard, uVarUtil, uMacros, uTpl, uSysVcl, uHelper, uLog, uSys, uDbList;
 
 type
+  TUserData = class
+    Ctx: TContext;
+    JWiz, JMed: TJSONObject;
+  end;
+
   TWizardUser = class(TPersistent)
   published
+    procedure OnClick_g00w10_save(Sender: TObject);
     procedure OnClick_g01w50s20_save(Sender: TObject);
     procedure OnShow_memo1(Sender: TObject);
     procedure OnShow_memo1_S(Sender: TObject);
     procedure OnShow_memo2(Sender: TObject);
+    procedure OnShow_memo_ext(Sender: TObject);
+    function OnSetVal(aData: TUserData; const aStr: string): string;
+    function OnVar(aData: TUserData; const aStr: string): string;
   private
     fParent: TFWizard;
     procedure PageControlChange(Sender: TObject);
     procedure D1(aJObjMed, aJObjWiz: TJSONObject);
     function D2(aJObjMed, aJObjWiz: TJSONObject): integer;
     procedure SaveXml(const aName: string; aJObjMed, aJObjWiz: TJSONObject; aIdx: integer);
-    function AsGrid(aJObj: TJSONObject; const aParam: TStringList): TStringList;
+    function AsGridPrint(aJObj: TJSONObject; const aParam: TStringList): TStringList;
     procedure StringListToPDF(aLines: TStringList; const aFileName: string);
     procedure ParseMemo(const aName: string);
   public
@@ -158,6 +167,81 @@ begin
   //StringListToPDF(TStringList(Memo.Lines), 'aFileName.pdf');
 end;
 
+function TWizardUser.OnVar(aData: TUserData; const aStr: string): string;
+var
+  SL, SLPrint: TStringList;
+begin
+  Result := aStr;
+  if (not aStr.IsQuoted()) then
+    Exit();
+
+  SL := TStringList.Create().Split(aStr, '|');
+  SLPrint := AsGridPrint(aData.JWiz, SL);
+  Result := SLPrint.Text;
+  aData.Ctx.SetVar(aStr, TJSONString.Create(Result));
+  SL.Free();
+end;
+
+function TWizardUser.OnSetVal(aData: TUserData; const aStr: string): string;
+var
+  CtrlName: string;
+  JObj: TJSONObject;
+  Parts: TStringArray;
+  DBL: TDbList;
+begin
+  Result := aStr;
+  if (not aStr.StartsWith('ctrl|grid')) then
+    Exit();
+
+  Parts := aStr.Split('|');
+  CtrlName := Parts[2];
+  JObj := TJSONObject(aData.JWiz.Find(CtrlName));
+  if (JObj = nil) then
+    Exit();
+
+  DBL := TDbList.Create(JObj);
+  Result := IntToStr(DBL.Count);
+  DBL.Free();
+end;
+
+procedure TWizardUser.OnClick_g00w10_save(Sender: TObject);
+var
+  Memo: TMemo;
+  Ctx: TContext;
+  UserData: TUserData;
+  Tpl: TTpl;
+  JObjMed, JObjWiz: TJSONObject;
+begin
+  Memo := TMemo(fParent.FindCtrl('memo_ext'));
+  if (Memo = nil) then
+    Exit();
+
+  JObjWiz := fParent.GetDataInt();
+
+  JObjMed := TJSONObject(fParent.GetDataExt().Clone());
+  //JObjMed.Add('band', 'pink floyd');
+
+  Ctx := TContext.Create();
+  Ctx.Load(JObjMed);
+
+  UserData := TUserData.Create();
+  UserData.JMed := JObjMed;
+  UserData.JWiz := JObjWiz;
+  UserData.Ctx := Ctx;
+
+  Tpl := TTpl.Create();
+  Tpl.OnSetVal := TTplFunc(@OnSetVal);
+  Tpl.OnVar := TTplFunc(@OnVar);
+  Tpl.UserData := UserData;
+  Tpl.Parse(Memo.Text);
+  Memo.Text := Tpl.Render(Ctx).Trim();
+
+  Ctx.Free();
+  JObjMed.Free();
+  JObjWiz.Free();
+  UserData.Free();
+end;
+
 procedure TWizardUser.OnClick_g01w50s20_save(Sender: TObject);
 var
   Cnt: integer;
@@ -178,7 +262,7 @@ procedure TWizardUser.StringListToPDF(aLines: TStringList; const aFileName: stri
 begin
 end;
 
-function TWizardUser.AsGrid(aJObj: TJSONObject; const aParam: TStringList): TStringList;
+function TWizardUser.AsGridPrint(aJObj: TJSONObject; const aParam: TStringList): TStringList;
 var
   DBL: TDbList;
   JObj: TJSONObject;
@@ -227,7 +311,7 @@ begin
     if (SL[0] = 'ctrl') and (SL.Count >= 3) then
       if (SL[1] = 'grid') then
       begin
-        SLPrint := AsGrid(JObjWiz, SL);
+        SLPrint := AsGridPrint(JObjWiz, SL);
         JObjRepl.SetKey(Find, SLPrint.Text);
         SLPrint.Free();
       end;
@@ -253,6 +337,11 @@ end;
 procedure TWizardUser.OnShow_memo2(Sender: TObject);
 begin
   ParseMemo('memo2');
+end;
+
+procedure TWizardUser.OnShow_memo_ext(Sender: TObject);
+begin
+  OnClick_g00w10_save(Sender);
 end;
 
 end.

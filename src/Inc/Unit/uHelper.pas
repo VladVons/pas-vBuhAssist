@@ -23,6 +23,7 @@ type
     function DelEmptyLines(): string;
     function EscapeRegExp(): string;
     function EndsWithAny(const aArr: TStringArray): boolean;
+    function IsQuoted(): Boolean;
     function JoinNonEmpty(const aArr : TStringArray): string;
     function Left(aLen: integer; aDoCut: boolean = False): string;
     function Middle(const aStart, aCount: integer): string;
@@ -411,6 +412,18 @@ begin
       Result := Result + self[i];
 end;
 
+function TStringHelperEx.IsQuoted(): Boolean;
+var
+  Len: integer;
+begin
+  Len := System.Length(self);
+  Result := (Len >= 2) and
+    (
+     ((self[1] = '''') and (self[Len] = '''')) or
+     ((self[1] = '"') and (self[Len] = '"'))
+    );
+end;
+
 
 // --- TStringListHelper
 function TStringListHelper.AddArray(const aArr: TStringArray): TStringList;
@@ -773,7 +786,7 @@ var
       end;
   end;
 
-  begin
+begin
   Result := aDef;
 
   JObjCur := self;

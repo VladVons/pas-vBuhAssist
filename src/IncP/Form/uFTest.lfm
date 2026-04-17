@@ -57,10 +57,4 @@ inherited FTest: TFTest
     Caption = 'TestXml 2'
     TabOrder = 2
   end
-  object Image1: TImage[3]
-    Left = 24
-    Height = 113
-    Top = 112
-    Width = 113
-  end
 end

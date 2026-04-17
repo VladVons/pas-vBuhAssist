@@ -1,8 +1,9 @@
-Pink 
+Pink
   Floyd {{location.town|upper}}
 
 Hello {{age}}
 {% if age > 18 and gender = 1 %}
+{{location.town}}
 Adult
 {% else %}
 Child

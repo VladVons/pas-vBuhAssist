@@ -8,19 +8,18 @@ unit uTpl;
 interface
 
 uses
-  Classes, SysUtils, fpjson, jsonparser;
+  Classes, SysUtils, fpjson, jsonparser,
+  uHelper;
 
 type
-  TNodeKind = (nkText, nkIf, nkVar);
+  TNodeKind = (nkText, nkIf, nkVar, nkSet);
+  TTplFunc = function(aObject: TObject; const aStr: string): string of object;
 
   TNode = class
   public
     Kind: TNodeKind;
-    Text: string;
-    Cond: string;
-    VarName: string;
-    TruePart: TList;
-    FalsePart: TList;
+    Text, Cond, VarName, Set_Val: string;
+    PartTrue, PartFalse: TList;
 
     constructor Create(aKind: TNodeKind);
     destructor Destroy(); override;
@@ -29,29 +28,34 @@ type
 // ================= JSON CONTEXT =================
   TContext = class
   private
-    fRoot: TJSONData;
+    fRoot: TJSONObject;
   public
     constructor Create();
     destructor Destroy(); override;
 
     function GetVar(const aPath: string): TJSONData;
+    procedure SetVar(const aName: string; aVal: TJSONData);
     procedure Load(const aJStr: string);
-    procedure Load(const aData: TJSONData);
+    procedure Load(aJObj: TJSONObject);
   end;
 
 // ================= MINI ENGINE =================
-  TMiniJinja = class
+  TTpl = class
   private
     fAST: TList;
     function RenderRecurs(aList: TList; aCtx: TContext): string;
     procedure FreeNodeList(aList: TList);
+    function ParseRecurs(const aStr: string; var aI: Integer; aStop1, aStop2: string; out aStopFound: string): TList;
 
-    class function PosEx(const SubStr, S: string; Offset: Integer): Integer; static;
+    class function PosEx(const aSubStr, aStr: string; aOffset: Integer): Integer; static;
     class function TrimTag(const aStr: string): string; static;
-    class function EvalCond(const Cond: string; Ctx: TContext): Boolean; static;
-    class function ParseRecurs(const aStr: string; var aI: Integer; aStop1, aStop2: string; out aStopFound: string): TList; static;
+    class function EvalCond(const aCond: string; aCtx: TContext): Boolean; static;
     class function Filters(const aValue: string; aParts: TStringArray): string;
+    class function ParseVal(const aStr: string): TJSONData; static;
   public
+    UserData: TObject;
+    OnSetVal, OnVar: TTplFunc;
+
     destructor Destroy(); override;
     procedure Parse(const aStr: string);
     function Render(aCtx: TContext): string;
@@ -63,27 +67,28 @@ implementation
 constructor TNode.Create(aKind: TNodeKind);
 begin
   Kind := aKind;
-  TruePart := TList.Create();
-  FalsePart := TList.Create();
+  PartTrue := TList.Create();
+  PartFalse := TList.Create();
 end;
 
 destructor TNode.Destroy();
 var
   i: Integer;
 begin
-  for i := 0 to TruePart.Count - 1 do
-    TObject(TruePart[i]).Free();
+  for i := 0 to PartTrue.Count - 1 do
+    TObject(PartTrue[i]).Free();
 
-  for i := 0 to FalsePart.Count - 1 do
-    TObject(FalsePart[i]).Free();
+  for i := 0 to PartFalse.Count - 1 do
+    TObject(PartFalse[i]).Free();
 
-  TruePart.Free();
-  FalsePart.Free();
+  PartTrue.Free();
+  PartFalse.Free();
+
   inherited;
 end;
 
 // ================= CONTEXT =================
-constructor TContext.Create;
+constructor TContext.Create();
 begin
   fRoot := TJSONObject.Create();
 end;
@@ -94,15 +99,18 @@ begin
   inherited;
 end;
 
-procedure TContext.Load(const aData: TJSONData);
+procedure TContext.Load(aJObj: TJSONObject);
 begin
   FreeAndNil(fRoot);
-  fRoot := aData;
+  fRoot := TJSONObject(aJObj.Clone());
 end;
 
 procedure TContext.Load(const aJStr: string);
+var
+  JObj: TJSONObject;
 begin
-  Load(GetJSON(aJStr));
+  JObj := TJSONObject(GetJSON(aJStr));
+  Load(JObj);
 end;
 
 function TContext.GetVar(const aPath: string): TJSONData;
@@ -110,8 +118,10 @@ var
   i: Integer;
   Parts: TStringArray;
 begin
-  Result := fRoot;
+  if (aPath.IsQuoted()) then
+    Exit(TJSONObject(fRoot).Find(aPath));
 
+  Result := fRoot;
   Parts := aPath.Split(['.']);
   for i := 0 to High(parts) do
   begin
@@ -122,14 +132,22 @@ begin
   end;
 end;
 
+procedure TContext.SetVar(const aName: string; aVal: TJSONData);
+begin
+  if (fRoot.JSONType <> jtObject) then
+    Exit();
+
+  fRoot.SetKey(aName, aVal);
+end;
+
 // ================= ENGINE =================
-destructor TMiniJinja.Destroy();
+destructor TTpl.Destroy();
 begin
   FreeNodeList(fAST);
   inherited;
 end;
 
-procedure TMiniJinja.FreeNodeList(aList: TList);
+procedure TTpl.FreeNodeList(aList: TList);
 var
   i: Integer;
 begin
@@ -142,47 +160,41 @@ begin
   aList.Free();
 end;
 
-function TMiniJinja.Render(aCtx: TContext): string;
+function TTpl.Render(aCtx: TContext): string;
 begin
   Result := RenderRecurs(fAST, aCtx);
 end;
 
-class function TMiniJinja.PosEx(const SubStr, S: string; Offset: Integer): Integer;
+class function TTpl.PosEx(const aSubStr, aStr: string; aOffset: Integer): Integer;
 begin
-  Result := Pos(SubStr, Copy(S, Offset, MaxInt));
+  Result := Pos(aSubStr, Copy(aStr, aOffset, MaxInt));
   if (Result > 0) then
-    Result := Result + Offset - 1;
+    Result := Result + aOffset - 1;
 end;
 
-class function TMiniJinja.TrimTag(const aStr: string): string;
+class function TTpl.TrimTag(const aStr: string): string;
 var
   Len: Integer;
 begin
   Len := Length(aStr);
-
   if (Len >= 4) and (aStr[1] = '{') and (aStr[Len] = '}') then
-  begin
-    if (aStr[2] = '%') and (aStr[Len - 1] = '%') then
+    if ((aStr[2] = '%') and (aStr[Len - 1] = '%')) or
+       ((aStr[2] = '{') and (aStr[Len - 1] = '}')) then
       Exit(Trim(Copy(aStr, 3, Len - 4)));
-
-    if (aStr[2] = '{') and (aStr[Len - 1] = '}') then
-      Exit(Trim(Copy(aStr, 3, Len - 4)));
-  end;
 
   Result := Trim(aStr);
 end;
 
 // ================= CONDITION (JSON AWARE SIMPLE) =================
-class function TMiniJinja.EvalCond(const Cond: string; Ctx: TContext): Boolean;
-
+class function TTpl.EvalCond(const aCond: string; aCtx: TContext): Boolean;
 var
-  tokens: array of string;
+  Tokens: array of string;
   i: Integer;
 
   function Peek(): string;
   begin
-    if (i <= High(tokens)) then
-      Result := tokens[i]
+    if (i <= High(Tokens)) then
+      Result := Tokens[i]
     else
       Result := '';
   end;
@@ -193,14 +205,14 @@ var
     Inc(i);
   end;
 
-  function ToBool(const v: string): Boolean;
+  function ToBool(const aStr: string): boolean;
   begin
-    Result := StrToIntDef(v, 0) <> 0;
+    Result := StrToIntDef(aStr, 0) <> 0;
   end;
 
-  function ToNum(const v: string): Double;
+  function ToNum(const aStr: string): Double;
   begin
-    Result := StrToFloatDef(v, 0);
+    Result := StrToFloatDef(aStr, 0);
   end;
 
   function EvalOr(): Boolean; forward;
@@ -209,16 +221,16 @@ var
 
   function EvalAtom(): Boolean;
   var
-    a, b, op: string;
-    va, vb: TJSONData;
-    na, nb: Double;
+    StrA, StrB, StrOp: string;
+    Ja, Jb: TJSONData;
+    Da, Db: Double;
   begin
-    a := Next();
+    StrA := Next();
 
-    if (a = 'not' )then
+    if (StrA = 'not' )then
       Exit(not EvalAtom());
 
-    if (a = '(') then
+    if (StrA = '(') then
     begin
       Result := EvalOr;
       if Peek = ')' then
@@ -226,53 +238,52 @@ var
       Exit();
     end;
 
-    va := Ctx.GetVar(a);
-
+    Ja := aCtx.GetVar(StrA);
     if (Peek = '') or (Peek = 'and') or (Peek = 'or') or (Peek = ')') then
     begin
-      if (va = nil) then
+      if (Ja = nil) then
         Exit(False);
-      Exit(ToBool(va.AsString));
+      Exit(ToBool(Ja.AsString));
     end;
 
-    op := Next();
-    b := Next();
+    StrOp := Next();
+    StrB := Next();
 
-    if (va = nil) then
+    if (Ja = nil) then
       Exit(False);
 
     // Literal
-    vb := Ctx.GetVar(b);
-    if (vb = nil) then
+    Jb := aCtx.GetVar(StrB);
+    if (Jb = nil) then
     begin
-      if (TryStrToFloat(b, nb)) then
+      if (TryStrToFloat(StrB, Db)) then
       begin
-        na := va.AsFloat;
-        case op of
-          '>':  Exit(na > nb);
-          '<':  Exit(na < nb);
-          '=':  Exit(na = nb);
-          '>=': Exit(na >= nb);
-          '<=': Exit(na <= nb);
-          '<>': Exit(na <> nb);
+        Da := Ja.AsFloat;
+        case StrOp of
+          '>':  Exit(Da > Db);
+          '<':  Exit(Da < Db);
+          '=':  Exit(Da = Db);
+          '>=': Exit(Da >= Db);
+          '<=': Exit(Da <= Db);
+          '<>': Exit(Da <> Db);
         end;
       end else
         Exit(False);
     end;
 
     // JSON
-    if (va.JSONType = jtNumber) and (vb.JSONType = jtNumber) then
+    if (Ja.JSONType = jtNumber) and (Jb.JSONType = jtNumber) then
     begin
-      na := va.AsFloat;
-      nb := vb.AsFloat;
+      Da := Ja.AsFloat;
+      Db := Jb.AsFloat;
 
-      case op of
-        '>':  Result := (na > nb);
-        '<':  Result := (na < nb);
-        '=':  Result := (na = nb);
-        '>=': Result := (na >= nb);
-        '<=': Result := (na <= nb);
-        '<>': Result := (na <> nb);
+      case StrOp of
+        '>':  Result := (Da > Db);
+        '<':  Result := (Da < Db);
+        '=':  Result := (Da = Db);
+        '>=': Result := (Da >= Db);
+        '<=': Result := (Da <= Db);
+        '<>': Result := (Da <> Db);
       else
         Result := False;
       end;
@@ -280,9 +291,9 @@ var
     end;
 
     // String
-    case op of
-      '=':  Result := (va.AsString = vb.AsString);
-      '<>': Result := (va.AsString <> vb.AsString);
+    case StrOp of
+      '=':  Result := (Ja.AsString = Jb.AsString);
+      '<>': Result := (Ja.AsString <> Jb.AsString);
     else
       Result := False;
     end;
@@ -310,30 +321,30 @@ var
 
   procedure Tokenize();
   var
-    s, buf: string;
+    Str, buf: string;
     j: Integer;
     c: Char;
   begin
-    s := LowerCase(Trim(Cond));
-    SetLength(tokens, 0);
-    buf := '';
+    Str := Trim(aCond);
+    SetLength(Tokens, 0);
+    Buf := '';
 
     j := 1;
-    while (j <= Length(s)) do
+    while (j <= Length(Str)) do
     begin
-      c := s[j];
+      c := Str[j];
 
       if (c in ['(', ')']) then
       begin
-        if buf <> '' then
+        if (Buf <> '') then
         begin
-          SetLength(tokens, Length(tokens)+1);
-          tokens[High(tokens)] := buf;
-          buf := '';
+          SetLength(Tokens, Length(Tokens)+1);
+          Tokens[High(Tokens)] := Buf;
+          Buf := '';
         end;
 
-        SetLength(tokens, Length(tokens)+1);
-        tokens[High(tokens)] := c;
+        SetLength(Tokens, Length(Tokens)+1);
+        Tokens[High(Tokens)] := c;
 
         Inc(j);
         Continue;
@@ -343,9 +354,9 @@ var
       begin
         if (buf <> '') then
         begin
-          SetLength(tokens, Length(tokens)+1);
-          tokens[High(tokens)] := buf;
-          buf := '';
+          SetLength(Tokens, Length(Tokens)+1);
+          Tokens[High(Tokens)] := buf;
+          Buf := '';
         end;
 
         Inc(j);
@@ -358,8 +369,8 @@ var
 
     if (buf <> '') then
     begin
-      SetLength(tokens, Length(tokens)+1);
-      tokens[High(tokens)] := buf;
+      SetLength(Tokens, Length(Tokens)+1);
+      Tokens[High(Tokens)] := Buf;
     end;
   end;
 
@@ -370,87 +381,116 @@ begin
 end;
 
 // ================= PARSER =================
-class function TMiniJinja.ParseRecurs(const aStr: string; var aI: Integer; aStop1, aStop2: string; out aStopFound: string): TList;
+function TTpl.ParseRecurs(const aStr: string; var aI: Integer; aStop1, aStop2: string; out aStopFound: string): TList;
 var
-  List: TList;
+  TagEnd, Pos1, Len: Integer;
+  Str, text, Tag: string;
+  List, TmpList: TList;
   node, ifNode: TNode;
-  text, tag: string;
-  tagEnd: Integer;
-
 begin
   List := TList.Create();
   aStopFound := '';
 
-  while (aI <= Length(aStr)) do
+  Len := aStr.Length;
+  while (aI <= Len) do
   begin
-    if Copy(aStr, aI, 2) = '{{' then
+    if (Copy(aStr, aI, 2) = '{{') then
     begin
-      tagEnd := PosEx('}}', aStr, aI);
+      TagEnd := PosEx('}}', aStr, aI);
 
       node := TNode.Create(nkVar);
-      node.VarName := Trim(Copy(aStr, aI + 2, tagEnd - aI - 2));
+      node.VarName := Trim(Copy(aStr, aI + 2, TagEnd - aI - 2));
+      if (Assigned(OnVar)) then
+        OnVar(UserData, node.VarName);
 
       List.Add(node);
-      aI := tagEnd + 2;
+      aI := TagEnd + 2;
+
       Continue;
     end;
 
-    if Copy(aStr, aI, 2) = '{%' then
+    //aStr.ToFile('memo.txt');
+    if (Copy(aStr, aI, 2) = '{%') then
     begin
-      tagEnd := PosEx('%}', aStr, aI);
-      tag := TrimTag(Copy(aStr, aI, tagEnd - aI + 2));
+      TagEnd := PosEx('%}', aStr, aI);
+      Tag := TrimTag(Copy(aStr, aI, TagEnd - aI + 2));
 
-      if (tag = aStop1) or (tag = aStop2) then
+      if (Tag = aStop1) or (Tag = aStop2) then
       begin
-        aStopFound := tag;
-        aI := tagEnd + 2;
+        aStopFound := Tag;
+        aI := TagEnd + 2;
         Exit(List);
       end;
 
-      if Pos('if', tag) = 1 then
+      if (Pos('set ', Tag) = 1) then
+      begin
+        node := TNode.Create(nkSet);
+
+        Str := Trim(Copy(Tag, 5, MaxInt));
+        Pos1 := Pos('=', Str);
+
+        if (Pos1 > 0) then
+        begin
+          node.VarName := Trim(Copy(Str, 1, Pos1 - 1));
+          node.Set_Val := Trim(Copy(Str, Pos1 + 1, MaxInt));
+          if (Assigned(OnSetVal)) then
+            node.Set_Val := OnSetVal(UserData, node.Set_Val);
+        end;
+
+        List.Add(node);
+        aI := TagEnd + 2;
+        Continue;
+      end;
+
+      if (Pos('if', Tag) = 1) then
       begin
         ifNode := TNode.Create(nkIf);
-        ifNode.Cond := Trim(Copy(tag, 3, MaxInt));
+        ifNode.Cond := Trim(Copy(Tag, 3, MaxInt));
 
-        aI := tagEnd + 2;
+        aI := TagEnd + 2;
 
-        ifNode.TruePart.Free();
-        ifNode.TruePart := ParseRecurs(aStr, aI, 'else', 'endif', aStopFound);
+        TmpList := ParseRecurs(aStr, aI, 'else', 'endif', aStopFound);
+        ifNode.PartTrue.Free();
+        ifNode.PartTrue := TmpList;
 
         if (aStopFound = 'else') then
         begin
-          ifNode.FalsePart.Free();
-          ifNode.FalsePart := ParseRecurs(aStr, aI, '', 'endif', aStopFound);
+          TmpList := ParseRecurs(aStr, aI, '', 'endif', aStopFound);
+          ifNode.PartFalse.Free();
+          ifNode.PartFalse := TmpList;
         end;
 
         List.Add(ifNode);
         Continue;
       end;
 
-      aI := tagEnd + 2;
+      aI := TagEnd + 2;
       Continue;
     end;
 
     // TEXT
-    tagEnd := PosEx('{', aSTr, aI);
-    if tagEnd = 0 then
-      tagEnd := Length(aStr) + 1;
+    TagEnd := PosEx('{', aStr, aI);
+    if (TagEnd = 0) then
+      TagEnd := Len + 1;
 
-    text := Copy(aStr, aI, tagEnd - aI);
-    if text <> '' then
+    if (TagEnd <= aI) then
+      Inc(TagEnd);
+
+    text := Copy(aStr, aI, TagEnd - aI);
+    if (text <> '') then
     begin
       node := TNode.Create(nkText);
       node.Text := text;
       List.Add(node);
     end;
 
-    aI := tagEnd;
+    aI := TagEnd;
   end;
 
   Result := List;
 end;
 
-procedure TMiniJinja.Parse(const aStr: string);
+procedure TTpl.Parse(const aStr: string);
 var
   iDummy: Integer;
   sDummy: string;
@@ -462,7 +502,7 @@ begin
 end;
 
 // ================= RENDER =================
-class function TMiniJinja.Filters(const aValue: string; aParts: TStringArray): string;
+class function TTpl.Filters(const aValue: string; aParts: TStringArray): string;
 var
   i: Integer;
 begin
@@ -471,17 +511,39 @@ begin
   // parts[0] = ім'я змінної
   for i := 1 to High(aParts) do
   begin
-    case Trim(LowerCase(aParts[i])) of
+    case aParts[i].Trim() of
       'upper':
         Result := UpperCase(Result);
 
       'trim':
-        Result := Trim(Result);
+        Result := Result.Trim();
     end;
   end;
 end;
 
-function TMiniJinja.RenderRecurs(aList: TList; aCtx: TContext): string;
+class function TTpl.ParseVal(const aStr: string): TJSONData;
+var
+  i: integer;
+  d: Double;
+  b: boolean;
+begin
+  // string
+  if (aStr.IsQuoted()) then
+    Exit(TJSONString.Create(Copy(aStr, 2, Length(aStr) - 2)));
+
+  if (TryStrToInt(aStr, i)) then
+      Exit(TJSONIntegerNumber.Create(i));
+
+  if (TryStrToFloat(aStr, d)) then
+      Exit(TJSONFloatNumber.Create(d));
+
+  if (TryStrToBool(aStr, b)) then
+    Exit(TJSONBoolean.Create(b));
+
+  Result := nil;
+end;
+
+function TTpl.RenderRecurs(aList: TList; aCtx: TContext): string;
 var
   i: Integer;
   VarName: string;
@@ -500,8 +562,14 @@ begin
 
       nkVar:
       begin
-        Parts := Node.VarName.Split(['|']);
-        VarName := Trim(parts[0]);
+        if (Node.VarName.IsQuoted()) then
+          VarName := Node.VarName
+        else
+        begin
+          Parts := Node.VarName.Split(['|']);
+          VarName := Trim(parts[0]);
+        end;
+
         JData := aCtx.GetVar(VarName);
         if (JData = nil) then
           Result := Result + '{{' + Node.VarName + '}}'
@@ -510,10 +578,22 @@ begin
       end;
 
       nkIf:
-        if EvalCond(Node.Cond, aCtx) then
-          Result := Result + RenderRecurs(Node.TruePart, aCtx)
+      begin
+        if (EvalCond(Node.Cond, aCtx)) then
+          Result := Result + RenderRecurs(Node.PartTrue, aCtx).Trim()
         else
-          Result := Result + RenderRecurs(Node.FalsePart, aCtx);
+          Result := Result + RenderRecurs(Node.PartFalse, aCtx).Trim();
+      end;
+
+      nkSet:
+      begin
+        JData := ParseVal(Node.Set_Val);
+        if (JData = nil) then
+          JData := aCtx.GetVar(Node.Set_Val); // змінна
+
+        if (JData <> nil) then
+          aCtx.SetVar(Node.VarName, JData.Clone);
+      end;
     end;
   end;
 end;

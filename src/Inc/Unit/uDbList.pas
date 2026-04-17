@@ -269,7 +269,7 @@ end;
 function TDbList.Print(const aFields, aCaptions: TStringArray): TStringList;
 var
   i: integer;
-  Str, Caption: string;
+  Str, Caption, Field: string;
   IsCaption: boolean;
   DbRec: TDbRec;
   SL: TStringList;
@@ -286,8 +286,9 @@ begin
     Str := '';
     for i := 0 to SL.Count - 1 do
     begin
-      Caption := IIF(IsCaption, aCaptions[i], SL[i]);
-      Str := Str + Format('%s: %s, ', [Caption, DbRec[SL[i]].AsString]);
+      Field := SL[i];
+      Caption := IIF(IsCaption, aCaptions[i], Field);
+      Str := Str + Format('%s: %s, ', [Caption, DbRec[Field].AsString]);
     end;
     Result.Add(Str.TrimExt([',', ' ']));
   end;
