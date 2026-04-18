@@ -9,7 +9,7 @@ interface
 
 uses
   Classes, SysUtils, Controls, StdCtrls, fpjson, LConvEncoding, base64, fppdf,
-  uFWizard, uVarUtil, uMacros, uTpl, uSysVcl, uHelper, uLog, uSys, uDbList;
+  uFWizard, uVarUtil, uMacros, uTpl, uSysVcl, uHelper, uLog, uSys, uDbList, uStrArr;
 
 type
   TUserData = class
@@ -219,7 +219,7 @@ begin
   JObjWiz := fParent.GetDataInt();
 
   JObjMed := TJSONObject(fParent.GetDataExt().Clone());
-  //JObjMed.Add('band', 'pink floyd');
+  JObjMed.Add('band', 'pink floyd');
 
   Ctx := TContext.Create();
   Ctx.Load(JObjMed);

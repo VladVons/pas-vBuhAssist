@@ -510,7 +510,6 @@ begin
 
   // parts[0] = ім'я змінної
   for i := 1 to High(aParts) do
-  begin
     case aParts[i].Trim() of
       'upper':
         Result := UpperCase(Result);
@@ -518,7 +517,6 @@ begin
       'trim':
         Result := Result.Trim();
     end;
-  end;
 end;
 
 class function TTpl.ParseVal(const aStr: string): TJSONData;
@@ -550,15 +548,16 @@ var
   Parts: TStringArray;
   Node: TNode;
   JData: TJSONData;
+  SB: TStringBuilder;
 begin
-  Result := '';
+  SB := TStringBuilder.Create();
 
   for i := 0 to aList.Count - 1 do
   begin
     Node := TNode(aList[i]);
     case Node.Kind of
       nkText:
-        Result := Result + Node.Text;
+        SB.Append(Node.Text);
 
       nkVar:
       begin
@@ -567,35 +566,38 @@ begin
         else
         begin
           Parts := Node.VarName.Split(['|']);
-          VarName := Trim(parts[0]);
+          VarName := parts[0].Trim();
         end;
 
         JData := aCtx.GetVar(VarName);
         if (JData = nil) then
-          Result := Result + '{{' + Node.VarName + '}}'
+          SB.Append('{{' + Node.VarName + '}}')
         else
-          Result := Result + Filters(JData.AsString, Parts);
+          SB.Append(Filters(JData.AsString, Parts));
       end;
 
       nkIf:
       begin
         if (EvalCond(Node.Cond, aCtx)) then
-          Result := Result + RenderRecurs(Node.PartTrue, aCtx).Trim()
+          SB.Append(RenderRecurs(Node.PartTrue, aCtx).Trim())
         else
-          Result := Result + RenderRecurs(Node.PartFalse, aCtx).Trim();
+          SB.Append(RenderRecurs(Node.PartFalse, aCtx).Trim());
       end;
 
       nkSet:
       begin
         JData := ParseVal(Node.Set_Val);
         if (JData = nil) then
-          JData := aCtx.GetVar(Node.Set_Val); // змінна
+          JData := aCtx.GetVar(Node.Set_Val);
 
         if (JData <> nil) then
           aCtx.SetVar(Node.VarName, JData.Clone);
       end;
     end;
   end;
+
+  Result := SB.ToString();
+  SB.Free();
 end;
 
 end.

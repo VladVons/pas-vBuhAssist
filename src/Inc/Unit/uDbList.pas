@@ -21,7 +21,6 @@ type
     procedure SetFieldByName(const aName: string; aVal: TJSONData);
   public
     constructor Create(aData: TJSONArray; aFields: TJSONObject);
-
     function GetAsJSON(): TJSONObject;
     function GetFields(): TStringArray;
     procedure SetField(const aName: string; const aVal: string);
@@ -41,7 +40,6 @@ type
     fIndex: Integer;
   public
     constructor Create(aList: TDbList);
-
     function MoveNext(): Boolean;
     function GetCurrent(): TDbRec;
     property Current: TDbRec read GetCurrent;
@@ -273,7 +271,10 @@ var
   IsCaption: boolean;
   DbRec: TDbRec;
   SL: TStringList;
+  SB: TStringBuilder;
 begin
+    SB := TStringBuilder.Create();
+
   if (Length(aFields) = 0) then
     SL := fJHead.GetKeys()
   else

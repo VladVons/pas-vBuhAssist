@@ -31,14 +31,21 @@ type
   TStrArr = class
   private
     fData: TStringArray;
+    fCount: Integer;
     function GetCount(): Integer; inline;
+    function GetCapacity(): integer;
     function GetItem(aIdx: Integer): string; inline;
+    function GetSize(): integer;
+    procedure Grow();
+    procedure IncCapacity(aVal: integer);
     procedure SetItem(aIdx: Integer; const aVal: string); inline;
     procedure QuickSort(aL, aR: Integer);
   public
+    constructor Create();
     function Add(const aStr: string): TStrArr;
     function Add(const aArr: TStringArray): TStrArr;
     function Add(aStrArr: TStrArr): TStrArr;
+    function Add(aSL: TStringList): TStrArr;
     function All(aFunc: TFuncStrBool): Boolean;
     function Any(aFunc: TFuncStrBool): Boolean;
     function Clear(): TStrArr;
@@ -54,7 +61,6 @@ type
     function Pop(): string;
     function Reverse(): TStrArr;
     function Shuffle(): TStrArr;
-    function SetSize(aSize: Integer; const aFill: string = ''): TStrArr;
     function Sort(): TStrArr;
     function Swap(aIdx1, aIdx2: Integer): TStrArr;
     function ToArray(): TStringArray;
@@ -67,6 +73,12 @@ type
 implementation
 
 // --- TStrArr
+constructor TStrArr.Create();
+begin
+  inherited;
+  fCount := 0;
+end;
+
 function TStrArr.GetEnumerator(): TStrArrEnumerator;
 begin
   Result := TStrArrEnumerator.Create(Self);
@@ -74,7 +86,7 @@ end;
 
 function TStrArr.GetCount: Integer;
 begin
-  Result := Length(fData);
+  Result := fCount;
 end;
 
 function TStrArr.GetItem(aIdx: Integer): string;
@@ -87,39 +99,92 @@ begin
   fData[aIdx] := aVal;
 end;
 
-function TStrArr.Add(const aStr: string): TStrArr;
+procedure TStrArr.Grow();
+const
+  cLimit = 1000 * 1024;
 var
-  Len: Integer;
+  CurCap, NewCap: Integer;
 begin
-  Len := Length(fData);
-  SetLength(fData, Len + 1);
-  fData[Len] := aStr;
+  CurCap := Length(fData);
+  if (CurCap < cLimit) then
+    NewCap := (CurCap + 2) * 2
+  else
+    NewCap := CurCap + cLimit;
 
-  Result := self;
+  SetLength(fData, NewCap);
+end;
+
+function TStrArr.GetCapacity(): integer;
+begin
+  Result := Length(fData);
+end;
+
+procedure TStrArr.IncCapacity(aVal: integer);
+begin
+  SetLength(fData, Length(fData) + aVal);
+end;
+
+function TStrArr.GetSize(): integer;
+var
+  i: integer;
+begin
+  Result := 0;
+  for i := 0 to fCount - 1 do
+    Inc(Result, Length(fData[i]));
+end;
+
+function TStrArr.Add(const aStr: string): TStrArr;
+begin
+  if (fCount = Length(fData)) then
+    Grow();
+
+  fData[fCount] := aStr;
+  Inc(fCount);
+
+  Result := Self;
 end;
 
 function TStrArr.Add(const aArr: TStringArray): TStrArr;
 var
-  i, Len: Integer;
+  i: Integer;
 begin
-  Len := Length(fData);
-  SetLength(fData, Len + Length(aArr));
+  IncCapacity(Length(aArr));
 
-  for i := 0 to High(aArr) do
-    fData[Len + i] := aArr[i];
+  for i := 0 to Length(aArr) - 1 do
+  begin
+    fData[fCount] := aArr[i];
+    Inc(fCount);
+  end;
 
   Result := self;
 end;
 
 function TStrArr.Add(aStrArr: TStrArr): TStrArr;
 var
-  Len, i: Integer;
+  i: Integer;
 begin
-  Len := Length(fData);
-  SetLength(fData, Len + aStrArr.Count);
+  IncCapacity(aStrArr.Count);
 
   for i := 0 to aStrArr.Count - 1 do
-    fData[Len + i] := aStrArr.fData[i];
+  begin
+    fData[fCount] := aStrArr.fData[i];
+    Inc(fCount);
+  end;
+
+  Result := self;
+end;
+
+function TStrArr.Add(aSL: TStringList): TStrArr;
+var
+  i: Integer;
+begin
+  IncCapacity(aSL.Count);
+
+  for i := 0 to aSL.Count - 1 do
+  begin
+    fData[fCount] := aSL[i];
+    Inc(fCount);
+  end;
 
   Result := self;
 end;
@@ -128,11 +193,9 @@ function TStrArr.Any(aFunc: TFuncStrBool): Boolean;
 var
   i: Integer;
 begin
-  for i := 0 to High(fData) do
-  begin
+  for i := 0 to Count - 1 do
     if (aFunc(fData[i])) then
       Exit(true);
-  end;
 
   Result := false;
 end;
@@ -141,29 +204,29 @@ function TStrArr.All(aFunc: TFuncStrBool): Boolean;
 var
   i: Integer;
 begin
-  for i := 0 to High(fData) do
-  begin
+  for i := 0 to Count - 1 do
     if (not aFunc(fData[i])) then
       Exit(false);
-  end;
 
   Result := true;
 end;
 
 function TStrArr.Insert(aIdx: Integer; const aStr: string): TStrArr;
 var
-  i, Len: Integer;
+  i: Integer;
 begin
-  Len := Length(fData);
-  if (aIdx < 0) or (aIdx > Len) then
-    Exit();
+  if (aIdx < 0) or (aIdx > Count) then
+    Exit(self);
 
-  SetLength(fData, Len + 1);
+  if (fCount = Length(fData)) then
+      Grow();
 
-  for i := Len downto aIdx + 1 do
+  for i := Count downto aIdx + 1 do
     fData[i] := fData[i - 1];
 
   fData[aIdx] := aStr;
+  Inc(fCount);
+
   Result := self;
 end;
 
@@ -192,14 +255,23 @@ end;
 
 function TStrArr.Join(const aDelim: string): string;
 var
-  i: Integer;
+  i, Len, LenDelim: Integer;
 begin
-  Result := '';
+  LenDelim := Length(aDelim);
+  Len := GetSize() + (LenDelim * (Count - 1));
+  SetLength(Result, Len);
+
+  Len := 1;
   for i := 0 to Count - 1 do
   begin
     if (i > 0) then
-      Result := Result + aDelim;
-    Result := Result + fData[i];
+    begin
+      Move(aDelim[1], Result[Len], LenDelim * SizeOf(Char));
+      Inc(Len, LenDelim);
+    end;
+
+    Move(fData[i][1], Result[Len], Length(fData[i]) * SizeOf(Char));
+    Inc(Len, Length(fData[i]));
   end;
 end;
 
@@ -233,20 +305,21 @@ end;
 
 function TStrArr.Delete(aIdx: Integer): TStrArr;
 var
-  i, Len: Integer;
+  i: Integer;
 begin
-  Len := Length(fData);
-  if (aIdx < 0) or (aIdx >= Len) then Exit;
+  if (aIdx < 0) or (aIdx >= Count) then
+    Exit(Self);
 
-  for i := aIdx to Len - 2 do
+  for i := aIdx to Count - 2 do
     fData[i] := fData[i + 1];
 
-  SetLength(fData, Len - 1);
-  Result := self;
+  Dec(fCount);
+  Result := Self;
 end;
 
 function TStrArr.Clear(): TStrArr;
 begin
+  fCount := 0;
   SetLength(fData, 0);
   Result := self;
 end;
@@ -255,6 +328,9 @@ function TStrArr.Swap(aIdx1, aIdx2: Integer): TStrArr;
 var
   Str: string;
 begin
+  if (aIdx1 >= Count) or (aIdx2 >= Count) then
+     Exit();
+
   Str := fData[aIdx1];
   fData[aIdx1] := fData[aIdx2];
   fData[aIdx2] := Str;
@@ -264,13 +340,13 @@ end;
 
 function TStrArr.ToArray(): TStringArray;
 begin
-  Result := Copy(fData);
+  Result := Copy(fData, 0, Count);
 end;
 
 function TStrArr.Sort(): TStrArr;
 begin
-  if (Length(fData) > 1) then
-    QuickSort(0, High(fData));
+  if (Count > 1) then
+    QuickSort(0, Count - 1);
 
   Result := self;
 end;
@@ -312,8 +388,8 @@ begin
   if (Count = 0) then
     Exit('');
 
-  Result := fData[Count - 1];
-  SetLength(fData, Count - 1);
+  Dec(fCount);
+  Result := fData[fCount];
 end;
 
 function TStrArr.Reverse(): TStrArr;
@@ -321,7 +397,7 @@ var
   i, j: Integer;
 begin
   i := 0;
-  j := High(fData);
+  j := Count - 1;
 
   while (i < j) do
   begin
@@ -342,20 +418,6 @@ begin
     rnd := Random(i + 1);
     Swap(i, rnd);
   end;
-
-  Result := self;
-end;
-
-function TStrArr.SetSize(aSize: Integer; const aFill: string = ''): TStrArr;
-var
-  Len, i: Integer;
-begin
-  Len := Length(fData);
-  SetLength(fData, aSize);
-
-  if (aSize > Len) then
-    for i := Len to aSize - 1 do
-      fData[i] := aFill;
 
   Result := self;
 end;
@@ -384,39 +446,52 @@ begin
 end;
 
 // --- Examples
-//function Has_O(const aStr: string): boolean;
-//begin
-//  Result := (Pos('o', aStr) > 0);
-//end;
-//
+function Has_O(const aStr: string): boolean;
+begin
+  Result := (Pos('o', aStr) > 0);
+end;
+
 //procedure Test();
 //var
+//  i: integer;
 //  Str, Str2: string;
 //  SA, Filtered: TStrArr;
 //begin
 //  SA := TStrArr.Create();
 //  try
-//    SA.Add('one');
-//    SA.Add('two');
-//    SA.Add('three');
-//    SA.Add('four');
-//    SA.Add('five');
-//    SA.Add('six');
-//    SA.Add('seven');
+//    for i := 0 to 1*1000 do
+//    begin
+//      SA.Add('one');
+//      SA.Add('two');
+//      SA.Add('three');
+//      SA.Add('four');
+//      SA.Add('five');
+//      SA.Add('six');
+//      SA.Add('seven');
+//      SA.Add('eight');
+//      SA.Add('nine');
+//      SA.Add('zerro');
+//    end;
+//    Str2 := SA.Join(', ');
 //
 //    SA.Shuffle().Sort();
+//    Str2 := SA.Join(', ');
+//
+//    SA.Reverse();
+//    Str2 := SA.Join(', ');
+//
 //    Filtered := SA.Filter(@Has_O);
 //    Filtered.Map(@UpperCase);
-//
 //    for Str in Filtered do
 //      Str2 := Str;
+//
 //  finally
 //    SA.Free();
 //  end;
 //end;
 //
 //begin
-//  //Test();
+//  Test();
 
 end.
 
