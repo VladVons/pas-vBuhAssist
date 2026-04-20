@@ -646,7 +646,8 @@ inherited FMedFindPdv: TFMedFindPdv
       '  N3,'
       '  N4,'
       '  A7_11,'
-      '  EDR_POK'
+      '  EDR_POK,'
+      '  SEND_DPA_RN'
       'FROM'
       '  FJ1201002_MAIN'
       'WHERE'
@@ -740,6 +741,15 @@ inherited FMedFindPdv: TFMedFindPdv
       FieldKind = fkData
       FieldName = 'EDR_POK'
       Index = 8
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+    object SQLQueryFJSEND_DPA_RN: TStringField
+      FieldKind = fkData
+      FieldName = 'SEND_DPA_RN'
+      Index = 9
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False

@@ -51,6 +51,7 @@ type
     function AddWrapped(const aStr: string; aMaxLen: Integer): TStringList;
     function DelArray(const aArr : TStringArray): TStringList;
     function DelEmpty(): TStringList;
+    function DelEmpty(aMaxEmpty: Integer): TStringList;
     function Formated(const aFormat: string): TStringList;
     function GetArray(): TStringArray;
     function GetJoin(const aDelim: string): string;
@@ -549,6 +550,33 @@ begin
       Delete(i);
 
   Result := Self;
+end;
+
+function TStringListHelper.DelEmpty(aMaxEmpty: Integer): TStringList;
+var
+  i, Cnt: Integer;
+  Str: string;
+begin
+  Result := TStringList.Create();
+  Result.Capacity := Count;
+
+  Cnt := 0;
+  for i := 0 to Count - 1 do
+  begin
+    Str := Trim(self[i]);
+    if (Str = '') then
+    begin
+      if (Cnt < aMaxEmpty) then
+      begin
+        Result.Add('');
+        Inc(Cnt);
+      end;
+    end else
+    begin
+      Result.Add(Str);
+      Cnt := 0;
+    end;
+  end;
 end;
 
 function TStringListHelper.IndexOfObject(aObj: TObject): Integer;

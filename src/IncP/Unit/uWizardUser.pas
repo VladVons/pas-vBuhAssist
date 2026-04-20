@@ -319,7 +319,8 @@ begin
   Tpl.OnVar := TTplFunc(@OnVar);
   Tpl.UserData := UserData;
   Tpl.Parse(Memo.Text);
-  Memo.Text := Tpl.Render(Ctx).Trim();
+  Memo.Text := Tpl.Render(Ctx);
+  Memo.Lines.Assign(TStringList(Memo.Lines).DelEmpty(1));
 
   Ctx.Free();
   JObjMed.Free();

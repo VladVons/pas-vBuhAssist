@@ -43,6 +43,7 @@ type
     SQLQueryCurVAT: TStringField;
     SQLQueryFJEDR_POK: TStringField;
     SQLQueryFJN3: TStringField;
+    SQLQueryFJSEND_DPA_RN: TStringField;
     SQLQueryOrg: TSQLQuery;
     SQLQueryFJA7_11: TCurrencyField;
     SQLQueryFJFIRM_EDRPOU: TStringField;
@@ -148,6 +149,7 @@ begin
   aJObj.Add('T1RXXXXG8', FormatFloat('0.00', Dbl));
 
   aJObj.Add('EDR_POK', aQuery.FieldByName('EDR_POK').AsString);
+  aJObj.Add('SEND_DPA_RN', aQuery.FieldByName('SEND_DPA_RN').AsString);
 
   //Log('i', ExpandSQL(aQuery));
   aQuery.Close();
