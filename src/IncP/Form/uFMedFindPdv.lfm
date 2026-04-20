@@ -20,11 +20,13 @@ inherited FMedFindPdv: TFMedFindPdv
     inherited PageControl: TPageControl
       Width = 919
       inherited TabSheetCur: TTabSheet
+        ClientWidth = 911
         inherited DbGrid1: TDBGrid
           Width = 911
         end
       end
       inherited TabSheetPrev: TTabSheet
+        ClientWidth = 911
         inherited DBGrid2: TDBGrid
           Width = 911
         end
@@ -759,11 +761,20 @@ inherited FMedFindPdv: TFMedFindPdv
       '  ORG.TAXINSPNUM,'
       '  ORG.LEADFIO,'
       '  ORG.LEADINDTAX,'
-      '  HBTAXINSP.NAME AS HBTAXINSP_NAME'
+      '  HBTAXINSP.NAME AS HBTAXINSP_NAME,'
+      '  HBPROPERTY.NAME  AS PROPERTY_NAME,'
+      '  HBORGLEGAL.NAME AS ORGLEGAL_NAME,'
+      '  HBKVED.NUM || ''; '' || HBKVED.NAME AS KVED_NAME'
       'FROM'
       '  ORG'
       'LEFT JOIN HBTAXINSP'
       '  ON HBTAXINSP.NUM = ORG.TAXINSPNUM'
+      'LEFT JOIN HBPROPERTY'
+      '  ON HBPROPERTY.NUM = ORG.PROPERTY'
+      'LEFT JOIN HBORGLEGAL'
+      '  ON HBORGLEGAL.NUM = ORG.ORGLEGAL'
+      'LEFT JOIN HBKVED'
+      '  ON HBKVED.CODE = ORG.KVED'
       'WHERE'
       '  ORG.EDRPOU = :_EDRPOU'
       ''
@@ -814,15 +825,42 @@ inherited FMedFindPdv: TFMedFindPdv
       ReadOnly = False
       Required = False
     end
-    object SQLQueryOrgHBTAXINSP_NAME: TStringField
+    object SQLQueryOrgPROPERTY: TStringField
       FieldKind = fkData
-      FieldName = 'HBTAXINSP_NAME'
+      FieldName = 'PROPERTY_NAME'
       Index = 4
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
       Required = False
+    end
+    object SQLQueryOrgORGLEGAL: TStringField
+      FieldKind = fkData
+      FieldName = 'ORGLEGAL_NAME'
+      Index = 5
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+    end
+    object SQLQueryOrgHBTAXINSP_NAME: TStringField
+      FieldKind = fkData
+      FieldName = 'HBTAXINSP_NAME'
+      Index = 6
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
       Size = 100
+    end
+    object SQLQueryOrgKVED: TStringField
+      FieldKind = fkData
+      FieldName = 'KVED_NAME'
+      Index = 7
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
     end
   end
   object DataSourceOrg: TDataSource[16]

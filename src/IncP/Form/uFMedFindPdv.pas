@@ -53,8 +53,11 @@ type
     SQLQueryFJN4: TStringField;
     SQLQueryOrgEDRPOU: TStringField;
     SQLQueryOrgHBTAXINSP_NAME: TStringField;
+    SQLQueryOrgKVED: TStringField;
     SQLQueryOrgLEADFIO: TStringField;
     SQLQueryOrgLEADINDTAX: TStringField;
+    SQLQueryOrgORGLEGAL: TStringField;
+    SQLQueryOrgPROPERTY: TStringField;
     SQLQueryOrgTAXINSPNUM: TStringField;
     SQLQueryPrev: TSQLQuery;
     SQLQueryFJ: TSQLQuery;
@@ -167,6 +170,11 @@ begin
   aJObj.Add('HSTI', aQuery.FieldByName('HBTAXINSP_NAME').AsString);
   aJObj.Add('HKBOS', aQuery.FieldByName('LEADINDTAX').AsString);
   aJObj.Add('HBOS', aQuery.FieldByName('LEADFIO').AsString);
+
+  aJObj.Add('PROPERTY_NAME', aQuery.FieldByName('PROPERTY_NAME').AsString);
+  aJObj.Add('ORGLEGAL_NAME', aQuery.FieldByName('ORGLEGAL_NAME').AsString);
+  aJObj.Add('KVED_NAME', aQuery.FieldByName('KVED_NAME').AsString);
+
 
   // ToDo
   aJObj.Add('H01', '1');
