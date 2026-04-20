@@ -38,6 +38,7 @@ type
     fWinManager: TWinManager;
     fHelper: TPersistent;
     fFileData, fDirData: string;
+
     procedure AddControls(aForm: TScrollingWinControl; aCtrls: TJSONArray; aJConf: TJSONObject);
     procedure ComboBoxWizardsChange();
     procedure GetVal(const aFile: string; aJObj: TJSONObject);
@@ -48,6 +49,7 @@ type
     procedure SetCtrlProperty(aCtrl: TControl; const aName: string; aVal: variant);
     procedure SetData(aJObj: TJSONObject);
     procedure SetEventByName(aComponent: TComponent; const aEventName, aHandlerName: string);
+    procedure SetEvent(aCtrl: TControl; aJObj: TJSONObject);
   public
     function  GetDataExt(): TJSONObject;
     function  GetDataInt(): TJSONObject;
@@ -247,6 +249,29 @@ begin
     Log('e', Format('Помилка у %s.%s=%s', [aCtrl.ClassName(), aName, VarToStr(aVal)]));
 end;
 
+procedure TFWizard.SetEvent(aCtrl: TControl; aJObj: TJSONObject);
+var
+  i, Idx: integer;
+  Str: string;
+  JObj: TJSONObject;
+begin
+  JObj := TJSONObject(aJObj.Find('_event'));
+  if (JObj = nil) then
+    Exit();
+
+  for i := 0 to JObj.Count - 1 do
+    begin
+      Str := JObj.Items[i].AsString;
+      Idx := Str.PosEx(':');
+      if (Idx > 0) then
+      begin
+        aCtrl.Hint := Str.RightFrom(Idx);
+        Str := Str.Left(Idx - 1);
+      end;
+      SetEventByName(aCtrl, JObj.Names[i], Str);
+    end;
+end;
+
 procedure TFWizard.AddControls(aForm: TScrollingWinControl; aCtrls: TJSONArray; aJConf: TJSONObject);
 var
   i, j, Idx, PosTop, PosLeft, BottomPad, ConfBottomPad: integer;
@@ -287,10 +312,7 @@ begin
     Ctrl.Left := Ctrl.Left + PosLeft;
     Ctrl.Parent := aForm;
 
-    JObjEvent := TJSONObject(JObjCtrl.Find('_event'));
-    if (JObjEvent <> nil) then
-      for j := 0 to JObjEvent.Count - 1 do
-        SetEventByName(Ctrl, JObjEvent.Names[j], JObjEvent.Items[j].AsString);
+    SetEvent(Ctrl, JObjCtrl);
 
     for j := 0 to JObjCtrl.Count - 1 do
     begin
@@ -330,7 +352,7 @@ end;
 
 procedure TFWizard.LoadFormScheme(const aName: string);
 var
-  i, j: integer;
+  i, j, Idx: integer;
   Str: string;
   JArrTab, JArrCtrl: TJSONArray;
   JObjTab, JObjConf, JObjConfDef, JObjEvent: TJSONObject;
@@ -381,10 +403,7 @@ begin
     Form.Caption := JObjTab.Get('caption', Format('caption %d', [i]));
     Form.Title := Form.Caption;
 
-    JObjEvent := TJSONObject(JObjTab.Find('_event'));
-    if (JObjEvent <> nil) then
-      for j := 0 to JObjEvent.Count - 1 do
-        SetEventByName(Form.Parent, JObjEvent.Names[j], JObjEvent.Items[j].AsString);
+    SetEvent(Form.Parent, JObjTab);
 
     JArrCtrl := TJSONArray(JObjTab.Find('controls'));
     if (JArrCtrl = nil) then

@@ -19,12 +19,10 @@ type
 
   TWizardUser = class(TPersistent)
   published
-    procedure OnClick_g00w10_save(Sender: TObject);
     procedure OnClick_g01w50s20_save(Sender: TObject);
-    procedure OnShow_memo1(Sender: TObject);
-    procedure OnShow_memo1_S(Sender: TObject);
-    procedure OnShow_memo2(Sender: TObject);
-    procedure OnShow_memo_ext(Sender: TObject);
+    procedure OnClick_g00w10_save(Sender: TObject);
+    procedure OnShow_TMemo(aSender: TMemo);
+    procedure OnShow_TMemoIf(aSender: TMemo);
     function OnSetVal(aData: TUserData; const aStr: string): string;
     function OnVar(aData: TUserData; const aStr: string): string;
   private
@@ -36,6 +34,7 @@ type
     function AsGridPrint(aJObj: TJSONObject; const aParam: TStringList): TStringList;
     procedure StringListToPDF(aLines: TStringList; const aFileName: string);
     procedure ParseMemo(const aName: string);
+    procedure ParseMemoIf(const aName: string);
   public
     constructor Create(aParent: TFWizard);
   end;
@@ -204,44 +203,6 @@ begin
   DBL.Free();
 end;
 
-procedure TWizardUser.OnClick_g00w10_save(Sender: TObject);
-var
-  Memo: TMemo;
-  Ctx: TContext;
-  UserData: TUserData;
-  Tpl: TTpl;
-  JObjMed, JObjWiz: TJSONObject;
-begin
-  Memo := TMemo(fParent.FindCtrl('memo_ext'));
-  if (Memo = nil) then
-    Exit();
-
-  JObjWiz := fParent.GetDataInt();
-
-  JObjMed := TJSONObject(fParent.GetDataExt().Clone());
-  JObjMed.Add('band', 'pink floyd');
-
-  Ctx := TContext.Create();
-  Ctx.Load(JObjMed);
-
-  UserData := TUserData.Create();
-  UserData.JMed := JObjMed;
-  UserData.JWiz := JObjWiz;
-  UserData.Ctx := Ctx;
-
-  Tpl := TTpl.Create();
-  Tpl.OnSetVal := TTplFunc(@OnSetVal);
-  Tpl.OnVar := TTplFunc(@OnVar);
-  Tpl.UserData := UserData;
-  Tpl.Parse(Memo.Text);
-  Memo.Text := Tpl.Render(Ctx).Trim();
-
-  Ctx.Free();
-  JObjMed.Free();
-  JObjWiz.Free();
-  UserData.Free();
-end;
-
 procedure TWizardUser.OnClick_g01w50s20_save(Sender: TObject);
 var
   Cnt: integer;
@@ -282,7 +243,7 @@ end;
 procedure TWizardUser.ParseMemo(const aName: string);
 var
   i: integer;
-  Find: string;
+  Str, Find: string;
   JObj, JObjWiz, JObjRepl: TJSONObject;
   Memo: TMemo;
   Macros: TMacros;
@@ -291,7 +252,7 @@ begin
   Memo := TMemo(fParent.FindCtrl(aName));
   if (Memo = nil) then
   begin
-    Log.Print('e', Format('Компонент `%s` не знайдено', [aName]));
+    Log.Print('e', Format('Не знайдено компонент `%s`', [aName]));
     Exit();
   end;
 
@@ -302,12 +263,13 @@ begin
 
   JObjRepl := TJSONObject.Create();
 
+  Str := SLScheme.Text;
   Macros := TMacros.Create('{%', '%}');
-  Macros.Load(SLScheme.Text);
+  Macros.Load(Str);
   for i := 0 to Macros.Items.Count - 1 do
   begin
     Find := Macros.Items[i];
-    SL := TStringList.Create().Split(Find, '|');
+    SL := TStringList.Create().Split(Find, '|').Map(@Trim);
     if (SL[0] = 'ctrl') and (SL.Count >= 3) then
       if (SL[1] = 'grid') then
       begin
@@ -324,24 +286,60 @@ begin
   Macros.Free();
 end;
 
-procedure TWizardUser.OnShow_memo1(Sender: TObject);
+procedure TWizardUser.ParseMemoIf(const aName: string);
+var
+  Memo: TMemo;
+  Ctx: TContext;
+  UserData: TUserData;
+  Tpl: TTpl;
+  JObjMed, JObjWiz: TJSONObject;
 begin
-  ParseMemo('memo1');
+  Memo := TMemo(fParent.FindCtrl(aName));
+  if (Memo = nil) then
+  begin
+    Log.Print('e', Format('Не знайдено компонент `%s`', [aName]));
+    Exit();
+  end;
+
+  JObjWiz := fParent.GetDataInt();
+
+  JObjMed := TJSONObject(fParent.GetDataExt().Clone());
+  JObjMed.Add('band', 'pink floyd');
+
+  Ctx := TContext.Create();
+  Ctx.Load(JObjMed);
+
+  UserData := TUserData.Create();
+  UserData.JMed := JObjMed;
+  UserData.JWiz := JObjWiz;
+  UserData.Ctx := Ctx;
+
+  Tpl := TTpl.Create();
+  Tpl.OnSetVal := TTplFunc(@OnSetVal);
+  Tpl.OnVar := TTplFunc(@OnVar);
+  Tpl.UserData := UserData;
+  Tpl.Parse(Memo.Text);
+  Memo.Text := Tpl.Render(Ctx).Trim();
+
+  Ctx.Free();
+  JObjMed.Free();
+  JObjWiz.Free();
+  UserData.Free();
 end;
 
-procedure TWizardUser.OnShow_memo1_S(Sender: TObject);
+procedure TWizardUser.OnShow_TMemo(aSender: TMemo);
 begin
-  ParseMemo('memo1_S');
+  ParseMemo(aSender.Hint);
 end;
 
-procedure TWizardUser.OnShow_memo2(Sender: TObject);
+procedure TWizardUser.OnShow_TMemoIf(aSender: TMemo);
 begin
-  ParseMemo('memo2');
+  ParseMemoIf(aSender.Hint);
 end;
 
-procedure TWizardUser.OnShow_memo_ext(Sender: TObject);
+procedure TWizardUser.OnClick_g00w10_save(Sender: TObject);
 begin
-  OnClick_g00w10_save(Sender);
+  ParseMemoIf('memo1');
 end;
 
 end.

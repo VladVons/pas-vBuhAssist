@@ -29,6 +29,7 @@ type
     function Middle(const aStart, aCount: integer): string;
     function PosEx(const aStr: string; aOfst: integer = 1): integer;
     function Right(aLen: Integer; aDoCut: boolean = False): string;
+    function RightFrom(aPos: Integer): string;
     function Replaces(const aOld, aNew: TStringArray): string;
     function TrimExt(const aChars: TSysCharSet = [' ']): string;
     function TrimInt(const aChars: TSysCharSet = [' ']): string;
@@ -186,6 +187,18 @@ begin
   else
     Result := System.Copy(Self, Len - aLen + 1, aLen);
 end;
+
+function TStringHelperEx.RightFrom(aPos: Integer): string;
+var
+  Len: Integer;
+begin
+  Len := System.Length(Self);
+  if (Len <= 0) or (aPos >= Len) then
+    Exit('');
+
+  Result := System.Copy(self, aPos + 1, Len - aPos);
+end;
+
 
 function TStringHelperEx.TrimExt(const aChars: TSysCharSet = [' ']): string;
 var
