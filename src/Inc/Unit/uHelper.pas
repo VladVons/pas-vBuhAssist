@@ -555,7 +555,6 @@ end;
 function TStringListHelper.DelEmpty(aMaxEmpty: Integer): TStringList;
 var
   i, Cnt: Integer;
-  Str: string;
 begin
   Result := TStringList.Create();
   Result.Capacity := Count;
@@ -563,8 +562,7 @@ begin
   Cnt := 0;
   for i := 0 to Count - 1 do
   begin
-    Str := Trim(self[i]);
-    if (Str = '') then
+    if (self[i].IsEmpty()) then
     begin
       if (Cnt < aMaxEmpty) then
       begin
@@ -573,7 +571,7 @@ begin
       end;
     end else
     begin
-      Result.Add(Str);
+      Result.Add(self[i]);
       Cnt := 0;
     end;
   end;

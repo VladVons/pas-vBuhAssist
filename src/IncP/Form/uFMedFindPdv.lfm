@@ -20,13 +20,11 @@ inherited FMedFindPdv: TFMedFindPdv
     inherited PageControl: TPageControl
       Width = 919
       inherited TabSheetCur: TTabSheet
-        ClientWidth = 911
         inherited DbGrid1: TDBGrid
           Width = 911
         end
       end
       inherited TabSheetPrev: TTabSheet
-        ClientWidth = 911
         inherited DBGrid2: TDBGrid
           Width = 911
         end
@@ -645,6 +643,7 @@ inherited FMedFindPdv: TFMedFindPdv
       '  N2_1,'
       '  N3,'
       '  N4,'
+      '  A6_7,'
       '  A7_11,'
       '  EDR_POK,'
       '  SEND_DPA_RN'
@@ -683,10 +682,20 @@ inherited FMedFindPdv: TFMedFindPdv
       Required = False
       Size = 100
     end
+    object SQLQueryFJA6_7: TFloatField
+      FieldKind = fkData
+      FieldName = 'A6_7'
+      Index = 2
+      LookupCache = False
+      ProviderFlags = [pfInUpdate, pfInWhere]
+      ReadOnly = False
+      Required = False
+      Currency = True
+    end
     object SQLQueryFJA7_11: TCurrencyField
       FieldKind = fkData
       FieldName = 'A7_11'
-      Index = 2
+      Index = 3
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -695,7 +704,7 @@ inherited FMedFindPdv: TFMedFindPdv
     object SQLQueryFJN2_1: TStringField
       FieldKind = fkData
       FieldName = 'N2_1'
-      Index = 3
+      Index = 4
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -704,7 +713,7 @@ inherited FMedFindPdv: TFMedFindPdv
     object SQLQueryFJN3: TStringField
       FieldKind = fkData
       FieldName = 'N3'
-      Index = 4
+      Index = 5
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -713,7 +722,7 @@ inherited FMedFindPdv: TFMedFindPdv
     object SQLQueryFJN4: TStringField
       FieldKind = fkData
       FieldName = 'N4'
-      Index = 5
+      Index = 6
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -722,7 +731,7 @@ inherited FMedFindPdv: TFMedFindPdv
     object SQLQueryFJN10: TStringField
       FieldKind = fkData
       FieldName = 'N10'
-      Index = 6
+      Index = 7
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -731,7 +740,7 @@ inherited FMedFindPdv: TFMedFindPdv
     object SQLQueryFJN11: TDateField
       FieldKind = fkData
       FieldName = 'N11'
-      Index = 7
+      Index = 8
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -740,7 +749,7 @@ inherited FMedFindPdv: TFMedFindPdv
     object SQLQueryFJEDR_POK: TStringField
       FieldKind = fkData
       FieldName = 'EDR_POK'
-      Index = 8
+      Index = 9
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False
@@ -749,7 +758,7 @@ inherited FMedFindPdv: TFMedFindPdv
     object SQLQueryFJSEND_DPA_RN: TStringField
       FieldKind = fkData
       FieldName = 'SEND_DPA_RN'
-      Index = 9
+      Index = 10
       LookupCache = False
       ProviderFlags = [pfInUpdate, pfInWhere]
       ReadOnly = False

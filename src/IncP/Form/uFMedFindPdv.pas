@@ -41,6 +41,7 @@ type
     SQLQueryCurPERTYPE: TIntegerField;
     SQLQueryCurSHORTNAME: TStringField;
     SQLQueryCurVAT: TStringField;
+    SQLQueryFJA6_7: TFloatField;
     SQLQueryFJEDR_POK: TStringField;
     SQLQueryFJN3: TStringField;
     SQLQueryFJSEND_DPA_RN: TStringField;
@@ -145,8 +146,8 @@ begin
   aJObj.Add('T1RXXXXG31', aQuery.FieldByName('N2_1').AsString);
   aJObj.Add('T1RXXXXG6S', aQuery.FieldByName('N4').AsString);
   aJObj.Add('T1RXXXXG7S', aQuery.FieldByName('FIRM_NAME').AsString);
-  Dbl := RoundTo(aQuery.FieldByName('A7_11').AsFloat, -2);
-  aJObj.Add('T1RXXXXG8', FormatFloat('0.00', Dbl));
+  aJObj.Add('T1RXXXXG8', FormatFloat('0.00', aQuery.FieldByName('A7_11').AsFloat));
+  aJObj.Add('A6_7', FormatFloat('0.00', aQuery.FieldByName('A6_7').AsFloat));
 
   aJObj.Add('EDR_POK', aQuery.FieldByName('EDR_POK').AsString);
   aJObj.Add('SEND_DPA_RN', aQuery.FieldByName('SEND_DPA_RN').AsString);
@@ -179,12 +180,12 @@ begin
 
 
   // ToDo
+  //aJObj.Add('FILLDOC', '01.01.2026');
+  //aJObj.Add('NAMEDOC', '123');
+  //aJObj.Add('NUMDOC', '333');
+
   aJObj.Add('H01', '1');
-  aJObj.Add('FILLDOC', '01.01.2026');
-  aJObj.Add('NAMEDOC', '123');
-  aJObj.Add('NUMDOC', '333');
   aJObj.Add('R001G10', 1);
-  //aJObj.Add('R01G1B', EncodeStringBase64('Hello Base64'));
   aJObj.Add('HNUM_1', 1);
   aJObj.Add('HNUM_2', 1);
   aJObj.Add('R01G1S_1', 'пояснення');

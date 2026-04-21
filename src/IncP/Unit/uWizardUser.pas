@@ -106,41 +106,61 @@ begin
 
   for i := 0 to aJObjWiz.Count - 1 do
   begin
+    // name like g01w10s10.grid_d2_s
     Key := aJObjWiz.Names[i];
-    if (Key.PosEx('_d2_') > 0) then
+    if (Key.PosEx('_d2_') = -1) then
+      continue;
+
+    JObj := TJSONObject(aJObjWiz.Items[i]);
+    DBL := TDbList.Create(JObj);
+    for Rec in DBL do
     begin
-      JObj := TJSONObject(aJObjWiz.Items[i]);
-      DBL := TDbList.Create(JObj);
-      for Rec in DBL do
+      // R01G1S_2
+      Str := string(' ').JoinNonEmpty([
+        DbL.Rec['doc_type'].AsString,
+        DbL.Rec['firm'].AsString,
+        DbL.Rec['doc_number'].AsString,
+        string(DbL.Rec['doc_date'].AsString).Replace('.', '')
+      ]);
+      aJObjMed.SetKey('R01G1S_2', Str + '.pdf');
+
+      // R01G1B
+      Str := DbL.Rec['doc_name'].AsString;
+      if (Str.IsEmpty()) then
+        Log.Print('e', Format('Не визначено `doc_name` для `%s`', [cDoc]))
+      else if (Str.FileExists()) then
       begin
-        Str := string(' ').JoinNonEmpty([
-          DbL.Rec['doc_type'].AsString,
-          DbL.Rec['firm'].AsString,
-          DbL.Rec['doc_number'].AsString,
-          string(DbL.Rec['doc_date'].AsString).Replace('.', '')
-        ]);
-        aJObjMed.SetKey('R01G1S_2', Str + '.pdf');
+        if (SLFiles.IndexOf(Str) <> -1) then
+          Log.Print('e', Format('Файл вже існує `%s`', [Str]))
+        else
+          SLFiles.Add(Str);
+        aJObjMed.SetKey('HNUM_2', SLFiles.Count);
 
-        Str := DbL.Rec['doc_name'].AsString;
-        if (Str.IsEmpty()) then
-          Log.Print('e', Format('Не визначено `doc_name` для `%s`', [cDoc]))
-        else if (Str.FileExists()) then
-        begin
-          if (SLFiles.IndexOf(Str) <> -1) then
-            Log.Print('e', Format('Файл вже існує `%s`', [Str]))
-          else
-            SLFiles.Add(Str);
-          aJObjMed.SetKey('HNUM_2', SLFiles.Count);
+        Str := StrFromFile(Str);
+        aJObjMed.SetKey('R01G1B', EncodeStringBase64(Str));
+      end else
+        Log.Print('e', Format('Не знайдено файл `%s`', [Str]));
 
-          Str := StrFromFile(Str);
-          aJObjMed.SetKey('R01G1B', EncodeStringBase64(Str));
-        end else
-          Log.Print('e', Format('Не знайдено файл `%s`', [Str]));
+      // NAMEDOC
+      Str := DbL.Rec['doc_type'].AsString;
+      Str := ChangeFileExt(Str, '');
+      aJObjMed.SetKey('NAMEDOC', Str);
 
-        SaveXml(cDoc, aJObjMed, JObj, i);
-      end;
-      DBL.Free();
+      // NUMDOC
+      Str := DbL.Rec['doc_number'].AsString;
+      if (Str.IsEmpty()) then
+        Str := '1';
+      aJObjMed.SetKey('NUMDOC', Str);
+
+      // FILLDOC
+      Str := DbL.Rec['doc_date'].AsString;
+      if (Str.IsEmpty()) then
+        Str := aJObjMed.Get('_DATE_WD', '');
+      aJObjMed.SetKey('FILLDOC', Str);
+
+      SaveXml(cDoc, aJObjMed, JObj, i);
     end;
+    DBL.Free();
   end;
 
   Result := SLFiles.Count;

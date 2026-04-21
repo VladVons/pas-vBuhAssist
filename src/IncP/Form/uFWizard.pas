@@ -136,7 +136,7 @@ begin
     JObjTab := JArrTab.Objects[i];
     if (JObjTab.Get('_enable', true)) then
     begin
-      JArr := JObjTab.Arrays['controls'];
+      JArr := JObjTab.Arrays['_controls'];
       for j := 0 to JArr.Count - 1 do
       begin
         JObj := JArr.Objects[j];
@@ -352,10 +352,10 @@ end;
 
 procedure TFWizard.LoadFormScheme(const aName: string);
 var
-  i, j, Idx: integer;
+  i, j: integer;
   Str: string;
   JArrTab, JArrCtrl: TJSONArray;
-  JObjTab, JObjConf, JObjConfDef, JObjEvent: TJSONObject;
+  JObjTab, JObjConf, JObjConfDef: TJSONObject;
   Form: TFBaseScroll;
   Macros: TMacros;
   TabSheet: TTabSheet;
@@ -398,17 +398,24 @@ begin
 
     Form := TFBaseScroll.Create(Nil);
     fWinManager.Add(Form);
-    Form.Parent.Caption := JObjTab.Get('title', Format('title %d', [i]));
+
+    for j := 0 to JObjTab.Count - 1 do
+    begin
+      Str := JObjTab.Names[j];
+      if (not Str.StartsWith('_')) then
+        Form.SetJProperty(JObjTab, Str);
+    end;
+
+    Form.Parent.Caption := JObjTab.Get('_title', Format('title %d', [i]));
     Form.Name := Form.GetJName(JObjTab, i);
-    Form.Caption := JObjTab.Get('caption', Format('caption %d', [i]));
     Form.Title := Form.Caption;
 
     SetEvent(Form.Parent, JObjTab);
 
-    JArrCtrl := TJSONArray(JObjTab.Find('controls'));
+    JArrCtrl := TJSONArray(JObjTab.Find('_controls'));
     if (JArrCtrl = nil) then
     begin
-      Log('e', Format('Не знайдено секцію `controls` в закладці %d', [i+1]));
+      Log('e', Format('Не знайдено секцію `_controls` в закладці %d', [i+1]));
       continue;
     end;
 
@@ -419,7 +426,7 @@ begin
     //JObjConfDef.Add('_top', PanelTitle.Top + PanelTitle.Height + 15);
     JObjConfDef.Add('_top', 5);
 
-    JObjConf := TJSONObject(JObjTab.Find('conf'));
+    JObjConf := TJSONObject(JObjTab.Find('_conf'));
     if (JObjConf <> nil) then
       JObjConfDef.Update(JObjConf);
 
