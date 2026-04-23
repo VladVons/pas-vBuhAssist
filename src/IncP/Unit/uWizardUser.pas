@@ -8,16 +8,16 @@ unit uWizardUser;
 interface
 
 uses
-  Classes, SysUtils, Controls, StdCtrls, fpjson, LConvEncoding, base64, fppdf,
-  uFWizard, uVarUtil, uMacros, uTpl, uSysVcl, uHelper, uLog, uSys, uDbList, uStrArr;
+  Classes, SysUtils, Controls, StdCtrls, Forms, fpjson, LConvEncoding, base64, fppdf,
+  uWizard, uVarUtil, uMacros, uTpl, uSys, uSysVcl, uHelper, uLog, uDbList, uSettings, uPDF, uFrStringGrid;
 
 type
   TUserData = class
-    Ctx: TContext;
-    JWiz, JMed: TJSONObject;
-  end;
+     Ctx: TContext;
+     JWiz, JMed: TJSONObject;
+   end;
 
-  TWizardUser = class(TPersistent)
+  TWizardUser = class(TWizard)
   published
     procedure OnClick_g01w50s20_save(Sender: TObject);
     procedure OnClick_g00w10_save(Sender: TObject);
@@ -26,8 +26,6 @@ type
     function OnSetVal(aData: TUserData; const aStr: string): string;
     function OnVar(aData: TUserData; const aStr: string): string;
   private
-    fParent: TFWizard;
-    procedure PageControlChange(Sender: TObject);
     procedure D1(aJObjMed, aJObjWiz: TJSONObject);
     function D2(aJObjMed, aJObjWiz: TJSONObject): integer;
     procedure SaveXml(const aName: string; aJObjMed, aJObjWiz: TJSONObject; aIdx: integer);
@@ -36,25 +34,46 @@ type
     procedure ParseMemo(const aName: string);
     procedure ParseMemoIf(const aName: string);
   public
-    constructor Create(aParent: TFWizard);
+    function DoSaveTab(aForm: TScrollBox): string; override;
   end;
 
 implementation
 
-constructor TWizardUser.Create(aParent: TFWizard);
-begin
-  inherited Create();
-  fParent := aParent;
-  //fParent.PageControl.OnChange := @PageControlChange;
-end;
+uses
+  uFWizard;
 
-procedure TWizardUser.PageControlChange(Sender: TObject);
+function TWizardUser.DoSaveTab(aForm: TScrollBox): string;
+var
+  i: Integer;
+  Dups: TIntegerArray;
+  Comp: TComponent;
+  JObj: TJSONObject;
+  DBL: TDbList;
 begin
+  for i := 0 to aForm.ComponentCount - 1 do
+  begin
+    Comp := aForm.Components[i];
+    if not (Comp is TFrStringGrid) then
+      continue;
+
+    JObj := TFrStringGrid(Comp).Export();
+    DBL := TDbList.Create(JObj);
+    try
+      Dups := DBL.GetDuplicates([]);
+      if (Length(Dups) > 0) then
+        Exit('Дубльований запис');
+    finally
+      DBL.Free();
+      JObj.Free();
+    end;
+  end;
+
+  Result := '';
 end;
 
 procedure TWizardUser.SaveXml(const aName: string; aJObjMed, aJObjWiz: TJSONObject; aIdx: integer);
 var
-  StrXds, Path, FileName, No, FJ: string;
+  Str, StrXds, Path, FileName, No, FJ: string;
   Macros: TMacros;
 begin
   FJ := IIF(Length(aJObjMed.Get('TIN', '')) = 8, 'J', 'F');
@@ -85,16 +104,21 @@ begin
     Macros.Free();
   end;
 
-  Path := ConcatPaths(['Data', FileName]);
+  Str := ConcatPaths([GetDesktopDir(), 'РозблокуванняПН']);
+  Str := Settings.GetItem('FSettings', 'DirExportPdv', Str);
+  if (not DirectoryExists(Str)) then
+    ForceDirectories(Str);
+  Path := ConcatPaths([Str, FileName]);
   StrXds.ToFile(Path);
-  Log.Print('i', Path);
+
+  Log.Print('i', Format('Збережено до %s', [Path]));
 end;
 
 function TWizardUser.D2(aJObjMed, aJObjWiz: TJSONObject): integer;
 const
   cDoc = '1360102';
 var
-  i: integer;
+  i, Idx: integer;
   Str, Key: string;
   JObj: TJSONObject;
   DBL: TDbList;
@@ -108,7 +132,7 @@ begin
   begin
     // name like g01w10s10.grid_d2_s
     Key := aJObjWiz.Names[i];
-    if (Key.PosEx('_d2_') = -1) then
+    if (Key.PosEx('grid_d2_') = 0) then
       continue;
 
     JObj := TJSONObject(aJObjWiz.Items[i]);
@@ -276,11 +300,13 @@ begin
     Exit();
   end;
 
-  JObjWiz := fParent.GetDataInt();
-
   JObj := fParent.FindSchemeItem(aName);
+  if (JObj = nil) then
+    Exit();
+
   SLScheme := TStringList.Create().AddArray(JObj.Arrays['lines']);
 
+  JObjWiz := fParent.GetDataInt();
   JObjRepl := TJSONObject.Create();
 
   Str := SLScheme.Text;
@@ -363,5 +389,21 @@ begin
   ParseMemoIf('memo1');
 end;
 
+procedure Test();
+var
+  Str: string;
+  SL: TStringList;
+begin
+  Str := StrFromFile('res\txt\UserAgreement.txt');
+  Str := Str.WordWrap(40);
+  Str.ToFile('tmp.txt');
+
+  SL := TStringList.Create();
+  SL.Text := Str;
+  TextToPDF('output.pdf', SL);
+end;
+
+begin
+  //Test();
 end.
 

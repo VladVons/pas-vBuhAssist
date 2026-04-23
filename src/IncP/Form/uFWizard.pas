@@ -10,15 +10,14 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ComCtrls, StdCtrls,
   ExtCtrls, ValEdit, Buttons, fpjson, TypInfo, Variants, jsonparser,
-  uFrStringGrid,
-  uSys, uSysVcl, uMacros, uHelper, uHelperVcl, uFBase, uFBaseScroll, uWinManager, uExGrid;
+  uFrStringGrid, uFBase, uFBaseScroll,
+  uSys, uSysVcl, uMacros, uHelper, uHelperVcl, uWinManager, uExGrid;
 
 const
   cMarkSaveLoad = '_s';
   cMarkSave = '_S';
 
 type
-  { TFWizard }
   TFWizard = class(TFBase)
     BitBtnClose: TBitBtn;
     BitBtnNext: TBitBtn;
@@ -38,7 +37,6 @@ type
     fWinManager: TWinManager;
     fHelper: TPersistent;
     fFileData, fDirData: string;
-
     procedure AddControls(aForm: TScrollingWinControl; aCtrls: TJSONArray; aJConf: TJSONObject);
     procedure ComboBoxWizardsChange();
     procedure GetVal(const aFile: string; aJObj: TJSONObject);
@@ -65,6 +63,9 @@ type
 
 implementation
 {$R *.lfm}
+
+uses
+  uWizard;
 
 procedure TFWizard.FormCreate(Sender: TObject);
 begin
@@ -201,8 +202,18 @@ end;
 
 procedure TFWizard.BitBtnCloseClick(Sender: TObject);
 var
+  Str: String;
   Cnt: integer;
+  ScrollBox: TScrollBox;
 begin
+  ScrollBox := TFBaseScroll(fWinManager.GetActiveForm()).ScrollBox;
+  Str := TWizard(fHelper).DoSaveTab(ScrollBox);
+  if (not Str.IsEmpty()) then
+  begin
+    Log('i', Str);
+    Exit();
+  end;
+
   SaveData();
   Cnt := fWinManager.CloseActive();
   if (Cnt = 0) then

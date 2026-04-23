@@ -8,10 +8,12 @@ unit uDbList;
 interface
 
 uses
-  Classes, SysUtils, fpjson,
+  Classes, SysUtils, fpjson, Generics.Collections,
   uHelper, uVarUtil;
 
 type
+  TIntegerArray = array of Integer;
+
   TDbRec = class
   private
     fData: TJSONArray;
@@ -23,6 +25,8 @@ type
     constructor Create(aData: TJSONArray; aFields: TJSONObject);
     function GetAsJSON(): TJSONObject;
     function GetFields(): TStringArray;
+    function GetFieldHash(aIdx: integer): UInt64;
+    function GetFieldIdx(const aName: string): integer; inline;
     procedure SetField(const aName: string; const aVal: string);
     procedure SetField(const aName: string; const aVal: Integer);
     procedure SetField(const aName: string; aVal: TJSONData);
@@ -31,9 +35,7 @@ type
     property Fields[const aName: string]: TJSONData read GetFieldByName write SetFieldByName; default;
   end;
 
-  { --- Iterator --- }
   TDbList = class;
-
   TDbListEnum = class
   private
     fList: TDbList;
@@ -45,13 +47,12 @@ type
     property Current: TDbRec read GetCurrent;
   end;
 
-  { --- Main --- }
   TDbList = class
   private
     fJHead: TJSONObject;
     fJData: TJSONArray;
     fRec: TDbRec;
-    fRecNo: Integer;
+    fTag, fRecNo: Integer;
 
     procedure SetRecNo(aNo: Integer);
     function GetCount(): Integer;
@@ -67,6 +68,7 @@ type
     function RecAdd(): TDbRec;
     function RecPop(aNo: Integer = -1): TDbRec;
     function GetEnumerator(): TDbListEnum;
+    function GetDuplicates(const aFields: TStringArray): TIntegerArray;
 
     property Rec: TDbRec read fRec;
     property RecNo: Integer read fRecNo write SetRecNo;
@@ -82,6 +84,11 @@ begin
   fFields := aFields;
 end;
 
+function TDbRec.GetFieldIdx(const aName: string): integer;
+begin
+  Result := fFields.Integers[aName];
+end;
+
 function TDbRec.GetFieldByName(const aName: string): TJSONData;
 var
   Idx: Integer;
@@ -94,7 +101,7 @@ procedure TDbRec.SetFieldByName(const aName: string; aVal: TJSONData);
 var
   Idx: Integer;
 begin
-  Idx := fFields.Integers[aName];
+  Idx := GetFieldIdx(aName);
   fData.Items[Idx] := aVal;
 end;
 
@@ -135,6 +142,23 @@ begin
   Fields[aName] := aVal;
 end;
 
+function TDbRec.GetFieldHash(aIdx: integer): UInt64;
+var
+  Str: string;
+  PCur, PEnd: PByte;
+begin
+  Result := 1469598103934665603;
+
+  Str := fData.Items[aIdx].AsString;
+  PCur := PByte(Str);
+  PEnd := PCur + Str.Length;
+  while (PCur < PEnd) do
+  begin
+    Result := Result xor PCur^;
+    Result := Result * 1099511628211;
+    Inc(PCur);
+  end;
+end;
 { ================= Iterator ================= }
 constructor TDbListEnum.Create(aList: TDbList);
 begin
@@ -325,6 +349,58 @@ end;
 function TDbList.GetEnumerator(): TDbListEnum;
 begin
   Result := TDbListEnum.Create(Self);
+end;
+
+function TDbList.GetDuplicates(const aFields: TStringArray): TIntegerArray;
+type
+  THashMap = specialize TDictionary<UInt64, Integer>;
+var
+  i, Cnt: Integer;
+  Hash: UInt64;
+  Fields: TIntegerArray;
+  Rec1: TDbRec;
+  Map: THashMap;
+begin
+  Map := THashMap.Create();
+  try
+    Map.Capacity := Count;
+    SetLength(Result, Count);
+
+    if (Length(aFields) = 0) then
+    begin
+      SetLength(Fields, fJHead.Count);
+      for i := 0 to fJHead.Count - 1 do
+        Fields[i] := i
+    end else begin
+      SetLength(Fields, Length(aFields));
+      for i := 0 to Length(aFields) - 1 do
+        Fields[i] := Rec.GetFieldIdx(aFields[i]);
+    end;
+
+    Cnt := 0;
+    for Rec1 in self do
+    begin
+      Hash := 1469598103934665603;
+      for i := 0 to High(Fields) do
+        Hash := Hash xor Rec1.GetFieldHash(Fields[i]);
+
+      if (Map.ContainsKey(Hash)) then
+      begin
+        if (Cnt = 0) then
+        begin
+          Result[Cnt] := Map[Hash];
+          Inc(Cnt);
+        end;
+        Result[Cnt] := RecNo;
+        Inc(Cnt);
+      end else
+        Map.Add(Hash, RecNo);
+    end;
+
+    SetLength(Result, Cnt);
+  finally
+    Map.Free();
+  end;
 end;
 
 end.

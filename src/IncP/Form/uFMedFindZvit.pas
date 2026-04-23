@@ -9,12 +9,13 @@ interface
 
 uses
   Classes, SysUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  ActnList, StdCtrls, fpjson,
-  uFMedFind, uMed, uHelper, uDmCommon;
+  ActnList, StdCtrls, Buttons, fpjson,
+  uFMedFind, uMed, uHelper, uDmCommon, uConst;
 
 type
   { TFMedFindZvit }
   TFMedFindZvit = class(TFMedFind)
+    BitBtnRecommended: TBitBtn;
     DataSourceCur: TDataSource;
     DataSourcePrev: TDataSource;
     SQLQueryCur: TSQLQuery;
@@ -44,6 +45,7 @@ type
     SQLQueryPrevPERDATE: TDateField;
     SQLQueryPrevSHORTNAME: TStringField;
     SQLTransaction: TSQLTransaction;
+    procedure BitBtnRecommendedClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure SQLQueryCurCalcFields(DataSet: TDataSet);
   protected
@@ -162,6 +164,30 @@ begin
 
 end;
 
+procedure TFMedFindZvit.BitBtnRecommendedClick(Sender: TObject);
+begin
+  if (ComboBoxFirm.Text = cChooseAll) then
+  begin
+    Log('i', 'Не заповнено код ЄДРПОУ');
+    Exit();
+  end;
+
+  if (ComboBoxMonth.Text = cChooseAll) then
+  begin
+    Log('i', 'Не заповнено період');
+    Exit();
+  end;
+
+  ComboBoxDoc.ItemIndex := 0;
+  ComboBoxSendStatus.ItemIndex := 0;
+  BitBtnFindClick(nil);
+
+  if (SQLQueryPrev.RecordCount > 0) then
+    PageControl.ActivePage := TabSheetPrev
+  else
+    Log('i', Format('Не знайдено рекомендованих звітів по коду %s', [ComboBoxFirm.Text]));
+end;
+
 procedure TFMedFindZvit.FormCreate(Sender: TObject);
 begin
   inherited;
@@ -179,6 +205,7 @@ begin
   DbGrid2.DataSource := DataSourcePrev;
 
   LoadJsonData();
+  PageControl.ActivePage := TabSheetCur;
 end;
 
 

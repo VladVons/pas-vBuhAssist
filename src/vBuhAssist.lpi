@@ -19,7 +19,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="11"/>
       <RevisionNr Value="3"/>
-      <BuildNr Value="149"/>
+      <BuildNr Value="152"/>
       <StringTable ProductName="vBuhAssist"/>
     </VersionInfo>
     <BuildModes>
@@ -382,6 +382,10 @@
       </Unit>
       <Unit>
         <Filename Value="Inc/Unit/uTpl.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="Inc/Unit/uPDF.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
     </Units>

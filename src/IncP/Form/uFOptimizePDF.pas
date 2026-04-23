@@ -27,7 +27,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
-    procedure SelectDir(aLabeledEdit: TLabeledEdit; const aKey: string);
+    procedure SelectDir(aEdit: TEdit; const aKey: string);
   public
 
   end;
@@ -101,26 +101,26 @@ begin
   end;
 end;
 
-procedure TFOptimizePDF.SelectDir(aLabeledEdit: TLabeledEdit; const aKey: string);
+procedure TFOptimizePDF.SelectDir(aEdit: TEdit; const aKey: string);
 begin
-  if (DirectoryExists(aLabeledEdit.Text)) then
-     SelectDirectoryDialog1.InitialDir := aLabeledEdit.Text;
+  if (DirectoryExists(aEdit.Text)) then
+     SelectDirectoryDialog1.InitialDir := aEdit.Text;
 
   if (SelectDirectoryDialog1.Execute()) then
   begin
      Settings.SetItem(Name, aKey, SelectDirectoryDialog1.FileName);
-     aLabeledEdit.Text := SelectDirectoryDialog1.FileName;
+     aEdit.Text := SelectDirectoryDialog1.FileName;
   end;
 end;
 
 procedure TFOptimizePDF.ButtonDirInClick(Sender: TObject);
 begin
-  SelectDir(LabeledEditDirIn, 'DirIn');
+  SelectDir(TEdit(LabeledEditDirIn), 'DirIn');
 end;
 
 procedure TFOptimizePDF.ButtonDirOutClick(Sender: TObject);
 begin
-  SelectDir(LabeledEditDirOut, 'DirOut');
+  SelectDir(TEdit(LabeledEditDirOut), 'DirOut');
 end;
 
 procedure TFOptimizePDF.FormCreate(Sender: TObject);

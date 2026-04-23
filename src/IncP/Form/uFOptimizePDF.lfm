@@ -11,6 +11,9 @@ inherited FOptimizePDF: TFOptimizePDF
     Width = 474
     ClientWidth = 474
     TabOrder = 6
+    inherited LabelTitle: TLabel
+      Width = 474
+    end
   end
   object ButtonConvert: TButton[1]
     Left = 24

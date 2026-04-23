@@ -1,15 +1,35 @@
 inherited FMedFindZvit: TFMedFindZvit
   Caption = 'Звітність'
   OnCreate = FormCreate
-  object DataSourcePrev: TDataSource[7]
+  object BitBtnRecommended: TBitBtn[2]
+    Left = 720
+    Height = 38
+    Top = 224
+    Width = 168
+    Caption = 'Пропоновані'
+    Images = DmCommon.ImageList1
+    TabOrder = 2
+    OnClick = BitBtnRecommendedClick
+  end
+  inherited frReport1: TfrReport[3]
+  end
+  inherited frDBDataSet1: TfrDBDataSet[4]
+  end
+  inherited FrPrintGrid1: TFrPrintGrid[5]
+  end
+  inherited SelectDirectoryDialog1: TSelectDirectoryDialog[6]
+  end
+  inherited PopupMenuActivation: TPopupMenu[7]
+  end
+  object DataSourcePrev: TDataSource[8]
     Left = 104
     Top = 336
   end
-  object DataSourceCur: TDataSource[8]
+  object DataSourceCur: TDataSource[9]
     Left = 24
     Top = 336
   end
-  object SQLQueryCur: TSQLQuery[9]
+  object SQLQueryCur: TSQLQuery[10]
     FieldDefs = <    
       item
         Name = 'EDRPOU'
@@ -433,7 +453,7 @@ inherited FMedFindZvit: TFMedFindZvit
       Size = 5
     end
   end
-  object SQLQueryPrev: TSQLQuery[10]
+  object SQLQueryPrev: TSQLQuery[11]
     FieldDefs = <    
       item
         Name = 'EDRPOU'
@@ -624,7 +644,7 @@ inherited FMedFindZvit: TFMedFindZvit
       Size = 50
     end
   end
-  object SQLTransaction: TSQLTransaction[11]
+  object SQLTransaction: TSQLTransaction[12]
     Active = False
     Left = 24
     Top = 184

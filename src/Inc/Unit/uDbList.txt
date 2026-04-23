@@ -1,24 +1,33 @@
 ﻿procedure Test();
 var
-  Db: TDbList;
+  Str: string;
+  DBL: TDbList;
   Rec: TDbRec;
   JObj: TJSONObject;
-  Str: string;
+  Dups: TIntegerArray;
 begin
   JObj := TJSONObject.Create();
   JObj.Add('head', TJSONArray.Create(['name', 'age']));
   JObj.Add('data', TJSONArray.Create());
-  Db := TDbList.Create(JObj);
+  DBL := TDbList.Create(JObj);
   try
-    Rec := Db.RecAdd();
+    Rec := DBL.RecAdd();
+    Rec.SetField('name', 'Alice');
+    Rec['age'] := TJSONIntegerNumber.Create(25);
+    Rec := DBL.RecAdd();
+    Rec.SetField('name', 'John');
+    Rec['age'] := TJSONIntegerNumber.Create(44);
+    Rec := DBL.RecAdd();
     Rec.SetField('name', 'Alice');
     Rec['age'] := TJSONIntegerNumber.Create(25);
 
-    for Rec in Db do
+    for Rec in DBL do
       Str := Format('%s, %s, %d', [Rec['name'].AsString, ' - ', Rec['age'].AsInteger]);
-    Str := Db.ExportStr();
+    Str := DBL.ExportStr();
+
+    Dups := DBL.GetDuplicates(['age']);
   finally
-    Db.Free();
+    DBL.Free();
     JObj.Free();
   end;
 end;

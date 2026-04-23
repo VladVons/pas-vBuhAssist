@@ -656,7 +656,7 @@ var
 begin
   inherited;
 
-  Str1 := '2345678901234567890';
+  //Str1 := '2345678901234567890';
   //Str := Str.Between('23', '89');
   //Str2 := Str1.Replaces(['12', '7'], ['ab', '?']);
   //Str1 := 'the {{town}} is a capital of Great britian';

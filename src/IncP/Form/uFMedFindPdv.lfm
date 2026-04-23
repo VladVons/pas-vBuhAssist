@@ -20,11 +20,13 @@ inherited FMedFindPdv: TFMedFindPdv
     inherited PageControl: TPageControl
       Width = 919
       inherited TabSheetCur: TTabSheet
+        ClientWidth = 911
         inherited DbGrid1: TDBGrid
           Width = 911
         end
       end
       inherited TabSheetPrev: TTabSheet
+        ClientWidth = 911
         inherited DBGrid2: TDBGrid
           Width = 911
         end
@@ -38,7 +40,6 @@ inherited FMedFindPdv: TFMedFindPdv
     Width = 168
     Caption = 'Розблокувати'
     Images = DmCommon.ImageList1
-    ImageIndex = 0
     TabOrder = 2
     OnClick = BitBtnUnlockClick
   end

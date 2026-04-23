@@ -8,7 +8,7 @@ unit uSys;
 interface
 
 uses
-  Classes, Windows, SysUtils, StrUtils, FileInfo, Process, fpjson,
+  Classes, Windows, SHFolder, SysUtils, StrUtils, FileInfo, Process, fpjson,
   uHelper;
 
 function AddDllDirectory(aDir: PWideChar): THandle; stdcall; external 'kernel32.dll';
@@ -23,6 +23,7 @@ function GetAppDir(): string;
 function GetAppVer(aBuildOnly: boolean = False): string;
 function GetExeVer(const aFile: string): string;
 function GetDirFiles(const aDir, aMask: string): TStringList;
+function GetDesktopDir(): string;
 procedure AddDirDll(const aPath: string);
 function FileGetSize(const aFileName: string): Int64;
 function FileGetModDate(const aFile: string): TDateTime;
@@ -229,6 +230,16 @@ begin
   finally
     Info.Free();
   end;
+end;
+
+function GetDesktopDir(): string;
+var
+  Path: array[0..MAX_PATH] of Char;
+begin
+  if SHGetFolderPath(0, CSIDL_DESKTOPDIRECTORY, 0, 0, @Path[0]) = S_OK then
+    Result := Path
+  else
+    Result := '';
 end;
 
 function GetExeVer(const aFile: string): string;

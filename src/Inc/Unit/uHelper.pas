@@ -9,7 +9,7 @@ unit uHelper;
 interface
 
 uses
-  Classes, SysUtils, StrUtils, fpjson;
+  Classes, SysUtils, StrUtils, LazUTF8, fpjson;
 
 type
   TStringMapFunc = function(const aStr: string): string;
@@ -21,24 +21,25 @@ type
     function Between(const aStart, aEnd: string): string;
     function DelBOM(): string;
     function DelEmptyLines(): string;
-    function EscapeRegExp(): string;
     function EndsWithAny(const aArr: TStringArray): boolean;
+    function EscapeRegExp(): string;
+    function FileExists(): boolean;
+    function FileQuoted(): string;
+    function Filter(aFrom, aTo: char; aInvert: boolean = False): string;
+    function Filter(const aAllowed: string; aInvert: boolean = False): string;
+    function Filter(const aAllowed: TCharSet; aInvert: boolean = False): string;
     function IsQuoted(): Boolean;
     function JoinNonEmpty(const aArr : TStringArray): string;
     function Left(aLen: integer; aDoCut: boolean = False): string;
     function Middle(const aStart, aCount: integer): string;
     function PosEx(const aStr: string; aOfst: integer = 1): integer;
+    function Replaces(const aOld, aNew: TStringArray): string;
     function Right(aLen: Integer; aDoCut: boolean = False): string;
     function RightFrom(aPos: Integer): string;
-    function Replaces(const aOld, aNew: TStringArray): string;
     function TrimExt(const aChars: TSysCharSet = [' ']): string;
     function TrimInt(const aChars: TSysCharSet = [' ']): string;
-    function Filter(const aAllowed: TCharSet; aInvert: boolean = False): string;
-    function Filter(aFrom, aTo: char; aInvert: boolean = False): string;
-    function Filter(const aAllowed: string; aInvert: boolean = False): string;
+    function WordWrap(aMaxLen: Integer): string;
     procedure ToFile(const aFile: string);
-    function FileExists(): boolean;
-    function FileQuoted(): string;
   end;
 
   TStringListHelper = class helper for TStringList
@@ -116,7 +117,7 @@ end;
 
 function TStringHelperEx.PosEx(const aStr: string; aOfst: integer = 1): integer;
 begin
-  Result := Pos(aStr, self, aOfst);
+  Result := System.Pos(aStr, self, aOfst);
 end;
 
 function TStringHelperEx.After(const aStr: string): string;
@@ -245,6 +246,100 @@ begin
   end;
 
   SetLength(Result, Len);
+end;
+
+function TStringHelperEx.WordWrap(aMaxLen: Integer): string;
+var
+  i, TotalLen, LineLen, WordLen: Integer;
+  Str, CurLine, WordBuf: string;
+begin
+  if (IsEmpty()) then
+    Exit('');
+
+  Result := '';
+  CurLine := '';
+  WordBuf := '';
+  LineLen := 0;
+  WordLen := 0;
+
+  TotalLen := UTF8Length(self);
+  i := 1;
+
+  while i <= TotalLen do
+  begin
+    Str := UTF8Copy(self, i, 1);
+
+    if (Str = ' ') or (Str = #10) or (Str = #13) then
+    begin
+      if (WordBuf <> '') then
+      begin
+        if (LineLen > 0) and (LineLen + 1 + WordLen > aMaxLen) then
+        begin
+          Result += CurLine + LineEnding;
+          CurLine := WordBuf;
+          LineLen := WordLen;
+        end
+        else
+        begin
+          if LineLen > 0 then
+          begin
+            CurLine += ' ';
+            Inc(LineLen);
+          end;
+          CurLine += WordBuf;
+          Inc(LineLen, WordLen);
+        end;
+
+        WordBuf := '';
+        WordLen := 0;
+      end;
+
+      if (Str = #10) or (Str = #13) then
+      begin
+        if CurLine <> '' then
+        begin
+          Result += CurLine + LineEnding;
+          CurLine := '';
+          LineLen := 0;
+        end;
+      end;
+    end else begin
+      WordBuf += Str;
+      Inc(WordLen);
+
+      if (WordLen >= aMaxLen) then
+      begin
+        if CurLine <> '' then
+        begin
+          Result += CurLine + LineEnding;
+          CurLine := '';
+          LineLen := 0;
+        end;
+
+        Result += WordBuf + LineEnding;
+        WordBuf := '';
+        WordLen := 0;
+      end;
+    end;
+
+    Inc(i);
+  end;
+
+  if WordBuf <> '' then
+  begin
+    if (LineLen > 0) and (LineLen + 1 + WordLen > aMaxLen) then
+    begin
+      Result += CurLine + LineEnding;
+      CurLine := WordBuf;
+    end else begin
+      if LineLen > 0 then
+        CurLine += ' ';
+      CurLine += WordBuf;
+    end;
+  end;
+
+  if CurLine <> '' then
+    Result += CurLine;
 end;
 
 function TStringHelperEx.DelEmptyLines(): string;

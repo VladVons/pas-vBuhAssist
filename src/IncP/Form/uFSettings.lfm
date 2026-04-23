@@ -1,25 +1,28 @@
 inherited FSettings: TFSettings
   Left = 287
   Height = 342
-  Width = 460
+  Width = 662
   Caption = 'Налаштування'
   ClientHeight = 342
-  ClientWidth = 460
+  ClientWidth = 662
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   inherited PanelTitle: TPanel
-    Width = 460
-    ClientWidth = 460
+    Width = 662
+    ClientWidth = 662
     TabOrder = 3
+    inherited LabelTitle: TLabel
+      Width = 662
+    end
   end
   object Panel1: TPanel[1]
     Left = 0
     Height = 40
-    Top = 40
-    Width = 460
+    Top = 48
+    Width = 662
     Align = alTop
     ClientHeight = 40
-    ClientWidth = 460
+    ClientWidth = 662
     TabOrder = 0
     object ButtonOk: TButton
       Left = 16
@@ -33,20 +36,20 @@ inherited FSettings: TFSettings
   end
   object PageControlMain: TPageControl[2]
     Left = 0
-    Height = 262
-    Top = 80
-    Width = 460
+    Height = 254
+    Top = 88
+    Width = 662
     Align = alClient
     TabOrder = 1
   end
   object Panel2: TPanel[3]
     Left = 0
-    Height = 262
-    Top = 80
-    Width = 460
+    Height = 254
+    Top = 88
+    Width = 662
     Align = alClient
-    ClientHeight = 262
-    ClientWidth = 460
+    ClientHeight = 254
+    ClientWidth = 662
     ParentBackground = False
     TabOrder = 2
     object GroupBox1: TGroupBox
@@ -55,7 +58,7 @@ inherited FSettings: TFSettings
       Top = 8
       Width = 432
       Caption = 'Версія'
-      ClientHeight = 27
+      ClientHeight = 23
       ClientWidth = 428
       ParentBackground = False
       TabOrder = 0
@@ -74,32 +77,32 @@ inherited FSettings: TFSettings
       Top = 72
       Width = 433
       Caption = 'Програма'
-      ClientHeight = 92
+      ClientHeight = 88
       ClientWidth = 429
       ParentBackground = False
       TabOrder = 1
       object SpinEditBeginYear: TSpinEdit
         Left = 120
-        Height = 24
+        Height = 28
         Top = 0
         Width = 136
         TabOrder = 0
       end
       object Label1: TLabel
         Left = 8
-        Height = 16
+        Height = 20
         Top = 8
-        Width = 93
+        Width = 90
         Caption = 'Дата початку'
       end
       object LabeledEditPassword: TLabeledEdit
         Left = 120
-        Height = 24
+        Height = 28
         Top = 32
         Width = 136
         EchoMode = emPassword
-        EditLabel.Height = 24
-        EditLabel.Width = 48
+        EditLabel.Height = 28
+        EditLabel.Width = 53
         EditLabel.Caption = 'Пароль'
         LabelPosition = lpLeft
         PasswordChar = '*'
@@ -107,14 +110,38 @@ inherited FSettings: TFSettings
       end
       object CheckBoxUpdates: TCheckBox
         Left = 120
-        Height = 20
+        Height = 24
         Top = 64
-        Width = 157
+        Width = 165
         Caption = 'Перевірка оновлень'
         Checked = True
         State = cbChecked
         TabOrder = 2
       end
     end
+    object LabeledEditPathExportPdv: TLabeledEdit
+      Left = 136
+      Height = 28
+      Top = 192
+      Width = 360
+      EditLabel.Height = 28
+      EditLabel.Width = 129
+      EditLabel.Caption = 'Шлях експорту ПН'
+      LabelPosition = lpLeft
+      TabOrder = 2
+    end
+  end
+  object ButtonDirExportPdv: TButton[4]
+    Left = 504
+    Height = 25
+    Top = 280
+    Width = 24
+    Caption = '...'
+    TabOrder = 4
+    OnClick = ButtonDirExportPdvClick
+  end
+  object SelectDirectoryDialog1: TSelectDirectoryDialog[5]
+    Left = 592
+    Top = 272
   end
 end
