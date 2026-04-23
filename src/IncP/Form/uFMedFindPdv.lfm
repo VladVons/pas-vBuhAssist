@@ -19,6 +19,8 @@ inherited FMedFindPdv: TFMedFindPdv
     end
     inherited PageControl: TPageControl
       Width = 919
+      ActivePage = TabSheetPrev
+      TabIndex = 1
       inherited TabSheetCur: TTabSheet
         ClientWidth = 911
         inherited DbGrid1: TDBGrid

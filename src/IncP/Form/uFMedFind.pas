@@ -276,7 +276,7 @@ begin
   Working(False);
 end;
 
-procedure TFMedFind.SQLQueryGridCurCalcFields(DataSet: TDataSet);
+procedure TFMedFind.SQLQueryGridCurCalcFields(aDataSet: TDataSet);
 var
   i, PerType: integer;
   FieldPerDate: TField;
@@ -284,10 +284,10 @@ var
 begin
   ProtectTimer.TimingStart();
 
-  FieldPerDate := DataSet.FindField('PERDATE');
+  FieldPerDate := aDataSet.FindField('PERDATE');
   if (FieldPerDate <> nil) and (not FieldPerDate.IsNull) then
   begin
-    PerType := DataSet.FieldByName('PERTYPE').AsInteger;
+    PerType := aDataSet.FieldByName('PERTYPE').AsInteger;
     if (PerType = cDbMonth) then
       Str := GetMonthNameUa(MonthOf(FieldPerDate.AsDateTime))
     else if (PerType = cDbQuarter) then
@@ -296,18 +296,18 @@ begin
       Str := IntToRoman10(GetYearPart(FieldPerDate.AsDateTime, 6)) + ' ' + PerTypeToHuman(PerType)
     else
       Str := PerTypeToHuman(PerType);
-    DataSet.FieldByName('PERDATE_STR').AsString :=  Str;
+    aDataSet.FieldByName('PERDATE_STR').AsString :=  Str;
   end;
 
-  ParentCalcFields(DataSet);
+  ParentCalcFields(aDataSet);
 
-  Code := DataSet.FieldByName('EDRPOU').AsString;
+  Code := aDataSet.FieldByName('EDRPOU').AsString;
   if (IsDemo(Code, FieldPerDate)) then
     for i := 0 to fDemoFields.Count - 1 do
-      DataSet.FieldByName(fDemoFields[i]).AsString := 'ДЕМО';
+      aDataSet.FieldByName(fDemoFields[i]).AsString := 'ДЕМО';
 
   if (IsBreakpoint(TMethod(@ProtectTimer.CompareRnd).Code)) then
-    FreeAndNil(DataSet);
+    FreeAndNil(aDataSet);
 
   if (ProtectTimer.TimingCheck()) then
     fCodesLic.Clear();

@@ -204,10 +204,19 @@ var
   JArr: TJSONArray;
   SL: TStringList;
   TabSheet: TTabSheet;
+  PerDate: TField;
 begin
-  if (not SQLQueryCur.Active) then
+  if (not SQLQueryCur.Active) or (SQLQueryCur.RecordCount = 0) then
   begin
     Log('e', 'Не відібрано значення');
+    Exit();
+  end;
+
+  Str := DBGrid1.DataSource.DataSet.FieldByName('EDRPOU').AsString;
+  PerDate := DBGrid1.DataSource.DataSet.FindField('PERDATE');
+  if (IsDemo(Str, PerDate)) then
+  begin
+    Log('i', 'Не знайдено ліцензій');
     Exit();
   end;
 
@@ -272,10 +281,10 @@ end;
 
 procedure TFMedFindPdv.BitBtnUnlockClick(aSender: TBitBtn);
 var
-  P: TPoint;
+  Pnt: TPoint;
 begin
-  P := aSender.ClientToScreen(Point(0, aSender.Height));
-  PopupMenuWizards.PopUp(P.X, P.Y);
+  Pnt := aSender.ClientToScreen(Point(0, aSender.Height));
+  PopupMenuWizards.PopUp(Pnt.X, Pnt.Y);
 end;
 
 procedure TFMedFindPdv.OnPopupMenuWizardsClick(aSender: TObject);

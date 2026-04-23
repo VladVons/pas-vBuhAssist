@@ -52,7 +52,7 @@
     procedure MenuItemOrderFreeClick(Sender: TObject);
     procedure MenuItemRefreshClick(Sender: TObject);
     procedure PageControlChange(Sender: TObject);
-    procedure SQLQueryGridCurCalcFields(DataSet: TDataSet);
+    procedure SQLQueryGridCurCalcFields(aDataSet: TDataSet);
   private
     fCount: integer;
     fSortField, fCurCaption, fPrevCaption: string;
@@ -61,7 +61,6 @@
     fCodesLic, fDemoFields: TStringList;
     fColorYelow: TColor;
     function GetCurPathObj(): TJSONObject;
-    function IsDemo(aCode: string; aField: TField): boolean;
     function QueryCurOpen(aQuery, aQueryPrev: TSQLQuery): integer;
     function QueryPrevOpen(aQuery: TSQLQuery; aSLCodes: TStringList; const aCode: string; aPerType, aYear, aMonth: integer): integer;
     procedure ConnectToDb();
@@ -79,6 +78,7 @@
     function  GetParentQueryCur(): TSQLQuery; virtual; abstract;
     function  GetParentQueryPrev(): TSQLQuery; virtual; abstract;
     function  GetParentTransaction(): TSQLTransaction; virtual; abstract;
+    function IsDemo(aCode: string; aField: TField): boolean;
     procedure LoadJsonData();
     procedure ParentQueryCurOpen(aQuery: TSQLQuery); virtual;
     procedure ParentCalcFields(DataSet: TDataSet); virtual;
