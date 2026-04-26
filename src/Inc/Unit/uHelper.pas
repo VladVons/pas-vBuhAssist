@@ -33,12 +33,12 @@ type
     function Left(aLen: integer; aDoCut: boolean = False): string;
     function Middle(const aStart, aCount: integer): string;
     function PosEx(const aStr: string; aOfst: integer = 1): integer;
+    function PosRSpace(aStart, aLen: integer): integer;
     function Replaces(const aOld, aNew: TStringArray): string;
     function Right(aLen: Integer; aDoCut: boolean = False): string;
     function RightFrom(aPos: Integer): string;
     function TrimExt(const aChars: TSysCharSet = [' ']): string;
     function TrimInt(const aChars: TSysCharSet = [' ']): string;
-    function WordWrap(aMaxLen: Integer): string;
     procedure ToFile(const aFile: string);
   end;
 
@@ -68,6 +68,7 @@ type
     function Quoted(const aChar: char): TStringList;
     function Replace(const aFind, aRep: string): TStringList;
     function Split(const aStr, aDelim: string): TStringList;
+    function WordWrap(aMaxLen: Integer): TStringList;
     function Uniq(): TStringList;
   end;
 
@@ -118,6 +119,27 @@ end;
 function TStringHelperEx.PosEx(const aStr: string; aOfst: integer = 1): integer;
 begin
   Result := System.Pos(aStr, self, aOfst);
+end;
+
+function TStringHelperEx.PosRSpace(aStart, aLen: integer): integer;
+var
+  i, Len: Integer;
+begin
+  Result := 0;
+
+  Len := System.Length(self);
+  if (Len = 0) then
+    Exit();
+
+  if (aStart > Len) then
+    aStart := Len;
+
+  if (aStart - aLen + 1 < 1) then
+    aLen := aStart;
+
+  for i := aStart downto aStart - aLen + 1 do
+    if (self[i] = ' ') then
+       Exit(i);
 end;
 
 function TStringHelperEx.After(const aStr: string): string;
@@ -246,100 +268,6 @@ begin
   end;
 
   SetLength(Result, Len);
-end;
-
-function TStringHelperEx.WordWrap(aMaxLen: Integer): string;
-var
-  i, TotalLen, LineLen, WordLen: Integer;
-  Str, CurLine, WordBuf: string;
-begin
-  if (IsEmpty()) then
-    Exit('');
-
-  Result := '';
-  CurLine := '';
-  WordBuf := '';
-  LineLen := 0;
-  WordLen := 0;
-
-  TotalLen := UTF8Length(self);
-  i := 1;
-
-  while i <= TotalLen do
-  begin
-    Str := UTF8Copy(self, i, 1);
-
-    if (Str = ' ') or (Str = #10) or (Str = #13) then
-    begin
-      if (WordBuf <> '') then
-      begin
-        if (LineLen > 0) and (LineLen + 1 + WordLen > aMaxLen) then
-        begin
-          Result += CurLine + LineEnding;
-          CurLine := WordBuf;
-          LineLen := WordLen;
-        end
-        else
-        begin
-          if LineLen > 0 then
-          begin
-            CurLine += ' ';
-            Inc(LineLen);
-          end;
-          CurLine += WordBuf;
-          Inc(LineLen, WordLen);
-        end;
-
-        WordBuf := '';
-        WordLen := 0;
-      end;
-
-      if (Str = #10) or (Str = #13) then
-      begin
-        if CurLine <> '' then
-        begin
-          Result += CurLine + LineEnding;
-          CurLine := '';
-          LineLen := 0;
-        end;
-      end;
-    end else begin
-      WordBuf += Str;
-      Inc(WordLen);
-
-      if (WordLen >= aMaxLen) then
-      begin
-        if CurLine <> '' then
-        begin
-          Result += CurLine + LineEnding;
-          CurLine := '';
-          LineLen := 0;
-        end;
-
-        Result += WordBuf + LineEnding;
-        WordBuf := '';
-        WordLen := 0;
-      end;
-    end;
-
-    Inc(i);
-  end;
-
-  if WordBuf <> '' then
-  begin
-    if (LineLen > 0) and (LineLen + 1 + WordLen > aMaxLen) then
-    begin
-      Result += CurLine + LineEnding;
-      CurLine := WordBuf;
-    end else begin
-      if LineLen > 0 then
-        CurLine += ' ';
-      CurLine += WordBuf;
-    end;
-  end;
-
-  if CurLine <> '' then
-    Result += CurLine;
 end;
 
 function TStringHelperEx.DelEmptyLines(): string;
@@ -703,6 +631,61 @@ begin
     Add(Parts[i]);
 
   Result := self;
+end;
+
+function TStringListHelper.WordWrap(aMaxLen: Integer): TStringList;
+var
+  i: Integer;
+
+  function _UTF8PrevChar(aPL, aPR: PChar): PChar;
+  begin
+    repeat
+      Dec(aPR);
+    until (aPR > aPL) or ((Byte(aPR^) and $C0) <> $80);
+    Result := aPR;
+  end;
+
+  function _UTF8PosRightSpace(aPL, aPR: PChar): PChar;
+  begin
+    while (aPR > aPL) do
+    begin
+      if (aPR^ = ' ') then
+        Exit(aPR);
+      aPR := _UTF8PrevChar(aPL, aPR);
+    end;
+
+    Result := nil;
+  end;
+
+  procedure ParseString(aPL: PChar; aLen: integer);
+  var
+    Len: integer;
+    Str: string;
+    PSpace, PLen: PChar;
+  begin
+    PLen := UTF8CodepointStart(aPL, aLen, aMaxLen);
+    if (PLen = nil) then
+    begin
+      SetString(Str, aPL, aLen);
+      Result.Add(Str)
+    end else begin
+      PSpace := _UTF8PosRightSpace(aPL, PLen);
+      if (PSpace <> nil) then
+      begin
+        Len := PSpace - aPL;
+        SetString(Str, aPL, Len);
+        Result.Add(Str);
+
+        ParseString(PSpace + 1, aLen - Len - 1);
+      end else
+        PSpace := PSpace; // ToDo ?
+    end;
+  end;
+
+begin
+  Result := TStringList.Create();
+  for i := 0 to Count - 1 do
+    ParseString(PChar(self[i]), self[i].Length);
 end;
 
 function TStringListHelper.Uniq(): TStringList;

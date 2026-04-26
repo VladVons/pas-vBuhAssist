@@ -213,6 +213,7 @@ begin
   end;
 
   Str := DBGrid1.DataSource.DataSet.FieldByName('EDRPOU').AsString;
+  Log('i', Format('Розблокування ПН для %s', [Str]));
   PerDate := DBGrid1.DataSource.DataSet.FindField('PERDATE');
   if (IsDemo(Str, PerDate)) then
   begin

@@ -28,6 +28,7 @@ type
   private
     procedure D1(aJObjMed, aJObjWiz: TJSONObject);
     function D2(aJObjMed, aJObjWiz: TJSONObject): integer;
+    function GetDirExport(): string;
     procedure SaveXml(const aName: string; aJObjMed, aJObjWiz: TJSONObject; aIdx: integer);
     function AsGridPrint(aJObj: TJSONObject; const aParam: TStringList): TStringList;
     procedure StringListToPDF(aLines: TStringList; const aFileName: string);
@@ -41,6 +42,17 @@ implementation
 
 uses
   uFWizard;
+
+function TWizardUser.GetDirExport(): string;
+var
+  Str: string;
+begin
+  Str := ConcatPaths([GetDesktopDir(), 'РозблокуванняПН']);
+  Str := Settings.GetItem('FSettings', 'DirExportPdv', Str);
+  if (not DirectoryExists(Str)) then
+    ForceDirectories(Str);
+  Result := Str;
+end;
 
 function TWizardUser.DoSaveTab(aForm: TScrollBox): string;
 var
@@ -104,10 +116,7 @@ begin
     Macros.Free();
   end;
 
-  Str := ConcatPaths([GetDesktopDir(), 'РозблокуванняПН']);
-  Str := Settings.GetItem('FSettings', 'DirExportPdv', Str);
-  if (not DirectoryExists(Str)) then
-    ForceDirectories(Str);
+  Str := GetDirExport();
   Path := ConcatPaths([Str, FileName]);
   StrXds.ToFile(Path);
 
@@ -118,7 +127,7 @@ function TWizardUser.D2(aJObjMed, aJObjWiz: TJSONObject): integer;
 const
   cDoc = '1360102';
 var
-  i, Idx: integer;
+  i: integer;
   Str, Key: string;
   JObj: TJSONObject;
   DBL: TDbList;
@@ -193,12 +202,14 @@ end;
 procedure TWizardUser.D1(aJObjMed, aJObjWiz: TJSONObject);
 const
   cDoc = '1312603';
-  cMemo = 'g01w40s10.memo1_S';
+  cMemoShort = 'g01w40s10.memo1_S';
+  cMemoLong = 'g01w40s20.memo2_S';
 var
+  Path: string;
   JArr: TJSONArray;
-  SL: TStringList;
+  SL, SL2: TStringList;
 begin
-  JArr := TJSONArray(aJObjWiz.Find(cMemo));
+  JArr := TJSONArray(aJObjWiz.Find(cMemoShort));
   if (JArr <> nil) then
   begin
     SL := TStringList.Create();
@@ -206,8 +217,20 @@ begin
     SL.Free();
   end;
 
+  JArr := TJSONArray(aJObjWiz.Find(cMemoLong));
+  if (JArr <> nil) then
+  begin
+    SL := TStringList.Create();
+    SL.AddArray(JArr);
+    SL2 := SL.WordWrap(80);
+    SL.Free();
+
+    Path := ConcatPaths([GetDirExport(), cDoc + '.pdf']);
+    TextToPDF(Path, SL2);
+    SL2.Free();
+  end;
+
   SaveXml(cDoc, aJObjMed, aJObjWiz, 1);
-  //StringListToPDF(TStringList(Memo.Lines), 'aFileName.pdf');
 end;
 
 function TWizardUser.OnVar(aData: TUserData; const aStr: string): string;
@@ -265,6 +288,7 @@ end;
 
 procedure TWizardUser.StringListToPDF(aLines: TStringList; const aFileName: string);
 begin
+
 end;
 
 function TWizardUser.AsGridPrint(aJObj: TJSONObject; const aParam: TStringList): TStringList;
@@ -392,15 +416,19 @@ end;
 procedure Test();
 var
   Str: string;
-  SL: TStringList;
+  SL, SL2: TStringList;
 begin
-  Str := StrFromFile('res\txt\UserAgreement.txt');
-  Str := Str.WordWrap(40);
-  Str.ToFile('tmp.txt');
-
   SL := TStringList.Create();
-  SL.Text := Str;
-  TextToPDF('output.pdf', SL);
+  SL.LoadFromFile('res\txt\UserAgreement.txt');
+  SL2 := SL.WordWrap(40);
+  SL2.SaveToFile('tmp.txt');
+  SL.Free();
+  SL2.Free();
+
+
+  //SL := TStringList.Create();
+  //SL.Text := Str;
+  //TextToPDF('output.pdf', SL);
 end;
 
 begin

@@ -12,59 +12,47 @@ procedure TextToPDF(const aFileName: string; const aText: TStringList);
 implementation
 
 procedure TextToPDF(const aFileName: string; const aText: TStringList);
+const
+  cPageHeight = 297;
+  cMarginTop = 20;
+  cMarginLeft = 10;
+  cMarginBottom = 17;
+  cLineStep = 6;
 var
   Doc: TPDFDocument;
   Section: TPDFSection;
   Page: TPDFPage;
   FontIdx: Integer;
   i, Y: Integer;
-begin
-  Doc := TPDFDocument.Create(nil);
-  try
-    // Метадані
-    //Doc.Infos.Title := 'Text to PDF Example';
-    //Doc.Infos.Author := 'Lazarus 4.4 / FPC 3.2.2';
-    //Doc.Infos.Producer := 'fcl-pdf';
-    //Doc.Infos.ApplicationName := 'TextToPDF';
-    //Doc.Infos.CreationDate := Now;
 
-    // Опції: стиснення + вбудовування шрифту (критично для кирилиці!)
-    //Doc.Options := [poPageOriginAtTop, poCompressFonts, poCompressText,
-    //                poNoEmbeddedFonts] - [poNoEmbeddedFonts];
-    //// Простіше:
-    //Doc.Options := [poPageOriginAtTop, poCompressFonts, poCompressText];
-    Doc.Options := Doc.Options + [poNoEmbeddedFonts];
-
-    Doc.StartDocument;
-
-    // Секція + сторінка
-    Section := Doc.Sections.AddSection;
-    Page := Doc.Pages.AddPage;
+  procedure NewPage();
+  begin
+    Page := Doc.Pages.AddPage();
     Page.PaperType := ptA4;
     Page.UnitOfMeasure := uomMillimeters;
     Section.AddPage(Page);
-
-    //FontIdx := Doc.AddFont('C:\Windows\Fonts\arial.ttf', 'Arial');
-    //FontIdx := Doc.AddFont('Helvetica');
-    FontIdx := Doc.AddFont('C:\Windows\Fonts\LiberationSans-Regular.ttf', 'LiberationSans');
     Page.SetFont(FontIdx, 11);
     Page.SetColor(clBlack, False);
+    Y := cMarginTop;
+  end;
 
-    // Пишемо текст рядок за рядком
-    Y := 20; // верхній відступ у мм
-    for i := 0 to AText.Count - 1 do
+begin
+  Doc := TPDFDocument.Create(nil);
+  try
+    Doc.Options := Doc.Options + [poNoEmbeddedFonts, poCompressFonts, poCompressText];
+    Doc.StartDocument();
+
+    Section := Doc.Sections.AddSection();
+    FontIdx := Doc.AddFont('C:\Windows\Fonts\LiberationSans-Regular.ttf', 'LiberationSans');
+
+    NewPage();
+    for i := 0 to aText.Count - 1 do
     begin
-      Page.WriteText(20, Y, AText[i]);
-      Inc(Y, 6); // крок між рядками
-      if (Y > 280) then // нова сторінка якщо вийшли за A4
-      begin
-        Page := Doc.Pages.AddPage;
-        Page.PaperType := ptA4;
-        Page.UnitOfMeasure := uomMillimeters;
-        Section.AddPage(Page);
-        Page.SetFont(FontIdx, 11);
-        Y := 20;
-      end;
+      Page.WriteText(cMarginLeft, cPageHeight - Y, aText[i]);
+
+      Inc(Y, cLineStep);
+      if (Y > cPageHeight - cMarginBottom) then
+        NewPage();
     end;
 
     Doc.SaveToFile(aFileName);
