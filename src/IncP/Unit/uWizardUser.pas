@@ -28,8 +28,9 @@ type
   private
     procedure D1(aJObjMed, aJObjWiz: TJSONObject);
     function D2(aJObjMed, aJObjWiz: TJSONObject): integer;
+    procedure D2_Explain_2(aJObjMed, aJObjWiz: TJSONObject);
     function GetDirExport(): string;
-    procedure SaveXml(const aName: string; aJObjMed, aJObjWiz: TJSONObject; aIdx: integer);
+    procedure SaveXml(const aName: string; aJObjMed: TJSONObject; aIdx: integer);
     function AsGridPrint(aJObj: TJSONObject; const aParam: TStringList): TStringList;
     procedure StringListToPDF(aLines: TStringList; const aFileName: string);
     procedure ParseMemo(const aName: string);
@@ -83,7 +84,7 @@ begin
   Result := '';
 end;
 
-procedure TWizardUser.SaveXml(const aName: string; aJObjMed, aJObjWiz: TJSONObject; aIdx: integer);
+procedure TWizardUser.SaveXml(const aName: string; aJObjMed: TJSONObject; aIdx: integer);
 var
   Str, StrXds, Path, FileName, No, FJ: string;
   Macros: TMacros;
@@ -123,11 +124,52 @@ begin
   Log.Print('i', Format('Збережено до %s', [Path]));
 end;
 
+procedure TWizardUser.D2_Explain_2(aJObjMed, aJObjWiz: TJSONObject);
+const
+  cDoc = '1360102';
+  cMemoLong = 'g01w40s20.memo2_S';
+var
+  Str, FileName, FilePath: string;
+  JArr: TJSONArray;
+  SL, SL2: TStringList;
+begin
+  JArr := TJSONArray(aJObjWiz.Find(cMemoLong));
+  if (JArr = nil) then
+    Exit();
+
+  SL := TStringList.Create();
+  SL.AddArray(JArr);
+  SL2 := SL.WordWrap(80);
+  SL.Free();
+
+  FileName := Format('Пояснення до податкової накладної номер %s від %s',
+    [aJObjMed.Get('T1RXXXXG31', '---'), aJObjMed.Get('T1RXXXXG2D', '---')]);
+  FilePath := ConcatPaths([GetDirExport(), FileName + '.pdf']);
+  TextToPDF(FilePath, SL2);
+  SL2.Free();
+
+  Str := StrFromFile(FilePath);
+  aJObjMed.SetKey('R01G1B', EncodeStringBase64(Str));
+
+  Str := aJObjMed.Get('_DATE_WD', '');
+  aJObjMed.SetKey('FILLDOC', Str);
+
+  aJObjMed.SetKey('NUMDOC', '1');
+
+  aJObjMed.SetKey('NAMEDOC', FileName);
+
+  aJObjMed.SetKey('R01G1S_2', FileName + '.pdf');
+
+  aJObjMed.SetKey('HNUM_2', '1');
+
+  SaveXml(cDoc, aJObjMed, 1);
+end;
+
 function TWizardUser.D2(aJObjMed, aJObjWiz: TJSONObject): integer;
 const
   cDoc = '1360102';
 var
-  i: integer;
+  i, Cnt: integer;
   Str, Key: string;
   JObj: TJSONObject;
   DBL: TDbList;
@@ -136,6 +178,12 @@ var
 begin
   SLFiles := TStringList.Create();
   SLFiles.CaseSensitive := False;
+
+  // розширене пояснення PDF
+  D2_Explain_2(aJObjMed, aJObjWiz);
+
+  // Розширене пояснення = 1
+  Cnt := 2;
 
   for i := 0 to aJObjWiz.Count - 1 do
   begin
@@ -191,7 +239,8 @@ begin
         Str := aJObjMed.Get('_DATE_WD', '');
       aJObjMed.SetKey('FILLDOC', Str);
 
-      SaveXml(cDoc, aJObjMed, JObj, i);
+      SaveXml(cDoc, aJObjMed, Cnt);
+      Inc(Cnt);
     end;
     DBL.Free();
   end;
@@ -203,11 +252,9 @@ procedure TWizardUser.D1(aJObjMed, aJObjWiz: TJSONObject);
 const
   cDoc = '1312603';
   cMemoShort = 'g01w40s10.memo1_S';
-  cMemoLong = 'g01w40s20.memo2_S';
 var
-  Path: string;
   JArr: TJSONArray;
-  SL, SL2: TStringList;
+  SL: TStringList;
 begin
   JArr := TJSONArray(aJObjWiz.Find(cMemoShort));
   if (JArr <> nil) then
@@ -217,20 +264,7 @@ begin
     SL.Free();
   end;
 
-  JArr := TJSONArray(aJObjWiz.Find(cMemoLong));
-  if (JArr <> nil) then
-  begin
-    SL := TStringList.Create();
-    SL.AddArray(JArr);
-    SL2 := SL.WordWrap(80);
-    SL.Free();
-
-    Path := ConcatPaths([GetDirExport(), cDoc + '.pdf']);
-    TextToPDF(Path, SL2);
-    SL2.Free();
-  end;
-
-  SaveXml(cDoc, aJObjMed, aJObjWiz, 1);
+  SaveXml(cDoc, aJObjMed, 1);
 end;
 
 function TWizardUser.OnVar(aData: TUserData; const aStr: string): string;
