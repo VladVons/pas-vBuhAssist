@@ -642,6 +642,7 @@ var
     repeat
       Dec(aPR);
     until (aPR > aPL) or ((Byte(aPR^) and $C0) <> $80);
+
     Result := aPR;
   end;
 
@@ -657,7 +658,7 @@ var
     Result := nil;
   end;
 
-  procedure ParseString(aPL: PChar; aLen: integer);
+  procedure _ParseStringRecurs(aPL: PChar; aLen: integer);
   var
     Len: integer;
     Str: string;
@@ -676,16 +677,16 @@ var
         SetString(Str, aPL, Len);
         Result.Add(Str);
 
-        ParseString(PSpace + 1, aLen - Len - 1);
+        _ParseStringRecurs(PSpace + 1, aLen - Len - 1);
       end else
-        PSpace := PSpace; // ToDo ?
+        PSpace := PSpace; // Ignore very short wrap aMaxLen = 15
     end;
   end;
 
 begin
   Result := TStringList.Create();
   for i := 0 to Count - 1 do
-    ParseString(PChar(self[i]), self[i].Length);
+    _ParseStringRecurs(PChar(self[i]), self[i].Length);
 end;
 
 function TStringListHelper.Uniq(): TStringList;
