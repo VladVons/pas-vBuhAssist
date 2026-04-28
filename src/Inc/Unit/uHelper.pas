@@ -25,6 +25,7 @@ type
     function EscapeRegExp(): string;
     function FileExists(): boolean;
     function FileQuoted(): string;
+    function Clone(aCount: integer): string;
     function Filter(aFrom, aTo: char; aInvert: boolean = False): string;
     function Filter(const aAllowed: string; aInvert: boolean = False): string;
     function Filter(const aAllowed: TCharSet; aInvert: boolean = False): string;
@@ -405,6 +406,28 @@ begin
   end;
 end;
 
+function TStringHelperEx.Clone(aCount: integer): string;
+var
+  i, Len, Offset: integer;
+begin
+  Len := System.Length(self);
+  if (aCount <= 0) or (Len = 0) then
+     Exit('');
+
+  SetLength(Result, Len * aCount);
+
+  if (Len = 1) then
+    FillChar(Result[1], aCount * SizeOf(Char), Ord(self[1]))
+  else begin
+    Offset := 0;
+    for i := 1 to aCount do
+    begin
+      Move(Self[1], Result[Offset + 1], Len);
+      Inc(Offset, Len);
+    end;
+  end;
+end;
+
 function TStringHelperEx.FileExists(): boolean;
 begin
   Result := SysUtils.FileExists(self);
@@ -637,22 +660,17 @@ function TStringListHelper.WordWrap(aMaxLen: Integer): TStringList;
 var
   i: Integer;
 
-  function _UTF8PrevChar(aPL, aPR: PChar): PChar;
-  begin
-    repeat
-      Dec(aPR);
-    until (aPR > aPL) or ((Byte(aPR^) and $C0) <> $80);
-
-    Result := aPR;
-  end;
-
-  function _UTF8PosRightSpace(aPL, aPR: PChar): PChar;
+  function _UTF8PosRightChar(aPL, aPR: PChar; aCh: AnsiChar): PChar;
   begin
     while (aPR > aPL) do
     begin
-      if (aPR^ = ' ') then
+      if (aPR^ = aCh) then
         Exit(aPR);
-      aPR := _UTF8PrevChar(aPL, aPR);
+
+      // рух назад до початку попереднього UTF-8 символу
+      repeat
+        Dec(aPR);
+      until (aPR <= aPL) or ((Byte(aPR^) and $C0) <> $80);
     end;
 
     Result := nil;
@@ -670,7 +688,7 @@ var
       SetString(Str, aPL, aLen);
       Result.Add(Str)
     end else begin
-      PSpace := _UTF8PosRightSpace(aPL, PLen);
+      PSpace := _UTF8PosRightChar(aPL, PLen, ' ');
       if (PSpace <> nil) then
       begin
         Len := PSpace - aPL;

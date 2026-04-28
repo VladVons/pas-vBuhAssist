@@ -459,6 +459,9 @@ begin
   SL.Free();
   SL2.Free();
 
+  Str := '12-';
+  //Str := '1';
+  //Str := Str.Clone(100*1000*1000);
 
   //SL := TStringList.Create();
   //SL.Text := Str;
@@ -466,6 +469,6 @@ begin
 end;
 
 begin
-  //Test();
+  Test();
 end.
 
