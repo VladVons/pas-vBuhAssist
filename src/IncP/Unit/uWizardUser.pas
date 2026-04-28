@@ -30,9 +30,9 @@ type
     function D2(aJObjMed, aJObjWiz: TJSONObject): integer;
     procedure D2_Explain_2(aJObjMed, aJObjWiz: TJSONObject);
     function GetDirExport(): string;
+    function GetDirExport(aJObjMed: TJSONObject): string;
     procedure SaveXml(const aName: string; aJObjMed: TJSONObject; aIdx: integer);
     function AsGridPrint(aJObj: TJSONObject; const aParam: TStringList): TStringList;
-    procedure StringListToPDF(aLines: TStringList; const aFileName: string);
     procedure ParseMemo(const aName: string);
     procedure ParseMemoIf(const aName: string);
   public
@@ -49,10 +49,18 @@ var
   Str: string;
 begin
   Str := ConcatPaths([GetDesktopDir(), 'РозблокуванняПН']);
-  Str := Settings.GetItem('FSettings', 'DirExportPdv', Str);
-  if (not DirectoryExists(Str)) then
-    ForceDirectories(Str);
-  Result := Str;
+  Result := Settings.GetItem('FSettings', 'DirExportPdv', Str);
+end;
+
+function TWizardUser.GetDirExport(aJObjMed: TJSONObject): string;
+var
+  Str: string;
+begin
+  Str := Format('Податкова накладана %s від %s', [aJObjMed.Get('T1RXXXXG31', 'x'), aJObjMed.Get('T1RXXXXG2D', 'x')]).Trim();
+  Result := ConcatPaths([GetDirExport(), aJObjMed.Get('HTIN', 'x'), aJObjMed.Get('EDR_POK', 'x'), Str]);
+
+  if (not DirectoryExists(Result)) then
+    ForceDirectories(Result);
 end;
 
 function TWizardUser.DoSaveTab(aForm: TScrollBox): string;
@@ -117,7 +125,7 @@ begin
     Macros.Free();
   end;
 
-  Str := GetDirExport();
+  Str := GetDirExport(aJObjMed);
   Path := ConcatPaths([Str, FileName]);
   StrXds.ToFile(Path);
 
@@ -144,7 +152,7 @@ begin
 
   FileName := Format('Пояснення до податкової накладної номер %s від %s',
     [aJObjMed.Get('T1RXXXXG31', '---'), aJObjMed.Get('T1RXXXXG2D', '---')]);
-  FilePath := ConcatPaths([GetDirExport(), FileName + '.pdf']);
+  FilePath := ConcatPaths([GetDirExport(aJObjMed), FileName + '.pdf']);
   TextToPDF(FilePath, SL2);
   SL2.Free();
 
@@ -169,7 +177,7 @@ function TWizardUser.D2(aJObjMed, aJObjWiz: TJSONObject): integer;
 const
   cDoc = '1360102';
 var
-  i, Cnt: integer;
+  i, Cnt, CntD2All, CntD2Ok: integer;
   Str, Key: string;
   JObj: TJSONObject;
   DBL: TDbList;
@@ -185,6 +193,8 @@ begin
   // Розширене пояснення = 1
   Cnt := 2;
 
+  CntD2All := 0;
+  CntD2Ok := 0;
   for i := 0 to aJObjWiz.Count - 1 do
   begin
     // name like g01w10s10.grid_d2_s
@@ -194,6 +204,10 @@ begin
 
     JObj := TJSONObject(aJObjWiz.Items[i]);
     DBL := TDbList.Create(JObj);
+    if (DBL.Count > 0) then
+      Inc(CntD2Ok);
+    Inc(CntD2All);
+
     for Rec in DBL do
     begin
       // R01G1S_2
@@ -244,6 +258,9 @@ begin
     end;
     DBL.Free();
   end;
+
+  if (CntD2All <> 0) then
+    Log.Print('i', Format('Заповненість документів %.2f%%', [CntD2Ok / CntD2All * 100]));
 
   Result := SLFiles.Count;
 end;
@@ -318,11 +335,6 @@ begin
   D1(JObjMed, JObjWiz);
 
   JObjMed.Free();
-end;
-
-procedure TWizardUser.StringListToPDF(aLines: TStringList; const aFileName: string);
-begin
-
 end;
 
 function TWizardUser.AsGridPrint(aJObj: TJSONObject; const aParam: TStringList): TStringList;
@@ -459,7 +471,7 @@ begin
   SL.Free();
   SL2.Free();
 
-  Str := '12-';
+  //Str := '12-';
   //Str := '1';
   //Str := Str.Clone(100*1000*1000);
 

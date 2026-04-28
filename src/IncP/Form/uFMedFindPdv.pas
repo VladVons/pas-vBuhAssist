@@ -9,11 +9,11 @@ interface
 
 uses
   Classes, SysUtils, DateUtils, DB, SQLDB, Forms, Controls, Graphics, Dialogs, ComCtrls,
-  ExtCtrls, Buttons, Menus, fpjson, Math, uDmCommon, uFMedFind, uFWizard,
-  uWizardUser, uMed, uWinManager, uHelper, uConst, uSys, uSysVcl, uQuery;
+  ExtCtrls, Buttons, Menus, fpjson, uDmCommon, uFMedFind, uFWizard,
+  uWizardUser, uMed, uWinManager, uHelper, uConst, uSys, uSysVcl;
 
 const
-  cDirData = 'Data\12345';
+  cDirData = 'Data';
   cWizardMain = 'FWizard';
 
 type
@@ -178,27 +178,13 @@ begin
   aJObj.Add('ORGLEGAL_NAME', aQuery.FieldByName('ORGLEGAL_NAME').AsString);
   aJObj.Add('KVED_NAME', aQuery.FieldByName('KVED_NAME').AsString);
 
-
-  // ToDo
-  //aJObj.Add('FILLDOC', '01.01.2026');
-  //aJObj.Add('NAMEDOC', '123');
-  //aJObj.Add('NUMDOC', '333');
-
-  aJObj.Add('H01', '1');
-  aJObj.Add('R001G10', 1);
-  aJObj.Add('HNUM_1', 1);
-  aJObj.Add('HNUM_2', 1);
-  aJObj.Add('R01G1S_1', 'пояснення');
-  aJObj.Add('R01G1S_2', 'рахунок');
-  aJObj.Add('T1RXXXXG5', '999');
-
   //Log('i', ExpandSQL(aQuery));
   aQuery.Close();
 end;
 
 procedure TFMedFindPdv.RunWizard(aIdx: integer);
 var
-  Str: string;
+  Str, Dir: string;
   Form: TFWizard;
   JObj, JObjMed: TJSONObject;
   JArr: TJSONArray;
@@ -240,18 +226,30 @@ begin
   SL.Free();
 
   JArr := TJSONArray(ResourceLoadJson(cWizardMain));
-  JObj := JArr.Objects[aIdx];
+  try
+    JObj := JArr.Objects[aIdx];
 
-  Str := ConcatPaths(['Data', JObjMed.Get('HTIN', ''), JObjMed.Get('EDR_POK', '')]);
-  Form := TFWizard(WinManager.Add(TFWizard));
-  Form.SetHelper(TWizardUser.Create(Form));
-  Form.Load(Str, JObj, JObjMed);
+    //Dir := ConcatPaths([GetAppConfigDir(false), cDirData, JObjMed.Get('HTIN', ''), JObjMed.Get('EDR_POK', '')]);
+    Dir := ConcatPaths([cDirData, JObjMed.Get('HTIN', ''), JObjMed.Get('EDR_POK', '')]);
+    if (not DirectoryExists(Dir)) then
+       ForceDirectories(Dir);
 
-  TabSheet := WinManager.GetPage(-1);
-  TabSheet.Caption := JObj.Get('caption', '');
+    if (JObjMed.Get('HTIN', '') = '') then
+    begin
+      Log('e', 'Не заповнено код HTIN');
+      Exit();
+    end;
 
-  JArr.Free();
-  JObjMed.Free();
+    Form := TFWizard(WinManager.Add(TFWizard));
+    Form.SetHelper(TWizardUser.Create(Form));
+    Form.Load(Dir, JObj, JObjMed);
+
+    TabSheet := WinManager.GetPage(-1);
+    TabSheet.Caption := JObj.Get('caption', '');
+  finally
+    JArr.Free();
+    JObjMed.Free();
+  end;
 end;
 
 procedure TFMedFindPdv.InitPopupWizard();
