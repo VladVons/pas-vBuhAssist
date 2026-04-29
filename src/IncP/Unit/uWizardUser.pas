@@ -177,7 +177,7 @@ function TWizardUser.D2(aJObjMed, aJObjWiz: TJSONObject): integer;
 const
   cDoc = '1360102';
 var
-  i, Cnt, CntD2All, CntD2Ok: integer;
+  i, Cnt, Cnt2, CntD2All, CntD2Ok: integer;
   Str, Key: string;
   JObj: TJSONObject;
   DBL: TDbList;
@@ -221,20 +221,29 @@ begin
 
       // R01G1B
       Str := DbL.Rec['doc_name'].AsString;
-      if (Str.IsEmpty()) then
-        Log.Print('e', Format('Не визначено `doc_name` для `%s`', [cDoc]))
-      else if (Str.FileExists()) then
+      if (Str.IsEmptyTrim()) then
       begin
-        if (SLFiles.IndexOf(Str) <> -1) then
-          Log.Print('e', Format('Файл вже існує `%s`', [Str]))
-        else
-          SLFiles.Add(Str);
-        aJObjMed.SetKey('HNUM_2', SLFiles.Count);
+        Log.Print('e', Format('Не визначено `doc_name` для `%s`', [cDoc]));
+        continue;
+      end;
 
-        Str := StrFromFile(Str);
-        aJObjMed.SetKey('R01G1B', EncodeStringBase64(Str));
-      end else
+      if (not Str.FileExists()) then
+      begin
         Log.Print('e', Format('Не знайдено файл `%s`', [Str]));
+        continue;
+      end;
+
+      if (SLFiles.IndexOf(Str) <> -1) then
+      begin
+        Log.Print('e', Format('Файл вже існує `%s`', [Str]));
+        continue;
+      end;
+      SLFiles.Add(Str);
+
+      aJObjMed.SetKey('HNUM_2', Cnt);
+
+      Str := StrFromFile(Str);
+      aJObjMed.SetKey('R01G1B', EncodeStringBase64(Str));
 
       // NAMEDOC
       Str := DbL.Rec['doc_type'].AsString;
@@ -270,6 +279,7 @@ const
   cDoc = '1312603';
   cMemoShort = 'g01w40s10.memo1_S';
 var
+  Str: string;
   JArr: TJSONArray;
   SL: TStringList;
 begin
@@ -280,6 +290,9 @@ begin
     aJObjMed.SetKey('R01G1S_1', SL.AddArray(JArr).Text);
     SL.Free();
   end;
+
+  Str := aJObjMed.Get('T1RXXXXG31', '');
+  aJObjMed.SetKey('HNUM_1', Str);
 
   SaveXml(cDoc, aJObjMed, 1);
 end;
@@ -331,7 +344,7 @@ begin
 
   Cnt := D2(JObjMed, JObjWiz);
 
-  JObjMed.SetKey('R001G10', Cnt);
+  JObjMed.SetKey('R001G10', Cnt + 1);
   D1(JObjMed, JObjWiz);
 
   JObjMed.Free();

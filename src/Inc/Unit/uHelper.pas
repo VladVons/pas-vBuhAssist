@@ -30,6 +30,7 @@ type
     function Filter(const aAllowed: string; aInvert: boolean = False): string;
     function Filter(const aAllowed: TCharSet; aInvert: boolean = False): string;
     function IsQuoted(): Boolean;
+    function IsEmptyTrim(): Boolean;
     function JoinNonEmpty(const aArr : TStringArray): string;
     function Left(aLen: integer; aDoCut: boolean = False): string;
     function Middle(const aStart, aCount: integer): string;
@@ -470,6 +471,11 @@ begin
       Result := Result + '\' + self[i]
     else
       Result := Result + self[i];
+end;
+
+function TStringHelperEx.IsEmptyTrim(): Boolean;
+begin
+  Result := (Trim() = '');
 end;
 
 function TStringHelperEx.IsQuoted(): Boolean;
